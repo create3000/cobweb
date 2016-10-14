@@ -91,6 +91,31 @@ function ($,
 		{
 			return "attrib";
 		},
+		addValue: function (array, index)
+		{
+			if (index < this .value_ .length)
+			{
+				var mat4 = this .value_ [index] .getValue ();
+
+				for (var i = 0; i < 16; ++ i)
+					array .push (mat4 [i]);
+			}
+			else
+			{
+				var mat4 = Matrix4 .Identity;
+
+				for (var i = 0; i < 16; ++ i)
+					array .push (mat4 [i]);
+			}
+		},
+		enable: function (gl, shaderNode, buffer)
+		{
+			shaderNode .enableMatrix4Attrib (gl, this .name_ .getValue (), buffer);
+		},
+		disable: function (gl, shaderNode)
+		{
+			shaderNode .disableMatrix4Attrib (gl, this .name_ .getValue ());
+		},
 	});
 
 	return Matrix4VertexAttribute;

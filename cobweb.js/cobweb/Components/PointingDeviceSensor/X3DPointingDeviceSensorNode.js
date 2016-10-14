@@ -51,15 +51,13 @@ define ("cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode",
 [
 	"jquery",
 	"cobweb/Components/Core/X3DSensorNode",
+	"cobweb/Browser/PointingDeviceSensor/PointingDeviceSensorContainer",
 	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector4",
-	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
-          X3DSensorNode, 
-          X3DConstants,
-          Vector4,
-          Matrix4)
+          X3DSensorNode,
+          PointingDeviceSensorContainer,
+          X3DConstants)
 {
 "use strict";
 
@@ -68,8 +66,6 @@ function ($,
 		X3DSensorNode .call (this, executionContext);
 
 		this .addType (X3DConstants .X3DPointingDeviceSensorNode);
-
-		this .matrices = { };
 	}
 
 	X3DPointingDeviceSensorNode .prototype = $.extend (Object .create (X3DSensorNode .prototype),
@@ -96,45 +92,31 @@ function ($,
 			if (this .isOver_ .getValue ())
 				this .isOver_ = false;
 		},
-		set_over__: function (hit, value)
+		set_over__: function (over, hit)
 		{
-			if (value !== this .isOver_ .getValue ())
+			if (over !== this .isOver_ .getValue ())
 			{
-				this .isOver_ = value;
+				this .isOver_ = over;
 
 				if (this .isOver_ .getValue ())
 					this .getBrowser () .getNotification () .string_ = this .description_;
 			}
 		},
-		set_active__: function (hit, value)
+		set_active__: function (active, hit)
 		{
-			if (value !== this .isActive_ .getValue ())
-				this .isActive_ = value;
+			if (active !== this .isActive_ .getValue ())
+				this .isActive_ = active
 		},
+		set_motion__: function (hit)
+		{ },
 		push: function (renderObject, sensors)
 		{
 			if (this .enabled_ .getValue ())
 			{
-				var currentLayer = renderObject .getLayer ();
-
-				sensors [this .getId ()] = this;
-
-				// Create a matrix set for each layer if needed in the case the sensor is cloned over multiple layers.
-
-				if (! this .matrices .hasOwnProperty (currentLayer .getId ()))
-				{
-					this .matrices [currentLayer .getId ()] = {
-						modelViewMatrix:  new Matrix4 (),
-						projectionMatrix: new Matrix4 (),
-						viewport:         new Vector4 (),
-					};
-				}
-
-				var matrices = this .matrices [currentLayer .getId ()];
-
-				matrices .modelViewMatrix  .assign (renderObject .getModelViewMatrix  () .get ());
-				matrices .projectionMatrix .assign (renderObject .getProjectionMatrix () .get ());
-				matrices .viewport         .assign (renderObject .getViewVolume () .getViewport ());
+				sensors [this .getId ()] = new PointingDeviceSensorContainer (this,
+				                                                              renderObject .getModelViewMatrix  () .get (),
+				                                                              renderObject .getProjectionMatrix () .get (),
+				                                                              renderObject .getViewVolume () .getViewport ());
 			}
 		},
 	});

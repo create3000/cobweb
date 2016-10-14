@@ -100,11 +100,11 @@ function ($,
 
 		this .addType (X3DConstants .X3DGeometryNode);
 			
-		this .addChildren ("transparent",  new Fields .SFBool ());
-		this .addChildren ("bbox_changed", new Fields .SFTime ());
+		this .addChildObjects ("transparent",  new Fields .SFBool (),
+		                       "bbox_changed", new Fields .SFTime ());
 
 		this .geometryType        = 3;
-		this .currentTexCoordNode = this .getBrowser () .getDefaultTextureCoordinate ();
+		this .currentTexCoordNode = this .getBrowser () .getDefaultTextureCoordinate (); // For TextureCoordinateGenerator needed.
 	}
 
 	X3DGeometryNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -131,7 +131,6 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			var gl = this .getBrowser () .getContext ();
@@ -141,6 +140,8 @@ function ($,
 			this .bbox             = new Box3 (this .min, this .max, true);
 			this .solid            = true;
 			this .flatShading      = undefined;
+			this .attribNodes      = [ ];
+			this .attribs          = [ ];
 			this .colors           = [ ];
 			this .texCoords        = [ ];
 			this .defaultTexCoords = [ ];
@@ -152,10 +153,12 @@ function ($,
 
 			this .primitiveMode   = gl .TRIANGLES;
 			this .frontFace       = gl .CCW;
+			this .attribBuffers   = [ ];
 			this .colorBuffer     = gl .createBuffer ();
 			this .texCoordBuffers = [ ];
 			this .normalBuffer    = gl .createBuffer ();
 			this .vertexBuffer    = gl .createBuffer ();
+			this .attribArray     = [ ];
 			this .colorArray      = new Float32Array ();
 			this .texCoordArray   = [ ];
 			this .vertexArray     = new Float32Array ();
@@ -167,9 +170,9 @@ function ($,
 					this .planes [i] = new Plane3 (Vector3 .Zero, boxNormals [0]);
 			}
 
-			this .depth            = Algorithm .nop;
-			this .display          = Algorithm .nop;
-			this .displayParticles = Algorithm .nop;
+			this .depth            = Function .prototype;
+			this .display          = Function .prototype;
+			this .displayParticles = Function .prototype;
 
 			this .set_live__ ();
 		},
@@ -219,6 +222,14 @@ function ($,
 		setCCW: function (value)
 		{
 			this .frontFace = value ? this .getBrowser () .getContext () .CCW : this .getBrowser () .getContext () .CW;
+		},
+		getAttrib: function ()
+		{
+			return this .attribNodes;
+		},
+		getAttribs: function ()
+		{
+			return this .attribs;
 		},
 		addColor: function (color)
 		{
@@ -588,9 +599,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			var live = this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ();
-
-			if (live)
+			if (this .isLive () .getValue ())
 				this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shading__");
 			else
 				this .getBrowser () .getBrowserOptions () .Shading_ .removeInterest (this, "set_shading__");
@@ -678,8 +687,27 @@ function ($,
 		},
 		clear: function ()
 		{
+			// BBox
+
 			this .min .set (Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY, Number .POSITIVE_INFINITY);
 			this .max .set (Number .NEGATIVE_INFINITY, Number .NEGATIVE_INFINITY, Number .NEGATIVE_INFINITY);
+
+			// Attrib
+
+			var
+				attrib    = this .getAttrib (),
+				numAttrib = attrib .length,
+				attribs   = this .getAttribs ();
+			
+			for (var a = 0, length = attribs .length; a < length; ++ a)
+				attribs [a] .length = 0;;
+			
+			for (var a = attribs .length; a < numAttrib; ++ a)
+				attribs [a] = [ ];
+			
+			attribs .length = numAttrib;
+
+			// Buffer
 
 			this .flatShading = undefined;
 			this .colors      .length = 0;
@@ -693,6 +721,27 @@ function ($,
 			var
 				gl    = this .getBrowser () .getContext (),
 				count = this .vertices .length / 4;
+
+			// Transfer attribs.
+
+			for (var i = this .attribBuffers .length, length = this .attribs .length; i < length; ++ i)
+			{
+				this .attribBuffers .push (gl .createBuffer ());
+				this .attribArray   .push (new Float32Array ());
+			}
+
+			this .attribBuffers .length = this .attribs .length;
+			
+			for (var i = 0, length = this .attribs .length; i < length; ++ i)
+			{
+				if (this .attribArray [i] .length !== this .attribs [i] .length)
+					this .attribArray [i] = new Float32Array (this .attribs [i]);
+				else
+					this .attribArray [i] .set (this .attribs [i]);
+
+				gl .bindBuffer (gl .ARRAY_BUFFER, this .attribBuffers [i]);
+				gl .bufferData (gl .ARRAY_BUFFER, this .attribArray [i], gl .STATIC_DRAW);
+			}
 
 			// Transfer colors.
 	
@@ -747,9 +796,10 @@ function ($,
 			}
 			else
 			{
-				this .depth            = Algorithm .nop;
-				this .display          = Algorithm .nop;
-				this .displayParticles = Algorithm .nop;
+				// Use no render function.
+				this .depth            = Function .prototype;
+				this .display          = Function .prototype;
+				this .displayParticles = Function .prototype;
 			}
 	  	},
 		traverse: function (type, renderObject)
@@ -760,7 +810,14 @@ function ($,
 
 			// Setup vertex attributes.
 
+			// Attribs in depth rendering are not supported.
+			//for (var i = 0, length = attribNodes .length; i < length; ++ i)
+			//	attribNodes [i] .enable (gl, shaderNode, attribBuffers [i]);
+
 			shaderNode .enableVertexAttribute (gl, this .vertexBuffer);
+
+			//for (var i = 0, length = attribNodes .length; i < length; ++ i)
+			//	attribNodes [i] .disable (gl, shaderNode);
 
 			gl .drawArrays (this .primitiveMode, 0, this .vertexCount);
 		},
@@ -769,9 +826,11 @@ function ($,
 			try
 			{
 				var
-					browser    = context .renderer .getBrowser (),
-					gl         = browser .getContext (),
-					shaderNode = context .shaderNode;
+					browser       = context .renderer .getBrowser (),
+					gl            = browser .getContext (),
+					shaderNode    = context .shaderNode,
+					attribNodes   = this .attribNodes,
+					attribBuffers = this .attribBuffers;
 	
 				// Setup shader.
 	
@@ -780,6 +839,9 @@ function ($,
 				shaderNode .setLocalUniforms (gl, context);
 	
 				// Setup vertex attributes.
+	
+				for (var i = 0, length = attribNodes .length; i < length; ++ i)
+					attribNodes [i] .enable (gl, shaderNode, attribBuffers [i]);
 	
 				if (this .colors .length)
 					shaderNode .enableColorAttribute (gl, this .colorBuffer);
@@ -823,6 +885,9 @@ function ($,
 					}
 				}
 	
+				for (var i = 0, length = attribNodes .length; i < length; ++ i)
+					attribNodes [i] .disable (gl, shaderNode);
+	
 				shaderNode .disableColorAttribute    (gl);
 				shaderNode .disableTexCoordAttribute (gl);
 				shaderNode .disableNormalAttribute   (gl);
@@ -836,6 +901,10 @@ function ($,
 		displayParticlesDepth: function (context, shaderNode, particles, numParticles)
 		{
 			var gl = context .renderer .getBrowser () .getContext ();
+
+			// Attribs in depth rendering are not supported:
+			//for (var i = 0, length = attribNodes .length; i < length; ++ i)
+			//	attribNodes [i] .enable (gl, shaderNode, attribBuffers [i]);
 
 			shaderNode .enableVertexAttribute   (gl, this .vertexBuffer);
 
@@ -859,15 +928,20 @@ function ($,
 
 				gl .drawArrays (shaderNode .primitiveMode, 0, this .vertexCount);
 			}
+	
+			//for (var i = 0, length = attribNodes .length; i < length; ++ i)
+			//	attribNodes [i] .disable (gl, shaderNode);
 		},
 		displayParticles: function (context, particles, numParticles)
 		{
 			try
 			{
 				var
-					browser    = context .renderer .getBrowser (),
-					gl         = browser .getContext (),
-					shaderNode = context .shaderNode;
+					browser       = context .renderer .getBrowser (),
+					gl            = browser .getContext (),
+					shaderNode    = context .shaderNode,
+					attribNodes   = this .attribNodes,
+					attribBuffers = this .attribBuffers;
 	
 				// Setup shader.
 	
@@ -877,6 +951,9 @@ function ($,
 	
 				// Setup vertex attributes.
 	
+				for (var i = 0, length = attribNodes .length; i < length; ++ i)
+					attribNodes [i] .enable (gl, shaderNode, attribBuffers [i]);
+
 				if (this .colors .length)
 					shaderNode .enableColorAttribute (gl, this .colorBuffer);
 	
@@ -990,6 +1067,9 @@ function ($,
 						}
 					}
 				}
+	
+				for (var i = 0, length = attribNodes .length; i < length; ++ i)
+					attribNodes [i] .disable (gl, shaderNode);
 	
 				shaderNode .disableColorAttribute    (gl);
 				shaderNode .disableTexCoordAttribute (gl);

@@ -54,13 +54,15 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/Shaders/X3DVertexAttributeNode",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DVertexAttributeNode, 
-          X3DConstants)
+          X3DConstants,
+          Algorithm)
 {
 "use strict";
 
@@ -91,6 +93,32 @@ function ($,
 		getContainerField: function ()
 		{
 			return "attrib";
+		},
+		addValue: function (array, index)
+		{
+			var
+				size  = Algorithm .clamp (this .numComponents_ .getValue (), 1, 4),
+				first = index * size,
+				last  = first + size;
+		
+			if (last <= this .value_ .length)
+			{
+				for (; first < last; ++ first)
+					array .push (this .value_ [first]);
+			}
+			else
+			{
+				for (; first < last; ++ first)
+					array .push (0);
+			}
+		},
+		enable: function (gl, shaderNode, buffer)
+		{
+			shaderNode .enableFloatAttrib (gl, this .name_ .getValue (), buffer, Algorithm .clamp (this .numComponents_ .getValue (), 1, 4));
+		},
+		disable: function (gl, shaderNode)
+		{
+			shaderNode .disableFloatAttrib (gl, this .name_ .getValue ());
 		},
 	});
 

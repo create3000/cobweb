@@ -102,17 +102,15 @@ function ($,
 		{
 			return "children";
 		},
-		set_over__: function (hit, value)
+		set_over__: function (over, hit, modelViewMatrix, projectionMatrix, viewport)
 		{
 			try
 			{
-				X3DTouchSensorNode .prototype .set_over__ .call (this, hit, value);
+				X3DTouchSensorNode .prototype .set_over__ .call (this, over, hit, modelViewMatrix, projectionMatrix, viewport);
 
 				if (this .isOver_ .getValue ())
 				{
-					var
-						intersection    = hit .intersection,
-						modelViewMatrix = this .getMatrices () [hit .layer .getId ()] .modelViewMatrix;
+					var intersection = hit .intersection;
 
 					invModelViewMatrix .assign (modelViewMatrix) .inverse ();
 

@@ -69,11 +69,11 @@ function ($,
 	X3DTouchSensorNode .prototype = $.extend (Object .create (X3DPointingDeviceSensorNode .prototype),
 	{
 		constructor: X3DTouchSensorNode,
-		set_active__: function (hit, value)
+		set_active__: function (active, hit)
 		{
-			X3DPointingDeviceSensorNode .prototype .set_active__ .call (this, hit, value);
+			X3DPointingDeviceSensorNode .prototype .set_active__ .call (this, active, hit);
 
-			if (this .enabled_ .getValue () && this .isOver_ .getValue () && ! value)
+			if (this .enabled_ .getValue () && this .isOver_ .getValue () && ! active)
 				this .touchTime_ = this .getBrowser () .getCurrentTime ();
 		},
 	});

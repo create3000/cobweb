@@ -381,8 +381,7 @@ function ($,
 				if (this .parent)
 					return this .parent .getOffsetUnitX ();
 		
-				else
-					return FRACTION;
+				return FRACTION;
 			}
 
 			return this .offsetUnitX;
@@ -393,25 +392,11 @@ function ($,
 			{
 				if (this .parent)
 					return this .parent .getOffsetUnitY ();
-		
-				else
-					return FRACTION;
+	
+				return FRACTION;
 			}
 		
 			return this .offsetUnitY;
-		},
-		getSizeUnitX: function ()
-		{
-			if (this .sizeUnitX === WORLD)
-			{
-				if (this .parent)
-					return this .parent .getSizeUnitX ();
-		
-				else
-					return FRACTION;
-			}
-		
-			return this .sizeUnitX;
 		},
 		getOffsetX: function ()
 		{
@@ -421,15 +406,14 @@ function ($,
 		{
 			return this .offsetY;
 		},
-		getSizeUnitY: function ()
+		getSizeUnitX: function ()
 		{
 			if (this .sizeUnitX === WORLD)
 			{
 				if (this .parent)
 					return this .parent .getSizeUnitX ();
 		
-				else
-					return FRACTION;
+				return FRACTION;
 			}
 		
 			return this .sizeUnitX;
@@ -441,8 +425,7 @@ function ($,
 				if (this .parent)
 					return this .parent .getSizeUnitY ();
 		
-				else
-					return FRACTION;
+				return FRACTION;
 			}
 		
 			return this .sizeUnitY;

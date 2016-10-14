@@ -72,14 +72,13 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-			this .isLive ()                         .addInterest (this, "set_live__");
+			this .isLive () .addInterest (this, "set_live__");
 
 			this .set_live__ ();
 		},
 		set_live__: function ()
 		{
-			if (this .getExecutionContext () .isLive ().getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				this .enabled_ .addInterest (this, "set_enabled__");
 

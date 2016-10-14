@@ -56,7 +56,9 @@ function (X3DScene)
 
 	function Scene (browser)
 	{
-		X3DScene .call (this, browser, this);
+		this ._browser = browser;
+
+		X3DScene .call (this, this);
 	}
 
 	Scene .prototype = $.extend (Object .create (X3DScene .prototype),

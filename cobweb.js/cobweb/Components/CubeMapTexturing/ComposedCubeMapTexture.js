@@ -127,7 +127,6 @@ function ($,
 
 			//
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .front_  .addInterest (this, "set_texture__", 0);
@@ -152,7 +151,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				this .getBrowser () .getBrowserOptions () .TextureQuality_ .addInterest (this, "set_textureQuality__");
 	

@@ -97,7 +97,7 @@ function ($,
 		},
 		getExportedNode: function ()
 		{
-			return this .inlineNode .getScene () .getExportedNode (this .exportedName);
+			return this .inlineNode .getInternalScene () .getExportedNode (this .exportedName);
 		},
 		getImportedName: function ()
 		{
@@ -134,7 +134,7 @@ function ($,
 					destinationField = route .destinationField;
 
 				if (route ._route)
-					route ._route .disconnect ();
+					route ._route .dispose ();
 
 				if (sourceNode instanceof ImportedNode)
 					sourceNode = sourceNode .getExportedNode () .getValue ();

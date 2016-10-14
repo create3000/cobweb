@@ -82,7 +82,7 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			this .addChildren ("string", new SFString ());
+			this .addChildObjects ("string", new SFString ());
 
 			this .element = $("<div></div>")
 				.addClass ("cobweb-notification")

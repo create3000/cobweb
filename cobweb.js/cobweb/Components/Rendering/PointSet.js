@@ -74,7 +74,6 @@ function ($,
 
 		this .setGeometryType (0);
 
-		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .coordNode    = null;
 		this .transparent_ = true;
@@ -122,21 +121,23 @@ function ($,
 		},
 		set_attrib__: function ()
 		{
-			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .removeInterest (this, "addNodeEvent");
+			var attribNodes = this .getAttrib ();
 
-			this .attribNodes .length = 0;
+			for (var i = 0, length = attribNodes .length; i < length; ++ i)
+				attribNodes [i] .removeInterest (this, "addNodeEvent");
+
+			attribNodes .length = 0;
 
 			for (var i = 0, length = this .attrib_ .length; i < length; ++ i)
 			{
 				var attribNode = X3DCast (X3DConstants .X3DVertexAttributeNode, this .attrib_ [i]);
 
 				if (attribNode)
-					this .attribNodes .push (attribNode);
+					attribNodes .push (attribNode);
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest (this, "addNodeEvent");
 		},
 		set_color__: function ()
 		{
@@ -164,16 +165,17 @@ function ($,
 				return;
 
 			var
-				colorNode = this .colorNode,
-				coordNode = this .coordNode;
+				attribNodes = this .getAttrib (),
+				numAttrib   = attribNodes .length,
+				attribs     = this .getAttribs (),
+				colorNode   = this .colorNode,
+				coordNode   = this .coordNode;
 
-			//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-			//{
-			//	attribArrays [a] .reserve (coordNode -> getSize ());
-
-			//	for (size_t i = 0, size = coordNode -> getSize (); i < size; ++ i)
-			//		attribNodes [a] -> addValue (attribArrays [a], i);
-			//}
+			for (var a = 0; a < numAttrib; ++ a)
+			{
+				for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
+					attribNodes [a] .addValue (attribs [a], i);
+			}
 			
 			if (this .colorNode)
 			{
@@ -183,8 +185,6 @@ function ($,
 
 			for (var i = 0, length = coordNode .point_ .length; i < length; ++ i)
 				this .addVertex (coordNode .get1Point (i));
-
-			//this .setAttribs (this .attribNodes, attribArrays);
 		},
 	});
 

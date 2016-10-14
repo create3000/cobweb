@@ -81,11 +81,17 @@ function ($, X3DBaseNode)
 	BindableList .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: BindableList,
-		initialize: function ()
+		getTypeName: function ()
 		{
-			X3DBaseNode .prototype .initialize .call (this);
-			
-			this .array [0] .set_bind_ .addInterest (this, "set_bind__", this .array [0]);
+			return "BindableList";
+		},
+		getComponentName: function ()
+		{
+			return "Cobweb";
+		},
+		getContainerField: function ()
+		{
+			return "bindableList";
 		},
 		get: function ()
 		{
@@ -114,33 +120,15 @@ function ($, X3DBaseNode)
 		{
 			if (! equals (this .collected, this .array))
 			{
-				// removeInterest
-
-				for (var i = 1; i < this .array .length; ++ i)
-					this .array [i] .set_bind_ .removeInterest (this, "set_bind__", this .array [i]);
-				
 				// Swap arrays.
 
 				var tmp = this .array;
 
 				this .array     = this .collected;
 				this .collected = tmp;
-
-				// addInterest
-
-				for (var i = 1; i < this .array .length; ++ i)
-					this .array [i] .set_bind_ .addInterest (this, "set_bind__", this .array [i]);
 			}
 
 			this .collected .length = 1;
-		},
-		set_bind__: function (bind, node)
-		{
-			if (bind .getValue ())
-				node .bindToLayer (this .layer);
-
-			else
-				node .unbindFromLayer (this .layer);
 		},
 	});
 

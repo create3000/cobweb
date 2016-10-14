@@ -58,8 +58,8 @@ function (Fields,
 
 	function X3DSoundContext ()
 	{
-		this .addChildren ("volume", new Fields .SFFloat (1));
-		this .addChildren ("mute",   new Fields .SFBool ());
+		this .addChildObjects ("volume", new Fields .SFFloat (1),
+		                       "mute",   new Fields .SFBool ());
 	}
 
 	X3DSoundContext .prototype =

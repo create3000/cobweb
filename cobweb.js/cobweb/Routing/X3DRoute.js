@@ -58,40 +58,79 @@ function ($,
 {
 "use strict";
 
-	function X3DRoute (/* executionContext, */ sourceNode, sourceField, destinationNode, destinationField)
+	function X3DRoute (executionContext, sourceNode, sourceField, destinationNode, destinationField)
 	{
-		//X3DBaseNode .call (this, executionContext);
-		
-		this ._sourceNode       = sourceNode;
+		X3DBaseNode .call (this, executionContext);
+
+		this .addChildObjects ("sourceNode",      new Fields .SFNode (sourceNode),
+		                       "destinationNode", new Fields .SFNode (destinationNode));
+
 		this ._sourceField      = sourceField;
-		this ._destinationNode  = destinationNode;
 		this ._destinationField = destinationField;
 
 		//if (! (this .getExecutionContext () instanceof X3DProtoDeclaration))
 			sourceField .addFieldInterest (destinationField);
-
-		Object .preventExtensions (this);
-		Object .freeze (this);
-		Object .seal (this);
 	}
 
-	X3DRoute .prototype =
+	X3DRoute .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
+		getTypeName: function ()
+		{
+			return "X3DRoute";
+		},
+		getComponentName: function ()
+		{
+			return "Cobweb";
+		},
+		getContainerField: function ()
+		{
+			return "routes";
+		},
+		initialize: function ()
+		{
+			X3DBaseNode .prototype .initialize .call (this);
+
+			this .sourceNode_      .addInterest (this, "set_node");
+			this .destinationNode_ .addInterest (this, "set_node");
+
+//			Object .preventExtensions (this);
+//			Object .freeze (this);
+//			Object .seal (this);
+		},
+		set_node: function ()
+		{
+			if (! this .sourceNode_ .getValue () || ! this .destinationNode_ .getValue ())
+				this .dispose ();
+		},
 		disconnect: function ()
 		{
 			this ._sourceField .removeFieldInterest (this ._destinationField);
+
+			if (this .sourceNode_ .getValue ())
+				this .sourceNode_ .removeInterest (this, "set_node");
+
+			if (this .destinationNode_ .getValue ())
+				this .destinationNode_ .removeInterest (this, "set_node");
 		},
 		toString: function ()
 		{
 			return Object .prototype .toString (this);
 		},
-	};
+		dispose: function ()
+		{
+			this .disconnect ();
+
+			this .getExecutionContext () .deleteRoute (this);
+
+			X3DBaseNode .prototype .dispose .call (this);
+		}
+	});
 
 	Object .defineProperty (X3DRoute .prototype, "sourceNode",
 	{
 		get: function ()
 		{
-			return new Fields .SFNode (this ._sourceNode);
+			return this .sourceNode_ .clone ();
 		},
 		enumerable: true,
 		configurable: false
@@ -111,7 +150,7 @@ function ($,
 	{
 		get: function ()
 		{
-			return new Fields .SFNode (this ._destinationNode);
+			return this .destinationNode_ .clone ();
 		},
 		enumerable: true,
 		configurable: false

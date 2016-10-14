@@ -80,12 +80,13 @@ function ($,
 
 		this .addType (X3DConstants .Inline);
 		
-		this .addChildren ("buffer", new Fields .SFTime ());
+		this .addChildObjects ("buffer", new Fields .SFTime ());
 
 		this .scene    = this .getBrowser () .getDefaultScene ();
 		this .group    = new Group (executionContext);
 		this .getBBox  = this .group .getBBox  .bind (this .group);
-		this .traverse = this .group .traverse .bind (this .group);
+
+		this .group .addParent (this);
 	}
 
 	Inline .prototype = $.extend (Object .create (X3DChildNode .prototype),
@@ -118,9 +119,9 @@ function ($,
 			X3DUrlObject     .prototype .initialize .call (this);
 			X3DBoundedObject .prototype .initialize .call (this);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
+			this .group .setPrivate (true);
 			this .group .setup ();
 			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
 
@@ -134,12 +135,7 @@ function ($,
 		{
 			if (this .checkLoadState () == X3DConstants .COMPLETE_STATE)
 			{
-				var live = this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ();
-
-				if (live)
-					this .scene .beginUpdate ();
-				else
-					this .scene .endUpdate ();
+				this .scene .setLive (this .isLive () .getValue ());
 			}
 		},
 		set_load__: function ()
@@ -167,6 +163,11 @@ function ($,
 		{
 			try
 			{
+				if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+					return;
+
+				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+
 				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_));
 			}
 			catch (error)
@@ -207,12 +208,13 @@ function ($,
 		},
 		setInternalScene: function (scene)
 		{
-			this .scene .endUpdate ();
+			this .scene .setLive (false);
 			this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
 
 			// Set new scene.
 
 			this .scene = scene;
+			this .scene .setPrivate (this .getExecutionContext () .getPrivate ());
 			this .scene .setup ();
 
 			//this .scene .setExecutionContext (this .getExecutionContext ());
@@ -226,6 +228,10 @@ function ($,
 		getInternalScene: function ()
 		{
 			return this .scene;
+		},
+		traverse: function (type, renderObject)
+		{
+			this .group .traverse (type, renderObject);
 		},
 	});
 

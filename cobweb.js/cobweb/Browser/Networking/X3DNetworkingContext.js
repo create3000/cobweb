@@ -70,7 +70,7 @@ function (Fields,
 	{
 		this .cache = this .getElement () [0] .getAttribute ("cache") != "false";
 
-		this .addChildren ("loadCount", new Fields .SFInt32 ());
+		this .addChildObjects ("loadCount", new Fields .SFInt32 ());
 
 		this .loadSensor     = new LoadSensor (this);
 		this .loadingTotal   = 0;
@@ -88,10 +88,11 @@ function (Fields,
 			this .loadSensor .setup ();
 
 			this .defaultScene .setup ();
-			this .defaultScene .beginUpdate ();
+			this .defaultScene .setLive (true);
 
+			this .privateScene .setPrivate (true);
 			this .privateScene .setup ();
-			this .privateScene .beginUpdate ();
+			this .privateScene .setLive (true);
 		},
 		getProviderUrl: function ()
 		{

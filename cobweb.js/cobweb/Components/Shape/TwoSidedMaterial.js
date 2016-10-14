@@ -116,7 +116,7 @@ function ($,
 		{
 			X3DMaterialNode . prototype .initialize .call (this);
 			
-			this .addChildren ("transparent", new Fields .SFBool ());
+			this .addChildObjects ("transparent", new Fields .SFBool ());
 
 			this .ambientIntensity_ .addInterest (this, "set_ambientIntensity__");
 			this .diffuseColor_     .addInterest (this, "set_diffuseColor__");

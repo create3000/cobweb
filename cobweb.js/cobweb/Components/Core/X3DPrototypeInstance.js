@@ -71,8 +71,6 @@ function ($,
 		this .protoNode        = protoNode;
 		this .fieldDefinitions = new FieldDefinitionArray (protoNode .getFieldDefinitions () .getValue () .slice ());
 
-		this .addChildren ("isLiveX3DPrototypeInstance", new Fields .SFBool (true));
-
 		X3DNode             .call (this, executionContext);
 		X3DExecutionContext .call (this, executionContext);
 
@@ -194,12 +192,7 @@ function ($,
 					//this .copyImportedNodes (proto);
 					this .copyRoutes (proto .routes);
 				}
-				
-				this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
-				this .isLive () .addInterest (this, "set_live__");
-	
-				this .set_live__ ();
-	
+
 				// Now initialize bases.
 	
 				X3DNode             .prototype .initialize .call (this);
@@ -214,10 +207,6 @@ function ($,
 		{
 			return false;
 		},
-		isLive: function ()
-		{
-		   return this .isLiveX3DPrototypeInstance_;
-		},
 		getInnerNode: function ()
 		{
 			var rootNodes = this .getRootNodes () .getValue ();
@@ -231,15 +220,6 @@ function ($,
 			}
 
 			throw new Error ("Root node not available.");
-		},
-		set_live__: function ()
-		{
-			var live = this .getExecutionContext () .isLive () .getValue () && X3DNode .prototype .isLive .call (this) .getValue ();
-
-			if (live)
-				this .beginUpdate ();
-			else
-				this .endUpdate ();
 		},
 		importExternProtos: function (externprotos)
 		{
@@ -280,7 +260,7 @@ function ($,
 				}
 				catch (error)
 				{
-					console .log (error .message);
+					console .log (error);
 				}
 			}
 		},

@@ -129,11 +129,11 @@ function ($,
 		X3DTimeContext                 .call (this);
 		X3DParticleSystemsContext      .call (this);
 
-		this .addChildren ("initialized",   new SFTime (),
-		                   "shutdown",      new SFTime (),
-		                   "prepareEvents", new SFTime (),
-		                   "sensors",       new SFTime (),
-		                   "finished",      new SFTime ());
+		this .addChildObjects ("initialized",   new SFTime (),
+		                       "shutdown",      new SFTime (),
+		                       "prepareEvents", new SFTime (),
+		                       "sensors",       new SFTime (),
+		                       "finished",      new SFTime ());
 
 		this .changedTime     = 0;
 		this .renderCallback  = this .traverse .bind (this);

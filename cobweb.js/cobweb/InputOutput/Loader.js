@@ -119,7 +119,7 @@ function ($,
 				{
 					// If we cannot parse XML we try to parse X3D Classic Encoding.	
 
-					new Parser (scene, string) .parseIntoScene ();
+					new Parser (scene) .parseIntoScene (string);
 
 					this .setScene (scene, success);
 				}
@@ -137,7 +137,7 @@ function ($,
 
 					// If we cannot parse XML we try to parse X3D Classic Encoding.	
 
-					new Parser (scene, string) .parseIntoScene ();
+					new Parser (scene) .parseIntoScene (string);
 					return scene;
 				}
 			}
@@ -146,10 +146,10 @@ function ($,
 		{
 			try
 			{
-				new XMLParser (scene, dom) .parseIntoScene ();
+				new XMLParser (scene) .parseIntoScene (dom);
 				
 				//AP: add reference to dom for later access
-				this. node. dom = dom;
+				this .node .dom = dom;
 
 				if (success)
 					this .setScene (scene, success);

@@ -79,7 +79,6 @@ function ($,
 
 		this .addType (X3DConstants .ElevationGrid);
 
-		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .texCoordNode = null;
 		this .normalNode   = null;
@@ -135,21 +134,23 @@ function ($,
 		},
 		set_attrib__: function ()
 		{
-			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .removeInterest (this, "addNodeEvent");
+			var attribNodes = this .getAttrib ();
 
-			this .attribNodes .length = 0;
+			for (var i = 0, length = attribNodes .length; i < length; ++ i)
+				attribNodes [i] .removeInterest (this, "addNodeEvent");
+
+			attribNodes .length = 0;
 
 			for (var i = 0, length = this .attrib_ .length; i < length; ++ i)
 			{
 				var attribNode = X3DCast (X3DConstants .X3DVertexAttributeNode, this .attrib_ [i]);
 
 				if (attribNode)
-					this .attribNodes .push (attribNode);
+					attribNodes .push (attribNode);
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest (this, "addNodeEvent");
 		},
 		set_color__: function ()
 		{
@@ -196,10 +197,6 @@ function ($,
 
 			if (this .normalNode)
 				this .normalNode .addInterest (this, "addNodeEvent");
-		},
-		getAttrib: function ()
-		{
-			return this .attribNodes;
 		},
 		getColor: function ()
 		{
@@ -335,18 +332,14 @@ function ($,
 				colorPerVertex  = this .colorPerVertex_ .getValue (),
 				normalPerVertex = this .normalPerVertex_ .getValue (),
 				coordIndex      = this .createCoordIndex (),
+				attribNodes     = this .getAttrib (),
+				numAttrib       = attribNodes .length,
+				attribs         = this .getAttribs (),
 				colorNode       = this .getColor (),
 				texCoordNode    = this .getTexCoord (),
 				normalNode      = this .getNormal (),
 				points          = this .createPoints (),
 				face            = 0;
-
-			// Vertex attribute
-
-			//std::vector <std::vector <float>> attribArrays (attribNodes .size ());
-
-			//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-			//	attribArrays [a] .reserve (coordIndex .size ());
 
 			if (texCoordNode)
 				texCoordNode .init (this .getTexCoords ());
@@ -358,14 +351,14 @@ function ($,
 
 			// Build geometry
 
-			for (var c = 0; c < coordIndex .length; ++ face)
+			for (var c = 0, numCoordIndices = coordIndex .length; c < numCoordIndices; ++ face)
 			{
 				for (var p = 0; p < 6; ++ p, ++ c)
 				{
 					var index = coordIndex [c];
 
-					//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-					//	attribNodes [a] -> addValue (attribArrays [a], i);
+					for (var a = 0; a < numAttrib; ++ a)
+						attribNodes [a] .addValue (attribs [a], index);
 
 					if (colorNode)
 					{

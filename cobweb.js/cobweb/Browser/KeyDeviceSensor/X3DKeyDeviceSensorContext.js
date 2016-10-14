@@ -60,10 +60,10 @@ function ($,
 	{
 		this .keyDeviceSensorNode = null;
 
-		this .addChildren ("controlKey",  new Fields .SFBool (),
-		                   "shiftKey",    new Fields .SFBool (),
-		                   "altKey",      new Fields .SFBool (),
-		                   "altGrKey",    new Fields .SFBool ());
+		this .addChildObjects ("controlKey",  new Fields .SFBool (),
+		                       "shiftKey",    new Fields .SFBool (),
+		                       "altKey",      new Fields .SFBool (),
+		                       "altGrKey",    new Fields .SFBool ());
 	}
 
 	X3DKeyDeviceSensorContext .prototype =

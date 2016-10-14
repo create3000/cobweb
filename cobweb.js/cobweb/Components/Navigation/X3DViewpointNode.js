@@ -125,12 +125,12 @@ function ($,
 		{
 			X3DBindableNode .prototype .initialize .call (this);
 
-			this .addChildren ("positionOffset",         new Fields .SFVec3f (),
-			                   "orientationOffset",      new Fields .SFRotation (),
-			                   "scaleOffset",            new Fields .SFVec3f (1, 1, 1),
-			                   "scaleOrientationOffset", new Fields .SFRotation (),
-			                   "centerOfRotationOffset", new Fields .SFVec3f (),
-			                   "fieldOfViewScale",       new Fields .SFFloat (1));
+			this .addChildObjects ("positionOffset",         new Fields .SFVec3f (),
+			                       "orientationOffset",      new Fields .SFRotation (),
+			                       "scaleOffset",            new Fields .SFVec3f (1, 1, 1),
+			                       "scaleOrientationOffset", new Fields .SFRotation (),
+			                       "centerOfRotationOffset", new Fields .SFVec3f (),
+			                       "fieldOfViewScale",       new Fields .SFFloat (1));
 		
 			this .timeSensor .stopTime_ = 1;
 			this .timeSensor .setup ();
@@ -161,7 +161,7 @@ function ($,
 			this .scaleInterpolator            .value_changed_ .addFieldInterest (this .scaleOffset_);
 			this .scaleOrientationInterpolator .value_changed_ .addFieldInterest (this .scaleOrientationOffset_);
 
-			this .isBound_ .addInterest (this, "set_bind__");
+			this .isBound_ .addInterest (this, "set_bound__");
 		},
 		getEaseInEaseOut: function ()
 		{
@@ -170,14 +170,10 @@ function ($,
 		setInterpolators: function () { },
 		bindToLayer: function (layer)
 		{
-			X3DBindableNode .prototype .bindToLayer .call (this, layer);
-		
 			layer .getViewpointStack () .push (this);
 		},
 		unbindFromLayer: function (layer)
 		{
-			X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
-
 			layer .getViewpointStack () .pop (this);
 		},
 		removeFromLayer: function (layer)
@@ -211,7 +207,7 @@ function ($,
 		getProjectionMatrix: function (renderObject)
 		{
 			var navigationInfo = renderObject .getNavigationInfo ();
-	
+
 			return this .getProjectionMatrixWithLimits (navigationInfo .getNearValue (),
                                                      navigationInfo .getFarValue (this),
                                                      renderObject .getLayer () .getViewport () .getRectangle (renderObject .getBrowser ()));
@@ -242,49 +238,34 @@ function ($,
 		{
 			return 1e5;
 		},
-		transitionStart: function (layer, fromViewpoint)
+		transitionStart: function (fromViewpoint)
 		{
 			try
 			{
-				if (! layer)
-				{
-					for (var id in this .getLayers ())
-					{
-						layer = this .getLayers () [id];
-						break;
-					}
-				}
-		
-
 				if (this .jump_ .getValue ())
 				{
+					var layers = this .getLayers ();
+
 					if (! this .retainUserOffsets_ .getValue ())
 						this .resetUserOffsets ();
 	
-					for (var id in this .getLayers ())
-						this .getLayers () [id] .getNavigationInfo () .transitionStart_ = true;;
-
-					if (layer)
+					for (var i = 0; i < layers .length; ++ i)
 					{
-						var navigationInfo = layer .getNavigationInfo ();
+						var navigationInfo = layers [i] .getNavigationInfo ();
+
+						navigationInfo .transitionStart_ = true;
 
 						var
 							transitionType = navigationInfo .getTransitionType (),
 							transitionTime = navigationInfo .transitionTime_ .getValue ();
-					}
-					else
-					{
-						var
-							transitionType = "LINEAR",
-							transitionTime = 1;
 					}
 
 					switch (transitionType)
 					{
 						case "TELEPORT":
 						{
-							if (layer)
-								layer .getNavigationInfo () .transitionComplete_ = true;
+							for (var i = 0; i < layers .length; ++ i)
+								layers [i] .getNavigationInfo () .transitionComplete_ = true;
 
 							return;
 						}
@@ -397,10 +378,12 @@ function ($,
 		},
 		lookAt: function (point, distance, factor, straighten)
 		{
-			var offset = point .copy () .add (this .getUserOrientation () .multVecRot (new Vector3 (0, 0, distance))) .subtract (this .getPosition ());
+			var
+				layers = this .getLayers (),
+				offset = point .copy () .add (this .getUserOrientation () .multVecRot (new Vector3 (0, 0, distance))) .subtract (this .getPosition ());
 
-			for (var id in this .getLayers ())
-				this .getLayers () [id] .getNavigationInfo () .transitionStart_ = true;;
+			for (var i = 0; i < layers .length; ++ i)
+				layers [i] .getNavigationInfo () .transitionStart_ = true;;
 		
 			this .timeSensor .cycleInterval_ = 0.2;
 			this .timeSensor .stopTime_      = this .getBrowser () .getCurrentTime ();
@@ -429,17 +412,17 @@ function ($,
 		{
 			if (! active .getValue () && this .timeSensor .fraction_changed_ .getValue () === 1)
 			{
-				for (var id in this .getLayers ())
-				{
-					var navigationInfo = this .getLayers () [id] .getNavigationInfo ();
+				var layers = this .getLayers ();
 
-					navigationInfo .transitionComplete_ = true;
+				for (var i = 0; i < layers .length; ++ i)
+				{
+					layers [i] .getNavigationInfo () .transitionComplete_ = true;
 				}
 
 				this .easeInEaseOut .set_fraction_ = 1;
 			}
 		},
-		set_bind__: function ()
+		set_bound__: function ()
 		{
 			if (this .isBound_ .getValue ())
 				this .getBrowser () .getNotification () .string_ = this .description_;

@@ -1236,6 +1236,23 @@
     <None Include="tests\Components\Navigation\WalkViewer.x3d" />
     <None Include="tests\Components\Shaders\Pipeline.x3d" />
     <None Include="cobweb\Browser\Core\BrowserProperties.js" />
+    <None Include="tests\Components\PointingDeviceSensor\ClonedSensors.x3d" />
+    <None Include="cobweb\Browser\PointingDeviceSensor\PointingDeviceSensorContainer.js" />
+    <None Include="tests\Components\Shaders\FloatVertexAttribute.x3d" />
+    <None Include="tests\Components\Shaders\Matrix3VertexAttribute.x3d" />
+    <None Include="tests\Components\Shaders\Matrix4VertexAttribute.x3d" />
+    <None Include="tests\Components\Shaders\LineFloatVertexAttribute.x3d" />
+    <None Include="tests\Components\Shaders\LineMatrix3VertexAttribute.x3d" />
+    <None Include="tests\Components\Shaders\LineMatrix4VertexAttribute.x3d" />
+    <None Include="tests\Components\Shaders\PointFloatVertexAttribute.x3d" />
+    <None Include="tests\Components\Shaders\PointMatrix3VertexAttribute.x3d" />
+    <None Include="tests\Components\Shaders\PointMatrix4VertexAttribute.x3d" />
+    <None Include="test.html" />
+    <None Include="tests\Components\Scripting\createX3DFromString.x3d" />
+    <None Include="test.x3d" />
+    <None Include="tests\Components\Scripting\AddRemoveRoute.x3d" />
+    <None Include="tests\Components\Rendering\cubes.x3d" />
+    <None Include="cobweb.dom.integration.xhtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

@@ -74,9 +74,8 @@ function ($,
 
 		this .setGeometryType (1);
 
-		this .attribNodes  = [ ];
-		this .colorNode    = null;
-		this .coordNode    = null;
+		this .colorNode = null;
+		this .coordNode = null;
 	}
 
 	LineSet .prototype = $.extend (Object .create (X3DLineGeometryNode .prototype),
@@ -119,21 +118,23 @@ function ($,
 		},
 		set_attrib__: function ()
 		{
-			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .removeInterest (this, "addNodeEvent");
+			var attribNodes = this .getAttrib ();
 
-			this .attribNodes .length = 0;
+			for (var i = 0, length = attribNodes .length; i < length; ++ i)
+				attribNodes [i] .removeInterest (this, "addNodeEvent");
+
+			attribNodes .length = 0;
 
 			for (var i = 0, length = this .attrib_ .length; i < length; ++ i)
 			{
 				var attribNode = X3DCast (X3DConstants .X3DVertexAttributeNode, this .attrib_ [i]);
 
 				if (attribNode)
-					this .attribNodes .push (attribNode);
+					attribNodes .push (attribNode);
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest (this, "addNodeEvent");
 		},
 		set_color__: function ()
 		{
@@ -178,6 +179,9 @@ function ($,
 
 			var
 				vertexCount = this .vertexCount_ .getValue (),
+				attribNodes = this .getAttrib (),
+				numAttrib   = attribNodes .length,
+				attribs     = this .getAttribs (),
 				colorNode   = this .colorNode,
 				coordNode   = this .coordNode,
 				size        = coordNode .getSize (),
@@ -196,8 +200,8 @@ function ($,
 
 					for (var i = 0; i < count; ++ i, index += i & 1)
 					{
-						//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-						//	attribNodes [a] -> addValue (attribArrays [a], index);
+						for (var a = 0; a < numAttrib; ++ a)
+							attrib [a] .addValue (attribs [a], index);
 
 						if (colorNode)
 							this .addColor (colorNode .get1Color (index));
@@ -210,8 +214,6 @@ function ($,
 				else
 					index += count;
 			}
-
-			//this .setAttribs (this .attribNodes, attribArrays);
 		},
 	});
 

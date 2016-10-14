@@ -74,7 +74,6 @@ function ($,
 
 		this .setGeometryType (1);
 
-		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .coordNode    = null;
 	}
@@ -121,21 +120,23 @@ function ($,
 		},
 		set_attrib__: function ()
 		{
-			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .removeInterest (this, "addNodeEvent");
+			var attribNodes = this .getAttrib ();
 
-			this .attribNodes .length = 0;
+			for (var i = 0, length = attribNodes .length; i < length; ++ i)
+				attribNodes [i] .removeInterest (this, "addNodeEvent");
+
+			attribNodes .length = 0;
 
 			for (var i = 0, length = this .attrib_ .length; i < length; ++ i)
 			{
 				var attribNode = X3DCast (X3DConstants .X3DVertexAttributeNode, this .attrib_ [i]);
 
 				if (attribNode)
-					this .attribNodes .push (attribNode);
+					attribNodes .push (attribNode);
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest (this, "addNodeEvent");
 		},
 		set_color__: function ()
 		{
@@ -266,6 +267,9 @@ function ($,
 				coordIndex     = this .coordIndex_. getValue (),
 				polylines      = this .getPolylineIndices (),
 				colorPerVertex = this .colorPerVertex_ .getValue (),
+				attribNodes    = this .getAttrib (),
+				numAttrib      = attribNodes .length,
+				attribs        = this .getAttribs (),
 				colorNode      = this .colorNode,
 				coordNode      = this .coordNode;
 
@@ -283,10 +287,12 @@ function ($,
 				{
 					for (var index = line, i_end = line + 2; index < i_end; ++ index)
 					{
-						var i = polyline [index];
+						var
+							i  = polyline [index],
+							ci = coordIndex [i] .getValue ();
 
-						//for (size_t a = 0, size = attribNodes .size (); a < size; ++ a)
-						//	attribNodes [a] -> addValue (attribArrays [a], coordIndex () [i]);
+						for (var a = 0; a < numAttrib; ++ a)
+							attribNodes [a] .addValue (attribs [a], ci);
 
 						if (colorNode)
 						{
@@ -296,7 +302,7 @@ function ($,
 								this .addColor (colorNode .get1Color (this .getColorIndex (face)));
 						}
 
-						this .addVertex (coordNode .get1Point (coordIndex [i] .getValue ()));
+						this .addVertex (coordNode .get1Point (ci));
 					}
 				}
 

@@ -74,7 +74,7 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 			
-			this .addChildren ("transparent", new Fields .SFBool ());
+			this .addChildObjects ("transparent", new Fields .SFBool ());
 		},
 	});
 

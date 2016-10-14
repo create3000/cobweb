@@ -19,7 +19,7 @@
         <Appearance>
           <Material/>
           <MovieTexture DEF='Movie'
-              url='"../../Examples/Vattenfall/stage/film6.mpv", "../../Examples/Vattenfall/stage/film6.mp4"'
+              url='"../images/campfire.512.mp4"'
               loop='true'
               startTime='1430125541.69667'
               stopTime='1430125555.56068'

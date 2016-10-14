@@ -66,6 +66,11 @@ function ($,
 {
 "use strict";
 
+	function isLive ()
+	{
+	   return this .isLive_;
+	}
+
 	function X3DBaseNode (executionContext)
 	{
 		if (this .hasOwnProperty ("_executionContext"))
@@ -78,6 +83,7 @@ function ($,
 		this ._fields            = { };
 		this ._predefinedFields  = { };
 		this ._userDefinedFields = { };
+		this ._cloneCount        = 0;
 
 		// Setup fields.
 
@@ -88,16 +94,14 @@ function ($,
 
 		for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
 			this .addField (fieldDefinitions [i]);
-
-		// Add children.
-
-		this .addChildren ("isLive", new Fields .SFBool (true));
 	}
 
 	X3DBaseNode .prototype = $.extend (Object .create (X3DEventObject .prototype),
 	{
 		constructor: X3DBaseNode,
 		fieldDefinitions: new FieldDefinitionArray ([ ]),
+		_private: false,
+		_live: true,
 		_initialized: false,
 		getScene: function ()
 		{
@@ -124,13 +128,80 @@ function ($,
 		{
 			return this;
 		},
+		isLive: function ()
+		{
+			///  Returns the live event of this node.
+
+			// Change function.
+
+			this .isLive = isLive;
+
+			// Add isLive event.
+
+			this .addChildObjects ("isLive", new Fields .SFBool (this .getLiveState ()));
+
+			// Event processing is done manually and immediately, so:
+			this .isLive_ .removeParent (this);
+
+			// Connect to execution context.
+
+			if (this ._executionContext !== this)
+				this ._executionContext .isLive () .addInterest (this, "_set_live__");
+
+			// Return field
+
+			return this .isLive ();
+		},
+		setLive: function (value)
+		{
+			///  Sets the own live state of this node.  Setting the live state to false
+			///  temporarily disables this node completely.
+
+			this ._live = value .valueOf ();
+
+			this ._set_live__ ();
+		},
+		getLive: function ()
+		{
+			///  Returns the own live state of this node.
+
+			return this ._live;
+		},
+		getLiveState: function ()
+		{
+			///  Determines the live state of this node.
+
+			if (this !== this ._executionContext)
+				return this .getLive () && this ._executionContext .isLive () .getValue ();
+
+			return this .getLive ();
+		},
+		_set_live__: function ()
+		{
+			var
+				live   = this .getLiveState (),
+				isLive = this .isLive ();
+
+			if (live)
+			{
+				if (isLive .getValue ())
+					return;
+
+				isLive .setValue (true);
+				isLive .processEvent (Events .create (isLive));
+			}
+			else
+			{
+				if (isLive .getValue ())
+				{
+					isLive .setValue (false);
+					isLive .processEvent (Events .create (isLive));
+				}
+			}
+		},
 		isInitialized: function ()
 		{
 			return this ._initialized;
-		},
-		isLive: function ()
-		{
-		   return this .isLive_;
 		},
 		setup: function ()
 		{
@@ -279,20 +350,20 @@ function ($,
 			executionContext .addUninitializedNode (copy);
 			return copy;
 		},
-		addChildren: function (name, field)
+		addChildObjects: function (name, field)
 		{
 			for (var i = 0, length = arguments .length; i < length; i += 2)
-				this .addChild (arguments [i + 0], arguments [i + 1]);
+				this .addChildObject (arguments [i], arguments [i + 1]);
 		},
-		addChild: function (name, field)
+		addChildObject: function (name, field)
 		{
 			field .addParent (this);
 			field .setName (name);
 
 			Object .defineProperty (this, name + "_",
 			{
-				get: function () { return this; } .bind (field),
-				set: field .setValue .bind (field),
+				get: function () { return field; },
+				set: function (value) { return field .setValue (value); },
 				enumerable: true,
 				configurable: false,
 			});
@@ -331,34 +402,43 @@ function ($,
 
 			Object .defineProperty (this, name + "_",
 			{
-				get: function () { return this; } .bind (field),
-				set: field .setValue .bind (field),
+				get: function () { return field; },
+				set: function (value) { return field .setValue (value); },
 				enumerable: true,
 				configurable: true, // false : non deleteable
 			});
+
+			if (! this .getPrivate ())
+				field .addClones (1);
 		},
-		removeField: function (name /*, completely */)
+		removeField: function (name)
 		{
 			var field = this ._fields [name];
 
-			//if (completely && field .getAccessType () === X3DConstants .inputOutput)
-			//{
-			//	delete this ._fields ["set_" + field .getName ()];
-			//	delete this ._fields [field .getName () + "_changed"];
-			//}
-
-			delete this ._fields [name];
-			delete this ._userDefinedFields [name];
-
-			var fieldDefinitions = this .fieldDefinitions .getValue ();
-
-			for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
+			if (field)
 			{
-				if (fieldDefinitions [i] .name === name)
+				if (field .getAccessType () === X3DConstants .inputOutput)
 				{
-					fieldDefinitions .splice (i, 1);
-					break;
+					delete this ._fields ["set_" + field .getName ()];
+					delete this ._fields [field .getName () + "_changed"];
 				}
+	
+				delete this ._fields [name];
+				delete this ._userDefinedFields [name];
+	
+				var fieldDefinitions = this .fieldDefinitions .getValue ();
+	
+				for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
+				{
+					if (fieldDefinitions [i] .name === name)
+					{
+						fieldDefinitions .splice (i, 1);
+						break;
+					}
+				}
+
+				if (! this .getPrivate ())
+					field .removeClones (1);
 			}
 		},
 		getField: function (name)
@@ -408,23 +488,66 @@ function ($,
 		{
 			return null;
 		},
-		traverse: function () { },
-		beginUpdate: function ()
+		hasRoutes: function ()
 		{
-		   if (this .isLive () .getValue ())
-		      return;
+			///  Returns true if there are any routes from or to fields of this node otherwise false.
 
-		   this .isLive () .setValue (true);
-			this .isLive () .processEvent (Events .create (this .isLive ()));
+			var fieldDefinitions = this .getFieldDefinitions ();
+
+			for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
+			{
+				var field = this .getField (fieldDefinitions [i] .name);
+
+				//if (field .getInputRoutes () .empty () and field .getOutputRoutes () .empty ())
+				//	continue;
+
+				return true;
+			}
+		
+			return false;
 		},
-		endUpdate: function ()
+		getPrivate: function ()
 		{
-		   if (this .isLive () .getValue ())
-		   {
-		      this .isLive () .setValue (false);
-				this .isLive () .processEvent (Events .create (this .isLive ()));
+			return this ._private;
+		},
+		setPrivate: function (value)
+		{
+			this ._private = value;
+
+			if (value)
+			{
+				var fieldDefinitions = this .getFieldDefinitions ();
+
+				for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
+					this .getField (fieldDefinitions [i] .name) .removeClones (1);
+			}
+			else
+			{
+				var fieldDefinitions = this .getFieldDefinitions ();
+
+				for (var i = 0, length = fieldDefinitions .length; i < length; ++ i)
+					this .getField (fieldDefinitions [i] .name) .addClones (1);
 			}
 		},
+		getCloneCount: function ()
+		{
+			return this ._cloneCount;
+		},
+		addClones: function (count)
+		{
+			if (count === 0)
+				return;
+		
+			this ._cloneCount += count;
+		},
+		removeClones: function (count)
+		{
+			if (count === 0)
+				return;
+		
+			this ._cloneCount -= count;
+		},
+		traverse: function () { },
 		toString: function ()
 		{
 			return this .getTypeName () + " { }";

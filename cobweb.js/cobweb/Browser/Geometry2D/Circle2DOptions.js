@@ -66,7 +66,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("segments", new Fields .SFInt32 (40))
+		this .addChildObjects ("segments", new Fields .SFInt32 (40))
 
 		this .vertices = [ ];
 	}

@@ -70,11 +70,6 @@ function ($,
 {
 "use strict";
 
-	function traverse (type, renderObject)
-	{
-		this .shapeNode .traverse (type, renderObject);
-	}
-
 	function CADFace (executionContext)
 	{
 		X3DProductStructureChildNode .call (this, executionContext);
@@ -165,9 +160,13 @@ function ($,
 			{ }
 
 			if (this .shapeNode)
-				this .traverse = traverse;
-			else
 				delete this .traverse;
+			else
+				this .traverse = Function .prototype;
+		},
+		traverse: function (type, renderObject)
+		{
+			this .shapeNode .traverse (type, renderObject);
 		},
 	});
 

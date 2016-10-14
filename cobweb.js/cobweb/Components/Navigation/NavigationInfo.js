@@ -79,8 +79,8 @@ function ($,
 
 		this .addType (X3DConstants .NavigationInfo);
 				
-		this .addChildren ("availableViewers", new Fields .MFString (),
-		                   "viewer",           new Fields .SFString ("EXAMINE"));
+		this .addChildObjects ("availableViewers", new Fields .MFString (),
+		                       "viewer",           new Fields .SFString ("EXAMINE"));
 	}
 
 	NavigationInfo .prototype = $.extend (Object .create (X3DBindableNode .prototype),
@@ -247,14 +247,10 @@ function ($,
 		},
 		bindToLayer: function (layer)
 		{
-			X3DBindableNode .prototype .bindToLayer .call (this, layer);
-		
 			layer .getNavigationInfoStack () .push (this);
 		},
 		unbindFromLayer: function (layer)
 		{
-			X3DBindableNode .prototype .unbindFromLayer .call (this, layer);
-
 			layer .getNavigationInfoStack () .pop (this);
 		},
 		removeFromLayer: function (layer)

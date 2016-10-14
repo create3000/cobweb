@@ -72,9 +72,7 @@ function ($,
 {
 "use strict";
 
-	var
-		plane      = new Plane3 (Vector3 .Zero, Vector3 .Zero),
-		ClipPlanes = ObjectCache (ClipPlaneContainer);
+	var ClipPlanes = ObjectCache (ClipPlaneContainer);
 
 	function ClipPlaneContainer (clipPlane, modelViewMatrix)
 	{
@@ -93,7 +91,7 @@ function ($,
 		set: function (clipPlane, modelViewMatrix)
 		{
 			var
-				plane       = this .plane,
+				plane      = this .plane,
 				localPlane = clipPlane .plane;
 	
 			try
@@ -117,7 +115,7 @@ function ($,
 
 			gl .uniform4f (shaderObject .x3d_ClipPlane [i], normal .x, normal .y, normal .z, plane .distanceFromOrigin);
 		},
-		recycle: function ()
+		dispose: function ()
 		{
 		   ClipPlanes .push (this);
 		},

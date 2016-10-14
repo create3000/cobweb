@@ -136,7 +136,7 @@ function set_time ()
 	var currentScene = Browser .currentScene;
 
 	if (currentScene .rootNodes .length > 2)
-		currentScene .rootNodes [currentScene .rootNodes .length - 1] .getValue () .dispose ();
+		currentScene .rootNodes [currentScene .rootNodes .length - 1] .getValue () .dispose (); // SAI not JS
 
 	print (currentScene .rootNodes);
 }

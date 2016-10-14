@@ -84,8 +84,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("rootNodes", new Fields .MFNode (),
-                         "loadCount", new Fields .SFInt32 ());
+		this .addChildObjects ("rootNodes", new Fields .MFNode (),
+                             "loadCount", new Fields .SFInt32 ());
 
 		this .specificationVersion = "3.3";
 		this .encoding             = "SCRIPTED";
@@ -99,8 +99,6 @@ function ($,
 		this .externprotos         = new ExternProtoDeclarationArray ();
 		this .routes               = new RouteArray ();
 		this .routeIndex           = { };
-
-		this .endUpdate ();
 	}
 
 	X3DExecutionContext .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -358,9 +356,14 @@ function ($,
 				if (sourceField .getType () !== destinationField .getType ())
 					throw new Error ("Bad ROUTE specification: ROUTE types " + sourceField .getTypeName () + " and " + destinationField .getTypeName () + " do not match.");
 
-				var
-					id    = sourceField .getId () + "." + destinationField .getId (),
-					route = new X3DRoute (sourceNode, sourceField, destinationNode, destinationField);
+				var id = sourceField .getId () + "." + destinationField .getId ();
+
+				if (this .routeIndex [id])
+					return this .routeIndex [id];
+
+				var route = new X3DRoute (this, sourceNode, sourceField, destinationNode, destinationField);
+
+				route .setup ();
 
 				this .routes .getValue () .push (route);
 				this .routeIndex [id] = route;
@@ -421,7 +424,7 @@ function ($,
 					throw 1;
 
 				if (viewpoint .isBound_ .getValue ())
-					viewpoint .transitionStart (null, viewpoint);
+					viewpoint .transitionStart (viewpoint);
 
 				else
 					viewpoint .set_bind_ = true;

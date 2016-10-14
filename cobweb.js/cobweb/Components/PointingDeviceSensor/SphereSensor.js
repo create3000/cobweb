@@ -140,18 +140,16 @@ function ($,
 
 			return false;
 		},
-		set_active__: function (hit, active)
+		set_active__: function (active, hit, modelViewMatrix, projectionMatrix, viewport)
 		{
-			X3DDragSensorNode .prototype .set_active__ .call (this, hit, active);
+			X3DDragSensorNode .prototype .set_active__ .call (this, active, hit, modelViewMatrix, projectionMatrix, viewport);
 
 			try
 			{
 				if (this .isActive_ .getValue ())
 				{
-					var matrices = this .getMatrices () [hit .layer .getId ()];
-
-					this .modelViewMatrix    .assign (matrices .modelViewMatrix);
-					this .invModelViewMatrix .assign (this .modelViewMatrix) .inverse ();
+					this .modelViewMatrix    .assign (modelViewMatrix);
+					this .invModelViewMatrix .assign (modelViewMatrix) .inverse ();
 
 					var
 						hitPoint = this .invModelViewMatrix .multVecMatrix (hit .intersection .point .copy ()),

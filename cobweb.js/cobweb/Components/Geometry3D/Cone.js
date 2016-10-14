@@ -105,7 +105,7 @@ function ($,
 		{
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 				this .getBrowser () .getConeOptions () .addInterest (this, "eventsProcessed");
 			else
 				this .getBrowser () .getConeOptions () .removeInterest (this, "eventsProcessed");

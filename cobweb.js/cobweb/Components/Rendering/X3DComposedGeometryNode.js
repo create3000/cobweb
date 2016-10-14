@@ -68,7 +68,6 @@ function ($,
 
 		this .addType (X3DConstants .X3DComposedGeometryNode);
 
-		this .attribNodes  = [ ];
 		this .colorNode    = null;
 		this .texCoordNode = null;
 		this .normalNode   = null;
@@ -94,10 +93,6 @@ function ($,
 			this .set_normal__ ();
 			this .set_coord__ ();
 		},
-		getAttrib: function ()
-		{
-			return this .attribNodes;
-		},
 		getColor: function ()
 		{
 			return this .colorNode;
@@ -116,21 +111,23 @@ function ($,
 		},
 		set_attrib__: function ()
 		{
-			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .removeInterest (this, "addNodeEvent");
+			var attribNodes = this .getAttrib ();
 
-			this .attribNodes .length = 0;
+			for (var i = 0, length = attribNodes .length; i < length; ++ i)
+				attribNodes [i] .removeInterest (this, "addNodeEvent");
+
+			attribNodes .length = 0;
 
 			for (var i = 0, length = this .attrib_ .length; i < length; ++ i)
 			{
 				var attribNode = X3DCast (X3DConstants .X3DVertexAttributeNode, this .attrib_ [i]);
 
 				if (attribNode)
-					this .attribNodes .push (attribNode);
+					attribNodes .push (attribNode);
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				this .attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest (this, "addNodeEvent");
 		},
 		set_color__: function ()
 		{
@@ -209,6 +206,9 @@ function ($,
 			var
 				colorPerVertex  = this .colorPerVertex_ .getValue (),
 				normalPerVertex = this .normalPerVertex_ .getValue (),
+				attribNodes     = this .getAttrib (),
+				numAttrib       = attribNodes .length,
+				attribs         = this .getAttribs (),
 				colorNode       = this .getColor (),
 				texCoordNode    = this .getTexCoord (),
 				normalNode      = this .getNormal (),
@@ -226,6 +226,9 @@ function ($,
 				face = Math .floor (i / verticesPerFace);
 
 				var index = this .getPolygonIndex (this .getTriangleIndex (i));
+
+				for (var a = 0; a < numAttrib; ++ a)
+					attrib [a] .addValue (attribs [a], index);
 
 				if (colorNode)
 				{

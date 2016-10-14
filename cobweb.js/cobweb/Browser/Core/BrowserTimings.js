@@ -68,7 +68,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildren ("enabled", new SFBool ());
+		this .addChildObjects ("enabled", new SFBool ());
 	}
 
 	BrowserTimings .prototype = $.extend (Object .create (X3DBaseNode .prototype),

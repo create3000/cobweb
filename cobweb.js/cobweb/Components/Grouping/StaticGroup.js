@@ -115,9 +115,8 @@ function ($,
 			this .group .bboxSize_   = this .bboxSize_;
 			this .group .bboxCenter_ = this .bboxCenter_;
 			this .group .children_   = this .children_;
+			this .group .setPrivate (true);
 			this .group .setup ();
-
-			this .traverse = this .group .traverse .bind (this .group);
 
 			// Connect after Group setup.
 			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
@@ -132,6 +131,10 @@ function ($,
 		set_children__: function ()
 		{
 			this .group .getBBox (this .bbox);
+		},
+		traverse: function (type, renderObject)
+		{
+			this .group .traverse (type, renderObject);
 		},
 	});
 

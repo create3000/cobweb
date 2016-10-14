@@ -50,12 +50,10 @@
 define ([
 	"jquery",
 	"cobweb/Basic/X3DBaseNode",
-	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DBaseNode,
-          TraverseType,
           X3DConstants)
 {
 "use strict";
@@ -70,6 +68,65 @@ function ($,
 	X3DNode .prototype = $.extend (Object .create (X3DBaseNode .prototype),
 	{
 		constructor: X3DNode,
+		getLayers: function ()
+		{
+			return this .findParents (X3DConstants .X3DLayerNode, this);
+		},
+		findParents: function (type, object)
+		{
+			var
+				parents = object .getParents (),
+				array   = [ ],
+				seen    = { };
+	
+			for (var id in parents)
+				this .findParentsImpl (type, parents [id], array, seen);
+	
+			return array;
+		},
+		findParentsImpl: function (type, object, array, seen)
+		{
+			if (seen .hasOwnProperty (object .getId ()))
+				return;
+
+			seen [object .getId ()] = true;
+
+			if (object instanceof X3DBaseNode)
+			{
+				var types = object .getType ();
+
+				for (var t = types .length - 1; t >= 0; -- t)
+				{
+					switch (types [t])
+					{
+						case X3DConstants .X3DProtoDeclarationNode:
+						case X3DConstants .X3DNode:
+							break;
+						case X3DConstants .LayerSet:
+						case X3DConstants .X3DBaseNode:
+						case X3DConstants .X3DMetadataObject:
+						case X3DConstants .X3DProgrammableShaderObject:
+						case X3DConstants .X3DScriptNode:
+							return;
+						default:
+							continue;
+					}
+		
+					break;
+				}
+
+				if (object .getType () .indexOf (type) !== -1)
+				{
+					array .push (object);
+					return;
+				}
+			}
+
+			var parents = object .getParents ();
+
+			for (var id in parents)
+				this .findParentsImpl (type, parents [id], array, seen);
+		},
 	});
 
 	return X3DNode;

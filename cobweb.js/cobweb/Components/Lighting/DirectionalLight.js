@@ -223,7 +223,7 @@ function ($,
 			else
 				gl .uniform1f (shaderObject .x3d_ShadowIntensity [i], 0);
 		},
-		recycle: function ()
+		dispose: function ()
 		{
 			// Return shadowBuffer and textureUnit.
 
@@ -232,6 +232,9 @@ function ($,
 
 			this .browser .pushShadowBuffer (this .shadowBuffer);
 
+			this .browser      = null;
+			this .lightNode    = null;
+			this .groupNode    = null;
 			this .shadowBuffer = null;
 			this .textureUnit  = 0;
 

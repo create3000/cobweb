@@ -77,63 +77,6 @@ function initialize ()
 	print ("initialize");
 	
 	var n1 = Browser .currentScene .createNode ("Transform");
-	var n2 = Browser .currentScene .createNode ("Group");
-	var n3 = Browser .currentScene .createNode ("Switch");
-
-	var s = {};
-	s [n1 .getValue () .getId ()] = true;
-	s [n2 .getValue () .getId ()] = true;
-
-	function compare (value) { return s [value .getValue () .getId ()]; }
-
-	var a = new MFNode (n1,n2,n3,n1,n1,n2,n3);
-
-	console .log (a .toString ());
-
-	a .erase (a .remove (0, a .length, compare), a .length);
-
-	console .log (a .toString ());
-
-
-
-	var a = new MFInt32 (1,2,3,1,1,2,3);
-
-	console .log (a .toString ());
-
-	a .erase (a .remove (0, a .length, 1), a .length);
-
-	console .log (a .toString ());
-
-
-
-	var a = new MFBool (true,false,true,false,true,true);
-
-	console .log (a .toString ());
-
-	a .erase (a .remove (0, a .length, true), a .length);
-
-	console .log (a .toString ());
-
-
-
-	var a = new MFColor (new SFColor (0.1,0.1,0.1),new SFColor (0.2,0.2,0.2),new SFColor (0.3,0.3,0.3),new SFColor (0.1,0.1,0.1),new SFColor (0.1,0.1,0.1),new SFColor (0.2,0.2,0.2),new SFColor (0.3,0.3,0.3));
-
-	console .log (a .toString ());
-
-	a .erase (a .remove (0, a .length, new SFColor (0.1,0.1,0.1)), a .length);
-
-	console .log (a .toString ());
-
-
-
-	var a = new MFBool (true,false,true,false,true,true);
-	var b = new MFBool (true,false,true,false,true,false);
-
-
-	console .log (a .equals (b));
-
-
-
 }
 ]]> 
             </Script>

@@ -113,8 +113,7 @@ function ($,
 		s3                 = new Vector3 (0, 0, 0),
 		s4                 = new Vector3 (0, 0, 0),
 		x                  = new Vector3 (0, 0, 0),
-		y                  = new Vector3 (0, 0, 0),
-		z                  = new Vector3 (0, 0, 0);
+		y                  = new Vector3 (0, 0, 0);
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
@@ -201,7 +200,6 @@ function ($,
 
 			var gl = this .getBrowser () .getContext ();
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shader__");
@@ -268,7 +266,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
@@ -298,7 +296,7 @@ function ($,
 			{
 				if (! this .isActive_ .getValue ())
 				{
-					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+					if (this .isLive () .getValue ())
 					{
 						this .getBrowser () .sensors () .addInterest (this, "animateParticles");
 			
@@ -314,7 +312,7 @@ function ($,
 			{
 				if (this .isActive_ .getValue ())
 				{
-					if (this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue ())
+					if (this .isLive () .getValue ())
 					{
 						this .getBrowser () .sensors () .removeInterest (this, "animateParticles");
 					}
@@ -834,7 +832,6 @@ function ($,
 				numParticles = this .numParticles,
 				colorArray   = this .colorArray,
 				vertexArray  = this .vertexArray,
-				sx1_2        = this .particleSize_ .x / 2,
 				sy1_2        = this .particleSize_ .y / 2;
 
 			// Colors

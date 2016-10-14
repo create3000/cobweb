@@ -116,7 +116,6 @@ function ($,
 
 			this .primitiveMode = gl .TRIANGLES;
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .activate_ .addInterest (this, "set_activate__");
@@ -124,6 +123,7 @@ function ($,
 
 			this .loadSensor .isLoaded_ .addInterest (this, "set_loaded__");
 			this .loadSensor .watchList_ = this .parts_;
+			this .loadSensor .setPrivate (true);
 			this .loadSensor .setup ();
 
 			//Must not call set_live__.
@@ -134,7 +134,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			if (this .getExecutionContext () .isLive () .getValue () && this .isLive () .getValue ())
+			if (this .isLive () .getValue ())
 			{
 				if (this .isValid_ .getValue ())
 				{

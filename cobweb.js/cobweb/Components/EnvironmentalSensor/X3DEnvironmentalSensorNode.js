@@ -69,7 +69,7 @@ function ($,
 
 		this .addType (X3DConstants .X3DEnvironmentalSensorNode);
 
-		this .addChildren ("traversed", new Fields .SFBool (true));
+		this .addChildObjects ("traversed", new Fields .SFBool (true));
 
 		this .currentTraversed = true;
 	}
@@ -81,7 +81,6 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
-			this .getExecutionContext () .isLive () .addInterest (this, "set_live__");
 			this .isLive () .addInterest (this, "set_live__");
 
 			this .enabled_   .addInterest (this, "set_live__");
@@ -89,6 +88,23 @@ function ($,
 			this .traversed_ .addInterest (this, "set_live__");
 
 			this .set_live__ ();
+		},
+		set_live__: function ()
+		{
+			if (this .isLive () .getValue () && this .traversed_ .getValue () && this .enabled_ .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
+			{
+				this .getBrowser () .sensors () .addInterest (this, "update");
+			}
+			else
+			{
+				this .getBrowser () .sensors () .removeInterest (this, "update");
+				
+				if (this .isActive_ .getValue ())
+				{
+					this .isActive_ = false;
+					this .exitTime_ = this .getBrowser () .getCurrentTime ();
+				}
+			}
 		},
 		setTraversed: function (value)
 		{
@@ -108,23 +124,6 @@ function ($,
 		getTraversed: function ()
 		{
 		   return this .currentTraversed;
-		},
-		set_live__: function ()
-		{
-			if (this .traversed_ .getValue () && this .enabled_ .getValue () && this .isLive () .getValue () && this .getExecutionContext () .isLive () .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
-			{
-				this .getBrowser () .sensors () .addInterest (this, "update");
-			}
-			else
-			{
-				this .getBrowser () .sensors () .removeInterest (this, "update");
-				
-				if (this .isActive_ .getValue ())
-				{
-					this .isActive_ = false;
-					this .exitTime_ = this .getBrowser () .getCurrentTime ();
-				}
-			}
 		},
 		update: function () { },
 	});

@@ -4,7 +4,7 @@
 		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 		<meta http-equiv="Pragma" content="no-cache"/>
 		<meta http-equiv="Expires" content="0"/>
-		<meta charset="utf-8">
+		<meta charset="utf-8"/>
 		<link rel="stylesheet" type="text/css" href="http://titania.create3000.de/fileadmin/styles.css"/>
 		<link rel="stylesheet" type="text/css" href="https://rawgit.com/create3000/cobweb/master/stable/2/2.1/cobweb.css"/>
 		<script type="text/javascript" src="https://rawgit.com/create3000/cobweb/master/stable/2/2.1/cobweb.min.js"></script>
@@ -29,6 +29,11 @@ body {
 	right: 0px;
 	bottom: 30px;
 	left: 0px;
+}
+
+.bookmark-section {
+	font-size: 10px;
+	font-weight: bold;
 }
 
 .location-bar {
@@ -72,7 +77,42 @@ body {
 	height: 100%;
 }
 
-X3DCanvas {
+.bookmarks {
+	overflow: hidden;
+	padding: 5px;
+	width: 110px;
+	float: left;
+	font-size: 12px;
+	text-align: right;
+}
+
+.bookmarks * {
+	margin: 0px;
+	padding: 0px;
+}
+
+.bookmarks p {
+	margin: 10px 0;
+}
+
+.bookmarks a {
+	background: none;
+}
+
+.bookmark-page {
+	list-style-type: none;
+}
+
+.bookmark-section {
+	font-size: 10px;
+	font-weight: bold;
+}
+
+li + .bookmark-section {
+	margin-top: 8px;
+}
+
+.browser {
 	background: #414141;
 	height: 100%;
 }
@@ -89,6 +129,7 @@ X3D (function (dom)
 {
 	var pages =
 	[
+		{ name: 'Worlds' },
 		{ name: 'Mad Flat 2',            mobile: false, url: [ "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Lighting/MadFlat2.x3d" ] },
 		{ name: 'Milkyway and Beyond',   mobile: true,  url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/examples/paul bourke/scene.x3d" ] },
 		{ name: 'Fourmi Earth',          mobile: true,  url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/examples/fourmilab/earth.x3d" ] },
@@ -101,60 +142,49 @@ X3D (function (dom)
 		{ name: 'Sliding Puzzle',        mobile: true,  url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/examples/puzzle/puzzle.x3d" ] },
 		{ name: 'Crazy Spiral',          mobile: true,  url: [ "http://titania.create3000.de/fileadmin/images/teaser/crazy-spiral.x3d" ] },
 		{ name: 'Water Quality',         mobile: false, url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/examples/water/water.x3d" ] },
+		
+		{ name: 'VRML' },
 		{ name: '4 Pong',                mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Pong/index.x3d",               "https://cdn.rawgit.com/create3000/Library/master/Examples/Pong/index.wrl" ] },
 		{ name: 'Mediafacade Berlin',    mobile: false, url: [ "https://rawgit.com/create3000/Library/master/Examples/Vattenfall/index.x3d",             "https://rawgit.com/create3000/Library/master/Examples/Vattenfall/index.wrl" ] },
 		{ name: 'Chomp!',                mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Chomp/chomp.x3d",              "https://cdn.rawgit.com/create3000/Library/master/Examples/Chomp/chomp.wrl" ] },
 		{ name: 'The Secret Labyrinth',  mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/ICTS/labyrinth.x3d",           "https://cdn.rawgit.com/create3000/Library/master/Examples/ICTS/labyrinth.wrl" ] },
 		{ name: 'World Trade Center',    mobile: false, url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/examples/alprojectsvr/wtc.x3d" ] },
 		{ name: 'Space Station Five',    mobile: true,  url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/examples/alprojectsvr/ssf.x3d" ] },
-		{ name: 'Discovery One',         mobile: false, url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/examples/alprojectsvr/d1.x3d" ] },
-		{ name: '3rd Person View',       mobile: false, url: [ "http://www.web3d.org/x3d/content/examples/Basic/Followers/3rdPersonViewChaser.x3d" ] },
 		{ name: 'Helicopter Simulation', mobile: true,  url: [ "http://blogofrog.com/files/vrml/ch47bsim402.wrz" ] },
 		{ name: 'Astronomy',             mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Astronomy/stage/astrnmy.x3d",  "https://cdn.rawgit.com/create3000/Library/master/Examples/Astronomy/stage/astrnmy.wrl" ] },
 		{ name: 'Treasure Island',       mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/TreasureIsland/index.x3d",     "https://cdn.rawgit.com/create3000/Library/master/Examples/TreasureIsland/index.wrl" ] },
 		{ name: 'Huey Huey',             mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Compel/huey.wrl" ] },
 		{ name: 'Lost Cathedral',        mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Cathedral/stage/index.x3d",    "https://cdn.rawgit.com/create3000/Library/master/Examples/Cathedral/stage/index.wrl" ] },
 
-		{ name: 'Approach',              mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Approach/stage/index.x3d",     "https://cdn.rawgit.com/create3000/Library/master/Examples/Approach/stage/index.wrl" ] },
 		{ name: 'Magic Mushrooms',       mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Mushrooms/index.x3d",          "https://cdn.rawgit.com/create3000/Library/master/Examples/Mushrooms/index.wrl" ] },
-		{ name: 'X3D Logo Pieces',       mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/LogoPieces/index.x3d" ] },
-		{ name: 'NIST-Logo',             mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/NIST-Logo/index.x3d",          "https://cdn.rawgit.com/create3000/Library/master/Examples/NIST-Logo/index.x3dv" ] },
 		{ name: 'Backyard Soccer',       mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/ICTS/soccer.x3d",              "https://cdn.rawgit.com/create3000/Library/master/Examples/ICTS/soccer.x3dv" ] },
 		{ name: 'Arcadia',               mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Arcadia/stage/index.x3d",      "https://cdn.rawgit.com/create3000/Library/master/Examples/Arcadia/stage/index.wrl" ] },
 		{ name: 'Foldup',                mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Compel/foldup.wrl" ] },
 		{ name: 'Lust For Life',         mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/LustForLife/stage/index.x3d",  "https://cdn.rawgit.com/create3000/Library/master/Examples/LustForLife/stage/index.wrl" ] },
-		{ name: 'Terrain',               mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Terrain/index.x3d",            "https://cdn.rawgit.com/create3000/Library/master/Examples/Terrain/index.wrl" ] },
+		{ name: 'Schacht',               mobile: false, url: [ "https://rawgit.com/create3000/Library/master/Examples/Schacht/index.x3d",                "https://rawgit.com/create3000/Library/master/Examples/Schacht/index.wrl" ] },
+		{ name: 'Tiki World',            mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/TikiWorld/stage/index.x3d",    "https://cdn.rawgit.com/create3000/Library/master/Examples/TikiWorld/stage/index.wrl" ] },
+
+		{ name: 'Small' },
+		{ name: 'X3D Logo Pieces',       mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/LogoPieces/index.x3d" ] },
 		{ name: 'Appartment',            mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Appartment/index.x3d",         "https://cdn.rawgit.com/create3000/Library/master/Examples/Appartment/index.wrl" ] },
-		{ name: 'Old Leipzig Rathaus',   mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Rathaus/stage/index.x3d",      "https://cdn.rawgit.com/create3000/Library/master/Examples/Rathaus/stage/index.wrl" ] },
+		{ name: 'Approach',              mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Approach/stage/index.x3d",     "https://cdn.rawgit.com/create3000/Library/master/Examples/Approach/stage/index.wrl" ] },
 		{ name: 'BIC Man',               mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/index.x3d",                "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/index.wrl" ] },
 		{ name: 'BIC Building',          mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/building.x3d",             "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/building.wrl" ] },
 		{ name: 'BIC Buero',             mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/buero.x3d",                "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/buero.wrl" ] },
 		{ name: 'BIC Info',              mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/info.x3d",                 "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/info.wrl" ] },
-		//{ name: 'Capone',                mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Capone/index.wrl" ] },
-		{ name: 'Anatomy',               mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Compel/anatomy/anatomy.wrl" ] },
-		{ name: 'Jungle',                mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Compel/jungle/jungle.x3d",     "https://cdn.rawgit.com/create3000/Library/master/Examples/Compel/jungle/jungle.wrl" ] },
-		//{ name: 'Ripple',                mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Compel/ripple.wrl" ] },
-		//{ name: 'DLMF',                  mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/DLMF/5.3.F4.x3d",            "https://cdn.rawgit.com/create3000/Library/master/Examples/DLMF/5.3.F4.wrl" ] },
 		{ name: 'Dolphin',               mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Dolphin/index.x3d",            "https://cdn.rawgit.com/create3000/Library/master/Examples/Dolphin/index.wrl" ] },
 		{ name: 'Gears',                 mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Gears/gears.x3d",              "https://cdn.rawgit.com/create3000/Library/master/Examples/Gears/gears.x3dv" ] },
-		//{ name: 'Hamburger',             mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/ICTS/hamburger.x3d",         "https://cdn.rawgit.com/create3000/Library/master/Examples/ICTS/hamburger.wrl" ] },
 		{ name: 'ICTS',                  mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/ICTS/index.x3d",               "https://cdn.rawgit.com/create3000/Library/master/Examples/ICTS/index.wrl" ] },
-		//{ name: 'ICTSpace',              mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/ICTSpace/index.wrl" ] },
-		//{ name: 'Marble',                mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Marble/marble.x3d" ] },
-		//{ name: 'MetalBeast',            mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/MetalBeast/index.wrl" ] },
-		//{ name: 'Microbes',              mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Mikroben/index.wrl" ] },
+		{ name: 'NIST-Logo',             mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/NIST-Logo/index.x3d",          "https://cdn.rawgit.com/create3000/Library/master/Examples/NIST-Logo/index.x3dv" ] },
+		{ name: 'Old Leipzig Rathaus',   mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Rathaus/stage/index.x3d",      "https://cdn.rawgit.com/create3000/Library/master/Examples/Rathaus/stage/index.wrl" ] },
+		{ name: 'Terrain',               mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Terrain/index.x3d",            "https://cdn.rawgit.com/create3000/Library/master/Examples/Terrain/index.wrl" ] },
 		{ name: 'Catchy Loopings',       mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Misc/shape5_a.x3d" ] },
 		{ name: 'Star World',            mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Misc/starworld.x3d" ] },
 		{ name: 'Torus Breath',          mobile: true,  url: [ "https://rawgit.com/create3000/Library/master/Examples/Misc/torusbreath2.x3d" ] },
-		//{ name: 'Moebius',               mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Moebius/index.wrl" ] },
 		{ name: 'Movie Truck',           mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/MovieTruck/stage/index.x3d",   "https://cdn.rawgit.com/create3000/Library/master/Examples/MovieTruck/stage/index.wrl" ] },
-		{ name: 'Schacht',               mobile: false, url: [ "https://rawgit.com/create3000/Library/master/Examples/Schacht/index.x3d",                "https://rawgit.com/create3000/Library/master/Examples/Schacht/index.wrl" ] },
-		{ name: 'Tiki World',            mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/TikiWorld/stage/index.x3d",    "https://cdn.rawgit.com/create3000/Library/master/Examples/TikiWorld/stage/index.wrl" ] },
-		//{ name: 'VRML Banner',           mobile: false, url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/VRMLBanner/vrmlbanner.x3d",  "https://cdn.rawgit.com/create3000/Library/master/Examples/VRMLBanner/vrmlbanner.wrl" ] },
-		
-		//{ name: 'Pinball Table',         mobile: false, url: [ "http://www.web3d.org/x3d/content/examples/Basic/StudentProjects/PinballTable.x3d" ] },
-		//{ name: 'Kelp Forest',           mobile: false, url: [ "http://x3dgraphics.com/examples/X3dForWebAuthors/KelpForestExhibit/KelpForestMain.x3d" ] },
 
+		{ name: 'Simple' },
+		{ name: '3rd Person View',       mobile: false, url: [ "http://www.web3d.org/x3d/content/examples/Basic/Followers/3rdPersonViewChaser.x3d" ] },
 		{ name: 'Dolphin Particle',    mobile: false, url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/ParticleSystems/DolphinLineSurfaceEmitter.x3d" ] },
 		{ name: 'Far Away',            mobile: true,  url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Text/scrolling-text.x3d" ] },
 		{ name: 'Geometry2D',          mobile: true,  url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Geometry2D/Geometry2D.x3d" ] },
@@ -163,7 +193,7 @@ X3D (function (dom)
 		{ name: 'SpotLight',           mobile: false, url: [ "https://rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Lighting/SpotLight.x3d" ] },
 		{ name: 'LocalLight',          mobile: false, url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Lighting/LocalLight.x3d" ] },
 		{ name: 'LayerSet',            mobile: false, url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Layering/ViewportLayer.x3d" ] },
-		{ name: 'ClipPlane',           mobile: false, url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Rendering/ClipPlane.x3d" ] },
+		{ name: 'ClipPlane',           mobile: false, url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Rendering/cubes.x3d" ] },
 		{ name: 'Nested Protos',       mobile: false, url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/PROTO/NestedProtos.x3d" ] },
 	];
 
@@ -191,10 +221,10 @@ function loadURL ()
 	<body>
 		<div class="examples">
 			<div class="bookmarks"></div>
-			<X3DCanvas>
+			<X3DCanvas class="browser">
 				<p class="fallback">Sorry,<br/>
 					it wasn't me!<br/>
-					<br>
+					<br/>
 					Your browser may not support all features required by Cobweb! You can use Firefox, Chrome,
 					or Microsoft Edge, because this is currently the choice of the choice. We will continuously
 					keep you informed on technical developments and as soon as Cobweb is running in other browser too.

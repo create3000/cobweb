@@ -74,7 +74,7 @@ function ($,
 		this .defaultLayerSet = this .layerSet;
 		this .layer0          = new Layer (executionContext);
 		
-		this .addChildren ("activeLayer", new SFNode (this .layer0));
+		this .addChildObjects ("activeLayer", new SFNode (this .layer0));
 	}
 
 	World .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -88,6 +88,7 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
+			this .layerSet .setPrivate (true);
 			this .layerSet .setup ();
 			this .layerSet .setLayer0 (this .layer0);
 			this .layerSet .activeLayer_ .addInterest (this, "set_activeLayer");
@@ -97,6 +98,7 @@ function ($,
 
 			this .set_rootNodes ();
 
+			this .layer0 .setPrivate (true);
 			this .layer0 .isLayer0 (true);
 			this .layer0 .setup ();
 
@@ -137,8 +139,6 @@ function ($,
 
 				this .set_activeLayer ();
 			}
-
-			this .traverse = this .layerSet .traverse .bind (this .layerSet);
 		},
 		set_activeLayer: function ()
 		{
@@ -161,6 +161,10 @@ function ($,
 			}
 			catch (error)
 			{ }
+		},
+		traverse: function (type, renderObject)
+		{
+			this .layerSet .traverse (type, renderObject);
 		},
 	});
 

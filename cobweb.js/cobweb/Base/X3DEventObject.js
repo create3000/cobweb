@@ -62,7 +62,7 @@ function ($,
 	{
 		X3DChildObject .call (this);
 
-		this .browser = browser;
+		this ._browser = browser;
 	}
 
 	X3DEventObject .prototype = $.extend (Object .create (X3DChildObject .prototype),
@@ -70,7 +70,7 @@ function ($,
 		constructor: X3DEventObject,
 		getBrowser: function ()
 		{
-			return this .browser;
+			return this ._browser;
 		},
 		getExtendedEventHandling: function ()
 		{

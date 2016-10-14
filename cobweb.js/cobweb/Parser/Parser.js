@@ -188,13 +188,11 @@ function ($,
 	 *  Parser
 	 */
 
-	function Parser (scene, input, isXML)
+	function Parser (scene, isXML)
 	{
 		this .scene             = scene;
 		this .isXML             = isXML;
 		this .executionContexts = [ ];
-
-		this .setInput (input);
 	}
 
 	Parser .prototype =
@@ -289,10 +287,11 @@ function ($,
 
 			this .getBrowser () .println (string);
 		},
-		parseIntoScene: function ()
+		parseIntoScene: function (input)
 		{
 			try
 			{
+				this .setInput (input);
 				this .x3dScene ();
 				return;
 			}

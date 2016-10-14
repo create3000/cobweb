@@ -50,6 +50,7 @@
 define ([
 	"jquery",
 	"cobweb/Browser/VERSION",
+	"cobweb/Base/Events",
 	"cobweb/Fields",
 	"cobweb/Browser/X3DBrowserContext",
 	"cobweb/Configuration/ComponentInfo",
@@ -65,6 +66,7 @@ define ([
 ],
 function ($,
           VERSION,
+          Events,
           Fields,
           X3DBrowserContext,
           ComponentInfo,
@@ -96,6 +98,18 @@ function ($,
 	X3DBrowser .prototype = $.extend (Object .create (X3DBrowserContext .prototype),
 	{
 		constructor: X3DBrowser,
+		getTypeName: function ()
+		{
+			return "X3DBrowser";
+		},
+		getComponentName: function ()
+		{
+			return "Cobweb";
+		},
+		getContainerField: function ()
+		{
+			return "browser";
+		},
 		initialize: function ()
 		{
 			this .replaceWorld (this .createScene ());
@@ -136,7 +150,7 @@ function ($,
 			if (urlCharacters)
 			{
 			   var
-			      parser    = new Parser (this .getExecutionContext (), "", true),
+			      parser    = new Parser (this .getExecutionContext (), true),
 			      url       = new Fields .MFString (),
 					parameter = new Fields .MFString ();
 
@@ -209,7 +223,7 @@ function ($,
 			if (this .isExternal ())
 			   return scene;
 
-			scene .beginUpdate ();
+			scene .setLive (true);
 
 			return scene;
 		},
@@ -219,12 +233,14 @@ function ($,
 
 			if (this .getWorld ())
 			{
-				this .getExecutionContext () .endUpdate ();
+				this .getExecutionContext () .setLive (false);
 				this .shutdown () .processInterests ();
 			}
-				
-			// Replace world.
 
+			// Clear event cache.
+			Events .clear ();
+
+			// Replace world.
 
 			if (! scene)
 				scene = this .createScene ();
@@ -236,10 +252,7 @@ function ($,
 			this .setBrowserLoading (true);
 			this .loadCount_ .addFieldCallback ("bindWorld" + this .loadId, this .bindWorld .bind (this));
 
-			if (this .isLive () .getValue ())
-				scene .beginUpdate ();
-			else
-				scene .endUpdate ();
+			scene .setLive (this .isLive () .getValue ())
 
 			this .setExecutionContext (scene);
 
@@ -272,10 +285,10 @@ function ($,
 
 			if (! external)
 			{
-				currentScene .isLive () .addFieldInterest (scene .isLive ());
+				currentScene .isLive () .addInterest (scene, "setLive");
 
 				if (currentScene .isLive () .getValue ())
-					scene .beginUpdate ();
+					scene .setLive (true);
 			}
 
 			scene .setup ();
@@ -311,10 +324,10 @@ function ($,
 
 				   if (! external)
 				   {
-				      currentScene .isLive () .addFieldInterest (scene .isLive ());
+				      currentScene .isLive () .addInterest (scene, "setLive");
 
 						if (currentScene .isLive () .getValue ())
-						   scene .beginUpdate ();
+						   scene .setLive (true);
 					}
 
 					scene .setup ();
@@ -336,10 +349,10 @@ function ($,
 
 			if (! external)
 			{
-				currentScene .isLive () .addFieldInterest (scene .isLive ());
+				currentScene .isLive () .addInterest (scene, "setLive");
 						
 				if (currentScene .isLive () .getValue ())
-					scene .beginUpdate ();
+					scene .setLive (true);
 			}
 
 			scene .setup ();
@@ -416,9 +429,24 @@ function ($,
 		{
 			if (! dom) return;
 			
-			new XMLParser (this .currentScene, dom) .parseIntoScene ();
+			var
+				currentScene = this .currentScene,
+				external     = this .isExternal (),
+				scene        = this .createScene ();
 
-			this .currentScene .setup ();
+			new XMLParser (scene) .parseIntoScene (dom);
+
+			if (! external)
+			{
+				currentScene .isLive () .addInterest (scene, "setLive");
+						
+				if (currentScene .isLive () .getValue ())
+					scene .setLive (true);
+			}
+
+			scene .setup ();
+
+			return scene;
 		},
 		setBrowserOption: function (name, value)
 		{
@@ -540,7 +568,7 @@ function ($,
 		bindViewpoint: function (viewpoint)
 		{
 			if (viewpoint .isBound_ .getValue ())
-				viewpoint .transitionStart (null, viewpoint);
+				viewpoint .transitionStart (viewpoint);
 
 			else
 				viewpoint .set_bind_ = true;
@@ -553,7 +581,10 @@ function ($,
 		{
 			try
 			{
-				this .currentScene .deleteRoute (this .currentScene .getRoute (fromNode, fromEventOut, toNode, toEventIn));
+				var route = this .currentScene .getRoute (fromNode, fromEventOut, toNode, toEventIn);
+
+				if (route)
+					this .currentScene .deleteRoute (route);
 			}
 			catch (error)
 			{
@@ -562,15 +593,14 @@ function ($,
 		},
 		beginUpdate: function ()
 		{
-			X3DBrowserContext .prototype .beginUpdate .call (this);
-			this .getExecutionContext () .beginUpdate ();
+			this .setLive (true);
+			this .getExecutionContext () .setLive (true);
 			this .advanceTime (performance .now ());
 		},
 		endUpdate: function ()
 		{
-			X3DBrowserContext .prototype .endUpdate .call (this);
-
-			this .getExecutionContext () .endUpdate ();
+			this .setLive (false);
+			this .getExecutionContext () .setLive (false);
 		},
 		print: function ()
 		{

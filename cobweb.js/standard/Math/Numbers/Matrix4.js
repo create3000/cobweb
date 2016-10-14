@@ -69,7 +69,6 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 		so                    = new Matrix3 (),
 		si                    = new Matrix3 (),
 		sosi                  = new Matrix3 (),
-		rotationMatrix        = new Matrix3 (),
 		c                     = new Vector3 (0, 0, 0),
 		b                     = new Matrix3 ();
 
