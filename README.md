@@ -93,6 +93,11 @@ Example
 `<X3DCanvas cache="true" src="path/to/your/X3D/world.x3d"></X3DCanvas>`
 
 
+Programmer's Style Guide
+--------------------------------------
+Programmers who want to work on Cobweb shall first read the [Style Guide](STYLE_GUIDE.md).
+
+
 Authors
 --------------------------------------
 All authors contributed to this project can be found in the [list of authors](AUTHORS.md).
