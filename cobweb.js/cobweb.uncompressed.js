@@ -30309,32 +30309,19 @@ function ($,
 
 			var Loader = require ("cobweb/InputOutput/Loader");
 
-			new Loader (this) .createX3DFromURL (this .url_, this .setSceneAsync .bind (this));
+			new Loader (this) .createX3DFromURL (this .url_, this .setInternalSceneAsync .bind (this));
 		},
-		setSceneAsync: function (value)
+		setInternalSceneAsync: function (value)
 		{
 			this .getScene () .removeLoadCount (this);
 		
 			if (value)
-				this .setScene (value);
+				this .setInternalScene (value);
 
 			else
 				this .setError ();
 		},
-		setError: function (error)
-		{
-			console .log (error);
-
-			this .setLoadState (X3DConstants .FAILED_STATE);
-
-			this .scene = this .getBrowser () .getPrivateScene ();
-
-			this .setProtoDeclaration (null);
-
-			this .deferred .resolve ();
-			this .deferred = $.Deferred ();
-		},
-		setScene: function (value)
+		setInternalScene: function (value)
 		{
 			this .scene = value;
 
@@ -30351,6 +30338,25 @@ function ($,
 			this .setProtoDeclaration (this .scene .protos [protoName]);
 
 			this .deferred .resolve ();
+		},
+		getInternalScene: function ()
+		{
+			///  Returns the internal X3DScene of this extern proto, that is loaded from the url given.
+
+			return this .scene;
+		},
+		setError: function (error)
+		{
+			console .log (error);
+
+			this .setLoadState (X3DConstants .FAILED_STATE);
+
+			this .scene = this .getBrowser () .getPrivateScene ();
+
+			this .setProtoDeclaration (null);
+
+			this .deferred .resolve ();
+			this .deferred = $.Deferred ();
 		},
 	});
 
@@ -33549,6 +33555,16 @@ function ($,
 		{
 			this .parents .pop ();
 		},
+		parseIntoNode: function (node, xml)
+		{
+			this .pushExecutionContext (node .getExecutionContext ());
+			this .pushParent (node);
+
+			this .statement (xml);
+
+			this .popParent ();
+			this .popExecutionContext ();
+		},
 		parseIntoScene: function (xml)
 		{
 			switch (xml .nodeName)
@@ -33757,7 +33773,7 @@ function ($,
 				var node = this .getExecutionContext () .createNode (element .nodeName, false);
 
 				//AP: attach node to DOM element for access from DOM.
-            element .x3dnode = node;
+            element .x3d = node;
 
 				this .DEF (element, node);
 				this .addNode (element, node);
@@ -33906,7 +33922,7 @@ function ($,
 					switch (parent .getType ())
 					{
 						case X3DConstants .SFNode:
-							parent .set (node);
+							parent .setValue (node);
 							parent .setSet (true);
 							return;
 
@@ -33931,7 +33947,7 @@ function ($,
 							switch (field .getType ())
 							{
 								case X3DConstants .SFNode:
-									field .set (node);
+									field .setValue (node);
 									field .setSet (true);
 									return;
 
@@ -33956,7 +33972,7 @@ function ($,
 						switch (field .getType ())
 						{
 							case X3DConstants .SFNode:
-								field .set (node);
+								field .setValue (node);
 								field .setSet (true);
 								return;
 
@@ -34288,9 +34304,10 @@ function ($,
 
 				var
 					sourceNode      = this .getExecutionContext () .getLocalNode (sourceNodeName),
-					destinationNode = this .getExecutionContext () .getLocalNode (destinationNodeName);
+					destinationNode = this .getExecutionContext () .getLocalNode (destinationNodeName),
+					route           = this .getExecutionContext () .addRoute (sourceNode, sourceField, destinationNode, destinationField);
 
-				this .getExecutionContext () .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+				element .x3d = route;
 			}
 			catch (error)
 			{
@@ -82255,6 +82272,10 @@ function ($,
 		},
 		getInternalScene: function ()
 		{
+			///  Returns the internal X3DScene of this extern proto, that is loaded from the url given.
+			///  If the load field was false an empty scene is returned.  This empty scene is the same for all Inline
+			///  nodes (due to performance reasons).
+
 			return this .scene;
 		},
 		traverse: function (type, renderObject)
