@@ -3,7 +3,7 @@ PROGAMMER's STYLE GUIDE
 
 Don't use abreviations.
 
-Use spaces! Use spaces on the right place. Expamples are in the source itself.
+Use spaces! Use spaces at the right place. Examples are in the source code itself.
 
     if (field)
     {
