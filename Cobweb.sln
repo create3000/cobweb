@@ -10,6 +10,16 @@ EndProject
 Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "tests", "tests\tests.mdproj", "{90405AC6-A0D9-4478-BB26-1F736DAA6834}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7742E9E0-2DE3-46AC-BC38-45A771A450A9}"
+	ProjectSection(SolutionItems) = preProject
+		AUTHORS.md = AUTHORS.md
+		Cobweb.sln = Cobweb.sln
+		Cobweb.userprefs = Cobweb.userprefs
+		dom-integration.html = dom-integration.html
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+		STYLE_GUIDE.md = STYLE_GUIDE.md
+		.bzrignore = .bzrignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

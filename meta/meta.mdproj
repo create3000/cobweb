@@ -12,33 +12,12 @@
     <OutputPath>.</OutputPath>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="..\Cobweb.sln">
-      <Link>Cobweb.sln</Link>
-    </None>
-    <None Include="..\Cobweb.userprefs">
-      <Link>Cobweb.userprefs</Link>
-    </None>
-    <None Include="..\README.md">
-      <Link>README.md</Link>
-    </None>
     <None Include="logo\icon.svg" />
     <None Include="logo\logo.svg" />
-    <None Include="..\.bzrignore">
-      <Link>.bzrignore</Link>
-    </None>
     <None Include="meta.mdproj" />
     <None Include="resources\SupportedComponents.js" />
     <None Include="resources\SupportedNodes.js" />
     <None Include="resources\SupportedNodes.VRML.js" />
-    <None Include="..\AUTHORS.md">
-      <Link>AUTHORS.md</Link>
-    </None>
-    <None Include="..\LICENSE.md">
-      <Link>LICENSE.md</Link>
-    </None>
-    <None Include="..\STYLE_GUIDE.md">
-      <Link>STYLE_GUIDE.md</Link>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="logo\" />
