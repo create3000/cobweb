@@ -14,7 +14,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		AUTHORS.md = AUTHORS.md
 		Cobweb.sln = Cobweb.sln
 		Cobweb.userprefs = Cobweb.userprefs
-		dom-integration.html = dom-integration.html
 		LICENSE.md = LICENSE.md
 		README.md = README.md
 		STYLE_GUIDE.md = STYLE_GUIDE.md

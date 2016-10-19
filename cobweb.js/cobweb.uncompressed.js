@@ -69105,6 +69105,7 @@ function ($,
 			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
 
 			this .updateTextureProperties ();
+			this .addNodeEvent ();
 		},
 		updateTexture: function (data, flipY)
 		{
@@ -69118,6 +69119,8 @@ function ($,
 
 			if (this .texturePropertiesNode .generateMipMaps_ .getValue ())
 				gl .generateMipmap (gl .TEXTURE_2D);
+
+			this .addNodeEvent ();
 		},
 		updateTextureProperties: function ()
 		{
@@ -77480,13 +77483,25 @@ function ($,
 		},
 		set_texture__: function (node, index)
 		{
-			if (this .textures [index])
-				this .textures [index] .loadState_ .removeInterest (this, "set_loadState__");
+			var texture = this .textures [index];
+
+			if (texture)
+			{
+				var callbackName = "set_loadState__" + texture .getId () + "_" + index;
+
+				texture .removeInterest (this, "set_loadState__");
+				texture .loadState_ .removeFieldCallback (callbackName);
+			}
 
 			var texture = this .textures [index] = X3DCast (X3DConstants .X3DTexture2DNode, node);
 
 			if (texture)
-				texture .loadState_ .addInterest (this, "set_loadState__", texture, index);
+			{
+				var callbackName = "set_loadState__" + texture .getId () + "_" + index;
+
+				texture .addInterest (this, "set_loadState__", texture, index);
+				texture .loadState_ .addFieldCallback (callbackName, this .set_loadState__ .bind (this, null, texture, index));
+			}
 
 			this .set_loadState__ (null, texture, index);
 		},
@@ -77549,7 +77564,13 @@ function ($,
 	
 					gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, !texture .getFlipY ());
 					gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
-					gl .texImage2D (this .targets [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
+
+					if (data instanceof Uint8Array)
+						gl .texImage2D (this .targets [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
+					else
+					{
+						gl .texImage2D  (this .targets [i], 0, gl .RGBA, gl .RGBA, gl .UNSIGNED_BYTE, data);
+					}
 				}
 
 				this .set_textureQuality__ ();
@@ -88935,10 +88956,8 @@ function ($,
 		{
 		   X3DSoundSourceNode .prototype .prepareEvents .call (this);
 
-		   var video = this .getMedia ();
-
-			if (video)
-				this .updateTexture (video [0], true);
+			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE)
+				this .updateTexture (this .getMedia () [0], true);
 		},
 		traverse: X3DTexture2DNode .prototype .traverse,
 	});

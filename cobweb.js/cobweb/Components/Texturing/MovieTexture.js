@@ -238,10 +238,8 @@ function ($,
 		{
 		   X3DSoundSourceNode .prototype .prepareEvents .call (this);
 
-		   var video = this .getMedia ();
-
-			if (video)
-				this .updateTexture (video [0], true);
+			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE)
+				this .updateTexture (this .getMedia () [0], true);
 		},
 		traverse: X3DTexture2DNode .prototype .traverse,
 	});

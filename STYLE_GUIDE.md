@@ -36,3 +36,16 @@ Use newlines! Use newlines after var declarations, if, for, while, do loops!
 Group declarations together.
 
 Comment code if needed! Don't comment code if the code is self explanatory. Write self explanatory code.
+
+Use property accessor functions. There should't be any performance drawbacks. Put setter before getter.
+
+    setProperty: function (value)
+    {
+    	this .property = value;
+    },
+    getProperty: function ()
+    {
+    	return this .property;
+    },
+
+Use Java style variable names, ie. camel case but lower case first.
