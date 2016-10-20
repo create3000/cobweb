@@ -16,8 +16,6 @@ html, body {
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
-	width: 921px;
-	height: 461px;
 }
 
 body {
@@ -26,8 +24,12 @@ body {
 	padding: 10px;
 }
 
+.test-browser {
+	width: 921px;
+}
+
 .tests {
-	height: 100%;
+	height: 461px;
 	box-shadow: 0px 2px 12px 1px rgba(0, 0, 0, 0.75);
 }
 
@@ -74,6 +76,7 @@ li + .bookmark-section {
 }
 
 .browser {
+	width: auto;
 	height: 100%;
 }
 
@@ -421,23 +424,30 @@ function loadURL ()
 	</script>
 </head>
 <body>
-	<div class="tests">
-		<div class="bookmarks"></div>
-		<X3DCanvas class="browser" cache="false" xsrc="https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationChaser.wrl">
-			<p class="fallback">Sorry,<br/>
-				it wasn't me!<br/>
-				<br/>
-				Your browser may not support all features required by Cobweb! You can use Firefox, Chrome,
-				or Microsoft Edge, because this is currently the choice of the choice. We will continuously
-				keep you informed on technical developments and as soon as Cobweb is running in other browser too.
-			</p>
-		</X3DCanvas>
-		<table class="load-url" cellpadding="4" style="margin:0; width:100%">
-			<tr><td><input style="width:100%"/></td><td style="width:10%"><button onclick="loadURL ()" style="width:100%">Load URL</button></td></tr>
-		</table>
-		<div class="toggle"><a href="cobweb.min.html">cobweb.min.html</a> | <a href="http://rawgit.com/create3000/cobweb/master/cobweb.js/cobweb.min.html">github</a></div>
-		<p class="version cobweb-dev"></p>
-		<p class="-cobweb-console"></p>
+	<div class="test-browser">
+		<div class="tests">
+			<div class="bookmarks"></div>
+			<X3DCanvas class="browser" cache="false" xsrc="https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationChaser.wrl">
+				<p class="fallback">Sorry,<br/>
+					it wasn't me!<br/>
+					<br/>
+					Your browser may not support all features required by Cobweb! You can use Firefox, Chrome,
+					or Microsoft Edge, because this is currently the choice of the choice. We will continuously
+					keep you informed on technical developments and as soon as Cobweb is running in other browser too.
+				</p>
+			</X3DCanvas>
+		</div>
+		<div class="location-bar">
+			<table class="load-url" cellpadding="4" style="margin:0; width:100%">
+				<tr><td><input style="width:100%"/></td><td style="width:10%"><button onclick="loadURL ()" style="width:100%">Load URL</button></td></tr>
+			</table>
+			<div class="toggle"><a href="cobweb.min.html">cobweb.min.html</a> | <a href="http://rawgit.com/create3000/cobweb/master/cobweb.js/cobweb.min.html">github</a></div>
+			<p class="version cobweb-dev"></p>
+			<p class="-cobweb-console"></p>
+		</div>
+	</div>
+	<div class="second">
+		<X3DCanvas cache="false" src="tests/Components/Rendering/IndexedLineSet.x3d"></X3DCanvas>
 	</div>
 </body>
 </html>

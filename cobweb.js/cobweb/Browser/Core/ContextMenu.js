@@ -60,11 +60,11 @@ function ($,
 {
 "use strict";
 	
+	$("head") .append ('<style>.cobweb-menu-title:before { content: "' + _("Cobweb X3D Browser") + '" }</style>');
+
 	function ContextMenu (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext);
-
-		$("head") .append ('<style>.cobweb-menu-title:before { content: "' + _("Cobweb X3D Browser") + '" }</style>');
 	}
 
 	ContextMenu .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -87,7 +87,7 @@ function ($,
 			X3DBaseNode .prototype .initialize .call (this);
 
 			$.contextMenu ({
-				selector: '.cobweb-surface', 
+				selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
 				build: this .build .bind (this),
 			});
 		},
@@ -100,7 +100,7 @@ function ($,
 				fullscreen       = this .getBrowser () .getElement () .fullScreen ();
 
 			var menu = {
-				className: 'cobweb-menu cobweb-menu-title',
+				className: "cobweb-menu cobweb-menu-title",
 				items: {
 					"separator0": "--------",
 					"viewpoints": {

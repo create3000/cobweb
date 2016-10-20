@@ -11,6 +11,8 @@ X3DCanvas {
 	padding: 0px;
 	border: 0px;
 	overflow: hidden;
+	width: 100px;
+	height: 100px;
 }
 
 X3DCanvas.cobweb-fullscreen {
