@@ -13,6 +13,11 @@ X3DCanvas {
 	overflow: hidden;
 }
 
+X3DCanvas.cobweb-fullscreen {
+	width: 100% !important;
+	height: 100% !important;
+}
+
 X3DCanvas > *:not(.cobweb-fallback) {
 	display: none;
 }

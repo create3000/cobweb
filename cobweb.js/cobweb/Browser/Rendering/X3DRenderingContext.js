@@ -106,6 +106,8 @@ function (Fields,
 
 			// Configure viewport.
 
+			$(document) .on ('webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', this .onfullscreen .bind (this));
+
 			setInterval (this .reshape .bind (this), 401); // Detect canvas resize.
 
 			this .reshape ();
@@ -242,6 +244,13 @@ function (Fields,
 		getClipPlanes: function ()
 		{
 			return this .clipPlanes;
+		},
+		onfullscreen: function ()
+		{
+			if (this .getElement () .fullScreen ())
+				this .getElement () .addClass  ("cobweb-fullscreen");
+			else
+				this .getElement () .removeClass ("cobweb-fullscreen");
 		},
 		reshape: function ()
 		{

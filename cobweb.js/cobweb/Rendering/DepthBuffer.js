@@ -99,10 +99,14 @@ function (ViewVolume,
 
 		// Always check that our framebuffer is ok
 
-		if (gl .checkFramebufferStatus (gl .FRAMEBUFFER) !== gl .FRAMEBUFFER_COMPLETE)
-			throw new Error ("Couldn't create frame buffer.");
+		var complete = gl .checkFramebufferStatus (gl .FRAMEBUFFER) === gl .FRAMEBUFFER_COMPLETE;
 
 		gl .bindFramebuffer (gl .FRAMEBUFFER, this .lastBuffer);
+
+		if (complete)
+			return;
+
+		throw new Error ("Couldn't create frame buffer.");
 	}
 
 	DepthBuffer .prototype =

@@ -229,6 +229,11 @@ function ($,
 		},
 		replaceWorld: function (scene)
 		{
+			// Stop any loading from loadURL.
+
+			if (this .loader)
+				this .loader .abort ();
+
 			// Remove world.
 
 			if (this .getWorld ())
@@ -378,7 +383,9 @@ function ($,
 
 			var id = this .addLoadCount (this);
 
-			new Loader (this .getWorld ()) .createX3DFromURL (url,
+			this .loader = new Loader (this .getWorld ());
+
+			this .loader .createX3DFromURL (url,
 			function (scene)
 			{
 				if (scene)

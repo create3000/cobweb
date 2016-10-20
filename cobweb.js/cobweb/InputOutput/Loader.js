@@ -99,6 +99,12 @@ function ($,
 	Loader .prototype = $.extend (Object .create (X3DObject .prototype),
 	{
 		constructor: Loader,
+		abort: function ()
+		{
+			this .callback      = Function .prototype;
+			this .bindViewpoint = Function .prototype;
+			this .foreign       = Function .prototype;
+		},
 		getWorldURL: function ()
 		{
 			return this .URL;
