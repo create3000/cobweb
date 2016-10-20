@@ -212,6 +212,8 @@ function ($,
 		
 						renderObject .getModelViewMatrix  () .pop ();
 						renderObject .getViewVolumes () .pop ();
+
+						//console .log (y * 3 + x, this .rotationMatrix .multRight (this .projectionMatrix) .multRight (biasMatrix) .toString ());
 					}
 				}
 

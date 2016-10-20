@@ -5,8 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Sat, 19 Dec 2015 11:18:24 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 12:48:54 GMT'/>
+    <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Text/scrolling-text.x3d'/>
+    <meta name='modified' content='Thu, 20 Oct 2016 10:57:21 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -36,6 +37,29 @@
               name='centerOfRotation'
               reference='http://titania.create3000.de'
               value='0, 0, 0'/>
+        </MetadataSet>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <FontStyle DEF='_1' containerField='value'
+                family='"SANS"'
+                size='1.61'
+                justify='"BEGIN", "BEGIN"'/>
+          </MetadataSet>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
+        </MetadataSet>
+        <MetadataSet DEF='LayerSet' containerField='value'
+            name='LayerSet'
+            reference='http://titania.create3000.de'>
+          <MetadataInteger DEF='activeLayer' containerField='value'
+              name='activeLayer'
+              reference='http://titania.create3000.de'
+              value='-1'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -82,7 +106,7 @@
         <Transform DEF='ScrollingText'
             translation='-0.771853 0 0'>
           <Transform DEF='Text'
-              translation='-6.18513 1.82504 0'>
+              translation='-6.18513 -1.97924 0'>
             <Group DEF='Animation'>
               <MetadataSet DEF='Animation_1'
                   name='Animation'
@@ -96,7 +120,7 @@
                     reference='http://titania.create3000.de'
                     value='10'/>
               </MetadataSet>
-              <TimeSensor DEF='_1'
+              <TimeSensor DEF='_2'
                   cycleInterval='120'
                   loop='true'/>
               <PositionInterpolator DEF='TextTranslationInterpolator'
@@ -197,16 +221,13 @@
             <Text
                 string='"Far Away"'
                 solid='true'>
-              <FontStyle
-                  family='"Ubuntu", "SANS"'
-                  size='1.61'
-                  justify='"BEGIN", "BEGIN"'/>
+              <FontStyle USE='_1'/>
             </Text>
           </Shape>
         </Transform>
       </Layer>
     </LayerSet>
-    <ROUTE fromNode='_1' fromField='fraction_changed' toNode='TextTranslationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='TextTranslationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='TextTranslationInterpolator' fromField='value_changed' toNode='Text' toField='set_translation'/>
   </Scene>
 </X3D>

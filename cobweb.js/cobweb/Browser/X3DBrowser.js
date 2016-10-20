@@ -376,7 +376,7 @@ function ($,
 
 			this .setBrowserLoading (true);
 
-			var id = this .addLoadCount ();
+			var id = this .addLoadCount (this);
 
 			new Loader (this .getWorld ()) .createX3DFromURL (url,
 			function (scene)

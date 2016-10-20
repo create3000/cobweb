@@ -134,7 +134,7 @@ function (Fields,
 				this .getCanvas ()         .stop (true, true) .fadeIn (2000);
 			}
 		},
-		addLoadCount: function ()
+		addLoadCount: function (object)
 		{
 		   var id = loadCountId ++;
 

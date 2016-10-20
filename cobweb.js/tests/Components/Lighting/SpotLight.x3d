@@ -6,9 +6,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Mon, 09 Mar 2015 08:07:10 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.4.9, http://titania.create3000.de'/>
+    <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Lighting/SpotLight.x3d'/>
-    <meta name='modified' content='Fri, 16 Sep 2016 14:42:42 GMT'/>
+    <meta name='modified' content='Thu, 20 Oct 2016 06:11:43 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -57,8 +57,9 @@
           <MetadataSet DEF='children' containerField='value'
               name='children'
               reference='http://titania.create3000.de'>
-            <PlaneSensor DEF='_1' containerField='value'
-                axisRotation='1 0 0 1.5707963267949'/>
+            <FontStyle DEF='_1' containerField='value'
+                family='"SANS"'
+                justify='"END"'/>
           </MetadataSet>
         </MetadataSet>
       </MetadataSet>
@@ -204,14 +205,14 @@ function initialize ()
               translation='0.5 0.854373 0'>
             <SpotLight DEF='Red'
                 color='1 0 0'
-                direction='0.367901 -0.812653 0.433459'
+                direction='0.417955 -0.797554 0.434995'
                 beamWidth='0.875398'
                 cutOffAngle='1.0308'
                 shadowColor='0.1 0 0'
                 shadowIntensity='1'
                 shadowDiffusion='0.02'/>
             <Transform DEF='_3'
-                rotation='0.910993421904714 0.412420883620531 -0 1.11848172341353'>
+                rotation='0.885745417439732 0.464171364352127 -0 1.12076347402541'>
               <Switch>
                 <Transform DEF='Cone'
                     rotation='-0.999999999993436 -3.62331999997622e-06 8.16271999994642e-11 1.5708'
@@ -245,14 +246,14 @@ function set_direction (value)
               translation='-1 0.800923 1'>
             <SpotLight DEF='Green'
                 color='0 1 0'
-                direction='0.436521 -0.831685 0.365168'
+                direction='0.417955 -0.797554 0.434995'
                 beamWidth='0.415398'
                 cutOffAngle='0.790796'
                 shadowColor='0 0.1 0'
                 shadowIntensity='1'
                 shadowDiffusion='0.03'/>
             <Transform DEF='_6'
-                rotation='0.885447527614659 0.464739363343678 -0 1.2000053890093'>
+                rotation='0.885745417439732 0.464171364352127 -0 1.12076347402541'>
               <Switch>
                 <Transform DEF='Cone_1'
                     rotation='0.999999999993436 3.62331999997622e-06 -8.16268999994642e-11 4.71239'
@@ -281,7 +282,7 @@ function set_direction (value)
           <Transform
               translation='9.70404e-15 0.166353 0'>
             <Transform DEF='_8'
-                rotation='0.877564854728366 0.479457949924268 -0 1.09060164280272'
+                rotation='0.885745417439732 0.464171364352127 -0 1.12076347402541'
                 scaleOrientation='0.901298633096723 0.105533957038929 0.420146828965403 0.854599'>
               <Switch>
                 <Transform DEF='Cone_2'
@@ -322,7 +323,7 @@ function set_direction (value)
           <SpotLight DEF='Blue'
               global='false'
               color='0 0 1'
-              direction='0.437748 -0.801223 0.475547'
+              direction='0.417955 -0.797554 0.434995'
               beamWidth='1.1508'
               cutOffAngle='1.2708'
               shadowColor='0 0 0.1'
@@ -357,7 +358,7 @@ function set_direction (value)
             </Transform>
           </Transform>
           <Transform DEF='Sphere'
-              translation='-4.0378 -1 1.65797'
+              translation='-3 -1 -1'
               scale='0.5 0.5 0.5'>
             <Group DEF='SphereAnimation'>
               <MetadataSet DEF='Animation'
@@ -425,8 +426,9 @@ function set_direction (value)
         <Transform DEF='Cylinder'
             translation='-1.5 -1 -1'
             scale='0.5 0.5 0.5'>
-          <PlaneSensor USE='_1'/>
-          <Transform DEF='_15'>
+          <PlaneSensor DEF='_15'
+              axisRotation='1 0 0 1.5707963267949'/>
+          <Transform DEF='_16'>
             <Shape>
               <Appearance>
                 <Material/>
@@ -493,7 +495,7 @@ function set_direction (value)
                 string='"SpotLight"'
                 solid='true'>
               <FontStyle
-                  family='"Ubuntu", "SANS"'
+                  family='"SANS"'
                   size='1.61'
                   justify='"BEGIN", "BEGIN"'/>
             </Text>
@@ -553,7 +555,7 @@ function set_phong ()
                   string='"Shading"'
                   solid='true'>
                 <FontStyle
-                    family='"Ubuntu", "SANS"'
+                    family='"SANS"'
                     style='BOLD'
                     size='0.68'
                     justify='"END"'/>
@@ -570,9 +572,7 @@ function set_phong ()
               <Text
                   string='"Pointset   Wireframe   Flat   Gouraud   Phong"'
                   solid='true'>
-                <FontStyle
-                    family='"Ubuntu", "SANS"'
-                    justify='"END"'/>
+                <FontStyle USE='_1'/>
               </Text>
             </Shape>
           </Transform>
@@ -581,26 +581,8 @@ function set_phong ()
               scale='0.139972 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material DEF='_16'
+                <Material DEF='_17'
                     transparency='1'/>
-              </Appearance>
-              <IndexedFaceSet
-                  texCoordIndex='0, 1, 2, 3, -1'
-                  coordIndex='0, 1, 2, 3, -1'>
-                <TextureCoordinate
-                    point='0 0, 1 0, 1 1, 0 1'/>
-                <Coordinate
-                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-              </IndexedFaceSet>
-            </Shape>
-            <TouchSensor DEF='_17'/>
-          </Transform>
-          <Transform DEF='Wireframe'
-              translation='0.77569 -0.916146 0'
-              scale='0.177062 0.040588 0.040588'>
-            <Shape>
-              <Appearance>
-                <Material USE='_16'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -613,12 +595,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_18'/>
           </Transform>
-          <Transform DEF='Flat'
-              translation='1.04432 -0.916146 0'
-              scale='0.0743511 0.040588 0.040588'>
+          <Transform DEF='Wireframe'
+              translation='0.77569 -0.916146 0'
+              scale='0.177062 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_16'/>
+                <Material USE='_17'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -631,12 +613,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_19'/>
           </Transform>
-          <Transform DEF='Gouraud'
-              translation='1.27986 -0.916146 0'
-              scale='0.142825 0.040588 0.040588'>
+          <Transform DEF='Flat'
+              translation='1.04432 -0.916146 0'
+              scale='0.0743511 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_16'/>
+                <Material USE='_17'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -649,12 +631,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_20'/>
           </Transform>
-          <Transform DEF='Phong'
-              translation='1.55457 -0.916146 0'
-              scale='0.111441 0.040588 0.040588'>
+          <Transform DEF='Gouraud'
+              translation='1.27986 -0.916146 0'
+              scale='0.142825 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_16'/>
+                <Material USE='_17'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -667,6 +649,24 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_21'/>
           </Transform>
+          <Transform DEF='Phong'
+              translation='1.55457 -0.916146 0'
+              scale='0.111441 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_17'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_22'/>
+          </Transform>
         </Group>
       </Layer>
     </LayerSet>
@@ -676,11 +676,11 @@ function set_phong ()
     <ROUTE fromNode='GreenDirectionInterpolator' fromField='value_changed' toNode='Green' toField='set_direction'/>
     <ROUTE fromNode='_2' fromField='fraction_changed' toNode='BlueDirectionInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='BlueDirectionInterpolator' fromField='value_changed' toNode='Blue' toField='set_direction'/>
-    <ROUTE fromNode='_21' fromField='touchTime' toNode='ShadingScript' toField='set_phong'/>
-    <ROUTE fromNode='_20' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
-    <ROUTE fromNode='_19' fromField='touchTime' toNode='ShadingScript' toField='set_flat'/>
-    <ROUTE fromNode='_18' fromField='touchTime' toNode='ShadingScript' toField='set_wireframe'/>
-    <ROUTE fromNode='_17' fromField='touchTime' toNode='ShadingScript' toField='set_pointset'/>
+    <ROUTE fromNode='_22' fromField='touchTime' toNode='ShadingScript' toField='set_phong'/>
+    <ROUTE fromNode='_21' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
+    <ROUTE fromNode='_20' fromField='touchTime' toNode='ShadingScript' toField='set_flat'/>
+    <ROUTE fromNode='_19' fromField='touchTime' toNode='ShadingScript' toField='set_wireframe'/>
+    <ROUTE fromNode='_18' fromField='touchTime' toNode='ShadingScript' toField='set_pointset'/>
     <ROUTE fromNode='Red' fromField='color_changed' toNode='_4' toField='set_emissiveColor'/>
     <ROUTE fromNode='Green' fromField='color_changed' toNode='_7' toField='set_emissiveColor'/>
     <ROUTE fromNode='Blue' fromField='color_changed' toNode='_9' toField='set_emissiveColor'/>
@@ -694,6 +694,6 @@ function set_phong ()
     <ROUTE fromNode='SphereTranslationInterpolator' fromField='value_changed' toNode='Sphere' toField='set_translation'/>
     <ROUTE fromNode='_10' fromField='translation_changed' toNode='_11' toField='set_translation'/>
     <ROUTE fromNode='_12' fromField='translation_changed' toNode='_13' toField='set_translation'/>
-    <ROUTE fromNode='_1' fromField='translation_changed' toNode='_15' toField='set_translation'/>
+    <ROUTE fromNode='_15' fromField='translation_changed' toNode='_16' toField='set_translation'/>
   </Scene>
 </X3D>

@@ -81,7 +81,7 @@ function ($,
 			}
 
 			if (notify !== false && value === X3DConstants .IN_PROGRESS_STATE)
-				this .loadId = this .getBrowser () .addLoadCount ();
+				this .loadId = this .getBrowser () .addLoadCount (this);
 
 			this .loadState_ = value;
 		},

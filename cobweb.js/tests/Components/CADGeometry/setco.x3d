@@ -7,9 +7,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='19 Dec 2015'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='identifier' content='http://spri.kshell.com/xt/shape/psghtq40qqvj/shape_2336333638.x3d'/>
-    <meta name='modified' content='Thu, 31 Dec 2015 16:47:54 GMT'/>
+    <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/CADGeometry/setco.x3d'/>
+    <meta name='modified' content='Thu, 20 Oct 2016 11:02:28 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -31,15 +31,37 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='0.00652447296306491, -0.00227019074372947, 9.99999713897705'/>
+              value='28.9666004180908, 50.8497009277344, 24.2611999511719'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.189542636275291, 0.545598924160004, -0.816330432891846, 0.00119603995699435'/>
+              value='-0.837913200543136, 0.538534128890824, 0.0887832212490573, 1.11955'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='0, 0, 0'/>
+              value='0, -0.255075991153717, -4.56500005722046'/>
+        </MetadataSet>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <FontStyle DEF='_1' containerField='value'
+                family='"SANS"'
+                justify='"FIRST"'/>
+          </MetadataSet>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
+        </MetadataSet>
+        <MetadataSet DEF='LayerSet' containerField='value'
+            name='LayerSet'
+            reference='http://titania.create3000.de'>
+          <MetadataInteger DEF='activeLayer' containerField='value'
+              name='activeLayer'
+              reference='http://titania.create3000.de'
+              value='-1'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -4744,7 +4766,7 @@
         <ViewpointGroup>
           <Viewpoint DEF='Oblique'
               position='28.9666 50.8497 24.2612'
-              orientation='-0.837913 0.538534 0.0887832 1.11955'
+              orientation='-0.837913200543136 0.538534128890824 0.0887832212490573 1.11955'
               centerOfRotation='0 -0.255076 -4.565'
               fieldOfView='0.16628'/>
           <Viewpoint DEF='Top'
@@ -4758,7 +4780,7 @@
               fieldOfView='0.16628'/>
           <Viewpoint DEF='Right'
               position='73.956 -0.271937 -4.54813'
-              orientation='0.577279 0.577286 0.577485 2.09381'
+              orientation='0.577279261258757 0.577286261261925 0.577485261351986 2.09381'
               centerOfRotation='0 -0.255076 -4.565'
               fieldOfView='0.16628'/>
         </ViewpointGroup>
@@ -4820,7 +4842,7 @@
                 string='" Setco™  CADGeometry"'
                 solid='true'>
               <FontStyle
-                  family='"Ubuntu", "SANS"'
+                  family='"SANS"'
                   size='1.61'
                   justify='"BEGIN", "FIRST"'/>
             </Text>
@@ -4880,7 +4902,7 @@ function set_phong ()
                   string='"Shading"'
                   solid='true'>
                 <FontStyle
-                    family='"Ubuntu", "SANS"'
+                    family='"SANS"'
                     style='BOLD'
                     size='0.68'
                     justify='"END"'/>
@@ -4898,7 +4920,7 @@ function set_phong ()
                   string='"Pointset   Wireframe   Flat   Gouraud   Phong"'
                   solid='true'>
                 <FontStyle
-                    family='"Ubuntu", "SANS"'
+                    family='"SANS"'
                     justify='"END"'/>
               </Text>
             </Shape>
@@ -4908,26 +4930,8 @@ function set_phong ()
               scale='0.139972 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material DEF='_1'
+                <Material DEF='_2'
                     transparency='1'/>
-              </Appearance>
-              <IndexedFaceSet
-                  texCoordIndex='0, 1, 2, 3, -1'
-                  coordIndex='0, 1, 2, 3, -1'>
-                <TextureCoordinate
-                    point='0 0, 1 0, 1 1, 0 1'/>
-                <Coordinate
-                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-              </IndexedFaceSet>
-            </Shape>
-            <TouchSensor DEF='_2'/>
-          </Transform>
-          <Transform DEF='Wireframe'
-              translation='0.77569 -0.916146 0'
-              scale='0.177062 0.040588 0.040588'>
-            <Shape>
-              <Appearance>
-                <Material USE='_1'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -4940,12 +4944,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_3'/>
           </Transform>
-          <Transform DEF='Flat'
-              translation='1.04432 -0.916146 0'
-              scale='0.0743511 0.040588 0.040588'>
+          <Transform DEF='Wireframe'
+              translation='0.77569 -0.916146 0'
+              scale='0.177062 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_1'/>
+                <Material USE='_2'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -4958,12 +4962,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_4'/>
           </Transform>
-          <Transform DEF='Gouraud'
-              translation='1.27986 -0.916146 0'
-              scale='0.142825 0.040588 0.040588'>
+          <Transform DEF='Flat'
+              translation='1.04432 -0.916146 0'
+              scale='0.0743511 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_1'/>
+                <Material USE='_2'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -4976,12 +4980,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_5'/>
           </Transform>
-          <Transform DEF='Phong'
-              translation='1.55457 -0.916146 0'
-              scale='0.111441 0.040588 0.040588'>
+          <Transform DEF='Gouraud'
+              translation='1.27986 -0.916146 0'
+              scale='0.142825 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_1'/>
+                <Material USE='_2'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -4993,6 +4997,24 @@ function set_phong ()
               </IndexedFaceSet>
             </Shape>
             <TouchSensor DEF='_6'/>
+          </Transform>
+          <Transform DEF='Phong'
+              translation='1.55457 -0.916146 0'
+              scale='0.111441 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_2'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_7'/>
           </Transform>
         </Group>
         <Group DEF='Viewpoints'>
@@ -5009,7 +5031,7 @@ function set_phong ()
                     string='"Right Side"'
                     solid='true'>
                   <FontStyle
-                      family='"Ubuntu", "SANS"'
+                      family='"SANS"'
                       justify='"END"'/>
                 </Text>
               </Shape>
@@ -5047,7 +5069,7 @@ function set_phong ()
                   string='"Viewpoints"'
                   solid='true'>
                 <FontStyle
-                    family='"Ubuntu", "SANS"'
+                    family='"SANS"'
                     style='BOLD'
                     size='0.68'
                     justify='"END"'/>
@@ -5067,7 +5089,7 @@ function set_phong ()
                     string='"Oblique View"'
                     solid='true'>
                   <FontStyle
-                      family='"Ubuntu", "SANS"'
+                      family='"SANS"'
                       justify='"END"'/>
                 </Text>
               </Shape>
@@ -5104,7 +5126,7 @@ function set_phong ()
                     string='"Top"'
                     solid='true'>
                   <FontStyle
-                      family='"Ubuntu", "SANS"'
+                      family='"SANS"'
                       justify='"END"'/>
                 </Text>
               </Shape>
@@ -5141,7 +5163,7 @@ function set_phong ()
                     string='"Bottom"'
                     solid='true'>
                   <FontStyle
-                      family='"Ubuntu", "SANS"'
+                      family='"SANS"'
                       justify='"END"'/>
                 </Text>
               </Shape>
@@ -5180,9 +5202,7 @@ function set_phong ()
               <Text
                   string='"Thanks to http://spri.kshell.com", ""'
                   solid='true'>
-                <FontStyle
-                    family='"Ubuntu", "SANS"'
-                    justify='"FIRST"'/>
+                <FontStyle USE='_1'/>
               </Text>
             </Shape>
           </Transform>
@@ -5200,10 +5220,10 @@ function set_phong ()
         </Anchor>
       </Layer>
     </LayerSet>
-    <ROUTE fromNode='_5' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
-    <ROUTE fromNode='_4' fromField='touchTime' toNode='ShadingScript' toField='set_flat'/>
-    <ROUTE fromNode='_3' fromField='touchTime' toNode='ShadingScript' toField='set_wireframe'/>
-    <ROUTE fromNode='_2' fromField='touchTime' toNode='ShadingScript' toField='set_pointset'/>
-    <ROUTE fromNode='_6' fromField='touchTime' toNode='ShadingScript' toField='set_phong'/>
+    <ROUTE fromNode='_6' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
+    <ROUTE fromNode='_5' fromField='touchTime' toNode='ShadingScript' toField='set_flat'/>
+    <ROUTE fromNode='_4' fromField='touchTime' toNode='ShadingScript' toField='set_wireframe'/>
+    <ROUTE fromNode='_3' fromField='touchTime' toNode='ShadingScript' toField='set_pointset'/>
+    <ROUTE fromNode='_7' fromField='touchTime' toNode='ShadingScript' toField='set_phong'/>
   </Scene>
 </X3D>

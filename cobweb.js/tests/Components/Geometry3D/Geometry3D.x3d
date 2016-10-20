@@ -5,8 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Thu, 26 Mar 2015 02:16:06 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Sat, 19 Dec 2015 12:29:31 GMT'/>
+    <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Geometry3D/Geometry3D.x3d'/>
+    <meta name='modified' content='Thu, 20 Oct 2016 10:58:37 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -32,11 +33,33 @@
           <MetadataDouble containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.784070789813995, -0.334372013807297, -0.522903859615326, 0.843905866146088'/>
+              value='0.784070753175274, -0.334371998182479, -0.522903835180633, 0.843905866146088'/>
           <MetadataDouble containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
               value='7.15990018844604, 1.81043994426727, -0.955601990222931'/>
+        </MetadataSet>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <FontStyle DEF='_1' containerField='value'
+                family='"SANS"'
+                justify='"END"'/>
+          </MetadataSet>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
+        </MetadataSet>
+        <MetadataSet DEF='LayerSet' containerField='value'
+            name='LayerSet'
+            reference='http://titania.create3000.de'>
+          <MetadataInteger DEF='activeLayer' containerField='value'
+              name='activeLayer'
+              reference='http://titania.create3000.de'
+              value='-1'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -81,7 +104,7 @@
         <Viewpoint
             description='Home'
             position='1.12246 -6.40656 10.8308'
-            orientation='0.784071 -0.334372 -0.522904 0.843906'
+            orientation='0.784070780208918 -0.334371906268713 -0.522903853419351 0.843906'
             centerOfRotation='7.1599 1.81044 -0.955602'/>
         <Transform DEF='Geometry3D'>
           <Group DEF='RotateAnim'>
@@ -96,14 +119,14 @@
                   reference='http://titania.create3000.de'
                   value='10'/>
             </MetadataSet>
-            <TimeSensor DEF='_1'
+            <TimeSensor DEF='_2'
                 cycleInterval='20'
                 loop='true'
                 startTime='1443559776.14588'
                 stopTime='1443559776.14586'/>
             <OrientationInterpolator DEF='BoxRotationInterpolator'
                 key='0, 0.25, 0.5, 0.75, 1'
-                keyValue='0 0 1 0, -4.33649e-09 -3.62374e-06 1 4.71239, -1.63448e-09 -3.62582e-06 1 3.14159, -1.08248e-10 -3.62609e-06 1 1.5708, 0 0 1 0'>
+                keyValue='0 0 1 0, -4.33648999997153e-09 -3.62373999997621e-06 0.999999999993434 4.71239, -1.63447999998926e-09 -3.62581999997617e-06 0.999999999993427 3.14159, -1.08247999999288e-10 -3.62608999997616e-06 0.999999999993426 1.5708, 0 0 1 0'>
               <MetadataSet DEF='Interpolator'
                   name='Interpolator'>
                 <MetadataInteger containerField='value'
@@ -122,8 +145,8 @@
             </OrientationInterpolator>
           </Group>
           <Transform DEF='Box'
-              rotation='4.33649e-09 3.62374e-06 -1 0.127565'>
-            <TouchSensor DEF='_2'
+              rotation='-5.98772685774869e-10 -3.62600322308696e-06 0.999999999993426 1.94915244056702'>
+            <TouchSensor DEF='_3'
                 description='Box'/>
             <Shape>
               <Appearance DEF='Grey'>
@@ -139,8 +162,8 @@
           </Transform>
           <Transform DEF='Sphere'
               translation='3 0 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.127565'>
-            <TouchSensor DEF='_3'
+              rotation='-5.98772685774869e-10 -3.62600322308696e-06 0.999999999993426 1.94915244056702'>
+            <TouchSensor DEF='_4'
                 description='Sphere'/>
             <Shape>
               <Appearance DEF='Grey_1'>
@@ -155,8 +178,8 @@
           </Transform>
           <Transform DEF='Cylinder'
               translation='6 0 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.127565'>
-            <TouchSensor DEF='_4'
+              rotation='-5.98772685774869e-10 -3.62600322308696e-06 0.999999999993426 1.94915244056702'>
+            <TouchSensor DEF='_5'
                 description='Cylinder'/>
             <Shape>
               <Appearance DEF='Grey_2'>
@@ -171,8 +194,8 @@
           </Transform>
           <Transform DEF='Cone'
               translation='9 0 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.127565'>
-            <TouchSensor DEF='_5'
+              rotation='-5.98772685774869e-10 -3.62600322308696e-06 0.999999999993426 1.94915244056702'>
+            <TouchSensor DEF='_6'
                 description='Cone'/>
             <Shape>
               <Appearance DEF='Grey_3'>
@@ -187,9 +210,9 @@
           </Transform>
           <Transform DEF='Extrusion'
               translation='12 0 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.127565'
+              rotation='-5.98772685774869e-10 -3.62600322308696e-06 0.999999999993426 1.94915244056702'
               scale='0.5 0.5 0.5'>
-            <TouchSensor DEF='_6'
+            <TouchSensor DEF='_7'
                 description='Extrusion'/>
             <Shape>
               <Appearance DEF='Grey_4'>
@@ -211,9 +234,9 @@
             </Shape>
           </Transform>
           <Transform DEF='ElevationGrid'
-              rotation='4.33649e-09 3.62374e-06 -1 0.127565'
+              rotation='-5.98772685774869e-10 -3.62600322308696e-06 0.999999999993426 1.94915244056702'
               center='15 5.96046e-08 -3.69549e-06'>
-            <TouchSensor DEF='_7'
+            <TouchSensor DEF='_8'
                 description='ElevationGrid'/>
             <Transform DEF='ElevationGrid_1'
                 translation='14 1 0'
@@ -237,8 +260,8 @@
           </Transform>
           <Transform DEF='IndexedFaceSet'
               translation='18 0 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.127565'>
-            <TouchSensor DEF='_8'
+              rotation='-5.98772685774869e-10 -3.62600322308696e-06 0.999999999993426 1.94915244056702'>
+            <TouchSensor DEF='_9'
                 description='IndexedFaceSet'/>
             <Shape>
               <Appearance DEF='Grey_6'>
@@ -258,8 +281,8 @@
           </Transform>
           <Transform DEF='Box_2'
               translation='0 3 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.127565'>
-            <TouchSensor USE='_2'/>
+              rotation='-5.98772685774869e-10 -3.62600322308696e-06 0.999999999993426 1.94915244056702'>
+            <TouchSensor USE='_3'/>
             <Shape>
               <Appearance DEF='Image'>
                 <Material/>
@@ -271,8 +294,8 @@
           </Transform>
           <Transform DEF='Sphere_2'
               translation='3 3 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.127565'>
-            <TouchSensor USE='_3'/>
+              rotation='-5.98772685774869e-10 -3.62600322308696e-06 0.999999999993426 1.94915244056702'>
+            <TouchSensor USE='_4'/>
             <Shape>
               <Appearance USE='Image'/>
               <Sphere USE='Sphere_1'/>
@@ -280,8 +303,8 @@
           </Transform>
           <Transform DEF='Cylinder_2'
               translation='6 3 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.127565'>
-            <TouchSensor USE='_4'/>
+              rotation='-5.98772685774869e-10 -3.62600322308696e-06 0.999999999993426 1.94915244056702'>
+            <TouchSensor USE='_5'/>
             <Shape>
               <Appearance USE='Image'/>
               <Cylinder USE='Cylinder_1'/>
@@ -289,8 +312,8 @@
           </Transform>
           <Transform DEF='Cone_2'
               translation='9 3 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.127565'>
-            <TouchSensor USE='_5'/>
+              rotation='-5.98772685774869e-10 -3.62600322308696e-06 0.999999999993426 1.94915244056702'>
+            <TouchSensor USE='_6'/>
             <Shape>
               <Appearance USE='Image'/>
               <Cone USE='Cone_1'/>
@@ -298,18 +321,18 @@
           </Transform>
           <Transform DEF='Extrusion_2'
               translation='12 3 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.127565'
+              rotation='-5.98772685774869e-10 -3.62600322308696e-06 0.999999999993426 1.94915244056702'
               scale='0.5 0.5 0.5'>
-            <TouchSensor USE='_6'/>
+            <TouchSensor USE='_7'/>
             <Shape>
               <Appearance USE='Image'/>
               <Extrusion USE='Extrusion_1'/>
             </Shape>
           </Transform>
           <Transform DEF='ElevationGrid_3'
-              rotation='4.33649e-09 3.62374e-06 -1 0.127565'
+              rotation='-5.98772685774869e-10 -3.62600322308696e-06 0.999999999993426 1.94915244056702'
               center='15 3 -3.69549e-06'>
-            <TouchSensor USE='_7'/>
+            <TouchSensor USE='_8'/>
             <Transform DEF='ElevationGrid_4'
                 translation='14 4 0'
                 rotation='1 0 0 1.5708'>
@@ -321,8 +344,8 @@
           </Transform>
           <Transform DEF='IndexedFaceSet_2'
               translation='18 3 0'
-              rotation='4.33649e-09 3.62374e-06 -1 0.127565'>
-            <TouchSensor USE='_8'/>
+              rotation='-5.98772685774869e-10 -3.62600322308696e-06 0.999999999993426 1.94915244056702'>
+            <TouchSensor USE='_9'/>
             <Shape>
               <Appearance USE='Image'/>
               <IndexedFaceSet USE='IndexedFaceSet_1'/>
@@ -387,7 +410,7 @@
                 string='" Geometry3D"'
                 solid='true'>
               <FontStyle
-                  family='"Ubuntu", "SANS"'
+                  family='"SANS"'
                   size='1.61'
                   justify='"BEGIN", "BEGIN"'/>
             </Text>
@@ -447,7 +470,7 @@ function set_phong ()
                   string='"Shading"'
                   solid='true'>
                 <FontStyle
-                    family='"Ubuntu", "SANS"'
+                    family='"SANS"'
                     style='BOLD'
                     size='0.68'
                     justify='"END"'/>
@@ -464,9 +487,7 @@ function set_phong ()
               <Text
                   string='"Pointset   Wireframe   Flat   Gouraud   Phong"'
                   solid='true'>
-                <FontStyle
-                    family='"Ubuntu", "SANS"'
-                    justify='"END"'/>
+                <FontStyle USE='_1'/>
               </Text>
             </Shape>
           </Transform>
@@ -475,26 +496,8 @@ function set_phong ()
               scale='0.139972 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material DEF='_9'
+                <Material DEF='_10'
                     transparency='1'/>
-              </Appearance>
-              <IndexedFaceSet
-                  texCoordIndex='0, 1, 2, 3, -1'
-                  coordIndex='0, 1, 2, 3, -1'>
-                <TextureCoordinate
-                    point='0 0, 1 0, 1 1, 0 1'/>
-                <Coordinate
-                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-              </IndexedFaceSet>
-            </Shape>
-            <TouchSensor DEF='_10'/>
-          </Transform>
-          <Transform DEF='Wireframe'
-              translation='0.77569 -0.916146 0'
-              scale='0.177062 0.040588 0.040588'>
-            <Shape>
-              <Appearance>
-                <Material USE='_9'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -507,12 +510,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_11'/>
           </Transform>
-          <Transform DEF='Flat'
-              translation='1.04432 -0.916146 0'
-              scale='0.0743511 0.040588 0.040588'>
+          <Transform DEF='Wireframe'
+              translation='0.77569 -0.916146 0'
+              scale='0.177062 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_9'/>
+                <Material USE='_10'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -525,12 +528,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_12'/>
           </Transform>
-          <Transform DEF='Gouraud'
-              translation='1.27986 -0.916146 0'
-              scale='0.142825 0.040588 0.040588'>
+          <Transform DEF='Flat'
+              translation='1.04432 -0.916146 0'
+              scale='0.0743511 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_9'/>
+                <Material USE='_10'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -543,12 +546,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_13'/>
           </Transform>
-          <Transform DEF='Phong'
-              translation='1.55457 -0.916146 0'
-              scale='0.111441 0.040588 0.040588'>
+          <Transform DEF='Gouraud'
+              translation='1.27986 -0.916146 0'
+              scale='0.142825 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_9'/>
+                <Material USE='_10'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -561,10 +564,28 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_14'/>
           </Transform>
+          <Transform DEF='Phong'
+              translation='1.55457 -0.916146 0'
+              scale='0.111441 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_10'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_15'/>
+          </Transform>
         </Group>
       </Layer>
     </LayerSet>
-    <ROUTE fromNode='_1' fromField='fraction_changed' toNode='BoxRotationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='BoxRotationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Box' toField='set_rotation'/>
     <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='IndexedFaceSet_2' toField='set_rotation'/>
     <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Extrusion_2' toField='set_rotation'/>
@@ -579,10 +600,10 @@ function set_phong ()
     <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='Sphere' toField='set_rotation'/>
     <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='ElevationGrid' toField='set_rotation'/>
     <ROUTE fromNode='BoxRotationInterpolator' fromField='value_changed' toNode='ElevationGrid_3' toField='set_rotation'/>
-    <ROUTE fromNode='_14' fromField='touchTime' toNode='ShadingScript' toField='set_phong'/>
-    <ROUTE fromNode='_13' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
-    <ROUTE fromNode='_12' fromField='touchTime' toNode='ShadingScript' toField='set_flat'/>
-    <ROUTE fromNode='_11' fromField='touchTime' toNode='ShadingScript' toField='set_wireframe'/>
-    <ROUTE fromNode='_10' fromField='touchTime' toNode='ShadingScript' toField='set_pointset'/>
+    <ROUTE fromNode='_15' fromField='touchTime' toNode='ShadingScript' toField='set_phong'/>
+    <ROUTE fromNode='_14' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
+    <ROUTE fromNode='_13' fromField='touchTime' toNode='ShadingScript' toField='set_flat'/>
+    <ROUTE fromNode='_12' fromField='touchTime' toNode='ShadingScript' toField='set_wireframe'/>
+    <ROUTE fromNode='_11' fromField='touchTime' toNode='ShadingScript' toField='set_pointset'/>
   </Scene>
 </X3D>
