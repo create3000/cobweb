@@ -245,13 +245,6 @@ function (Fields,
 		{
 			return this .clipPlanes;
 		},
-		onfullscreen: function ()
-		{
-			if (this .getElement () .fullScreen ())
-				this .getElement () .addClass  ("cobweb-fullscreen");
-			else
-				this .getElement () .removeClass ("cobweb-fullscreen");
-		},
 		reshape: function ()
 		{
 			var
@@ -272,6 +265,13 @@ function (Fields,
 
 				this .addBrowserEvent ();
 			}
+		},
+		onfullscreen: function ()
+		{
+			if (this .getElement () .fullScreen ())
+				this .getElement () .addClass  ("cobweb-fullscreen");
+			else
+				this .getElement () .removeClass ("cobweb-fullscreen");
 		},
 	};
 

@@ -108,24 +108,22 @@ function (DepthBuffer)
 		},
 		set_shadowIntensityBuffers__: function ()
 		{
-			try
-			{
-				var
-					maxLights = this .getMaxLights (),
-					width     = this .viewport_ [2],
-					height    = this .viewport_ [3];
-
-				for (var i = 0; i < maxLights; ++ i)
-					this .shadowIntensityBuffers [i] = new DepthBuffer (this, width, height);
-	
-				this .shadowIntensityBuffers .length = maxLights;
-	
-				console .log (this .shadowIntensityBuffers);
-			}
-			catch (error)
-			{
-				console .log (error);
-			}
+//			try
+//			{
+//				var
+//					maxLights = this .getMaxLights (),
+//					width     = this .viewport_ [2],
+//					height    = this .viewport_ [3];
+//
+//				for (var i = 0; i < maxLights; ++ i)
+//					this .shadowIntensityBuffers [i] = new DepthBuffer (this, width, height);
+//	
+//				this .shadowIntensityBuffers .length = maxLights;
+//			}
+//			catch (error)
+//			{
+//				console .log (error);
+//			}
 		},
 	};
 
