@@ -120,7 +120,8 @@ function ($,
 			this .image .load (this .setImage .bind (this));
 			this .image .error (this .setError .bind (this));
 			this .image .bind ("abort", this .setError .bind (this));
-			this .image .attr ("crossOrigin", "anonymous");
+
+			this .image [0] .crossOrigin = "Anonymous";
 
 			this .requestAsyncLoad ();
 		},

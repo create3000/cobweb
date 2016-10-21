@@ -1253,6 +1253,7 @@
     <None Include="cobweb.dom.integration.xhtml" />
     <None Include="tests\Components\ComposedCubeMapTexture\ComposedCubeMapMovieTexture.x3d" />
     <None Include="lib\DataStorage.js" />
+    <None Include="test.xhtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

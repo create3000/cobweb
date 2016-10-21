@@ -126,9 +126,10 @@ function ($,
 			this .audio = $("<audio></audio>");
 			this .audio .error (this .setError .bind (this));
 			this .audio .bind ("abort", this .setError .bind (this));
-			this .audio .attr ("preload", "auto");
-			this .audio .attr ("volume", 0);
-			this .audio .attr ("crossOrigin", "anonymous");
+
+			this .audio [0] .preload     = "auto";
+			this .audio [0] .volume      = 0;
+			this .audio [0] .crossOrigin = "Anonymous";
 
 			this .requestAsyncLoad ();
 		},

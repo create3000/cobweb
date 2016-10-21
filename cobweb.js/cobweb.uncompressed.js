@@ -19214,7 +19214,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "2.2";
+	return "2.3a";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -69344,7 +69344,8 @@ function ($,
 			this .image .load (this .setImage .bind (this));
 			this .image .error (this .setError .bind (this));
 			this .image .bind ("abort", this .setError .bind (this));
-			this .image .attr ("crossOrigin", "anonymous");
+
+			this .image [0] .crossOrigin = "Anonymous";
 
 			this .requestAsyncLoad ();
 		},
@@ -73246,9 +73247,10 @@ function ($,
 			this .audio = $("<audio></audio>");
 			this .audio .error (this .setError .bind (this));
 			this .audio .bind ("abort", this .setError .bind (this));
-			this .audio .attr ("preload", "auto");
-			this .audio .attr ("volume", 0);
-			this .audio .attr ("crossOrigin", "anonymous");
+
+			this .audio [0] .preload     = "auto";
+			this .audio [0] .volume      = 0;
+			this .audio [0] .crossOrigin = "Anonymous";
 
 			this .requestAsyncLoad ();
 		},
@@ -88892,9 +88894,10 @@ function ($,
 			this .video = $("<video></video>");
 			this .video .error (this .setError .bind (this));
 			this .video .bind ("abort", this .setError .bind (this));
-			this .video .attr ("preload", "auto");
-			this .video .attr ("volume", 0);
-			this .video .attr ("crossOrigin", "anonymous");
+
+			this .video [0] .preload     = "auto";
+			this .video [0] .volume      = 0;
+			this .video [0] .crossOrigin = "Anonymous";
 
 			this .requestAsyncLoad ();
 		},

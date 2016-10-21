@@ -136,9 +136,10 @@ function ($,
 			this .video = $("<video></video>");
 			this .video .error (this .setError .bind (this));
 			this .video .bind ("abort", this .setError .bind (this));
-			this .video .attr ("preload", "auto");
-			this .video .attr ("volume", 0);
-			this .video .attr ("crossOrigin", "anonymous");
+
+			this .video [0] .preload     = "auto";
+			this .video [0] .volume      = 0;
+			this .video [0] .crossOrigin = "Anonymous";
 
 			this .requestAsyncLoad ();
 		},
