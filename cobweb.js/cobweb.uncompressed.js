@@ -19214,7 +19214,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "2.2";
+	return "2.3a";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -23342,11 +23342,11 @@ function ($,
 {
 
 	
+	$("head") .append ('<style>.cobweb-menu-title:before { content: "' + _("Cobweb X3D Browser") + '" }</style>');
+
 	function ContextMenu (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext);
-
-		$("head") .append ('<style>.cobweb-menu-title:before { content: "' + _("Cobweb X3D Browser") + '" }</style>');
 	}
 
 	ContextMenu .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -23369,7 +23369,7 @@ function ($,
 			X3DBaseNode .prototype .initialize .call (this);
 
 			$.contextMenu ({
-				selector: '.cobweb-surface', 
+				selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
 				build: this .build .bind (this),
 			});
 		},
@@ -23382,7 +23382,7 @@ function ($,
 				fullscreen       = this .getBrowser () .getElement () .fullScreen ();
 
 			var menu = {
-				className: 'cobweb-menu cobweb-menu-title',
+				className: "cobweb-menu cobweb-menu-title",
 				items: {
 					"separator0": "--------",
 					"viewpoints": {
@@ -23784,11 +23784,11 @@ function (BrowserOptions,
 
 		// Get canvas & context.
 
-		var browser  = $("<div></div>") .addClass ("cobweb-browser") .prependTo (this .element);
+		var browser  = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
 		var loading  = $("<div></div>") .addClass ("cobweb-loading")  .appendTo (browser);
 		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
 		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
-		var canvas   = $("<div></div>") .addClass ("cobweb-surface")  .appendTo (browser);
+		var surface  = $("<div></div>") .addClass ("cobweb-surface")  .appendTo (browser);
 
 		$("<div></div>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
 		$("<div></div>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
@@ -23797,7 +23797,8 @@ function (BrowserOptions,
 		$("<div></div>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div></div>"));
 
 		this .loading = loading;
-		this .canvas  = $("<canvas></canvas>") .prependTo (canvas);
+		this .surface = surface;
+		this .canvas  = $("<canvas></canvas>") .prependTo (surface);
 		this .context = getContext (this .canvas [0]);
 
 		this .browserOptions      = new BrowserOptions (this);
@@ -23819,6 +23820,8 @@ function (BrowserOptions,
 			this .notification        .setup ();
 			this .browserTimings      .setup ();
 			this .contextMenu         .setup ();
+
+			this .surface .addClass ("cobweb-surface-" + this .getId ());
 		},
 		isStrict: function ()
 		{
@@ -56204,19 +56207,14 @@ function (DepthBuffer)
 	
 	function X3DLightingContext ()
 	{
-		this .localLights            = [ ]; // Local light dumpster
-		this .shadowBuffers          = [ ]; // Shadow buffer cache
-		this .shadowIntensityBuffers = [ ]; // Shadow intensity texture frame buffers
+		this .localLights   = [ ]; // Local light dumpster
+		this .shadowBuffers = [ ]; // Shadow buffer cache
 	}
 
 	X3DLightingContext .prototype =
 	{
 		initialize: function ()
-		{
-			this .viewport_ .addInterest (this, "set_shadowIntensityBuffers__");
-
-			this .set_shadowIntensityBuffers__ ();
-		},
+		{ },
 		getMaxLights: function ()
 		{
 			return 8;
@@ -56253,25 +56251,6 @@ function (DepthBuffer)
 		{
 			if (buffer)
 				this .shadowBuffers [buffer .getWidth ()] .push (buffer);
-		},
-		set_shadowIntensityBuffers__: function ()
-		{
-//			try
-//			{
-//				var
-//					maxLights = this .getMaxLights (),
-//					width     = this .viewport_ [2],
-//					height    = this .viewport_ [3];
-//
-//				for (var i = 0; i < maxLights; ++ i)
-//					this .shadowIntensityBuffers [i] = new DepthBuffer (this, width, height);
-//	
-//				this .shadowIntensityBuffers .length = maxLights;
-//			}
-//			catch (error)
-//			{
-//				console .log (error);
-//			}
 		},
 	};
 

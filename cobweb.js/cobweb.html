@@ -80,6 +80,11 @@ li + .bookmark-section {
 	height: 100%;
 }
 
+.second-browser {
+	float: left;
+	margin-right: 20px;
+}
+
 .fallback {
 	display: block;
 	margin: 300px 0 0 0;
@@ -442,12 +447,10 @@ function loadURL ()
 				<tr><td><input style="width:100%"/></td><td style="width:10%"><button onclick="loadURL ()" style="width:100%">Load URL</button></td></tr>
 			</table>
 			<div class="toggle"><a href="cobweb.min.html">cobweb.min.html</a> | <a href="http://rawgit.com/create3000/cobweb/master/cobweb.js/cobweb.min.html">github</a></div>
+			<X3DCanvas class="second-browser" cache="false" src="tests/Components/Rendering/IndexedLineSet.x3d"></X3DCanvas>
 			<p class="version cobweb-dev"></p>
 			<p class="-cobweb-console"></p>
 		</div>
-	</div>
-	<div class="second">
-		<X3DCanvas cache="false" src="tests/Components/Rendering/IndexedLineSet.x3d"></X3DCanvas>
 	</div>
 </body>
 </html>

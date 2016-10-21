@@ -56,19 +56,14 @@ function (DepthBuffer)
 	
 	function X3DLightingContext ()
 	{
-		this .localLights            = [ ]; // Local light dumpster
-		this .shadowBuffers          = [ ]; // Shadow buffer cache
-		this .shadowIntensityBuffers = [ ]; // Shadow intensity texture frame buffers
+		this .localLights   = [ ]; // Local light dumpster
+		this .shadowBuffers = [ ]; // Shadow buffer cache
 	}
 
 	X3DLightingContext .prototype =
 	{
 		initialize: function ()
-		{
-			this .viewport_ .addInterest (this, "set_shadowIntensityBuffers__");
-
-			this .set_shadowIntensityBuffers__ ();
-		},
+		{ },
 		getMaxLights: function ()
 		{
 			return 8;
@@ -105,25 +100,6 @@ function (DepthBuffer)
 		{
 			if (buffer)
 				this .shadowBuffers [buffer .getWidth ()] .push (buffer);
-		},
-		set_shadowIntensityBuffers__: function ()
-		{
-//			try
-//			{
-//				var
-//					maxLights = this .getMaxLights (),
-//					width     = this .viewport_ [2],
-//					height    = this .viewport_ [3];
-//
-//				for (var i = 0; i < maxLights; ++ i)
-//					this .shadowIntensityBuffers [i] = new DepthBuffer (this, width, height);
-//	
-//				this .shadowIntensityBuffers .length = maxLights;
-//			}
-//			catch (error)
-//			{
-//				console .log (error);
-//			}
 		},
 	};
 
