@@ -51,6 +51,8 @@ define (function ()
 {
 "use strict";
 
+	var namespaces = new WeakMap ();
+
 	var handler =
 	{
 		get: function (target, key)
@@ -58,28 +60,36 @@ define (function ()
 			if (key in target)
 				return target [key];
 			
-			if (localStorage [key] === undefined)
+			var value = localStorage [target .getNameSpace () + key];
+
+			if (value === undefined)
 			   return undefined;
 
-			return JSON .parse (localStorage [key])
+			return JSON .parse (value)
 		},
 		set: function (target, key, value)
 		{
-			localStorage [key] = JSON .stringify (value);
+			localStorage [target .getNameSpace () + key] = JSON .stringify (value);
 			return true;
 		},
 	};
 
-	function DataStorage ()
+	function DataStorage (namespace)
 	{
+		namespaces .set (this, namespace);
+
 		return new Proxy (this, handler);
 	}
 
 	DataStorage .prototype = {
 		constructor: DataStorage,
+		getNameSpace: function ()
+		{
+			return namespaces .get (this);
+		},
 		removeItem: function (key)
 		{
-			return localStorage .removeItem (key);
+			return localStorage .removeItem (this .getNameSpace () + key);
 		},
 		clear: function ()
 		{
@@ -87,5 +97,5 @@ define (function ()
 		},
 	}
 
-	return new DataStorage ();
+	return DataStorage;
 });

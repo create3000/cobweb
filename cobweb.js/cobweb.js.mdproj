@@ -647,7 +647,6 @@
     <None Include="images\TextureQuality.png" />
     <None Include="images\PrimitiveQuality.png" />
     <None Include="tests\Components\Layering\Rotor.x3d" />
-    <None Include="lib\dataStorage.js" />
     <None Include="tests\Components\Lighting\LocalLight.x3d" />
     <None Include="cobweb\Browser\Geometry2D\X3DGeometry2DContext.js" />
     <None Include="cobweb\Browser\Geometry2D\Rectangle2DOptions.js" />
@@ -1253,6 +1252,7 @@
     <None Include="tests\Components\Rendering\cubes.x3d" />
     <None Include="cobweb.dom.integration.xhtml" />
     <None Include="tests\Components\ComposedCubeMapTexture\ComposedCubeMapMovieTexture.x3d" />
+    <None Include="lib\DataStorage.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

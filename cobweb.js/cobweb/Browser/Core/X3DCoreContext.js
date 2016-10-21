@@ -54,16 +54,20 @@ define ([
 	"cobweb/Browser/Core/Notification",
 	"cobweb/Browser/Core/BrowserTimings",
 	"cobweb/Browser/Core/ContextMenu",
+	"lib/DataStorage",
 ],
 function (BrowserOptions,
           BrowserProperties,
           RenderingProperties,
           Notification,
           BrowserTimings,
-          ContextMenu)
+          ContextMenu,
+          DataStorage)
 {
 "use strict";
 	
+	var number = 0;
+
 	function getContext (canvas)
 	{
 		var gl = canvas .getContext ("webgl") ||
@@ -91,6 +95,7 @@ function (BrowserOptions,
 
 	function X3DCoreContext (element)
 	{
+		this .number  = ++ number;
 		this .element = element;
 
 		// Get canvas & context.
@@ -99,7 +104,7 @@ function (BrowserOptions,
 		var loading  = $("<div></div>") .addClass ("cobweb-loading")  .appendTo (browser);
 		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
 		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
-		var surface  = $("<div></div>") .addClass ("cobweb-surface")  .appendTo (browser);
+		var surface  = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
 
 		$("<div></div>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
 		$("<div></div>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
@@ -108,7 +113,6 @@ function (BrowserOptions,
 		$("<div></div>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div></div>"));
 
 		this .loading = loading;
-		this .surface = surface;
 		this .canvas  = $("<canvas></canvas>") .prependTo (surface);
 		this .context = getContext (this .canvas [0]);
 
@@ -118,6 +122,7 @@ function (BrowserOptions,
 		this .notification        = new Notification (this);
 		this .browserTimings      = new BrowserTimings (this);
 		this .contextMenu         = new ContextMenu (this);
+		this .dataStorage         = new DataStorage ("X3DBrowser(" + this .number + ").");
 		this .mobile              = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
 	}
 
@@ -131,8 +136,10 @@ function (BrowserOptions,
 			this .notification        .setup ();
 			this .browserTimings      .setup ();
 			this .contextMenu         .setup ();
-
-			this .surface .addClass ("cobweb-surface-" + this .getId ());
+		},
+		getNumber: function ()
+		{
+			return this .number;
 		},
 		isStrict: function ()
 		{
@@ -173,6 +180,10 @@ function (BrowserOptions,
 		getBrowserTimings: function ()
 		{
 			return this .browserTimings;
+		},
+		getDataStorage: function ()
+		{
+			return this .dataStorage;
 		},
 		getMobile: function ()
 		{

@@ -51,13 +51,11 @@ define ([
 	"jquery",
 	"cobweb/Fields/SFBool",
 	"cobweb/Basic/X3DBaseNode",
-	"lib/dataStorage",
 	"lib/gettext",
 ],
 function ($,
           SFBool,
           X3DBaseNode,
-          dataStorage,
           _)
 {
 "use strict";
@@ -93,7 +91,7 @@ function ($,
 			this .enabled_ .addInterest (this, "set_enabled__");
 
 			this .localeOptions = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
-			this .type          = dataStorage ["BrowserTimings.type"] || "LESS";
+			this .type          = this .getBrowser () .getDataStorage () ["BrowserTimings.type"] || "LESS";
 			this .startTime     = 0;
 			this .frames        = 0;
 
@@ -107,12 +105,12 @@ function ($,
 
 			this .set_button__ ();
 
-			if (dataStorage ["BrowserTimings.enabled"])
+			if (this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"])
 				this .enabled_ = true;
 		},
 		set_enabled__: function (enabled)
 		{
-			dataStorage ["BrowserTimings.enabled"] = enabled .getValue ();
+			this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
 
 			if (enabled .getValue ())
 			{
@@ -133,7 +131,7 @@ function ($,
 			else
 				this .type = "MORE";
 
-			dataStorage ["BrowserTimings.type"] = this .type;
+			this .getBrowser () .getDataStorage () ["BrowserTimings.type"] = this .type;
 
 			this .set_button__ ();
 			this .build ();
