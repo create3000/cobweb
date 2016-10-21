@@ -20135,97 +20135,6 @@ define ('cobweb/Browser/Core/TextureQuality',[],function ()
  ******************************************************************************/
 
 
-define ('lib/dataStorage',[],function ()
-{
-
-
-	var handler =
-	{
-		get: function (target, key)
-		{
-			if (key in target)
-				return target [key];
-			
-			if (localStorage [key] === undefined)
-			   return undefined;
-
-			return JSON .parse (localStorage [key])
-		},
-		set: function (target, key, value)
-		{
-			localStorage [key] = JSON .stringify (value);
-			return true;
-		},
-	};
-
-	function DataStorage ()
-	{
-		return new Proxy (this, handler);
-	}
-
-	DataStorage .prototype = {
-		constructor: DataStorage,
-		removeItem: function (key)
-		{
-			return localStorage .removeItem (key);
-		},
-		clear: function ()
-		{
-			return localStorage .clear ();
-		},
-	}
-
-	return new DataStorage ();
-});
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
 define ('cobweb/Browser/Core/BrowserOptions',[
 	"jquery",
 	"cobweb/Fields",
@@ -20235,7 +20144,6 @@ define ('cobweb/Browser/Core/BrowserOptions',[
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Core/PrimitiveQuality",
 	"cobweb/Browser/Core/TextureQuality",
-	"lib/dataStorage",
 ],
 function ($,
           Fields,
@@ -20244,8 +20152,7 @@ function ($,
           X3DBaseNode,
           X3DConstants,
           PrimitiveQuality,
-          TextureQuality,
-          dataStorage)
+          TextureQuality)
 {
 
 	
@@ -20309,7 +20216,7 @@ function ($,
 					fieldDefinition = fieldDefinitions [i],
 					field           = this .getField (fieldDefinition .name);
 
-				if (dataStorage ["BrowserOptions." + fieldDefinition .name] !== undefined)
+				if (this .getBrowser () .getDataStorage () ["BrowserOptions." + fieldDefinition .name] !== undefined)
 					continue;
 
 				if (! field .equals (fieldDefinition .value))
@@ -20317,9 +20224,9 @@ function ($,
 			}
 
 			var
-				rubberband       = dataStorage ["BrowserOptions.Rubberband"],
-				primitiveQuality = dataStorage ["BrowserOptions.PrimitiveQuality"],
-				textureQuality   = dataStorage ["BrowserOptions.TextureQuality"];
+				rubberband       = this .getBrowser () .getDataStorage () ["BrowserOptions.Rubberband"],
+				primitiveQuality = this .getBrowser () .getDataStorage () ["BrowserOptions.PrimitiveQuality"],
+				textureQuality   = this .getBrowser () .getDataStorage () ["BrowserOptions.TextureQuality"];
 				
 			if (rubberband       !== undefined && rubberband       !== this .Rubberband_       .getValue ()) this .Rubberband_       = rubberband;
 			if (primitiveQuality !== undefined && primitiveQuality !== this .PrimitiveQuality_ .getValue ()) this .PrimitiveQuality_ = primitiveQuality;
@@ -20339,11 +20246,11 @@ function ($,
 		},
 		set_rubberband__: function (rubberband)
 		{
-			dataStorage ["BrowserOptions.Rubberband"] = rubberband .getValue ();
+			this .getBrowser () .getDataStorage () ["BrowserOptions.Rubberband"] = rubberband .getValue ();
 		},
 		set_primitiveQuality__: function (primitiveQuality)
 		{
-			dataStorage ["BrowserOptions.PrimitiveQuality"] = primitiveQuality .getValue ();
+			this .getBrowser () .getDataStorage () ["BrowserOptions.PrimitiveQuality"] = primitiveQuality .getValue ();
 
 			var
 				arc      = this .getBrowser () .getArc2DOptions (),
@@ -20408,7 +20315,7 @@ function ($,
 		},
 		set_textureQuality__: function (textureQuality)
 		{
-			dataStorage ["BrowserOptions.TextureQuality"] = textureQuality .getValue ();
+			this .getBrowser () .getDataStorage () ["BrowserOptions.TextureQuality"] = textureQuality .getValue ();
 
 			var textureProperties = this .getBrowser () .getDefaultTextureProperties ();
 
@@ -21285,13 +21192,11 @@ define ('cobweb/Browser/Core/BrowserTimings',[
 	"jquery",
 	"cobweb/Fields/SFBool",
 	"cobweb/Basic/X3DBaseNode",
-	"lib/dataStorage",
 	"lib/gettext",
 ],
 function ($,
           SFBool,
           X3DBaseNode,
-          dataStorage,
           _)
 {
 
@@ -21327,7 +21232,7 @@ function ($,
 			this .enabled_ .addInterest (this, "set_enabled__");
 
 			this .localeOptions = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
-			this .type          = dataStorage ["BrowserTimings.type"] || "LESS";
+			this .type          = this .getBrowser () .getDataStorage () ["BrowserTimings.type"] || "LESS";
 			this .startTime     = 0;
 			this .frames        = 0;
 
@@ -21341,12 +21246,12 @@ function ($,
 
 			this .set_button__ ();
 
-			if (dataStorage ["BrowserTimings.enabled"])
+			if (this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"])
 				this .enabled_ = true;
 		},
 		set_enabled__: function (enabled)
 		{
-			dataStorage ["BrowserTimings.enabled"] = enabled .getValue ();
+			this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
 
 			if (enabled .getValue ())
 			{
@@ -21367,7 +21272,7 @@ function ($,
 			else
 				this .type = "MORE";
 
-			dataStorage ["BrowserTimings.type"] = this .type;
+			this .getBrowser () .getDataStorage () ["BrowserTimings.type"] = this .type;
 
 			this .set_button__ ();
 			this .build ();
@@ -23342,11 +23247,11 @@ function ($,
 {
 
 	
+	$("head") .append ('<style>.cobweb-menu-title:before { content: "' + _("Cobweb X3D Browser") + '" }</style>');
+
 	function ContextMenu (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext);
-
-		$("head") .append ('<style>.cobweb-menu-title:before { content: "' + _("Cobweb X3D Browser") + '" }</style>');
 	}
 
 	ContextMenu .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -23369,7 +23274,7 @@ function ($,
 			X3DBaseNode .prototype .initialize .call (this);
 
 			$.contextMenu ({
-				selector: '.cobweb-surface', 
+				selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
 				build: this .build .bind (this),
 			});
 		},
@@ -23382,7 +23287,7 @@ function ($,
 				fullscreen       = this .getBrowser () .getElement () .fullScreen ();
 
 			var menu = {
-				className: 'cobweb-menu cobweb-menu-title',
+				className: "cobweb-menu cobweb-menu-title",
 				items: {
 					"separator0": "--------",
 					"viewpoints": {
@@ -23736,6 +23641,107 @@ function ($,
  ******************************************************************************/
 
 
+define ('lib/DataStorage',[],function ()
+{
+
+
+	var namespaces = new WeakMap ();
+
+	var handler =
+	{
+		get: function (target, key)
+		{
+			if (key in target)
+				return target [key];
+			
+			var value = localStorage [target .getNameSpace () + key];
+
+			if (value === undefined)
+			   return undefined;
+
+			return JSON .parse (value)
+		},
+		set: function (target, key, value)
+		{
+			localStorage [target .getNameSpace () + key] = JSON .stringify (value);
+			return true;
+		},
+	};
+
+	function DataStorage (namespace)
+	{
+		namespaces .set (this, namespace);
+
+		return new Proxy (this, handler);
+	}
+
+	DataStorage .prototype = {
+		constructor: DataStorage,
+		getNameSpace: function ()
+		{
+			return namespaces .get (this);
+		},
+		removeItem: function (key)
+		{
+			return localStorage .removeItem (this .getNameSpace () + key);
+		},
+		clear: function ()
+		{
+			return localStorage .clear ();
+		},
+	}
+
+	return DataStorage;
+});
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
 define ('cobweb/Browser/Core/X3DCoreContext',[
 	"cobweb/Browser/Core/BrowserOptions",
 	"cobweb/Browser/Core/BrowserProperties",
@@ -23743,16 +23749,20 @@ define ('cobweb/Browser/Core/X3DCoreContext',[
 	"cobweb/Browser/Core/Notification",
 	"cobweb/Browser/Core/BrowserTimings",
 	"cobweb/Browser/Core/ContextMenu",
+	"lib/DataStorage",
 ],
 function (BrowserOptions,
           BrowserProperties,
           RenderingProperties,
           Notification,
           BrowserTimings,
-          ContextMenu)
+          ContextMenu,
+          DataStorage)
 {
 
 	
+	var number = 0;
+
 	function getContext (canvas)
 	{
 		var gl = canvas .getContext ("webgl") ||
@@ -23780,15 +23790,16 @@ function (BrowserOptions,
 
 	function X3DCoreContext (element)
 	{
+		this .number  = ++ number;
 		this .element = element;
 
 		// Get canvas & context.
 
-		var browser  = $("<div></div>") .addClass ("cobweb-browser") .prependTo (this .element);
+		var browser  = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
 		var loading  = $("<div></div>") .addClass ("cobweb-loading")  .appendTo (browser);
 		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
 		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
-		var canvas   = $("<div></div>") .addClass ("cobweb-surface")  .appendTo (browser);
+		var surface  = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
 
 		$("<div></div>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
 		$("<div></div>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
@@ -23797,7 +23808,7 @@ function (BrowserOptions,
 		$("<div></div>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div></div>"));
 
 		this .loading = loading;
-		this .canvas  = $("<canvas></canvas>") .prependTo (canvas);
+		this .canvas  = $("<canvas></canvas>") .prependTo (surface);
 		this .context = getContext (this .canvas [0]);
 
 		this .browserOptions      = new BrowserOptions (this);
@@ -23806,6 +23817,7 @@ function (BrowserOptions,
 		this .notification        = new Notification (this);
 		this .browserTimings      = new BrowserTimings (this);
 		this .contextMenu         = new ContextMenu (this);
+		this .dataStorage         = new DataStorage ("X3DBrowser(" + this .number + ").");
 		this .mobile              = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
 	}
 
@@ -23819,6 +23831,10 @@ function (BrowserOptions,
 			this .notification        .setup ();
 			this .browserTimings      .setup ();
 			this .contextMenu         .setup ();
+		},
+		getNumber: function ()
+		{
+			return this .number;
 		},
 		isStrict: function ()
 		{
@@ -23859,6 +23875,10 @@ function (BrowserOptions,
 		getBrowserTimings: function ()
 		{
 			return this .browserTimings;
+		},
+		getDataStorage: function ()
+		{
+			return this .dataStorage;
 		},
 		getMobile: function ()
 		{
@@ -56204,19 +56224,14 @@ function (DepthBuffer)
 	
 	function X3DLightingContext ()
 	{
-		this .localLights            = [ ]; // Local light dumpster
-		this .shadowBuffers          = [ ]; // Shadow buffer cache
-		this .shadowIntensityBuffers = [ ]; // Shadow intensity texture frame buffers
+		this .localLights   = [ ]; // Local light dumpster
+		this .shadowBuffers = [ ]; // Shadow buffer cache
 	}
 
 	X3DLightingContext .prototype =
 	{
 		initialize: function ()
-		{
-			this .viewport_ .addInterest (this, "set_shadowIntensityBuffers__");
-
-			this .set_shadowIntensityBuffers__ ();
-		},
+		{ },
 		getMaxLights: function ()
 		{
 			return 8;
@@ -56253,25 +56268,6 @@ function (DepthBuffer)
 		{
 			if (buffer)
 				this .shadowBuffers [buffer .getWidth ()] .push (buffer);
-		},
-		set_shadowIntensityBuffers__: function ()
-		{
-//			try
-//			{
-//				var
-//					maxLights = this .getMaxLights (),
-//					width     = this .viewport_ [2],
-//					height    = this .viewport_ [3];
-//
-//				for (var i = 0; i < maxLights; ++ i)
-//					this .shadowIntensityBuffers [i] = new DepthBuffer (this, width, height);
-//	
-//				this .shadowIntensityBuffers .length = maxLights;
-//			}
-//			catch (error)
-//			{
-//				console .log (error);
-//			}
 		},
 	};
 
@@ -56329,10 +56325,8 @@ function (DepthBuffer)
 
 define ('cobweb/Browser/Sound/X3DSoundContext',[
 	"cobweb/Fields",
-	"lib/dataStorage",
 ],
-function (Fields,
-          dataStorage)
+function (Fields)
 {
 
 
@@ -56350,19 +56344,19 @@ function (Fields,
 			this .mute_   .addInterest (this, "set_mute__");
 
 			var
-				volume = dataStorage ["X3DSoundContext.volume"],
-				mute   = dataStorage ["X3DSoundContext.mute"];
+				volume = this .getDataStorage () ["X3DSoundContext.volume"],
+				mute   = this .getDataStorage () ["X3DSoundContext.mute"];
 
 			if (volume !== undefined) this .volume_ = volume;
 			if (mute   !== undefined) this .mute_   = mute;
 		},
 		set_volume__: function (volume)
 		{
-			dataStorage ["X3DSoundContext.volume"] = volume .getValue ();
+			this .getDataStorage () ["X3DSoundContext.volume"] = volume .getValue ();
 		},
 		set_mute__: function (mute)
 		{
-			dataStorage ["X3DSoundContext.mute"] = mute .getValue ();
+			this .getDataStorage () ["X3DSoundContext.mute"] = mute .getValue ();
 		},
 	};
 
