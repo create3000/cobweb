@@ -126,7 +126,7 @@ li + .bookmark-section {
 		</style>
 	<script type="text/javascript" src="Bookmarks.js"></script>
 	<script type="text/javascript">
-X3D (function (dom)
+X3D (function (X3DCanvases)
 {
 	var pages =
 	[
@@ -199,7 +199,7 @@ X3D (function (dom)
 	];
 
 	var
-		Browser   = X3D .getBrowser (dom),
+		Browser   = X3D .getBrowser (X3DCanvases),
 		bookmarks = new Bookmarks (Browser, $(".bookmarks"), pages, 19);
 
 	bookmarks .setup ();

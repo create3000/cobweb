@@ -1122,7 +1122,6 @@
     <None Include="cobweb\Execution\ExportedNode.js" />
     <None Include="cobweb\Execution\ImportedNode.js" />
     <None Include="tests\Components\Scripting\string.x3dv" />
-    <None Include="iframe.html" />
     <None Include="examples\noise\noise.x3d" />
     <None Include="examples\noise\noise2.x3d" />
     <None Include="examples\fourmilab\earth.x3d" />
@@ -1245,15 +1244,17 @@
     <None Include="tests\Components\Shaders\PointFloatVertexAttribute.x3d" />
     <None Include="tests\Components\Shaders\PointMatrix3VertexAttribute.x3d" />
     <None Include="tests\Components\Shaders\PointMatrix4VertexAttribute.x3d" />
-    <None Include="test.html" />
     <None Include="tests\Components\Scripting\createX3DFromString.x3d" />
-    <None Include="test.x3d" />
     <None Include="tests\Components\Scripting\AddRemoveRoute.x3d" />
     <None Include="tests\Components\Rendering\cubes.x3d" />
     <None Include="cobweb.dom.integration.xhtml" />
     <None Include="tests\Components\ComposedCubeMapTexture\ComposedCubeMapMovieTexture.x3d" />
     <None Include="lib\DataStorage.js" />
-    <None Include="test.xhtml" />
+    <None Include="tests\HTML\ImportDocumentRootNodes.html" />
+    <None Include="tests\HTML\test.x3d" />
+    <None Include="tests\HTML\test.xhtml" />
+    <None Include="tests\HTML\iframe.html" />
+    <None Include="tests\HTML\createBrowser.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1323,5 +1324,6 @@
     <Folder Include="tests\Components\ParticleSystems\" />
     <Folder Include="cobweb\Browser\ParticleSystems\" />
     <Folder Include="cobweb\Browser\Shaders\Bits\" />
+    <Folder Include="tests\HTML\" />
   </ItemGroup>
 </Project>

@@ -124,12 +124,21 @@ function ($,
 
 	// X3D
 
+	function createBrowser (url, parameter)
+	{
+		var element = $("<X3DCanvas></X3DCanvas>") .attr ("url", url .toString ());
+
+		createBrowserFromElement (element);
+
+		return element [0];
+	}
+
 	function getBrowser (dom)
 	{
 		return $(dom) .data ("browser");
 	}
 
-	function createBrowser (dom)
+	function createBrowserFromElement (dom)
 	{
 		dom = $(dom);
 
@@ -169,7 +178,7 @@ function ($,
 
 			try
 			{
-				var browsers = $.map (elements, createBrowser);
+				var browsers = $.map (elements, createBrowserFromElement);
 
 				numBrowsers = browsers .length;
 
@@ -182,6 +191,8 @@ function ($,
 						browser .initialized () .addFieldCallback ("initialized" + browser .getId (), set_initialized .bind (null, browser, elements));
 					}
 				}
+				else
+					set_initialized (null, []);
 			}
 			catch (error)
 			{
@@ -195,13 +206,13 @@ function ($,
 
 	function set_initialized (browser, elements)
 	{
-		browser .initialized () .removeFieldCallback ("initialized" + browser .getId ());
+		if (browser)
+			browser .initialized () .removeFieldCallback ("initialized" + browser .getId ());
 
-		if (-- numBrowsers)
+		if (-- numBrowsers > 0)
 			return;
 
-		callbacks .resolve (elements);
-		
+		callbacks .resolve (Array .prototype .slice .call (elements));
 	}
 
 	$.extend (X3D,
