@@ -48,7 +48,6 @@
 
 
 define ([
-	"jquery",
 	"cobweb/Fields",
 	"cobweb/Components/Networking/LoadSensor",
 	"cobweb/Browser/Networking/urls",
@@ -56,8 +55,7 @@ define ([
 	"lib/sprintf.js/src/sprintf",
 	"lib/gettext",
 ],
-function ($,
-          Fields,
+function (Fields,
           LoadSensor,
           urls,
           URI,
