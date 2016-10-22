@@ -58,6 +58,7 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
+	"standard/Math/Algorithm",
 	"cobweb/DEBUG",
 ],
 function ($,
@@ -70,6 +71,7 @@ function ($,
           X3DConstants,
           urls,
           URI,
+          Algorithm,
           DEBUG)
 {
 "use strict";
@@ -211,6 +213,9 @@ function ($,
 					height = video .videoHeight,
 					canvas = this .canvas [0],
 					cx     = canvas .getContext ("2d");
+
+				if (! Algorithm .isPowerOfTwo (width) || ! Algorithm .isPowerOfTwo (height))
+					throw new Error ("The movie texture is a non power-of-two texture.");
 
 				canvas .width  = width;
 				canvas .height = height;
