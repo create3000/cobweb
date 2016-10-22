@@ -167,6 +167,7 @@ function ($,
 	X3DBackgroundNode .prototype = $.extend (Object .create (X3DBindableNode .prototype),
 	{
 		constructor: X3DBackgroundNode,
+		modelViewMatrix: new Matrix4 (),
 		rotation: new Rotation4 (),
 		textureMatrixArray: new Float32Array (new Matrix4 ()),
 		rectangleCount: 6,
@@ -469,7 +470,7 @@ function ($,
 				case TraverseType .CAMERA:
 				{
 					renderObject .getLayer () .getBackgrounds () .push (this);
-		
+
 					this .transformationMatrix .assign (renderObject .getModelViewMatrix () .get ());
 					break;
 				}
@@ -478,10 +479,10 @@ function ($,
 					var
 						sourcePlanes = renderObject .getClipPlanes (),
 						destPlanes   = this .clipPlanes;
-	
+
 					for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
 						destPlanes [i] = sourcePlanes [i];
-					
+
 					destPlanes .length = sourcePlanes .length;
 					break;
 				}
@@ -509,7 +510,7 @@ function ($,
 				viewpoint       = renderObject .getViewpoint (),
 				scale           = viewpoint .getScreenScale (point, viewport),
 				rotation        = this .rotation,
-				modelViewMatrix = this .transformationMatrix;
+				modelViewMatrix = this .modelViewMatrix .assign (this .transformationMatrix);
 
 			scale .multiply (Math .max (viewport [2], viewport [3]));
 
@@ -526,7 +527,7 @@ function ($,
 			modelViewMatrix .rotate (rotation);
 
 			this .modelViewMatrixArray .set (modelViewMatrix);
-		
+
 			// Draw.
 
 			this .drawSphere (renderObject);
