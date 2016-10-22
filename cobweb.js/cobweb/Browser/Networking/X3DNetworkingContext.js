@@ -48,6 +48,7 @@
 
 
 define ([
+	"jquery",
 	"cobweb/Fields",
 	"cobweb/Components/Networking/LoadSensor",
 	"cobweb/Browser/Networking/urls",
@@ -55,7 +56,8 @@ define ([
 	"lib/sprintf.js/src/sprintf",
 	"lib/gettext",
 ],
-function (Fields,
+function ($,
+          Fields,
           LoadSensor,
           urls,
           URI,
@@ -66,6 +68,17 @@ function (Fields,
 	
 	var loadCountId = 0;
 
+	function getBaseURI (element)
+	{
+		var baseURI = element .baseURI;
+
+		// Fix for Edge.
+		if (baseURI .startsWith ("about:"))
+			baseURI = document .baseURI;
+
+		return new URI (baseURI);
+	}
+
 	function X3DNetworkingContext ()
 	{
 		this .cache = this .getElement () [0] .getAttribute ("cache") != "false";
@@ -75,7 +88,7 @@ function (Fields,
 		this .loadSensor     = new LoadSensor (this);
 		this .loadingTotal   = 0;
 		this .loadingObjects = { };
-		this .location       = new URI (this .getElement () [0] .baseURI);
+		this .location       = getBaseURI (this .getElement () [0]);
 		this .defaultScene   = this .createScene ();
 		this .privateScene   = this .createScene ();
 		this .browserLoading = false;
