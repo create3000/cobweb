@@ -48,20 +48,24 @@
 
 
 define ([
+	"cobweb/Fields",
 	"cobweb/Browser/Core/BrowserOptions",
 	"cobweb/Browser/Core/BrowserProperties",
 	"cobweb/Browser/Core/RenderingProperties",
 	"cobweb/Browser/Core/Notification",
 	"cobweb/Browser/Core/BrowserTimings",
 	"cobweb/Browser/Core/ContextMenu",
+	"cobweb/Parser/Parser",
 	"lib/DataStorage",
 ],
-function (BrowserOptions,
+function (Fields,
+          BrowserOptions,
           BrowserProperties,
           RenderingProperties,
           Notification,
           BrowserTimings,
           ContextMenu,
+          Parser,
           DataStorage)
 {
 "use strict";
@@ -136,6 +140,12 @@ function (BrowserOptions,
 			this .notification        .setup ();
 			this .browserTimings      .setup ();
 			this .contextMenu         .setup ();
+
+			// Observe Element's attributes.
+
+			this .observer = new MutationObserver (this .processMutations .bind (this));
+
+			this .observer .observe (this .element [0], { attributes: true, childList: false, characterData: false, subtree: false });
 		},
 		getNumber: function ()
 		{
@@ -188,6 +198,64 @@ function (BrowserOptions,
 		getMobile: function ()
 		{
 			return this .mobile;
+		},
+		processMutations: function (mutations)
+		{
+			mutations .forEach (function (mutation)
+			{
+				this .processMutation (mutation);
+			},
+			this);
+		},
+		processMutation: function (mutation)
+		{
+			var element = mutation .target;
+			
+			switch (mutation .type)
+			{
+				case "attributes":
+				{
+					this .processAttribute (mutation, element);
+					break;
+				}
+			}
+		},
+		processAttribute: function (mutation, element)
+		{
+			var attributeName = mutation .attributeName;
+
+			switch (attributeName)
+			{
+				case "src":
+					var urlCharacters = this .getElement () .attr ("src");
+		
+					if (urlCharacters)
+						this .load ('"' + urlCharacters + '"');
+
+					break;
+				case "url":
+					this .load (this .getElement () .attr ("url"));
+					break;
+				case "cache":
+					this .setCaching (this .getElement () .attr ("cache") != "false");
+					break;
+			}
+		},
+		load: function (urlCharacters)
+		{
+			if (urlCharacters)
+			{
+			   var
+			      parser    = new Parser (this .getExecutionContext (), true),
+			      url       = new Fields .MFString (),
+					parameter = new Fields .MFString ();
+
+				parser .setInput (urlCharacters);
+				parser .sfstringValues (url);
+
+				if (url .length)
+					this .loadURL (url, parameter);
+			}
 		},
 	};
 

@@ -58,8 +58,9 @@ body {
 		<script type="text/javascript">
 X3D (function (X3DCanvases)
 {
-	var X3DCanvas = $(X3D .createBrowser (new X3D .MFString ("tests/HTML/Cone.x3d")));
+	var X3DCanvas = $(X3D .createBrowser ());
 
+	X3DCanvas .attr ("url", new X3D .MFString ("tests/HTML/Cone.x3d"));
 	X3DCanvas .addClass ("browser");
 	X3DCanvas .appendTo ($("body"));
 },

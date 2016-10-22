@@ -1251,10 +1251,13 @@
     <None Include="tests\Components\ComposedCubeMapTexture\ComposedCubeMapMovieTexture.x3d" />
     <None Include="lib\DataStorage.js" />
     <None Include="tests\HTML\ImportDocumentRootNodes.html" />
-    <None Include="tests\HTML\test.x3d" />
-    <None Include="tests\HTML\test.xhtml" />
     <None Include="tests\HTML\iframe.html" />
     <None Include="tests\HTML\createBrowser.html" />
+    <None Include="tests\HTML\BasicXHTML.xhtml" />
+    <None Include="tests\HTML\Cone.x3d" />
+    <None Include="tests\HTML\createBrowser2.html" />
+    <None Include="tests\HTML\X3DCanvasSetUrlAttribute.html" />
+    <None Include="tests\HTML\Box.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

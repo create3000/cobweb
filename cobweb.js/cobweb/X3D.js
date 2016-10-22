@@ -126,7 +126,10 @@ function ($,
 
 	function createBrowser (url, parameter)
 	{
-		var element = $("<X3DCanvas></X3DCanvas>") .attr ("url", url .toString ());
+		var element = $("<X3DCanvas></X3DCanvas>");
+
+		if (url instanceof Fields .MFString)
+			 element .attr ("url", url .toString ())
 
 		createBrowserFromElement (element);
 

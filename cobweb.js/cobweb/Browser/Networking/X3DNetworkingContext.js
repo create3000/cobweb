@@ -98,6 +98,10 @@ function (Fields,
 		{
 			return urls .providerUrl;
 		},
+		setCaching: function (value)
+		{
+		   this .cache = value;
+		},
 		doCaching: function ()
 		{
 		   return this .cache;

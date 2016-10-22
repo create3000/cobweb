@@ -60,7 +60,6 @@ define ([
 	"cobweb/Execution/Scene",
 	"cobweb/InputOutput/Loader",
 	"cobweb/Parser/XMLParser",
-	"cobweb/Parser/Parser",
 	"cobweb/Bits/X3DConstants",
 	"lib/gettext",
 ],
@@ -76,7 +75,6 @@ function ($,
           Scene,
           Loader,
           XMLParser,
-          Parser,
           X3DConstants,
           _)
 {
@@ -147,19 +145,7 @@ function ($,
 			else
 				urlCharacters = this .getElement () [0] .getAttribute ("url");
 
-			if (urlCharacters)
-			{
-			   var
-			      parser    = new Parser (this .getExecutionContext (), true),
-			      url       = new Fields .MFString (),
-					parameter = new Fields .MFString ();
-
-				parser .setInput (urlCharacters);
-				parser .sfstringValues (url);
-
-				if (url .length)
-					this .loadURL (url, parameter);
-			}
+			this .load (urlCharacters);
 		},
 		getName: function ()
 		{
