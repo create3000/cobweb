@@ -965,6 +965,11 @@ function loadFromUrl(url, callback) {
         return callback(null, request.response);
     };
 
+	// HO: fixes font loading errors.
+	request.onerror = function () { 
+		return callback('Font could not be loaded: error');
+	}; 
+
     request.send();
 }
 
