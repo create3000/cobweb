@@ -168,7 +168,7 @@ function ($,
 				r           = 0;
 			
 			rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Frame rate") + ":")) .append ($("<td></td>") .text (f2(this .frames / (currentTime - this .startTime)) .toLocaleString (language, fixed) + " " + _("fps")));
-			rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Speed")      + ":")) .append ($("<td></td>") .text (f2(browser .currentSpeed)                          .toLocaleString (language, fixed) + " " + _("m/s")));
+			rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Speed")      + ":")) .append ($("<td></td>") .text (f2(this .getSpeed (browser .currentSpeed))         .toLocaleString (language, fixed) + " " + this .getSpeedUnit (browser .currentSpeed)));
 
 			if (this .type === "MORE")
 			{
@@ -209,6 +209,20 @@ function ($,
 			this .header .find ("th") .text (_("Browser Timings"));
 			this .body .empty ();
 			this .body .append (rows);
+		},
+		getSpeed: function (speed)
+		{
+			if (speed < 15)
+				return speed;
+
+			return speed * 3.6;
+		},
+		getSpeedUnit: function (speed)
+		{
+			if (speed < 15)
+				return _("m/s");
+
+			return _("km/h");
 		},
 	});
 

@@ -39,6 +39,10 @@ msgstr "Geschwindigkeit"
 msgid "m/s"
 msgstr ""
 
+#: Browser/Core/BrowserTimings.js:125
+msgid "km/h"
+msgstr ""
+
 #: Browser/Core/BrowserTimings.js:150
 msgid "Browser"
 msgstr ""
