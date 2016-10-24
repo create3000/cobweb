@@ -85,6 +85,7 @@ function (TextureProperties,
 			this .maxTextureSize          = gl .getParameter (gl .MAX_TEXTURE_SIZE);
 			this .maxTextureUnits         = gl .getParameter (gl .MAX_TEXTURE_IMAGE_UNITS);
 			this .maxCombinedTextureUnits = gl .getParameter (gl .MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+			this .textureMemory           = NaN;
 
 			var
 				textureUnits         = this .textureUnits,
@@ -151,6 +152,10 @@ function (TextureProperties,
 		getCombinedTextureUnits: function ()
 		{
 			return this .combinedTextureUnits;
+		},
+		getTextureMemory: function ()
+		{
+			return this .textureMemory;
 		},
 		getDefaultTextureProperties: function ()
 		{

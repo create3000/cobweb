@@ -128,6 +128,7 @@ function ($,
 			                "                Max lights: 8\n" +
 			                "                Texture units: " + this .getMaxTextureUnits () + " / " + this .getMaxCombinedTextureUnits () + "\n" +
 			                "                Max texture size: " + this .getMaxTextureSize () + " × " + this .getMaxTextureSize () + " pixel\n" +
+			                "                Texture memory: " + this .getTextureMemory () + "\n" +
 			                "                Max vertex uniform vectors: " + this .getMaxVertexUniformVectors () + "\n" +
 			                "                Max fragment uniform vectors: " + this .getMaxFragmentUniformVectors () + "\n" +
 			                "                Max vertex attribs: " + this .getMaxVertexAttribs () + "\n");

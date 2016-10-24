@@ -79,7 +79,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "MaxTextureSize", new Fields .SFInt32 ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "TextureUnits",   new Fields .SFInt32 ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "MaxLights",      new Fields .SFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "Antialiased",    new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "Antialiased",    new Fields .SFBool (true)),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "ColorDepth",     new Fields .SFInt32 ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "TextureMemory",  new Fields .SFDouble ()),
 		]),
@@ -94,6 +94,26 @@ function ($,
 		getContainerField: function ()
 		{
 			return "renderingProperties";
+		},
+		initialize: function ()
+		{
+			X3DBaseNode .prototype .initialize .call (this);
+
+			var browser = this .getBrowser ();
+
+			this .MaxTextureSize_ = browser .getMaxTextureSize ();
+			this .TextureUnits_   = browser .getCombinedTextureUnits ();
+			this .MaxLights_      = browser .getMaxLights ();
+			this .ColorDepth_     = browser .getColorDepth ();
+			this .TextureMemory_  = browser .getTextureMemory ();
+
+			browser .getBrowserOptions () .Shading_ .addInterest (this, "set_shading__");
+
+			this .set_shading__ ();
+		},
+		set_shading__: function (shading)
+		{
+			this .Shading_ = shading;
 		},
 	});
 
