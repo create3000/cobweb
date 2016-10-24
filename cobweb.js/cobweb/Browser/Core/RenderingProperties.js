@@ -109,7 +109,7 @@ function ($,
 
 			browser .getBrowserOptions () .Shading_ .addInterest (this, "set_shading__");
 
-			this .set_shading__ ();
+			this .set_shading__ (browser .getBrowserOptions () .Shading_);
 		},
 		set_shading__: function (shading)
 		{
