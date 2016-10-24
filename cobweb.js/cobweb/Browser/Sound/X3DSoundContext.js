@@ -49,10 +49,8 @@
 
 define ([
 	"cobweb/Fields",
-	"lib/dataStorage",
 ],
-function (Fields,
-          dataStorage)
+function (Fields)
 {
 "use strict";
 
@@ -70,19 +68,19 @@ function (Fields,
 			this .mute_   .addInterest (this, "set_mute__");
 
 			var
-				volume = dataStorage ["X3DSoundContext.volume"],
-				mute   = dataStorage ["X3DSoundContext.mute"];
+				volume = this .getDataStorage () ["X3DSoundContext.volume"],
+				mute   = this .getDataStorage () ["X3DSoundContext.mute"];
 
 			if (volume !== undefined) this .volume_ = volume;
 			if (mute   !== undefined) this .mute_   = mute;
 		},
 		set_volume__: function (volume)
 		{
-			dataStorage ["X3DSoundContext.volume"] = volume .getValue ();
+			this .getDataStorage () ["X3DSoundContext.volume"] = volume .getValue ();
 		},
 		set_mute__: function (mute)
 		{
-			dataStorage ["X3DSoundContext.mute"] = mute .getValue ();
+			this .getDataStorage () ["X3DSoundContext.mute"] = mute .getValue ();
 		},
 	};
 

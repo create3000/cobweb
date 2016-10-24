@@ -5,8 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Sun, 08 Mar 2015 05:54:30 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.2.1, http://titania.create3000.de'/>
-    <meta name='modified' content='Tue, 05 Jan 2016 23:22:25 GMT'/>
+    <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Lighting/PointLight.x3d'/>
+    <meta name='modified' content='Thu, 20 Oct 2016 10:59:35 GMT'/>
     <meta name='title' content='Beethoven'/>
   </head>
   <Scene>
@@ -33,11 +34,33 @@
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.111306011676788, -0.981465756893158, -0.155999973416328, 0.489277720451355'/>
+              value='0.111306008788667, -0.981465731426504, -0.155999969368507, 0.489277720451353'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
               value='3.33974003791809, -0.21424899995327, -0.636991024017334'/>
+        </MetadataSet>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <FontStyle DEF='_1' containerField='value'
+                family='"SANS"'
+                justify='"END"'/>
+          </MetadataSet>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
+        </MetadataSet>
+        <MetadataSet DEF='LayerSet' containerField='value'
+            name='LayerSet'
+            reference='http://titania.create3000.de'>
+          <MetadataInteger DEF='activeLayer' containerField='value'
+              name='activeLayer'
+              reference='http://titania.create3000.de'
+              value='-1'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -84,10 +107,10 @@
         <Viewpoint
             description='Perspective'
             position='-2.07142 -0.615413 9.70525'
-            orientation='0.111306 -0.981466 -0.156 0.489278'
+            orientation='0.111305970237233 -0.981465737560023 -0.155999958286241 0.489278'
             centerOfRotation='3.33974 -0.214249 -0.636991'/>
         <Transform>
-          <Transform DEF='_1'>
+          <Transform DEF='_2'>
             <Transform>
               <Group DEF='LightAnim'>
                 <MetadataSet
@@ -101,7 +124,7 @@
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor DEF='_2'
+                <TimeSensor DEF='_3'
                     cycleInterval='10'
                     loop='true'
                     startTime='1452036144.23537'
@@ -184,63 +207,63 @@
                 </PositionInterpolator>
               </Group>
               <Transform DEF='RedLight'
-                  translation='1.83313 0.855343 -1.16107'>
-                <PointLight DEF='_3'
+                  translation='2.06338 0.482709 -0.308917'>
+                <PointLight DEF='_4'
                     color='1 0 0'
                     attenuation='0.07 0.16 0.88'/>
                 <Transform DEF='Sphere'>
                   <Shape>
                     <Appearance>
-                      <Material DEF='_4'
+                      <Material DEF='_5'
                           emissiveColor='1 0 0'/>
                     </Appearance>
-                    <Sphere DEF='_5'
+                    <Sphere DEF='_6'
                         radius='0.08'/>
                   </Shape>
                 </Transform>
               </Transform>
               <Transform DEF='GreenLight'
-                  translation='-1.35354 3.74531 -0.685197'>
-                <PointLight DEF='_6'
+                  translation='-1.40209 3.30116 0.168655'>
+                <PointLight DEF='_7'
                     color='0 1 0'
                     attenuation='0.07 0.16 0.88'/>
                 <Transform DEF='Sphere_1'>
                   <Shape>
                     <Appearance>
-                      <Material DEF='_7'
+                      <Material DEF='_8'
                           emissiveColor='0 1 0'/>
                     </Appearance>
-                    <Sphere USE='_5'/>
+                    <Sphere USE='_6'/>
                   </Shape>
                 </Transform>
               </Transform>
               <Transform DEF='BlueLight'
-                  translation='1.67464 1.56784 1.49585'>
-                <PointLight DEF='_8'
+                  translation='1.75427 0.666927 0.597061'>
+                <PointLight DEF='_9'
                     color='0 0 1'
                     attenuation='0.07 0.16 0.88'/>
                 <Transform DEF='Sphere_2'>
                   <Shape>
                     <Appearance>
-                      <Material DEF='_9'
+                      <Material DEF='_10'
                           emissiveColor='0 0 1'/>
                     </Appearance>
-                    <Sphere USE='_5'/>
+                    <Sphere USE='_6'/>
                   </Shape>
                 </Transform>
               </Transform>
               <Transform DEF='PinkLight'
-                  translation='-2.25639 -0.48941 1.14889'>
-                <PointLight DEF='_10'
+                  translation='-1.70254 -0.289649 0.18823'>
+                <PointLight DEF='_11'
                     color='1 0 1'
                     attenuation='0.07 0.16 0.88'/>
                 <Transform DEF='Sphere_3'>
                   <Shape>
                     <Appearance>
-                      <Material DEF='_11'
+                      <Material DEF='_12'
                           emissiveColor='1 0 1'/>
                     </Appearance>
-                    <Sphere USE='_5'/>
+                    <Sphere USE='_6'/>
                   </Shape>
                 </Transform>
               </Transform>
@@ -253,7 +276,7 @@
         </Transform>
         <Transform
             translation='9 0 0'>
-          <Transform USE='_1'/>
+          <Transform USE='_2'/>
         </Transform>
       </Layer>
       <Layer DEF='HUD'>
@@ -313,7 +336,7 @@
                 string='"PointLight"'
                 solid='true'>
               <FontStyle
-                  family='"Ubuntu", "SANS"'
+                  family='"SANS"'
                   size='1.61'
                   justify='"BEGIN", "BEGIN"'/>
             </Text>
@@ -373,7 +396,7 @@ function set_phong ()
                   string='"Shading"'
                   solid='true'>
                 <FontStyle
-                    family='"Ubuntu", "SANS"'
+                    family='"SANS"'
                     style='BOLD'
                     size='0.68'
                     justify='"END"'/>
@@ -390,9 +413,7 @@ function set_phong ()
               <Text
                   string='"Pointset   Wireframe   Flat   Gouraud   Phong"'
                   solid='true'>
-                <FontStyle
-                    family='"Ubuntu", "SANS"'
-                    justify='"END"'/>
+                <FontStyle USE='_1'/>
               </Text>
             </Shape>
           </Transform>
@@ -401,26 +422,8 @@ function set_phong ()
               scale='0.139972 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material DEF='_12'
+                <Material DEF='_13'
                     transparency='1'/>
-              </Appearance>
-              <IndexedFaceSet
-                  texCoordIndex='0, 1, 2, 3, -1'
-                  coordIndex='0, 1, 2, 3, -1'>
-                <TextureCoordinate
-                    point='0 0, 1 0, 1 1, 0 1'/>
-                <Coordinate
-                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-              </IndexedFaceSet>
-            </Shape>
-            <TouchSensor DEF='_13'/>
-          </Transform>
-          <Transform DEF='Wireframe'
-              translation='0.77569 -0.916146 0'
-              scale='0.177062 0.040588 0.040588'>
-            <Shape>
-              <Appearance>
-                <Material USE='_12'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -433,12 +436,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_14'/>
           </Transform>
-          <Transform DEF='Flat'
-              translation='1.04432 -0.916146 0'
-              scale='0.0743511 0.040588 0.040588'>
+          <Transform DEF='Wireframe'
+              translation='0.77569 -0.916146 0'
+              scale='0.177062 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_12'/>
+                <Material USE='_13'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -451,12 +454,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_15'/>
           </Transform>
-          <Transform DEF='Gouraud'
-              translation='1.27986 -0.916146 0'
-              scale='0.142825 0.040588 0.040588'>
+          <Transform DEF='Flat'
+              translation='1.04432 -0.916146 0'
+              scale='0.0743511 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_12'/>
+                <Material USE='_13'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -469,12 +472,12 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_16'/>
           </Transform>
-          <Transform DEF='Phong'
-              translation='1.55457 -0.916146 0'
-              scale='0.111441 0.040588 0.040588'>
+          <Transform DEF='Gouraud'
+              translation='1.27986 -0.916146 0'
+              scale='0.142825 0.040588 0.040588'>
             <Shape>
               <Appearance>
-                <Material USE='_12'/>
+                <Material USE='_13'/>
               </Appearance>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
@@ -487,25 +490,43 @@ function set_phong ()
             </Shape>
             <TouchSensor DEF='_17'/>
           </Transform>
+          <Transform DEF='Phong'
+              translation='1.55457 -0.916146 0'
+              scale='0.111441 0.040588 0.040588'>
+            <Shape>
+              <Appearance>
+                <Material USE='_13'/>
+              </Appearance>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+            <TouchSensor DEF='_18'/>
+          </Transform>
         </Group>
       </Layer>
     </LayerSet>
-    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='RedLightTranslationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='RedLightTranslationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='RedLightTranslationInterpolator' fromField='value_changed' toNode='RedLight' toField='set_translation'/>
-    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='GreenLightTranslationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='GreenLightTranslationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='GreenLightTranslationInterpolator' fromField='value_changed' toNode='GreenLight' toField='set_translation'/>
-    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='BlueLightTranslationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='BlueLightTranslationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='BlueLightTranslationInterpolator' fromField='value_changed' toNode='BlueLight' toField='set_translation'/>
-    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='PinkLightTranslationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='PinkLightTranslationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='PinkLightTranslationInterpolator' fromField='value_changed' toNode='PinkLight' toField='set_translation'/>
-    <ROUTE fromNode='_17' fromField='touchTime' toNode='ShadingScript' toField='set_phong'/>
-    <ROUTE fromNode='_16' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
-    <ROUTE fromNode='_15' fromField='touchTime' toNode='ShadingScript' toField='set_flat'/>
-    <ROUTE fromNode='_14' fromField='touchTime' toNode='ShadingScript' toField='set_wireframe'/>
-    <ROUTE fromNode='_13' fromField='touchTime' toNode='ShadingScript' toField='set_pointset'/>
-    <ROUTE fromNode='_3' fromField='color_changed' toNode='_4' toField='set_emissiveColor'/>
-    <ROUTE fromNode='_10' fromField='color_changed' toNode='_11' toField='set_emissiveColor'/>
-    <ROUTE fromNode='_8' fromField='color_changed' toNode='_9' toField='set_emissiveColor'/>
-    <ROUTE fromNode='_6' fromField='color_changed' toNode='_7' toField='set_emissiveColor'/>
+    <ROUTE fromNode='_18' fromField='touchTime' toNode='ShadingScript' toField='set_phong'/>
+    <ROUTE fromNode='_17' fromField='touchTime' toNode='ShadingScript' toField='set_gouraud'/>
+    <ROUTE fromNode='_16' fromField='touchTime' toNode='ShadingScript' toField='set_flat'/>
+    <ROUTE fromNode='_15' fromField='touchTime' toNode='ShadingScript' toField='set_wireframe'/>
+    <ROUTE fromNode='_14' fromField='touchTime' toNode='ShadingScript' toField='set_pointset'/>
+    <ROUTE fromNode='_4' fromField='color_changed' toNode='_5' toField='set_emissiveColor'/>
+    <ROUTE fromNode='_11' fromField='color_changed' toNode='_12' toField='set_emissiveColor'/>
+    <ROUTE fromNode='_9' fromField='color_changed' toNode='_10' toField='set_emissiveColor'/>
+    <ROUTE fromNode='_7' fromField='color_changed' toNode='_8' toField='set_emissiveColor'/>
   </Scene>
 </X3D>

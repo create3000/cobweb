@@ -2,11 +2,14 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="9" Column="23" />
-      <File FileName="cobweb.js/test.html" Line="73" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="437" Column="32" />
-      <File FileName="cobweb.js/dom-integration.xhtml" Line="16" Column="14" />
-      <File FileName="README.md" Line="16" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/test.html" Line="62" Column="33" />
+      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="428" Column="33" />
+      <File FileName="cobweb.js/cobweb.release.html" Line="169" Column="19" />
+      <File FileName="cobweb.js/cobweb/X3D.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/X3DBrowserContext.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Prototype/X3DExternProtoDeclaration.js" Line="167" Column="4" />
+      <File FileName="cobweb.js/cobweb/Components/Networking/Inline.js" Line="230" Column="9" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

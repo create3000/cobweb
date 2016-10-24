@@ -73,7 +73,7 @@ var Bookmarks = (function ()
 	
 	function Bookmarks (browser, element, bookmarks, filesPerPage)
 	{
-		var index = X3D .require ("lib/dataStorage") ["Bookmarks.pageIndex"];
+		var index = browser .getDataStorage () ["Bookmarks.pageIndex"];
 
 		this .browser         = browser;
 		this .element         = element;
@@ -108,7 +108,7 @@ var Bookmarks = (function ()
 		},
 		restore: function ()
 		{
-			this .loadURL (X3D .require ("lib/dataStorage") ["Bookmarks.url"]);
+			this .loadURL (this .browser .getDataStorage () ["Bookmarks.url"]);
 		},
 		setSplit (value)
 		{
@@ -116,7 +116,7 @@ var Bookmarks = (function ()
 		},
 		loadURL: function (url)
 		{
-			X3D .require ("lib/dataStorage") ["Bookmarks.url"] = url;
+			this .browser .getDataStorage () ["Bookmarks.url"] = url;
 
 			this .browser .loadURL (new X3D .MFString (url), new X3D .MFString ());
 
@@ -128,7 +128,7 @@ var Bookmarks = (function ()
 	
 			this .index = (this .index + this .pages .length + n) % this .pages .length;
 
-			X3D .require ("lib/dataStorage") ["Bookmarks.pageIndex"] = this .index;
+			this .browser .getDataStorage () ["Bookmarks.pageIndex"] = this .index;
 
 			var ul = $("<ul></ul>") .addClass ("bookmark-page") .appendTo (this .element);
 

@@ -133,32 +133,19 @@ function ($,
 
 			var Loader = require ("cobweb/InputOutput/Loader");
 
-			new Loader (this) .createX3DFromURL (this .url_, this .setSceneAsync .bind (this));
+			new Loader (this) .createX3DFromURL (this .url_, this .setInternalSceneAsync .bind (this));
 		},
-		setSceneAsync: function (value)
+		setInternalSceneAsync: function (value)
 		{
 			this .getScene () .removeLoadCount (this);
 		
 			if (value)
-				this .setScene (value);
+				this .setInternalScene (value);
 
 			else
 				this .setError ();
 		},
-		setError: function (error)
-		{
-			console .log (error);
-
-			this .setLoadState (X3DConstants .FAILED_STATE);
-
-			this .scene = this .getBrowser () .getPrivateScene ();
-
-			this .setProtoDeclaration (null);
-
-			this .deferred .resolve ();
-			this .deferred = $.Deferred ();
-		},
-		setScene: function (value)
+		setInternalScene: function (value)
 		{
 			this .scene = value;
 
@@ -175,6 +162,25 @@ function ($,
 			this .setProtoDeclaration (this .scene .protos [protoName]);
 
 			this .deferred .resolve ();
+		},
+		getInternalScene: function ()
+		{
+			///  Returns the internal X3DScene of this extern proto, that is loaded from the url given.
+
+			return this .scene;
+		},
+		setError: function (error)
+		{
+			console .log (error);
+
+			this .setLoadState (X3DConstants .FAILED_STATE);
+
+			this .scene = this .getBrowser () .getPrivateScene ();
+
+			this .setProtoDeclaration (null);
+
+			this .deferred .resolve ();
+			this .deferred = $.Deferred ();
 		},
 	});
 

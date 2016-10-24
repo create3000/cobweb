@@ -48,22 +48,30 @@
 
 
 define ([
+	"cobweb/Fields",
 	"cobweb/Browser/Core/BrowserOptions",
 	"cobweb/Browser/Core/BrowserProperties",
 	"cobweb/Browser/Core/RenderingProperties",
 	"cobweb/Browser/Core/Notification",
 	"cobweb/Browser/Core/BrowserTimings",
 	"cobweb/Browser/Core/ContextMenu",
+	"cobweb/Parser/Parser",
+	"lib/DataStorage",
 ],
-function (BrowserOptions,
+function (Fields,
+          BrowserOptions,
           BrowserProperties,
           RenderingProperties,
           Notification,
           BrowserTimings,
-          ContextMenu)
+          ContextMenu,
+          Parser,
+          DataStorage)
 {
 "use strict";
 	
+	var number = 0;
+
 	function getContext (canvas)
 	{
 		var gl = canvas .getContext ("webgl") ||
@@ -91,15 +99,16 @@ function (BrowserOptions,
 
 	function X3DCoreContext (element)
 	{
+		this .number  = ++ number;
 		this .element = element;
 
 		// Get canvas & context.
 
-		var browser  = $("<div></div>") .addClass ("cobweb-browser") .prependTo (this .element);
+		var browser  = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
 		var loading  = $("<div></div>") .addClass ("cobweb-loading")  .appendTo (browser);
 		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
 		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
-		var canvas   = $("<div></div>") .addClass ("cobweb-surface")  .appendTo (browser);
+		var surface  = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
 
 		$("<div></div>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
 		$("<div></div>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
@@ -108,7 +117,7 @@ function (BrowserOptions,
 		$("<div></div>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div></div>"));
 
 		this .loading = loading;
-		this .canvas  = $("<canvas></canvas>") .prependTo (canvas);
+		this .canvas  = $("<canvas></canvas>") .prependTo (surface);
 		this .context = getContext (this .canvas [0]);
 
 		this .browserOptions      = new BrowserOptions (this);
@@ -117,6 +126,7 @@ function (BrowserOptions,
 		this .notification        = new Notification (this);
 		this .browserTimings      = new BrowserTimings (this);
 		this .contextMenu         = new ContextMenu (this);
+		this .dataStorage         = new DataStorage ("X3DBrowser(" + this .number + ").");
 		this .mobile              = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
 	}
 
@@ -130,6 +140,16 @@ function (BrowserOptions,
 			this .notification        .setup ();
 			this .browserTimings      .setup ();
 			this .contextMenu         .setup ();
+
+			// Observe Element's attributes.
+
+			this .observer = new MutationObserver (this .processMutations .bind (this));
+
+			this .observer .observe (this .element [0], { attributes: true, childList: false, characterData: false, subtree: false });
+		},
+		getNumber: function ()
+		{
+			return this .number;
 		},
 		isStrict: function ()
 		{
@@ -171,9 +191,71 @@ function (BrowserOptions,
 		{
 			return this .browserTimings;
 		},
+		getDataStorage: function ()
+		{
+			return this .dataStorage;
+		},
 		getMobile: function ()
 		{
 			return this .mobile;
+		},
+		processMutations: function (mutations)
+		{
+			mutations .forEach (function (mutation)
+			{
+				this .processMutation (mutation);
+			},
+			this);
+		},
+		processMutation: function (mutation)
+		{
+			var element = mutation .target;
+			
+			switch (mutation .type)
+			{
+				case "attributes":
+				{
+					this .processAttribute (mutation, element);
+					break;
+				}
+			}
+		},
+		processAttribute: function (mutation, element)
+		{
+			var attributeName = mutation .attributeName;
+
+			switch (attributeName)
+			{
+				case "src":
+					var urlCharacters = this .getElement () .attr ("src");
+		
+					if (urlCharacters)
+						this .load ('"' + urlCharacters + '"');
+
+					break;
+				case "url":
+					this .load (this .getElement () .attr ("url"));
+					break;
+				case "cache":
+					this .setCaching (this .getElement () .attr ("cache") != "false");
+					break;
+			}
+		},
+		load: function (urlCharacters)
+		{
+			if (urlCharacters)
+			{
+			   var
+			      parser    = new Parser (this .getExecutionContext (), true),
+			      url       = new Fields .MFString (),
+					parameter = new Fields .MFString ();
+
+				parser .setInput (urlCharacters);
+				parser .sfstringValues (url);
+
+				if (url .length)
+					this .loadURL (url, parameter);
+			}
 		},
 	};
 

@@ -60,7 +60,6 @@ define ([
 	"cobweb/Execution/Scene",
 	"cobweb/InputOutput/Loader",
 	"cobweb/Parser/XMLParser",
-	"cobweb/Parser/Parser",
 	"cobweb/Bits/X3DConstants",
 	"lib/gettext",
 ],
@@ -76,7 +75,6 @@ function ($,
           Scene,
           Loader,
           XMLParser,
-          Parser,
           X3DConstants,
           _)
 {
@@ -130,6 +128,7 @@ function ($,
 			                "                Max lights: 8\n" +
 			                "                Texture units: " + this .getMaxTextureUnits () + " / " + this .getMaxCombinedTextureUnits () + "\n" +
 			                "                Max texture size: " + this .getMaxTextureSize () + " × " + this .getMaxTextureSize () + " pixel\n" +
+			                "                Texture memory: " + this .getTextureMemory () + "\n" +
 			                "                Max vertex uniform vectors: " + this .getMaxVertexUniformVectors () + "\n" +
 			                "                Max fragment uniform vectors: " + this .getMaxFragmentUniformVectors () + "\n" +
 			                "                Max vertex attribs: " + this .getMaxVertexAttribs () + "\n");
@@ -147,19 +146,7 @@ function ($,
 			else
 				urlCharacters = this .getElement () [0] .getAttribute ("url");
 
-			if (urlCharacters)
-			{
-			   var
-			      parser    = new Parser (this .getExecutionContext (), true),
-			      url       = new Fields .MFString (),
-					parameter = new Fields .MFString ();
-
-				parser .setInput (urlCharacters);
-				parser .sfstringValues (url);
-
-				if (url .length)
-					this .loadURL (url, parameter);
-			}
+			this .load (urlCharacters);
 		},
 		getName: function ()
 		{
@@ -229,6 +216,11 @@ function ($,
 		},
 		replaceWorld: function (scene)
 		{
+			// Stop any loading from loadURL.
+
+			if (this .loader)
+				this .loader .abort ();
+
 			// Remove world.
 
 			if (this .getWorld ())
@@ -376,9 +368,11 @@ function ($,
 
 			this .setBrowserLoading (true);
 
-			var id = this .addLoadCount ();
+			var id = this .addLoadCount (this);
 
-			new Loader (this .getWorld ()) .createX3DFromURL (url,
+			this .loader = new Loader (this .getWorld ());
+
+			this .loader .createX3DFromURL (url,
 			function (scene)
 			{
 				if (scene)

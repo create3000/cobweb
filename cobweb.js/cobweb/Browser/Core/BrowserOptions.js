@@ -56,7 +56,6 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Core/PrimitiveQuality",
 	"cobweb/Browser/Core/TextureQuality",
-	"lib/dataStorage",
 ],
 function ($,
           Fields,
@@ -65,8 +64,7 @@ function ($,
           X3DBaseNode,
           X3DConstants,
           PrimitiveQuality,
-          TextureQuality,
-          dataStorage)
+          TextureQuality)
 {
 "use strict";
 	
@@ -130,7 +128,7 @@ function ($,
 					fieldDefinition = fieldDefinitions [i],
 					field           = this .getField (fieldDefinition .name);
 
-				if (dataStorage ["BrowserOptions." + fieldDefinition .name] !== undefined)
+				if (this .getBrowser () .getDataStorage () ["BrowserOptions." + fieldDefinition .name] !== undefined)
 					continue;
 
 				if (! field .equals (fieldDefinition .value))
@@ -138,9 +136,9 @@ function ($,
 			}
 
 			var
-				rubberband       = dataStorage ["BrowserOptions.Rubberband"],
-				primitiveQuality = dataStorage ["BrowserOptions.PrimitiveQuality"],
-				textureQuality   = dataStorage ["BrowserOptions.TextureQuality"];
+				rubberband       = this .getBrowser () .getDataStorage () ["BrowserOptions.Rubberband"],
+				primitiveQuality = this .getBrowser () .getDataStorage () ["BrowserOptions.PrimitiveQuality"],
+				textureQuality   = this .getBrowser () .getDataStorage () ["BrowserOptions.TextureQuality"];
 				
 			if (rubberband       !== undefined && rubberband       !== this .Rubberband_       .getValue ()) this .Rubberband_       = rubberband;
 			if (primitiveQuality !== undefined && primitiveQuality !== this .PrimitiveQuality_ .getValue ()) this .PrimitiveQuality_ = primitiveQuality;
@@ -160,11 +158,11 @@ function ($,
 		},
 		set_rubberband__: function (rubberband)
 		{
-			dataStorage ["BrowserOptions.Rubberband"] = rubberband .getValue ();
+			this .getBrowser () .getDataStorage () ["BrowserOptions.Rubberband"] = rubberband .getValue ();
 		},
 		set_primitiveQuality__: function (primitiveQuality)
 		{
-			dataStorage ["BrowserOptions.PrimitiveQuality"] = primitiveQuality .getValue ();
+			this .getBrowser () .getDataStorage () ["BrowserOptions.PrimitiveQuality"] = primitiveQuality .getValue ();
 
 			var
 				arc      = this .getBrowser () .getArc2DOptions (),
@@ -229,7 +227,7 @@ function ($,
 		},
 		set_textureQuality__: function (textureQuality)
 		{
-			dataStorage ["BrowserOptions.TextureQuality"] = textureQuality .getValue ();
+			this .getBrowser () .getDataStorage () ["BrowserOptions.TextureQuality"] = textureQuality .getValue ();
 
 			var textureProperties = this .getBrowser () .getDefaultTextureProperties ();
 

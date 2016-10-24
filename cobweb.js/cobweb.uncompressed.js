@@ -10335,7 +10335,7 @@ function ($,
 	X3DField .prototype = $.extend (Object .create (X3DChildObject .prototype),
 	{
 		constructor: X3DField,
-		_value: undefined,
+		_value: null,
 		_references: { },
 		_fieldInterests: { },
 		_fieldCallbacks: { },
@@ -19214,7 +19214,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "2.2a";
+	return "2.4a";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -20135,97 +20135,6 @@ define ('cobweb/Browser/Core/TextureQuality',[],function ()
  ******************************************************************************/
 
 
-define ('lib/dataStorage',[],function ()
-{
-
-
-	var handler =
-	{
-		get: function (target, key)
-		{
-			if (key in target)
-				return target [key];
-			
-			if (localStorage [key] === undefined)
-			   return undefined;
-
-			return JSON .parse (localStorage [key])
-		},
-		set: function (target, key, value)
-		{
-			localStorage [key] = JSON .stringify (value);
-			return true;
-		},
-	};
-
-	function DataStorage ()
-	{
-		return new Proxy (this, handler);
-	}
-
-	DataStorage .prototype = {
-		constructor: DataStorage,
-		removeItem: function (key)
-		{
-			return localStorage .removeItem (key);
-		},
-		clear: function ()
-		{
-			return localStorage .clear ();
-		},
-	}
-
-	return new DataStorage ();
-});
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
 define ('cobweb/Browser/Core/BrowserOptions',[
 	"jquery",
 	"cobweb/Fields",
@@ -20235,7 +20144,6 @@ define ('cobweb/Browser/Core/BrowserOptions',[
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Core/PrimitiveQuality",
 	"cobweb/Browser/Core/TextureQuality",
-	"lib/dataStorage",
 ],
 function ($,
           Fields,
@@ -20244,8 +20152,7 @@ function ($,
           X3DBaseNode,
           X3DConstants,
           PrimitiveQuality,
-          TextureQuality,
-          dataStorage)
+          TextureQuality)
 {
 
 	
@@ -20309,7 +20216,7 @@ function ($,
 					fieldDefinition = fieldDefinitions [i],
 					field           = this .getField (fieldDefinition .name);
 
-				if (dataStorage ["BrowserOptions." + fieldDefinition .name] !== undefined)
+				if (this .getBrowser () .getDataStorage () ["BrowserOptions." + fieldDefinition .name] !== undefined)
 					continue;
 
 				if (! field .equals (fieldDefinition .value))
@@ -20317,9 +20224,9 @@ function ($,
 			}
 
 			var
-				rubberband       = dataStorage ["BrowserOptions.Rubberband"],
-				primitiveQuality = dataStorage ["BrowserOptions.PrimitiveQuality"],
-				textureQuality   = dataStorage ["BrowserOptions.TextureQuality"];
+				rubberband       = this .getBrowser () .getDataStorage () ["BrowserOptions.Rubberband"],
+				primitiveQuality = this .getBrowser () .getDataStorage () ["BrowserOptions.PrimitiveQuality"],
+				textureQuality   = this .getBrowser () .getDataStorage () ["BrowserOptions.TextureQuality"];
 				
 			if (rubberband       !== undefined && rubberband       !== this .Rubberband_       .getValue ()) this .Rubberband_       = rubberband;
 			if (primitiveQuality !== undefined && primitiveQuality !== this .PrimitiveQuality_ .getValue ()) this .PrimitiveQuality_ = primitiveQuality;
@@ -20339,11 +20246,11 @@ function ($,
 		},
 		set_rubberband__: function (rubberband)
 		{
-			dataStorage ["BrowserOptions.Rubberband"] = rubberband .getValue ();
+			this .getBrowser () .getDataStorage () ["BrowserOptions.Rubberband"] = rubberband .getValue ();
 		},
 		set_primitiveQuality__: function (primitiveQuality)
 		{
-			dataStorage ["BrowserOptions.PrimitiveQuality"] = primitiveQuality .getValue ();
+			this .getBrowser () .getDataStorage () ["BrowserOptions.PrimitiveQuality"] = primitiveQuality .getValue ();
 
 			var
 				arc      = this .getBrowser () .getArc2DOptions (),
@@ -20408,7 +20315,7 @@ function ($,
 		},
 		set_textureQuality__: function (textureQuality)
 		{
-			dataStorage ["BrowserOptions.TextureQuality"] = textureQuality .getValue ();
+			this .getBrowser () .getDataStorage () ["BrowserOptions.TextureQuality"] = textureQuality .getValue ();
 
 			var textureProperties = this .getBrowser () .getDefaultTextureProperties ();
 
@@ -20646,7 +20553,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "MaxTextureSize", new Fields .SFInt32 ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "TextureUnits",   new Fields .SFInt32 ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "MaxLights",      new Fields .SFInt32 ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "Antialiased",    new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "Antialiased",    new Fields .SFBool (true)),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "ColorDepth",     new Fields .SFInt32 ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "TextureMemory",  new Fields .SFDouble ()),
 		]),
@@ -20661,6 +20568,26 @@ function ($,
 		getContainerField: function ()
 		{
 			return "renderingProperties";
+		},
+		initialize: function ()
+		{
+			X3DBaseNode .prototype .initialize .call (this);
+
+			var browser = this .getBrowser ();
+
+			this .MaxTextureSize_ = browser .getMaxTextureSize ();
+			this .TextureUnits_   = browser .getCombinedTextureUnits ();
+			this .MaxLights_      = browser .getMaxLights ();
+			this .ColorDepth_     = browser .getColorDepth ();
+			this .TextureMemory_  = browser .getTextureMemory ();
+
+			browser .getBrowserOptions () .Shading_ .addInterest (this, "set_shading__");
+
+			this .set_shading__ (browser .getBrowserOptions () .Shading_);
+		},
+		set_shading__: function (shading)
+		{
+			this .Shading_ = shading;
 		},
 	});
 
@@ -21100,9 +21027,9 @@ define('text/text',['module'], function (module) {
 
 define('text', ['text/text'], function (main) { return main; });
 
-define('text!locale/de.po',[],function () { return 'msgid ""\nmsgstr ""\n"Project-Id-Version: Cobweb\\n"\n"POT-Creation-Date: 2015-12-23 04:56+0100\\n"\n"PO-Revision-Date: 2015-12-23 04:57+0100\\n"\n"Last-Translator: Holger Seelig <holger.seelig@yahoo.de>\\n"\n"Language-Team: \\n"\n"Language: de\\n"\n"MIME-Version: 1.0\\n"\n"Content-Type: text/plain; charset=UTF-8\\n"\n"Content-Transfer-Encoding: 8bit\\n"\n"X-Generator: Poedit 1.8.4\\n"\n"X-Poedit-Basepath: ../cobweb\\n"\n"Plural-Forms: nplurals=2; plural=(n != 1);\\n"\n"X-Poedit-SourceCharset: UTF-8\\n"\n"X-Poedit-SearchPath-0: .\\n"\n\n#: Browser/Core/BrowserTimings.js:96\nmsgid "Less Properties"\nmsgstr "Weniger Eigenschaften"\n\n#: Browser/Core/BrowserTimings.js:98\nmsgid "More Properties"\nmsgstr "Mehr Eigenschaften"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "Frame rate"\nmsgstr "Bildrate"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "fps"\nmsgstr "BpS"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "Speed"\nmsgstr "Geschwindigkeit"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "m/s"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:150\nmsgid "Browser"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:150 Browser/Core/BrowserTimings.js:151\n#: Browser/Core/BrowserTimings.js:152 Browser/Core/BrowserTimings.js:153\n#: Browser/Core/BrowserTimings.js:154 Browser/Core/BrowserTimings.js:155\n#: Browser/Core/BrowserTimings.js:156\nmsgid "ms"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:151\nmsgid "X3D"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:152\nmsgid "Routing"\nmsgstr "Routen"\n\n#: Browser/Core/BrowserTimings.js:153\nmsgid "Picking"\nmsgstr "Zeigegerät"\n\n#: Browser/Core/BrowserTimings.js:154\nmsgid "Camera"\nmsgstr "Kamera"\n\n#: Browser/Core/BrowserTimings.js:155\nmsgid "Collision"\nmsgstr "Kollision"\n\n#: Browser/Core/BrowserTimings.js:156\nmsgid "Display"\nmsgstr "Anzeige"\n\n#: Browser/Core/BrowserTimings.js:157\nmsgid "Shapes"\nmsgstr "Formen"\n\n#: Browser/Core/BrowserTimings.js:158\nmsgid "Sensors"\nmsgstr "Sensoren"\n\n#: Browser/Core/BrowserTimings.js:163 Browser/Core/ContextMenu.js:210\nmsgid "Browser Timings"\nmsgstr "Zeitberechnung"\n\n#: Browser/Core/ContextMenu.js:19\nmsgid "Cobweb X3D Browser"\nmsgstr ""\n\n#: Browser/Core/ContextMenu.js:59\nmsgid "Viewpoints"\nmsgstr "Ansichtspunkte"\n\n#: Browser/Core/ContextMenu.js:87\nmsgid "Available Viewers"\nmsgstr "Verfügbare Betrachter"\n\n#: Browser/Core/ContextMenu.js:95 Browser/Core/ContextMenu.js:107\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:135\nmsgid "Primitive Quality"\nmsgstr "Qualität der Grundobjekte"\n\n#: Browser/Core/ContextMenu.js:99 Browser/Core/ContextMenu.js:147\nmsgid "High"\nmsgstr "Hoch"\n\n#: Browser/Core/ContextMenu.js:107 Browser/Core/ContextMenu.js:155\nmsgid "high"\nmsgstr "hoch"\n\n#: Browser/Core/ContextMenu.js:113 Browser/Core/ContextMenu.js:161\nmsgid "Medium"\nmsgstr "Mittel"\n\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:169\nmsgid "medium"\nmsgstr "mittel"\n\n#: Browser/Core/ContextMenu.js:127 Browser/Core/ContextMenu.js:175\nmsgid "Low"\nmsgstr "Niedrig"\n\n#: Browser/Core/ContextMenu.js:135 Browser/Core/ContextMenu.js:183\nmsgid "low"\nmsgstr "niedrig"\n\n#: Browser/Core/ContextMenu.js:143 Browser/Core/ContextMenu.js:155\n#: Browser/Core/ContextMenu.js:169 Browser/Core/ContextMenu.js:183\nmsgid "Texture Quality"\nmsgstr "Textur Qualität"\n\n#: Browser/Core/ContextMenu.js:191\nmsgid "Display Rubberband"\nmsgstr "Gummiband anzeigen"\n\n#: Browser/Core/ContextMenu.js:202 Browser/Core/ContextMenu.js:204\nmsgid "Rubberband"\nmsgstr "Gummiband"\n\n#: Browser/Core/ContextMenu.js:202\nmsgid "on"\nmsgstr "an"\n\n#: Browser/Core/ContextMenu.js:204\nmsgid "off"\nmsgstr "aus"\n\n#: Browser/Core/ContextMenu.js:225\nmsgid "Mute Browser"\nmsgstr "Browser stumm schalten"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser muted"\nmsgstr "Browser stumm geschalten"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser unmuted"\nmsgstr "Browser Ton an"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Leave Fullscreen"\nmsgstr "Vollbild verlassen"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Fullscreen"\nmsgstr "Vollbild"\n\n#: Browser/Core/ContextMenu.js:249\nmsgid "About Cobweb"\nmsgstr "Über Cobweb"\n\n#: Browser/Core/ContextMenu.js:342\nmsgid "Examine Viewer"\nmsgstr "Untersuchen"\n\n#: Browser/Core/ContextMenu.js:344\nmsgid "Walk Viewer"\nmsgstr "Laufen"\n\n#: Browser/Core/ContextMenu.js:346\nmsgid "Fly Viewer"\nmsgstr "Fliegen"\n\n#: Browser/Core/ContextMenu.js:348\nmsgid "Plane Viewer"\nmsgstr "Ebenen Betrachter"\n\n#: Browser/Core/ContextMenu.js:350\n#, fuzzy\nmsgid "Look At Viewer"\nmsgstr "Auf Objekte zielen"\n\n#: Browser/Core/ContextMenu.js:352\nmsgid "None Viewer"\nmsgstr "Kein Betrachter"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d file"\nmsgstr "Lade %d Datei"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d files"\nmsgstr "Lade %d Dateien"\n\n#: Browser/Networking/X3DNetworkingContext.js:104\nmsgid "Loading done"\nmsgstr "Fertig mit Laden"\n\n#: Browser/X3DBrowser.js:313\nmsgid "Failed loading world."\nmsgstr "Laden der Dateien fehlgeschlagen."\n\n#~ msgid "Look At"\n#~ msgstr "Auf Objekte zielen"\n';});
+define('text!locale/de.po',[],function () { return 'msgid ""\nmsgstr ""\n"Project-Id-Version: Cobweb\\n"\n"POT-Creation-Date: 2015-12-23 04:56+0100\\n"\n"PO-Revision-Date: 2015-12-23 04:57+0100\\n"\n"Last-Translator: Holger Seelig <holger.seelig@yahoo.de>\\n"\n"Language-Team: \\n"\n"Language: de\\n"\n"MIME-Version: 1.0\\n"\n"Content-Type: text/plain; charset=UTF-8\\n"\n"Content-Transfer-Encoding: 8bit\\n"\n"X-Generator: Poedit 1.8.4\\n"\n"X-Poedit-Basepath: ../cobweb\\n"\n"Plural-Forms: nplurals=2; plural=(n != 1);\\n"\n"X-Poedit-SourceCharset: UTF-8\\n"\n"X-Poedit-SearchPath-0: .\\n"\n\n#: Browser/Core/BrowserTimings.js:96\nmsgid "Less Properties"\nmsgstr "Weniger Eigenschaften"\n\n#: Browser/Core/BrowserTimings.js:98\nmsgid "More Properties"\nmsgstr "Mehr Eigenschaften"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "Frame rate"\nmsgstr "Bildrate"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "fps"\nmsgstr "BpS"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "Speed"\nmsgstr "Geschwindigkeit"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "m/s"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "km/h"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:150\nmsgid "Browser"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:150 Browser/Core/BrowserTimings.js:151\n#: Browser/Core/BrowserTimings.js:152 Browser/Core/BrowserTimings.js:153\n#: Browser/Core/BrowserTimings.js:154 Browser/Core/BrowserTimings.js:155\n#: Browser/Core/BrowserTimings.js:156\nmsgid "ms"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:151\nmsgid "X3D"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:152\nmsgid "Routing"\nmsgstr "Routen"\n\n#: Browser/Core/BrowserTimings.js:153\nmsgid "Picking"\nmsgstr "Zeigegerät"\n\n#: Browser/Core/BrowserTimings.js:154\nmsgid "Camera"\nmsgstr "Kamera"\n\n#: Browser/Core/BrowserTimings.js:155\nmsgid "Collision"\nmsgstr "Kollision"\n\n#: Browser/Core/BrowserTimings.js:156\nmsgid "Display"\nmsgstr "Anzeige"\n\n#: Browser/Core/BrowserTimings.js:157\nmsgid "Shapes"\nmsgstr "Formen"\n\n#: Browser/Core/BrowserTimings.js:158\nmsgid "Sensors"\nmsgstr "Sensoren"\n\n#: Browser/Core/BrowserTimings.js:163 Browser/Core/ContextMenu.js:210\nmsgid "Browser Timings"\nmsgstr "Zeitberechnung"\n\n#: Browser/Core/ContextMenu.js:19\nmsgid "Cobweb X3D Browser"\nmsgstr ""\n\n#: Browser/Core/ContextMenu.js:59\nmsgid "Viewpoints"\nmsgstr "Ansichtspunkte"\n\n#: Browser/Core/ContextMenu.js:87\nmsgid "Available Viewers"\nmsgstr "Verfügbare Betrachter"\n\n#: Browser/Core/ContextMenu.js:95 Browser/Core/ContextMenu.js:107\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:135\nmsgid "Primitive Quality"\nmsgstr "Qualität der Grundobjekte"\n\n#: Browser/Core/ContextMenu.js:99 Browser/Core/ContextMenu.js:147\nmsgid "High"\nmsgstr "Hoch"\n\n#: Browser/Core/ContextMenu.js:107 Browser/Core/ContextMenu.js:155\nmsgid "high"\nmsgstr "hoch"\n\n#: Browser/Core/ContextMenu.js:113 Browser/Core/ContextMenu.js:161\nmsgid "Medium"\nmsgstr "Mittel"\n\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:169\nmsgid "medium"\nmsgstr "mittel"\n\n#: Browser/Core/ContextMenu.js:127 Browser/Core/ContextMenu.js:175\nmsgid "Low"\nmsgstr "Niedrig"\n\n#: Browser/Core/ContextMenu.js:135 Browser/Core/ContextMenu.js:183\nmsgid "low"\nmsgstr "niedrig"\n\n#: Browser/Core/ContextMenu.js:143 Browser/Core/ContextMenu.js:155\n#: Browser/Core/ContextMenu.js:169 Browser/Core/ContextMenu.js:183\nmsgid "Texture Quality"\nmsgstr "Textur Qualität"\n\n#: Browser/Core/ContextMenu.js:191\nmsgid "Display Rubberband"\nmsgstr "Gummiband anzeigen"\n\n#: Browser/Core/ContextMenu.js:202 Browser/Core/ContextMenu.js:204\nmsgid "Rubberband"\nmsgstr "Gummiband"\n\n#: Browser/Core/ContextMenu.js:202\nmsgid "on"\nmsgstr "an"\n\n#: Browser/Core/ContextMenu.js:204\nmsgid "off"\nmsgstr "aus"\n\n#: Browser/Core/ContextMenu.js:225\nmsgid "Mute Browser"\nmsgstr "Browser stumm schalten"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser muted"\nmsgstr "Browser stumm geschalten"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser unmuted"\nmsgstr "Browser Ton an"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Leave Fullscreen"\nmsgstr "Vollbild verlassen"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Fullscreen"\nmsgstr "Vollbild"\n\n#: Browser/Core/ContextMenu.js:249\nmsgid "About Cobweb"\nmsgstr "Über Cobweb"\n\n#: Browser/Core/ContextMenu.js:342\nmsgid "Examine Viewer"\nmsgstr "Untersuchen"\n\n#: Browser/Core/ContextMenu.js:344\nmsgid "Walk Viewer"\nmsgstr "Laufen"\n\n#: Browser/Core/ContextMenu.js:346\nmsgid "Fly Viewer"\nmsgstr "Fliegen"\n\n#: Browser/Core/ContextMenu.js:348\nmsgid "Plane Viewer"\nmsgstr "Ebenen Betrachter"\n\n#: Browser/Core/ContextMenu.js:350\n#, fuzzy\nmsgid "Look At Viewer"\nmsgstr "Auf Objekte zielen"\n\n#: Browser/Core/ContextMenu.js:352\nmsgid "None Viewer"\nmsgstr "Kein Betrachter"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d file"\nmsgstr "Lade %d Datei"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d files"\nmsgstr "Lade %d Dateien"\n\n#: Browser/Networking/X3DNetworkingContext.js:104\nmsgid "Loading done"\nmsgstr "Fertig mit Laden"\n\n#: Browser/X3DBrowser.js:313\nmsgid "Failed loading world."\nmsgstr "Laden der Dateien fehlgeschlagen."\n\n#~ msgid "Look At"\n#~ msgstr "Auf Objekte zielen"\n';});
 
-define('text!locale/fr.po',[],function () { return 'msgid ""\nmsgstr ""\n"Project-Id-Version: Cobweb\\n"\n"POT-Creation-Date: 2015-12-23 04:58+0100\\n"\n"PO-Revision-Date: 2015-12-23 05:07+0100\\n"\n"Last-Translator: Holger Seelig <holger.seelig@yahoo.de>\\n"\n"Language-Team: \\n"\n"Language: fr\\n"\n"MIME-Version: 1.0\\n"\n"Content-Type: text/plain; charset=UTF-8\\n"\n"Content-Transfer-Encoding: 8bit\\n"\n"X-Generator: Poedit 1.8.4\\n"\n"X-Poedit-Basepath: ../cobweb\\n"\n"Plural-Forms: nplurals=2; plural=(n != 1);\\n"\n"X-Poedit-SourceCharset: UTF-8\\n"\n"X-Poedit-SearchPath-0: .\\n"\n\n#: Browser/Core/BrowserTimings.js:96\nmsgid "Less Properties"\nmsgstr "Moins de propriétés"\n\n#: Browser/Core/BrowserTimings.js:98\nmsgid "More Properties"\nmsgstr "Plus de propriétés"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "Frame rate"\nmsgstr "Fréquence"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "fps"\nmsgstr "fps"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "Speed"\nmsgstr "Vélocité"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "m/s"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:150\n#, fuzzy\nmsgid "Browser"\nmsgstr "Cobweb X3D Navigateur"\n\n#: Browser/Core/BrowserTimings.js:150 Browser/Core/BrowserTimings.js:151\n#: Browser/Core/BrowserTimings.js:152 Browser/Core/BrowserTimings.js:153\n#: Browser/Core/BrowserTimings.js:154 Browser/Core/BrowserTimings.js:155\n#: Browser/Core/BrowserTimings.js:156\nmsgid "ms"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:151\nmsgid "X3D"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:152\nmsgid "Routing"\nmsgstr "Routes"\n\n#: Browser/Core/BrowserTimings.js:153\nmsgid "Picking"\nmsgstr "Pointeur"\n\n#: Browser/Core/BrowserTimings.js:154\nmsgid "Camera"\nmsgstr "Caméra"\n\n#: Browser/Core/BrowserTimings.js:155\nmsgid "Collision"\nmsgstr "Collision"\n\n#: Browser/Core/BrowserTimings.js:156\nmsgid "Display"\nmsgstr "Visualisation"\n\n#: Browser/Core/BrowserTimings.js:157\nmsgid "Shapes"\nmsgstr "Formes"\n\n#: Browser/Core/BrowserTimings.js:158\nmsgid "Sensors"\nmsgstr "Senseurs"\n\n#: Browser/Core/BrowserTimings.js:163 Browser/Core/ContextMenu.js:210\nmsgid "Browser Timings"\nmsgstr "Calcul du temps"\n\n#: Browser/Core/ContextMenu.js:19\nmsgid "Cobweb X3D Browser"\nmsgstr "Cobweb X3D Navigateur"\n\n#: Browser/Core/ContextMenu.js:59\nmsgid "Viewpoints"\nmsgstr "Points de vue"\n\n#: Browser/Core/ContextMenu.js:87\nmsgid "Available Viewers"\nmsgstr "Visionneurs disponibles"\n\n#: Browser/Core/ContextMenu.js:95 Browser/Core/ContextMenu.js:107\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:135\nmsgid "Primitive Quality"\nmsgstr "Qualité des objets simples"\n\n#: Browser/Core/ContextMenu.js:99 Browser/Core/ContextMenu.js:147\nmsgid "High"\nmsgstr "Haut"\n\n#: Browser/Core/ContextMenu.js:107 Browser/Core/ContextMenu.js:155\nmsgid "high"\nmsgstr "haut"\n\n#: Browser/Core/ContextMenu.js:113 Browser/Core/ContextMenu.js:161\nmsgid "Medium"\nmsgstr "Moyenne"\n\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:169\nmsgid "medium"\nmsgstr "moyenne"\n\n#: Browser/Core/ContextMenu.js:127 Browser/Core/ContextMenu.js:175\nmsgid "Low"\nmsgstr "Faible"\n\n#: Browser/Core/ContextMenu.js:135 Browser/Core/ContextMenu.js:183\nmsgid "low"\nmsgstr "faible"\n\n#: Browser/Core/ContextMenu.js:143 Browser/Core/ContextMenu.js:155\n#: Browser/Core/ContextMenu.js:169 Browser/Core/ContextMenu.js:183\nmsgid "Texture Quality"\nmsgstr "Qualité des textures"\n\n#: Browser/Core/ContextMenu.js:191\nmsgid "Display Rubberband"\nmsgstr "Présenter le bande élastique"\n\n#: Browser/Core/ContextMenu.js:202 Browser/Core/ContextMenu.js:204\nmsgid "Rubberband"\nmsgstr "Bande élastique"\n\n#: Browser/Core/ContextMenu.js:202\nmsgid "on"\nmsgstr "marche"\n\n#: Browser/Core/ContextMenu.js:204\nmsgid "off"\nmsgstr "arrêt"\n\n#: Browser/Core/ContextMenu.js:225\nmsgid "Mute Browser"\nmsgstr "Rendre navigateur muet"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser muted"\nmsgstr "Navigateur muet"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser unmuted"\nmsgstr "Son de navigateur réactivé"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Leave Fullscreen"\nmsgstr "Sortie en plein écran"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Fullscreen"\nmsgstr "Plein écran"\n\n#: Browser/Core/ContextMenu.js:249\nmsgid "About Cobweb"\nmsgstr "À propos de Cobweb"\n\n#: Browser/Core/ContextMenu.js:342\nmsgid "Examine Viewer"\nmsgstr "Examiner"\n\n#: Browser/Core/ContextMenu.js:344\nmsgid "Walk Viewer"\nmsgstr "Aller"\n\n#: Browser/Core/ContextMenu.js:346\nmsgid "Fly Viewer"\nmsgstr "Voler"\n\n#: Browser/Core/ContextMenu.js:348\nmsgid "Plane Viewer"\nmsgstr "Visionneur de la plaine"\n\n#: Browser/Core/ContextMenu.js:350\n#, fuzzy\nmsgid "Look At Viewer"\nmsgstr "Regarder un objet de près"\n\n#: Browser/Core/ContextMenu.js:352\nmsgid "None Viewer"\nmsgstr "Pas de visionneur"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d file"\nmsgstr "Télécharger %d fichier"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d files"\nmsgstr "Télécharger %d fichiers"\n\n#: Browser/Networking/X3DNetworkingContext.js:104\nmsgid "Loading done"\nmsgstr "Téléchargement fini"\n\n#: Browser/X3DBrowser.js:313\nmsgid "Failed loading world."\nmsgstr "Le chargement des fichiers ayant échoué."\n\n#~ msgid "Look At"\n#~ msgstr "Regarder un objet de près"\n';});
+define('text!locale/fr.po',[],function () { return 'msgid ""\nmsgstr ""\n"Project-Id-Version: Cobweb\\n"\n"POT-Creation-Date: 2015-12-23 04:58+0100\\n"\n"PO-Revision-Date: 2015-12-23 05:07+0100\\n"\n"Last-Translator: Holger Seelig <holger.seelig@yahoo.de>\\n"\n"Language-Team: \\n"\n"Language: fr\\n"\n"MIME-Version: 1.0\\n"\n"Content-Type: text/plain; charset=UTF-8\\n"\n"Content-Transfer-Encoding: 8bit\\n"\n"X-Generator: Poedit 1.8.4\\n"\n"X-Poedit-Basepath: ../cobweb\\n"\n"Plural-Forms: nplurals=2; plural=(n != 1);\\n"\n"X-Poedit-SourceCharset: UTF-8\\n"\n"X-Poedit-SearchPath-0: .\\n"\n\n#: Browser/Core/BrowserTimings.js:96\nmsgid "Less Properties"\nmsgstr "Moins de propriétés"\n\n#: Browser/Core/BrowserTimings.js:98\nmsgid "More Properties"\nmsgstr "Plus de propriétés"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "Frame rate"\nmsgstr "Fréquence"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "fps"\nmsgstr "fps"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "Speed"\nmsgstr "Vélocité"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "m/s"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "km/h"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:150\n#, fuzzy\nmsgid "Browser"\nmsgstr "Cobweb X3D Navigateur"\n\n#: Browser/Core/BrowserTimings.js:150 Browser/Core/BrowserTimings.js:151\n#: Browser/Core/BrowserTimings.js:152 Browser/Core/BrowserTimings.js:153\n#: Browser/Core/BrowserTimings.js:154 Browser/Core/BrowserTimings.js:155\n#: Browser/Core/BrowserTimings.js:156\nmsgid "ms"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:151\nmsgid "X3D"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:152\nmsgid "Routing"\nmsgstr "Routes"\n\n#: Browser/Core/BrowserTimings.js:153\nmsgid "Picking"\nmsgstr "Pointeur"\n\n#: Browser/Core/BrowserTimings.js:154\nmsgid "Camera"\nmsgstr "Caméra"\n\n#: Browser/Core/BrowserTimings.js:155\nmsgid "Collision"\nmsgstr "Collision"\n\n#: Browser/Core/BrowserTimings.js:156\nmsgid "Display"\nmsgstr "Visualisation"\n\n#: Browser/Core/BrowserTimings.js:157\nmsgid "Shapes"\nmsgstr "Formes"\n\n#: Browser/Core/BrowserTimings.js:158\nmsgid "Sensors"\nmsgstr "Senseurs"\n\n#: Browser/Core/BrowserTimings.js:163 Browser/Core/ContextMenu.js:210\nmsgid "Browser Timings"\nmsgstr "Calcul du temps"\n\n#: Browser/Core/ContextMenu.js:19\nmsgid "Cobweb X3D Browser"\nmsgstr "Cobweb X3D Navigateur"\n\n#: Browser/Core/ContextMenu.js:59\nmsgid "Viewpoints"\nmsgstr "Points de vue"\n\n#: Browser/Core/ContextMenu.js:87\nmsgid "Available Viewers"\nmsgstr "Visionneurs disponibles"\n\n#: Browser/Core/ContextMenu.js:95 Browser/Core/ContextMenu.js:107\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:135\nmsgid "Primitive Quality"\nmsgstr "Qualité des objets simples"\n\n#: Browser/Core/ContextMenu.js:99 Browser/Core/ContextMenu.js:147\nmsgid "High"\nmsgstr "Haut"\n\n#: Browser/Core/ContextMenu.js:107 Browser/Core/ContextMenu.js:155\nmsgid "high"\nmsgstr "haut"\n\n#: Browser/Core/ContextMenu.js:113 Browser/Core/ContextMenu.js:161\nmsgid "Medium"\nmsgstr "Moyenne"\n\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:169\nmsgid "medium"\nmsgstr "moyenne"\n\n#: Browser/Core/ContextMenu.js:127 Browser/Core/ContextMenu.js:175\nmsgid "Low"\nmsgstr "Faible"\n\n#: Browser/Core/ContextMenu.js:135 Browser/Core/ContextMenu.js:183\nmsgid "low"\nmsgstr "faible"\n\n#: Browser/Core/ContextMenu.js:143 Browser/Core/ContextMenu.js:155\n#: Browser/Core/ContextMenu.js:169 Browser/Core/ContextMenu.js:183\nmsgid "Texture Quality"\nmsgstr "Qualité des textures"\n\n#: Browser/Core/ContextMenu.js:191\nmsgid "Display Rubberband"\nmsgstr "Présenter le bande élastique"\n\n#: Browser/Core/ContextMenu.js:202 Browser/Core/ContextMenu.js:204\nmsgid "Rubberband"\nmsgstr "Bande élastique"\n\n#: Browser/Core/ContextMenu.js:202\nmsgid "on"\nmsgstr "marche"\n\n#: Browser/Core/ContextMenu.js:204\nmsgid "off"\nmsgstr "arrêt"\n\n#: Browser/Core/ContextMenu.js:225\nmsgid "Mute Browser"\nmsgstr "Rendre navigateur muet"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser muted"\nmsgstr "Navigateur muet"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser unmuted"\nmsgstr "Son de navigateur réactivé"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Leave Fullscreen"\nmsgstr "Sortie en plein écran"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Fullscreen"\nmsgstr "Plein écran"\n\n#: Browser/Core/ContextMenu.js:249\nmsgid "About Cobweb"\nmsgstr "À propos de Cobweb"\n\n#: Browser/Core/ContextMenu.js:342\nmsgid "Examine Viewer"\nmsgstr "Examiner"\n\n#: Browser/Core/ContextMenu.js:344\nmsgid "Walk Viewer"\nmsgstr "Aller"\n\n#: Browser/Core/ContextMenu.js:346\nmsgid "Fly Viewer"\nmsgstr "Voler"\n\n#: Browser/Core/ContextMenu.js:348\nmsgid "Plane Viewer"\nmsgstr "Visionneur de la plaine"\n\n#: Browser/Core/ContextMenu.js:350\n#, fuzzy\nmsgid "Look At Viewer"\nmsgstr "Regarder un objet de près"\n\n#: Browser/Core/ContextMenu.js:352\nmsgid "None Viewer"\nmsgstr "Pas de visionneur"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d file"\nmsgstr "Télécharger %d fichier"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d files"\nmsgstr "Télécharger %d fichiers"\n\n#: Browser/Networking/X3DNetworkingContext.js:104\nmsgid "Loading done"\nmsgstr "Téléchargement fini"\n\n#: Browser/X3DBrowser.js:313\nmsgid "Failed loading world."\nmsgstr "Le chargement des fichiers ayant échoué."\n\n#~ msgid "Look At"\n#~ msgstr "Regarder un objet de près"\n';});
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
@@ -21285,13 +21212,11 @@ define ('cobweb/Browser/Core/BrowserTimings',[
 	"jquery",
 	"cobweb/Fields/SFBool",
 	"cobweb/Basic/X3DBaseNode",
-	"lib/dataStorage",
 	"lib/gettext",
 ],
 function ($,
           SFBool,
           X3DBaseNode,
-          dataStorage,
           _)
 {
 
@@ -21327,7 +21252,7 @@ function ($,
 			this .enabled_ .addInterest (this, "set_enabled__");
 
 			this .localeOptions = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
-			this .type          = dataStorage ["BrowserTimings.type"] || "LESS";
+			this .type          = this .getBrowser () .getDataStorage () ["BrowserTimings.type"] || "LESS";
 			this .startTime     = 0;
 			this .frames        = 0;
 
@@ -21341,12 +21266,12 @@ function ($,
 
 			this .set_button__ ();
 
-			if (dataStorage ["BrowserTimings.enabled"])
+			if (this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"])
 				this .enabled_ = true;
 		},
 		set_enabled__: function (enabled)
 		{
-			dataStorage ["BrowserTimings.enabled"] = enabled .getValue ();
+			this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
 
 			if (enabled .getValue ())
 			{
@@ -21367,7 +21292,7 @@ function ($,
 			else
 				this .type = "MORE";
 
-			dataStorage ["BrowserTimings.type"] = this .type;
+			this .getBrowser () .getDataStorage () ["BrowserTimings.type"] = this .type;
 
 			this .set_button__ ();
 			this .build ();
@@ -21404,7 +21329,7 @@ function ($,
 				r           = 0;
 			
 			rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Frame rate") + ":")) .append ($("<td></td>") .text (f2(this .frames / (currentTime - this .startTime)) .toLocaleString (language, fixed) + " " + _("fps")));
-			rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Speed")      + ":")) .append ($("<td></td>") .text (f2(browser .currentSpeed)                          .toLocaleString (language, fixed) + " " + _("m/s")));
+			rows [r++] = $("<tr></tr>") .append ($("<td></td>") .text (_("Speed")      + ":")) .append ($("<td></td>") .text (f2(this .getSpeed (browser .currentSpeed))         .toLocaleString (language, fixed) + " " + this .getSpeedUnit (browser .currentSpeed)));
 
 			if (this .type === "MORE")
 			{
@@ -21445,6 +21370,20 @@ function ($,
 			this .header .find ("th") .text (_("Browser Timings"));
 			this .body .empty ();
 			this .body .append (rows);
+		},
+		getSpeed: function (speed)
+		{
+			if (speed < 15)
+				return speed;
+
+			return speed * 3.6;
+		},
+		getSpeedUnit: function (speed)
+		{
+			if (speed < 15)
+				return _("m/s");
+
+			return _("km/h");
 		},
 	});
 
@@ -23342,11 +23281,11 @@ function ($,
 {
 
 	
+	$("head") .append ('<style>.cobweb-menu-title:before { content: "' + _("Cobweb X3D Browser") + '" }</style>');
+
 	function ContextMenu (executionContext)
 	{
 		X3DBaseNode .call (this, executionContext);
-
-		$("head") .append ('<style>.cobweb-menu-title:before { content: "' + _("Cobweb X3D Browser") + '" }</style>');
 	}
 
 	ContextMenu .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -23369,7 +23308,7 @@ function ($,
 			X3DBaseNode .prototype .initialize .call (this);
 
 			$.contextMenu ({
-				selector: '.cobweb-surface', 
+				selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
 				build: this .build .bind (this),
 			});
 		},
@@ -23382,7 +23321,7 @@ function ($,
 				fullscreen       = this .getBrowser () .getElement () .fullScreen ();
 
 			var menu = {
-				className: 'cobweb-menu cobweb-menu-title',
+				className: "cobweb-menu cobweb-menu-title",
 				items: {
 					"separator0": "--------",
 					"viewpoints": {
@@ -23736,336 +23675,54 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Core/X3DCoreContext',[
-	"cobweb/Browser/Core/BrowserOptions",
-	"cobweb/Browser/Core/BrowserProperties",
-	"cobweb/Browser/Core/RenderingProperties",
-	"cobweb/Browser/Core/Notification",
-	"cobweb/Browser/Core/BrowserTimings",
-	"cobweb/Browser/Core/ContextMenu",
+define ('cobweb/Components/Networking/X3DUrlObject',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Bits/X3DConstants",
 ],
-function (BrowserOptions,
-          BrowserProperties,
-          RenderingProperties,
-          Notification,
-          BrowserTimings,
-          ContextMenu)
+function ($,
+          Fields,
+          X3DConstants)
 {
 
-	
-	function getContext (canvas)
+
+	function X3DUrlObject (executionContext)
 	{
-		var gl = canvas .getContext ("webgl") ||
-		         canvas .getContext ("experimental-webgl");
-
-		if (! gl)
-			throw new Error ("Couldn't create WebGL context.");
-
-		// Feature detection:
+		this .addType (X3DConstants .X3DUrlObject);
 		
-		// If the aliased linewidth ranges are both 1, gl.lineWidth is probably not possible,
-		// thus we disable it completely to prevent webgl errors.
-		
-		var aliasedLineWidthRange = gl .getParameter (gl .ALIASED_LINE_WIDTH_RANGE);
-		
-		if (aliasedLineWidthRange [0] === 1 && aliasedLineWidthRange [1] === 1)
-		{
-			gl .lineWidth = Function .prototype;
-		}
-		
-		// Return context.
-		
-		return gl;
+		this .addChildObjects ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
 	}
 
-	function X3DCoreContext (element)
+	X3DUrlObject .prototype =
 	{
-		this .element = element;
-
-		// Get canvas & context.
-
-		var browser  = $("<div></div>") .addClass ("cobweb-browser") .prependTo (this .element);
-		var loading  = $("<div></div>") .addClass ("cobweb-loading")  .appendTo (browser);
-		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
-		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
-		var canvas   = $("<div></div>") .addClass ("cobweb-surface")  .appendTo (browser);
-
-		$("<div></div>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
-		$("<div></div>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
-		$("<div></div>") .addClass ("cobweb-spinner-three") .appendTo (spinner);
-		$("<div></div>") .addClass ("cobweb-spinner-text")  .appendTo (progress) .text ("Lade 0 Dateien");
-		$("<div></div>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div></div>"));
-
-		this .loading = loading;
-		this .canvas  = $("<canvas></canvas>") .prependTo (canvas);
-		this .context = getContext (this .canvas [0]);
-
-		this .browserOptions      = new BrowserOptions (this);
-		this .browserProperties   = new BrowserProperties (this);
-		this .renderingProperties = new RenderingProperties (this);
-		this .notification        = new Notification (this);
-		this .browserTimings      = new BrowserTimings (this);
-		this .contextMenu         = new ContextMenu (this);
-		this .mobile              = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
-	}
-
-	X3DCoreContext .prototype =
-	{
+		constructor: X3DUrlObject,
 		initialize: function ()
 		{
-			this .browserOptions      .setup ()
-			this .browserProperties   .setup ()
-			this .renderingProperties .setup ();
-			this .notification        .setup ();
-			this .browserTimings      .setup ();
-			this .contextMenu         .setup ();
 		},
-		isStrict: function ()
+		setLoadState: function (value, notify)
 		{
-			return false;
-		},
-		getElement: function ()
-		{
-			return this .element;
-		},
-		getLoadingElement: function ()
-		{
-			return this .loading;
-		},
-		getCanvas: function ()
-		{
-			return this .canvas;
-		},
-		getContext: function ()
-		{
-			return this .context;
-		},
-		getBrowserOptions: function ()
-		{
-			return this .browserOptions;
-		},
-		getBrowserProperties: function ()
-		{
-			return this .browserProperties;
-		},
-		getRenderingProperties: function ()
-		{
-			return this .renderingProperties;
-		},
-		getNotification: function ()
-		{
-			return this .notification;
-		},
-		getBrowserTimings: function ()
-		{
-			return this .browserTimings;
-		},
-		getMobile: function ()
-		{
-			return this .mobile;
-		},
-	};
-
-	return X3DCoreContext;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Routing/X3DRoutingContext',[
-],
-function ()
-{
-
-
-	function X3DRoutingContext ()
-	{
-		this .taintedFields     = [ ];
-		this .taintedFieldsTemp = [ ];
-		this .taintedNodes      = [ ];
-		this .taintedNodesTemp  = [ ];
-	}
-
-	X3DRoutingContext .prototype =
-	{
-		constructor: X3DRoutingContext,
-		initialize: function () { },
-		addTaintedField: function (field, event)
-		{
-			this .taintedFields .push (field, event);
-		},
-		addTaintedNode: function (node)
-		{
-			this .taintedNodes .push (node);
-		},
-		processEvents: function ()
-		{
-			do
+			if (this .hasOwnProperty ("loadId"))
 			{
-				// Process field events
-				do
-				{
-					var taintedFields = this .taintedFields;
-
-					// Swap tainted fields.
-					this .taintedFields         = this .taintedFieldsTemp;
-					this .taintedFields .length = 0;
-
-					for (var i = 0, length = taintedFields .length; i < length; i += 2)
-						taintedFields [i] .processEvent (taintedFields [i + 1]);
-
-					// Don't know why this must be done after the for loop, otherwise a fatal error could be thrown.
-					this .taintedFieldsTemp = taintedFields;
-				}
-				while (this .taintedFields .length);
-
-				// Process node events
-				do
-				{
-					var taintedNodes = this .taintedNodes;
-
-					// Swap tainted nodes.
-					this .taintedNodes         = this .taintedNodesTemp;
-					this .taintedNodes .length = 0;
-
-					for (var i = 0, length = taintedNodes .length; i < length; ++ i)
-						taintedNodes [i] .processEvents ();
-					
-					// Don't know why this must be done after the for loop, otherwise a fatal error could be thrown.
-					this .taintedNodesTemp = taintedNodes;
-				}
-				while (! this .taintedFields .length && this .taintedNodes .length);
+				this .getBrowser () .removeLoadCount (this .loadId);
+				
+				delete this .loadId;
 			}
-			while (this .taintedFields .length);
+
+			if (notify !== false && value === X3DConstants .IN_PROGRESS_STATE)
+				this .loadId = this .getBrowser () .addLoadCount (this);
+
+			this .loadState_ = value;
+		},
+		checkLoadState: function ()
+		{
+			return this .loadState_ .getValue ();
 		},
 	};
 
-	return X3DRoutingContext;
+	return X3DUrlObject;
 });
 
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
 
-
-define ('cobweb/Browser/Scripting/X3DScriptingContext',[
-],
-function ()
-{
-
-
-	function X3DScriptingContext ()
-	{
-		this .scripts = [ this ];
-	}
-
-	X3DScriptingContext .prototype =
-	{
-		initialize: function ()
-		{
-		},
-		isExternal: function ()
-		{
-		   return this .scripts .length === 1;
-		},
-		getScriptStack: function ()
-		{
-			return this .scripts;
-		}
-	};
-
-	return X3DScriptingContext;
-});
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
@@ -24200,4258 +23857,6 @@ function ($,
 
 	return X3DNode;
 });
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Core/X3DChildNode',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Components/Core/X3DNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DNode, 
-          X3DConstants)
-{
-
-
-	function X3DChildNode (executionContext)
-	{
-		if (this .getExecutionContext ())
-			return;
-
-		X3DNode .call (this, executionContext);
-
-		this .addType (X3DConstants .X3DChildNode);
-
-		this .addChildObjects ("isCameraObject", new Fields .SFBool ());
-	}
-
-	X3DChildNode .prototype = $.extend (Object .create (X3DNode .prototype),
-	{
-		constructor: X3DChildNode,
-		setCameraObject: function (value)
-		{
-			if (value !== this .isCameraObject_ .getValue ())
-				this .isCameraObject_ = value;
-		},
-		getCameraObject: function ()
-		{
-			return this .isCameraObject_ .getValue ();
-		},
-	});
-
-	return X3DChildNode;
-});
-
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Core/X3DSensorNode',[
-	"jquery",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          X3DChildNode, 
-          X3DConstants)
-{
-
-
-	function X3DSensorNode (executionContext)
-	{
-		X3DChildNode .call (this, executionContext);
-
-		this .addType (X3DConstants .X3DSensorNode);
-	}
-
-	X3DSensorNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
-	{
-		constructor: X3DSensorNode,
-	});
-
-	return X3DSensorNode;
-});
-
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Networking/X3DNetworkSensorNode',[
-	"jquery",
-	"cobweb/Components/Core/X3DSensorNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          X3DSensorNode, 
-          X3DConstants)
-{
-
-
-	function X3DNetworkSensorNode (executionContext)
-	{
-		X3DSensorNode .call (this, executionContext);
-
-		this .addType (X3DConstants .X3DNetworkSensorNode);
-	}
-
-	X3DNetworkSensorNode .prototype = $.extend (Object .create (X3DSensorNode .prototype),
-	{
-		constructor: X3DNetworkSensorNode,
-	});
-
-	return X3DNetworkSensorNode;
-});
-
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Bits/X3DCast',[
-	"cobweb/Fields",
-],
-function (Fields)
-{
-
-
-	return function (type, node)
-	{
-		try
-		{
-			if (node)
-			{
-				if (node instanceof Fields .SFNode)
-					node = node .getValue ();
-
-				if (node)
-				{
-					node = node .getInnerNode ();
-				
-					if (node .getType () .indexOf (type) !== -1)
-						return node;
-				}
-			}
-		}
-		catch (error)
-		{ }
-
-		return null;
-	};
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Networking/LoadSensor',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Networking/X3DNetworkSensorNode",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DNetworkSensorNode,
-          X3DCast,
-          X3DConstants)
-{
-
-
-	function LoadSensor (executionContext)
-	{
-		X3DNetworkSensorNode .call (this, executionContext);
-
-		this .addType (X3DConstants .LoadSensor);
-
-		this .urlObjects = [ ];
-		this .aborted    = false;
-		this .timeOutId  = undefined;
-	}
-
-	LoadSensor .prototype = $.extend (Object .create (X3DNetworkSensorNode .prototype),
-	{
-		constructor: LoadSensor,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",  new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",   new Fields .SFBool (true)),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "timeOut",   new Fields .SFTime ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",  new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "isLoaded",  new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "progress",  new Fields .SFFloat ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,  "loadTime",  new Fields .SFTime ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "watchList", new Fields .MFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "LoadSensor";
-		},
-		getComponentName: function ()
-		{
-			return "Networking";
-		},
-		getContainerField: function ()
-		{
-			return "children";
-		},
-		initialize: function ()
-		{
-			X3DNetworkSensorNode .prototype .initialize .call (this);
-
-			this .enabled_   .addInterest (this,"set_enabled__");
-			this .timeOut_   .addInterest (this,"set_timeOut__");
-			this .watchList_ .addInterest (this,"set_watchList__");
-
-			this .watchList_ .addEvent ();
-		},
-		set_enabled__: function ()
-		{
-			if (this .enabled_ .getValue ())
-				this .reset ();
-		
-			else
-			{
-				this .abort ();
-				this .remove ();
-			}
-		},
-		set_timeOut__: function ()
-		{
-			if (this .isActive_ .getValue ())
-			{
-				this .clearTimeout ();
-
-				this .aborted = false;
-
-				if (this .timeOut_ .getValue () > 0)
-					this .timeOutId = setTimeout (this .abort .bind (this), this .timeOut_ .getValue () * 1000);
-			}
-		},
-		set_watchList__: function ()
-		{
-			this .reset ();
-		},
-		set_loadState__: function (dummy, urlObject)
-		{
-			switch (urlObject .checkLoadState ())
-			{
-				case X3DConstants .NOT_STARTED_STATE:
-					break;
-				case X3DConstants .IN_PROGRESS_STATE:
-				case X3DConstants .COMPLETE_STATE:
-				case X3DConstants .FAILED_STATE:
-				{
-					this .count ();
-					break;
-				}
-			}
-		},
-		count: function ()
-		{
-			var
-				complete   = 0,
-				failed     = 0,
-				urlObjects = this .urlObjects;
-
-			for (var i = 0, length = urlObjects .length; i < length; ++ i)
-			{
-				var urlObject = urlObjects [i];
-
-				complete += urlObject .checkLoadState () == X3DConstants .COMPLETE_STATE;
-				failed   += urlObject .checkLoadState () == X3DConstants .FAILED_STATE;
-			}
-
-			var progress = complete / urlObjects .length;
-
-			if (this .aborted || failed || complete == urlObjects .length)
-			{
-				var loaded = complete == urlObjects .length;
-
-				this .clearTimeout ();
-
-				this .isActive_ = false;
-				this .isLoaded_ = loaded;
-				this .progress_ = progress;
-
-				if (loaded)
-					this .loadTime_ = this .getBrowser () .getCurrentTime ();
-			}
-			else
-			{
-				if (this .isActive_ .getValue ())
-				{
-					this .progress_ = progress;
-				}
-				else
-				{
-					this .isActive_ = true;
-
-					this .progress_ = progress;
-		
-					this .set_timeOut__ ();
-				}
-			}
-		},
-		abort: function ()
-		{
-			this .clearTimeout ();
-
-			this .aborted = true;
-
-			if (this .enabled_ .getValue ())
-				this .count ();
-		},
-		reset: function ()
-		{
-			this .remove ();
-		
-			if (this .enabled_ .getValue ())
-			{
-				var
-					watchList  = this .watchList_ .getValue (),
-					urlObjects = this .urlObjects;
-
-				for (var i = 0, length = watchList .length; i < length; ++ i)
-				{
-					var urlObject = X3DCast (X3DConstants .X3DUrlObject, watchList [i]);
-		
-					if (urlObject)
-					{
-						urlObjects .push (urlObject);
-		
-						urlObject .loadState_ .addInterest (this, "set_loadState__", urlObject);
-					}
-				}
-
-				this .count ();
-			}
-		},
-		remove: function ()
-		{
-			this .clearTimeout ();
-
-			var urlObjects = this .urlObjects;
-
-			for (var i = 0, length = urlObjects .length; i < length; ++ i)
-				urlObjects [i] .loadState_ .removeInterest (this, "set_loadState__");
-
-			urlObjects .length = 0;
-		},
-		clearTimeout: function ()
-		{
-			clearTimeout (this .timeOutId);
-			this .timeOutId = undefined;
-		},
-	});
-
-	return LoadSensor;
-});
-
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('standard/Networking/URI',[
-	"jquery",
-],
-function ($)
-{
-
-
-	/*
-	 *  Path
-	 */
-
-	function Path (path, separator)
-	{
-		switch (arguments .length)
-		{
-			case 2:
-			{
-				this .value                    = path .split (separator);
-				this .value .separator         = separator;
-				this .value .leadingSeparator  = false;
-				this .value .trailingSeparator = false;
-				
-				if (this .value .length)
-				{
-					if (this .value [0] === "")
-					{
-						this .value .shift ();
-						this .value .leadingSeparator = true;
-					}
-				}
-				
-				if (this .value .length)
-				{
-					if (this .value [this .value .length - 1] === "")
-					{
-						this .value .pop ();
-						this .value .trailingSeparator = true;
-					}		
-				}
-				
-				break;
-			}
-			case 4:
-			{
-				this .value                    = arguments [0];
-				this .value .separator         = arguments [1];
-				this .value .leadingSeparator  = arguments [2];
-				this .value .trailingSeparator = arguments [3];					
-				break;
-			}
-		}
-	}
-
-	Path .prototype =
-	{
-		copy: function ()
-		{
-			return new Path (this .value .slice (0, this .value .length), 
-		                    this .value .separator,
-		                    this .value .leadingSeparator,
-		                    this .value .trailingSeparator);
-		},
-		get origin ()
-		{
-			return new Path ([ ], 
-		                    this .value .separator,
-		                    true,
-		                    false);
-		},
-		get base ()
-		{
-			if (this .value .trailingSeparator)
-				return this .copy ();
-
-			return this .parent;	
-		},
-		get parent ()
-		{
-			switch (this .value .length)
-			{
-				case 0:
-				case 1:
-				{
-					if (this .value .leadingSeparator)
-						return this .origin;
-
-					return new Path ([ ".." ], this .value .separator, false, false);
-				}
-
-				default:
-					return new Path (this .value .slice (0, this .value .length - 1), 
-				                    this .value .separator,
-				                    this .value .leadingSeparator,
-				                    true);
-			}
-
-		},
-		isRelative: function ()
-		{
-			return ! this .value .length || this .value [0] == "..";
-		},
-		getRelativePath: function (descendant)
-		{
-			if (this .isRelative ())
-				return descendant;
-		
-			var path = new Path ([ ], "/", false, false);
-
-			var basePath       = this .removeDotSegments () .base;
-			var descendantPath = descendant .removeDotSegments ();
-
-			var i, j;
-
-			for (i = 0; i < basePath .value .length && i < descendantPath .value .length; ++ i)
-			{
-				if (basePath .value [i] !== descendantPath .value [i])
-					break;
-			}
-
-			for (j = i; j < basePath .value .length; ++ j)
-				path .value .push ("..");
-
-			for (j = i; j < descendantPath .value .length; ++ j)
-				path .value .push (descendantPath .value [j]);
-
-			return path;
-		},
-		removeDotSegments: function ()
-		{
-			var path = new Path ([ ], this .value .separator, this .value .leadingSeparator, this .value .trailingSeparator);
-
-			if (this .value .length)
-			{
-				for (var i = 0; i < this .value .length; ++ i)
-				{
-					var segment = this .value [i];
-				
-					if (segment === ".")
-						path .value .trailingSeparator = true;
-
-					else if (segment === "..")
-					{
-						path .value .trailingSeparator = true;
-
-						if (path .value .length)
-							path .value .pop ();
-					}
-
-					else
-					{
-						path .value .trailingSeparator = false;
-						path .value .push (segment);
-					}
-				}
-
-				path .value .trailingSeparator |= this .value .trailingSeparator;
-			}
-
-			return path;
-		},
-		toString: function ()
-		{
-			var string = "";
-		
-			if (this .value .leadingSeparator)
-				string += this .value .separator;
-
-			string += this .value .join (this .value .separator);
-
-			if (this .value .trailingSeparator)
-				string += this .value .separator;
-
-			return string;
-		},
-	};
-
-	/*
-	 *  URI
-	 *  https://tools.ietf.org/html/rfc3986
-	 */
-
-	var wellKnownPorts =
-	{
-		ftp:   21,
-		http:  80,
-		https: 443,
-		ftps:  990,
-	};
-
-	var address   = /^(?:([^:\/?#]*?):)?(?:(\/\/)([^\/?#]*))?([^?#]*)(?:\?([^#]*))?(?:#(.*))?$/;
-	var authority = /^(.*?)(?:\:([^:]*))?$/;
-
-	function parse (uri, string)
-	{
-		var result = address .exec (string);
-	
-		if (result)
-		{
-			uri .scheme    = result [1] || "";
-			uri .slashs    = result [2] || "";
-			uri .authority = result [3] || "";
-			uri .path      = result [4] || "";
-			uri .query     = result [5] || "";
-			uri .fragment  = result [6] || "";
-			
-			var result = authority .exec (uri .authority);
-			
-			if (result)
-			{
-				uri .host      = result [1] || "";
-				uri .port      = result [2] ? parseInt (result [2]) : 0;
-				uri .authority = uri .host;
-
-				if (uri .port)
-					uri .authority += ":" + uri .port;
-			}
-			
-			uri .absolute = Boolean (uri .slashs .length) || uri .path [0] === "/";
-			uri .local    = /^(?:file|data)$/ .test (uri .scheme) || (! uri .scheme && ! uri .authority)
-		}
-
-		uri .string = string;
-	}
-
-	function removeDotSegments (path)
-	{
-		return new Path (path, "/") .removeDotSegments () .toString ();
-	}
-
-	function URI (uri)
-	{
-		this .value =
-		{
-			local:     true,
-			absolute:  true,
-			scheme:    "",
-			slashs:    "",
-			authority: "",
-			host:      "",
-			port:      0,
-			path:      "",
-			query:     "",
-			fragment:  "",
-			string:    "",
-		};
-
-		switch (arguments .length)
-		{
-			case 0:
-				break;
-			case 1:
-			{
-				parse (this .value, uri);
-				break;
-			}
-			case 10:
-			{
-				this .value .local     = arguments [0];
-				this .value .absolute  = arguments [1];
-				this .value .scheme    = arguments [2];
-				this .value .slashs    = arguments [3];
-				this .value .authority = arguments [4];
-				this .value .host      = arguments [5];
-				this .value .port      = arguments [6];
-				this .value .path      = arguments [7];
-				this .value .query     = arguments [8];
-				this .value .fragment  = arguments [9];
-				this .value .string    = this .toString ();
-				break;
-			}
-		}
-	};
-
-	URI .prototype =
-	{
-		copy: function ()
-		{
-			return new URI (this .value .local,
-			                this .value .absolute,
-			                this .value .scheme,
-			                this .value .slashs,
-			                this .value .authority,
-			                this .value .host,
-			                this .value .port,
-			                this .value .path,
-			                this .value .query,
-			                this .value .fragment);
-		},
-		get length ()
-		{
-			return this .value .string .length;
-		},
-		isRelative: function ()
-		{
-			return ! this .value .absolute ();
-		},
-		isAbsolute: function ()
-		{
-			return ! this .value .absolute;
-		},
-		isLocal: function ()
-		{
-			return this .value .local;
-		},
-		isNetwork: function ()
-		{
-			return ! this .value .local;
-		},
-		isDirectory: function ()
-		{
-			return this .value .path .length && this .value .path [this .value .path .length - 1] === "/";
-		},
-		isFile: function ()
-		{
-			return ! this .isDirectory ();
-		},
-		get hierarchy ()
-		{
-			var hierarchy = "";
-
-			hierarchy += this .value .slashs;
-			hierarchy += this .value .authority;
-			hierarchy += this .value .path;
-
-			return hierarchy;
-		},
-		get authority ()
-		{
-			return this .value .authority;
-		},
-		get scheme ()
-		{
-			return this .value .scheme;
-		},
-		get host ()
-		{
-			return this .value .host;
-		},
-		get port ()
-		{
-			return this .value .port;
-		},
-		get wellKnownPort ()
-		{
-			var wellKnownPort = wellKnownPorts [this .value .scheme];
-
-			if (wellKnownPort !== undefined)
-				return wellKnownPort;
-
-			return 0;
-		},
-		get path ()
-		{
-			return this .value .path;
-		},
-		set query (value)
-		{
-			this .value .query = value;
-		},
-		get query ()
-		{
-			return this .value .query;
-		},
-		set fragment (value)
-		{
-			this .value .fragment = value;
-		},
-		get fragment ()
-		{
-			return this .value .fragment;
-		},
-		get location ()
-		{
-			return this .toString ();
-		},
-		get origin ()
-		{
-			return new URI (this .value .local,
-			                this .value .absolute,
-			                this .value .scheme,
-			                this .value .slashs,
-			                this .value .authority,
-			                this .value .host,
-			                this .value .port,
-			                this .value .local ? "/" : "",
-			                "",
-			                "");
-		},
-		get base ()
-		{
-			if (this .isDirectory ())
-				return new URI (this .value .local,
-				                this .value .absolute,
-				                this .value .scheme,
-				                this .value .slashs,
-				                this .value .authority,
-				                this .value .host,
-				                this .value .port,
-				                this .value .path,
-				                "",
-				                "");
-
-			return this .parent;
-		},
-		get parent ()
-		{
-			var path;
-			
-			if (this .isDirectory ())
-			{
-				if (this .value .path .length == 1)
-					return "/";
-
-				path = this .value .path .substr (0, this .value .path .length - 1);
-			}
-			else
-				path = this .path;
-
-			var slash = path .lastIndexOf ("/");
-			
-			path = slash == -1 ? "" : path .substring (0, path .lastIndexOf ("/") + 1);
-
-			return new URI (this .value .local,
-			                this .value .absolute,
-			                this .value .scheme,
-			                this .value .slashs,
-			                this .value .authority,
-			                this .value .host,
-			                this .value .port,
-			                path,
-			                "",
-			                "");	
-		},
-		get filename ()
-		{
-			return new URI (this .value .local,
-			                this .value .absolute,
-			                this .value .scheme,
-			                this .value .slashs,
-			                this .value .authority,
-			                this .value .host,
-			                this .value .port,
-			                this .value .path,
-			                "",
-			                "");
-		},
-		get basename ()
-		{
-			if (this .value .path)
-				return this .value .path .substr (this .value .path. lastIndexOf ("/") + 1);
-
-			return "";
-		},
-		get prefix ()
-		{
-			if (this .value .path .length && this .isFile ())
-			{
-				var basename = this .basename;
-				var suffix   = this .suffix;
-
-				return basename .substr (0, basename .length - suffix .length);
-			}
-
-			return this .basename;
-		},
-		get suffix ()
-		{
-			var dot   = this .value .path .lastIndexOf (".");
-			var slash = this .value .path .lastIndexOf ("/");
-
-			if (slash < dot)
-				return this .value .path .substr (dot);
-
-			return "";
-		},
-		transform: function (reference)
-		{
-			var T_local    = false;
-			var T_absolute = false;
-
-			var T_scheme    = "";
-			var T_slashs    = "";
-			var T_authority = "";
-			var T_host      = "";
-			var T_port      = 0;
-			var T_path      = "";
-			var T_query     = "";
-			var T_fragment  = "";
-
-			if (reference .scheme .length)
-			{
-				T_local     = reference .isLocal ();
-				T_absolute  = reference .isAbsolute ();
-				T_scheme    = reference .scheme;
-				T_slashs    = reference .value .slashs;
-				T_authority = reference .authority;
-				T_host      = reference .host;
-				T_port      = reference .port;
-				T_path      = reference .path;
-				T_query     = reference .query;
-			}
-			else
-			{
-				if (reference .authority .length)
-				{
-					T_local     = reference .isLocal ();
-					T_absolute  = reference .isAbsolute ();
-					T_authority = reference .authority;
-					T_host      = reference .host;
-					T_port      = reference .port;
-					T_path      = reference .path;
-					T_query     = reference .query;
-				}
-				else
-				{
-					if (reference .path .length === 0)
-					{
-						var T_path = this .value .path;
-
-						if (reference .query .length)
-							T_query = reference .query;
-						else
-							T_query = this .value .query;
-					}
-					else
-					{
-						if (reference .path [0] === "/")
-						{
-							T_path = reference .path;
-						}
-						else
-						{
-							// merge (Base .path (), reference .path ());
-
-							var base = this .base;
-
-							if (base .path .length === 0)
-								T_path = "/";
-							else
-								T_path += base .path;
-
-							T_path += reference .path;
-						}
-
-						T_query = reference .query;
-					}
-
-					T_local     = this .isLocal ();
-					T_absolute  = this .isAbsolute () || reference .isAbsolute ();
-					T_authority = this .value .authority;
-					T_host      = this .value .host;
-					T_port      = this .value .port;
-				}
-
-				T_scheme = this .value .scheme;
-				T_slashs = this .value .slashs;
-			}
-
-			T_fragment = reference .fragment;
-
-			return new URI (T_local,
-			                T_absolute,
-			                T_scheme,
-			                T_slashs,
-			                T_authority,
-			                T_host,
-			                T_port,
-			                removeDotSegments (T_path),
-			                T_query,
-			                T_fragment);
-		},
-		removeDotSegments: function ()
-		{
-			return new URI (this .value .local,
-			                this .value .absolute,
-			                this .value .scheme,
-			                this .value .slashs,
-			                this .value .authority,
-			                this .value .host,
-			                this .value .port,
-			                removeDotSegments (this .value .path),
-			                this .value .query,
-			                this .value .fragment);
-		},
-		getRelativePath: function (descendant)
-		{
-			if (this .value .scheme !== descendant .scheme)
-				return descendant;
-
-			if (this .value .authority !== descendant .authority)
-				return descendant;
-
-			var path           = new Path (this .value .path, "/");
-			var descendantPath = new Path (descendant .path,  "/");
-
-			return new URI (true,
-			                false,
-			                "",
-			                "",
-			                "",
-			                "",
-			                0,
-			                path .getRelativePath (descendantPath) .toString (),
-			                descendant .query,
-			                descendant .fragment);
-		},
-		escape: function ()
-		{
-			return new URI (escape (this .location));
-		},
-		unescape: function ()
-		{
-			return new URI (unescape (this .location));	
-		},
-		toString: function ()
-		{
-			var string = this .value .scheme;
-
-			if (this .value .scheme .length)
-				string += ":";
-
-			string += this .hierarchy;
-
-			if (this .value .query .length)
-				string += "?" + this .value .query;
-
-			if (this .value .fragment .length)
-				string += "#" + this .value .fragment;
-
-			return string;
-		},
-	};
-
-	return URI;
-});
-
-(function(window) {
-    var re = {
-        not_string: /[^s]/,
-        number: /[diefg]/,
-        json: /[j]/,
-        not_json: /[^j]/,
-        text: /^[^\x25]+/,
-        modulo: /^\x25{2}/,
-        placeholder: /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-gijosuxX])/,
-        key: /^([a-z_][a-z_\d]*)/i,
-        key_access: /^\.([a-z_][a-z_\d]*)/i,
-        index_access: /^\[(\d+)\]/,
-        sign: /^[\+\-]/
-    }
-
-    function sprintf() {
-        var key = arguments[0], cache = sprintf.cache
-        if (!(cache[key] && cache.hasOwnProperty(key))) {
-            cache[key] = sprintf.parse(key)
-        }
-        return sprintf.format.call(null, cache[key], arguments)
-    }
-
-    sprintf.format = function(parse_tree, argv) {
-        var cursor = 1, tree_length = parse_tree.length, node_type = "", arg, output = [], i, k, match, pad, pad_character, pad_length, is_positive = true, sign = ""
-        for (i = 0; i < tree_length; i++) {
-            node_type = get_type(parse_tree[i])
-            if (node_type === "string") {
-                output[output.length] = parse_tree[i]
-            }
-            else if (node_type === "array") {
-                match = parse_tree[i] // convenience purposes only
-                if (match[2]) { // keyword argument
-                    arg = argv[cursor]
-                    for (k = 0; k < match[2].length; k++) {
-                        if (!arg.hasOwnProperty(match[2][k])) {
-                            throw new Error(sprintf("[sprintf] property '%s' does not exist", match[2][k]))
-                        }
-                        arg = arg[match[2][k]]
-                    }
-                }
-                else if (match[1]) { // positional argument (explicit)
-                    arg = argv[match[1]]
-                }
-                else { // positional argument (implicit)
-                    arg = argv[cursor++]
-                }
-
-                if (get_type(arg) == "function") {
-                    arg = arg()
-                }
-
-                if (re.not_string.test(match[8]) && re.not_json.test(match[8]) && (get_type(arg) != "number" && isNaN(arg))) {
-                    throw new TypeError(sprintf("[sprintf] expecting number but found %s", get_type(arg)))
-                }
-
-                if (re.number.test(match[8])) {
-                    is_positive = arg >= 0
-                }
-
-                switch (match[8]) {
-                    case "b":
-                        arg = arg.toString(2)
-                    break
-                    case "c":
-                        arg = String.fromCharCode(arg)
-                    break
-                    case "d":
-                    case "i":
-                        arg = parseInt(arg, 10)
-                    break
-                    case "j":
-                        arg = JSON.stringify(arg, null, match[6] ? parseInt(match[6]) : 0)
-                    break
-                    case "e":
-                        arg = match[7] ? arg.toExponential(match[7]) : arg.toExponential()
-                    break
-                    case "f":
-                        arg = match[7] ? parseFloat(arg).toFixed(match[7]) : parseFloat(arg)
-                    break
-                    case "g":
-                        arg = match[7] ? parseFloat(arg).toPrecision(match[7]) : parseFloat(arg)
-                    break
-                    case "o":
-                        arg = arg.toString(8)
-                    break
-                    case "s":
-                        arg = ((arg = String(arg)) && match[7] ? arg.substring(0, match[7]) : arg)
-                    break
-                    case "u":
-                        arg = arg >>> 0
-                    break
-                    case "x":
-                        arg = arg.toString(16)
-                    break
-                    case "X":
-                        arg = arg.toString(16).toUpperCase()
-                    break
-                }
-                if (re.json.test(match[8])) {
-                    output[output.length] = arg
-                }
-                else {
-                    if (re.number.test(match[8]) && (!is_positive || match[3])) {
-                        sign = is_positive ? "+" : "-"
-                        arg = arg.toString().replace(re.sign, "")
-                    }
-                    else {
-                        sign = ""
-                    }
-                    pad_character = match[4] ? match[4] === "0" ? "0" : match[4].charAt(1) : " "
-                    pad_length = match[6] - (sign + arg).length
-                    pad = match[6] ? (pad_length > 0 ? str_repeat(pad_character, pad_length) : "") : ""
-                    output[output.length] = match[5] ? sign + arg + pad : (pad_character === "0" ? sign + pad + arg : pad + sign + arg)
-                }
-            }
-        }
-        return output.join("")
-    }
-
-    sprintf.cache = {}
-
-    sprintf.parse = function(fmt) {
-        var _fmt = fmt, match = [], parse_tree = [], arg_names = 0
-        while (_fmt) {
-            if ((match = re.text.exec(_fmt)) !== null) {
-                parse_tree[parse_tree.length] = match[0]
-            }
-            else if ((match = re.modulo.exec(_fmt)) !== null) {
-                parse_tree[parse_tree.length] = "%"
-            }
-            else if ((match = re.placeholder.exec(_fmt)) !== null) {
-                if (match[2]) {
-                    arg_names |= 1
-                    var field_list = [], replacement_field = match[2], field_match = []
-                    if ((field_match = re.key.exec(replacement_field)) !== null) {
-                        field_list[field_list.length] = field_match[1]
-                        while ((replacement_field = replacement_field.substring(field_match[0].length)) !== "") {
-                            if ((field_match = re.key_access.exec(replacement_field)) !== null) {
-                                field_list[field_list.length] = field_match[1]
-                            }
-                            else if ((field_match = re.index_access.exec(replacement_field)) !== null) {
-                                field_list[field_list.length] = field_match[1]
-                            }
-                            else {
-                                throw new SyntaxError("[sprintf] failed to parse named argument key")
-                            }
-                        }
-                    }
-                    else {
-                        throw new SyntaxError("[sprintf] failed to parse named argument key")
-                    }
-                    match[2] = field_list
-                }
-                else {
-                    arg_names |= 2
-                }
-                if (arg_names === 3) {
-                    throw new Error("[sprintf] mixing positional and named placeholders is not (yet) supported")
-                }
-                parse_tree[parse_tree.length] = match
-            }
-            else {
-                throw new SyntaxError("[sprintf] unexpected placeholder")
-            }
-            _fmt = _fmt.substring(match[0].length)
-        }
-        return parse_tree
-    }
-
-    var vsprintf = function(fmt, argv, _argv) {
-        _argv = (argv || []).slice(0)
-        _argv.splice(0, 0, fmt)
-        return sprintf.apply(null, _argv)
-    }
-
-    /**
-     * helpers
-     */
-    function get_type(variable) {
-        return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase()
-    }
-
-    function str_repeat(input, multiplier) {
-        return Array(multiplier + 1).join(input)
-    }
-
-    /**
-     * export to either browser or node.js
-     */
-    if (typeof exports !== "undefined") {
-        exports.sprintf = sprintf
-        exports.vsprintf = vsprintf
-    }
-    else {
-        window.sprintf = sprintf
-        window.vsprintf = vsprintf
-
-        if (typeof define === "function" && define.amd) {
-            define('lib/sprintf.js/src/sprintf',[],function() {
-                return {
-                    sprintf: sprintf,
-                    vsprintf: vsprintf
-                }
-            })
-        }
-    }
-})(typeof window === "undefined" ? this : window);
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Browser/Networking/urls',[
-	"jquery",
-	"cobweb/Browser/VERSION",
-	"standard/Networking/URI",
-	"lib/sprintf.js/src/sprintf",
-],
-function ($,
-          VERSION,
-          URI,
-          sprintf)
-{
-
-
-	var
-		MAJOR            = parseInt (VERSION),
-		cobwebExpression = /\/(?:cobweb\.min\.js|cobweb\.uncompressed\.js|cobweb\.js)$/,
-		script           = $("script") .filter (function (i, element) { return element .src .match (cobwebExpression); }),
-		scriptURL        = new URI (script [0] .src);
-
-	function componentUrl (name)
-	{
-		if (VERSION === String (parseFloat (VERSION)))
-		{
-			return [
-				scriptURL .transform (new URI (sprintf .sprintf ("components/%s.js", name))) .toString (),
-				sprintf .sprintf ("https://cdn.rawgit.com/create3000/cobweb/master/stable/%s/%s/Components/%s.js", MAJOR, VERSION, name),
-				sprintf .sprintf ("http://cdn.rawgit.com/create3000/cobweb/master/stable/%s/%s/Components/%s.js",  MAJOR, VERSION, name),
-				sprintf .sprintf ("https://rawgit.com/create3000/cobweb/master/stable/%s/%s/Components/%s.js",     MAJOR, VERSION, name),
-				sprintf .sprintf ("http://rawgit.com/create3000/cobweb/master/stable/%s/%s/Components/%s.js",      MAJOR, VERSION, name),
-			];
-		}
-		else
-		{
-			return [
-				scriptURL .transform (new URI (sprintf .sprintf ("components/%s.js", name))) .toString (),
-				sprintf .sprintf ("https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/components/%s.js", name),
-				sprintf .sprintf ("http://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/components/%s.js", name),
-				sprintf .sprintf ("https://rawgit.com/create3000/cobweb/master/cobweb.js/components/%s.js",     name),
-				sprintf .sprintf ("http://rawgit.com/create3000/cobweb/master/cobweb.js/components/%s.js",      name),
-			];
-		}
-	}
-
-	return {
-		providerUrl:       "http://titania.create3000.de/cobweb",
-		componentUrl:       componentUrl,
-		fallbackUrl:       "https://crossorigin.me/",
-		fallbackExpression: new RegExp ("^https://crossorigin.me/"),
-	};
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Browser/Networking/X3DNetworkingContext',[
-	"cobweb/Fields",
-	"cobweb/Components/Networking/LoadSensor",
-	"cobweb/Browser/Networking/urls",
-	"standard/Networking/URI",
-	"lib/sprintf.js/src/sprintf",
-	"lib/gettext",
-],
-function (Fields,
-          LoadSensor,
-          urls,
-          URI,
-          sprintf,
-          _)
-{
-
-	
-	var loadCountId = 0;
-
-	function X3DNetworkingContext ()
-	{
-		this .cache = this .getElement () [0] .getAttribute ("cache") != "false";
-
-		this .addChildObjects ("loadCount", new Fields .SFInt32 ());
-
-		this .loadSensor     = new LoadSensor (this);
-		this .loadingTotal   = 0;
-		this .loadingObjects = { };
-		this .location       = new URI (this .getElement () [0] .baseURI);
-		this .defaultScene   = this .createScene ();
-		this .privateScene   = this .createScene ();
-		this .browserLoading = false;
-	}
-
-	X3DNetworkingContext .prototype =
-	{
-		initialize: function ()
-		{
-			this .loadSensor .setup ();
-
-			this .defaultScene .setup ();
-			this .defaultScene .setLive (true);
-
-			this .privateScene .setPrivate (true);
-			this .privateScene .setup ();
-			this .privateScene .setLive (true);
-		},
-		getProviderUrl: function ()
-		{
-			return urls .providerUrl;
-		},
-		doCaching: function ()
-		{
-		   return this .cache;
-		},
-		getLocation: function ()
-		{
-			return this .location;
-		},
-		getDefaultScene: function ()
-		{
-			return this .defaultScene;
-		},
-		getPrivateScene: function ()
-		{
-			return this .privateScene;
-		},
-		getLoadSensor: function ()
-		{
-			return this .loadSensor;
-		},
-		setBrowserLoading: function (value)
-		{
-			this .browserLoading = value;
-
-			if (value)
-			{
-				this .resetLoadCount ();
-				this .getCanvas ()         .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
-				this .getLoadingElement () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
-			}
-			else
-			{
-				this .getLoadingElement () .stop (true, true) .fadeOut (2000);
-				this .getCanvas ()         .stop (true, true) .fadeIn (2000);
-			}
-		},
-		addLoadCount: function ()
-		{
-		   var id = loadCountId ++;
-
-			++ this .loadingTotal;
-		   this .loadingObjects [id] = true;
-			
-			this .setLoadCount (this .loadCount_ = this .loadCount_ .getValue () + 1);
-			this .setCursor ("DEFAULT");
-
-			return id;
-		},
-		removeLoadCount: function (id)
-		{
-		   if (! this .loadingObjects .hasOwnProperty (id))
-		      return;
-		   
-			delete this .loadingObjects [id];
-
-			this .setLoadCount (this .loadCount_ = this .loadCount_ .getValue () - 1);
-		},
-		setLoadCount: function (value)
-		{
-			if (value)
-				var string = sprintf .sprintf (value == 1 ? _ ("Loading %d file") : _ ("Loading %d files"), value);
-			
-			else
-			{
-				var string = _("Loading done");
-				this .setCursor ("DEFAULT");
-			}
-
-			if (! this .browserLoading)
-				this .getNotification () .string_ = string;
-
-			this .getLoadingElement () .find (".cobweb-spinner-text") .text (string);
-
-			this .getLoadingElement () .find (".cobweb-progressbar div") .css ("width", ((this .loadingTotal - value) * 100 / this .loadingTotal) + "%");
-		},
-		resetLoadCount: function ()
-		{
-			this .loadCount_     = 0;
-			this .loadingTotal   = 0;
-			this .loadingObjects = { };			   
-		},
-	};
-
-	return X3DNetworkingContext;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Browser/Shaders/X3DShadersContext',[],function ()
-{
-
-
-	function X3DShadersContext ()
-	{
-		this .shaders = { };
-	}
-
-	X3DShadersContext .prototype =
-	{
-		initialize: function () { },
-		getShadingLanguageVersion: function ()
-		{
-			return this .getContext () .getParameter (this .getContext () .SHADING_LANGUAGE_VERSION);
-		},
-		getMaxVertexUniformVectors: function ()
-		{
-			return this .getContext () .getParameter (this .getContext () .MAX_VERTEX_UNIFORM_VECTORS);
-		},
-		getMaxFragmentUniformVectors: function ()
-		{
-			return this .getContext () .getParameter (this .getContext () .MAX_FRAGMENT_UNIFORM_VECTORS);
-		},
-		getMaxVertexAttribs: function ()
-		{
-			return this .getContext () .getParameter (this .getContext () .MAX_VERTEX_ATTRIBS);
-		},
-		addShader: function (shader)
-		{
-			this .shaders [shader .getId ()] = shader;
-			shader .setShading (this .getBrowserOptions () .getShading ());
-		},
-		removeShader: function (shader)
-		{
-			delete this .shaders [shader .getId ()];
-		},
-		getShaders: function ()
-		{
-			return this .shaders;
-		},
-	};
-
-	return X3DShadersContext;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Shape/X3DAppearanceNode',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Components/Core/X3DNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DNode, 
-          X3DConstants)
-{
-
-
-	function X3DAppearanceNode (executionContext)
-	{
-		X3DNode .call (this, executionContext);
-
-		this .addType (X3DConstants .X3DAppearanceNode);
-	}
-
-	X3DAppearanceNode .prototype = $.extend (Object .create (X3DNode .prototype),
-	{
-		constructor: X3DAppearanceNode,
-		initialize: function ()
-		{
-			X3DNode .prototype .initialize .call (this);
-			
-			this .addChildObjects ("transparent", new Fields .SFBool ());
-		},
-	});
-
-	return X3DAppearanceNode;
-});
-
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Shape/Appearance',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Shape/X3DAppearanceNode",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DAppearanceNode,
-          X3DCast,
-          X3DConstants)
-{
-
-
-	function Appearance (executionContext)
-	{
-		X3DAppearanceNode .call (this, executionContext);
-
-		this .addType (X3DConstants .Appearance);
-
-		this .linePropertiesNode   = null;
-		this .materialNode         = null;
-		this .textureNode          = null;
-		this .textureTransformNode = null;
-		this .shaderNodes          = [ ];
-		this .shaderNode           = null;
-	}
-
-	Appearance .prototype = $.extend (Object .create (X3DAppearanceNode .prototype),
-	{
-		constructor: Appearance,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",         new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "fillProperties",   new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "lineProperties",   new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "material",         new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "texture",          new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "textureTransform", new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "shaders",          new Fields .MFNode ()),
-		]),
-		getTypeName: function ()
-		{
-			return "Appearance";
-		},
-		getComponentName: function ()
-		{
-			return "Shape";
-		},
-		getContainerField: function ()
-		{
-			return "appearance";
-		},
-		initialize: function ()
-		{
-			X3DAppearanceNode .prototype .initialize .call (this);
-
-			this .isLive () .addInterest (this, "set_live__");
-
-			this .lineProperties_   .addInterest (this, "set_lineProperties__");
-			this .material_         .addInterest (this, "set_material__");
-			this .texture_          .addInterest (this, "set_texture__");
-			this .textureTransform_ .addInterest (this, "set_textureTransform__");
-			this .shaders_          .addInterest (this, "set_shaders__");
-
-			this .set_lineProperties__ ();
-			this .set_material__ ();
-			this .set_texture__ ();
-			this .set_textureTransform__ ();
-			this .set_shaders__ ();
-		},
-		getLineProperties: function ()
-		{
-			return this .linePropertiesNode;
-		},
-		getMaterial: function ()
-		{
-			return this .materialNode;
-		},
-		getTexture: function ()
-		{
-			return this .textureNode;
-		},
-		getTextureTransform: function ()
-		{
-			return this .textureTransformNode;
-		},
-		set_lineProperties__: function ()
-		{
-			this .linePropertiesNode = X3DCast (X3DConstants .LineProperties, this .lineProperties_);
-		},
-		set_live__: function ()
-		{
-			if (this .isLive () .getValue ())
-			{
-				if (this .shaderNode)
-					this .getBrowser () .addShader (this .shaderNode);
-			}
-			else
-			{
-				if (this .shaderNode)
-				this .getBrowser () .removeShader (this .shaderNode);
-			}
-		},
-		set_material__: function ()
-		{
-			if (this .materialNode)
-				this .materialNode .transparent_ .removeInterest (this, "set_transparent__");
-
-			this .materialNode = X3DCast (X3DConstants .X3DMaterialNode, this .material_);
-
-			if (this .materialNode)
-				this .materialNode .transparent_ .addInterest (this, "set_transparent__");
-			
-			this .set_transparent__ ();
-		},
-		set_texture__: function ()
-		{
-			if (this .textureNode)
-				this .textureNode .transparent_ .removeInterest (this, "set_transparent__");
-
-			this .textureNode = X3DCast (X3DConstants .X3DTextureNode, this .texture_);
-
-			if (this .textureNode)
-				this .textureNode .transparent_ .addInterest (this, "set_transparent__");
-
-			if (X3DCast (X3DConstants .GeneratedCubeMapTexture, this .texture_))
-			{
-				delete this .traverse;
-			}
-			else
-			{
-				this .traverse = Function .prototype;
-			}
-
-			this .set_transparent__ ();
-		},
-		set_textureTransform__: function ()
-		{
-			this .textureTransformNode = X3DCast (X3DConstants .X3DTextureTransformNode, this .textureTransform_);
-			
-			if (this .textureTransformNode)
-				return;
-
-			this .textureTransformNode = this .getBrowser () .getDefaultTextureTransform ();
-		},
-		set_shaders__: function ()
-		{
-			var
-				shaders     = this .shaders_ .getValue (),
-				shaderNodes = this .shaderNodes;
-
-			for (var i = 0, length = shaderNodes .length; i < length; ++ i)
-				shaderNodes [i] .isValid_ .removeInterest (this, "set_shader__");
-		
-			shaderNodes .length = 0;
-		
-			for (var i = 0, length = shaders .length; i < length; ++ i)
-			{
-				var shaderNode = X3DCast (X3DConstants .X3DShaderNode, shaders [i]);
-		
-				if (shaderNode)
-				{
-					shaderNodes .push (shaderNode);
-					shaderNode .isValid_ .addInterest (this, "set_shader__");
-				}
-			}
-
-			this .set_shader__ ();
-		},
-		set_shader__: function ()
-		{
-			var shaderNodes = this .shaderNodes;
-
-			if (this .shaderNode)
-				this .getBrowser () .removeShader (this .shaderNode);
-
-			this .shaderNode = null;
-
-			for (var i = 0, length = shaderNodes .length; i < length; ++ i)
-			{
-				if (shaderNodes [i] .isValid_ .getValue ())
-				{
-					this .shaderNode = shaderNodes [i];
-					break;
-				}
-			}
-
-			if (this .isLive () .getValue ())
-			{
-				if (this .shaderNode)
-					this .getBrowser () .addShader (this .shaderNode);
-			}
-
-			this .set_transparent__ ();
-		},
-		set_transparent__: function ()
-		{
-			this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
-			                     (this .textureNode  && this .textureNode  .transparent_ .getValue ());
-		},
-		traverse: function (type, renderObject)
-		{
-			this .textureNode .traverse (type, renderObject);
-		},
-		display: function (context)
-		{
-			context .linePropertiesNode   = this .linePropertiesNode;
-			context .materialNode         = this .materialNode;
-			context .textureNode          = this .textureNode;
-			context .textureTransformNode = this .textureTransformNode;
-			context .shaderNode           = this .shaderNode || context .renderer .getBrowser () .getDefaultShader ();
-		},
-	});
-
-	return Appearance;
-});
-
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Browser/Shape/X3DShapeContext',[
-	"cobweb/Components/Shape/Appearance",
-],
-function (Appearance)
-{
-
-
-	function X3DShapeContext ()
-	{
-		this .defaultAppearance = new Appearance (this);
-	}
-
-	X3DShapeContext .prototype =
-	{
-		initialize: function ()
-		{
-			this .defaultAppearance .setup ();
-		},
-		getDefaultAppearance: function ()
-		{
-			return this .defaultAppearance;
-		},
-	};
-
-	return X3DShapeContext;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Shape/X3DAppearanceChildNode',[
-	"jquery",
-	"cobweb/Components/Core/X3DNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          X3DNode, 
-          X3DConstants)
-{
-
-
-	function X3DAppearanceChildNode (executionContext)
-	{
-		X3DNode .call (this, executionContext);
-
-		this .addType (X3DConstants .X3DAppearanceChildNode);
-	}
-
-	X3DAppearanceChildNode .prototype = $.extend (Object .create (X3DNode .prototype),
-	{
-		constructor: X3DAppearanceChildNode,
-	});
-
-	return X3DAppearanceChildNode;
-});
-
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Shaders/X3DShaderNode',[
-	"jquery",
-	"cobweb/Components/Shape/X3DAppearanceChildNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          X3DAppearanceChildNode, 
-          X3DConstants)
-{
-
-
-	function X3DShaderNode (executionContext)
-	{
-		X3DAppearanceChildNode .call (this, executionContext);
-
-		this .addType (X3DConstants .X3DShaderNode);
-	}
-
-	X3DShaderNode .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),
-	{
-		constructor: X3DShaderNode,
-		custom: true,
-		setCustom: function (value)
-		{
-			this .custom = value;
-		},
-		getCustom: function ()
-		{
-			return this .custom;
-		},
-		setGeometryType: function (value)
-		{
-			this .setShading (value, this .getBrowser () .getBrowserOptions () .Shading_ .getValue ());
-		},
-		setShading: function (geometryType, shading)
-		{
-			var gl = this .getBrowser () .getContext ();
-
-			switch (geometryType)
-			{
-				case 0:
-				{
-					switch (shading)
-					{
-						case "POINT":
-						case "POINTSET":
-						{
-							this .primitiveMode = gl .POINTS;
-							this .wireframe     = true;
-							break;
-						}
-						case "WIREFRAME":
-						{
-							this .primitiveMode = gl .POINTS;
-							this .wireframe     = true;
-							break;
-						}
-						default:
-						{
-							// case FLAT:
-							// case GOURAUD:
-							// case PHONG:
-		
-							this .primitiveMode = gl .POINTS;
-							this .wireframe     = true;
-							break;
-						}
-					}
-
-					break;
-				}
-				case 1:
-				{
-					switch (shading)
-					{
-						case "POINT":
-						case "POINTSET":
-						{
-							this .primitiveMode = gl .POINTS;
-							this .wireframe     = true;
-							break;
-						}
-						case "WIREFRAME":
-						{
-							this .primitiveMode = gl .LINES;
-							this .wireframe     = true;
-							break;
-						}
-						default:
-						{
-							// case FLAT:
-							// case GOURAUD:
-							// case PHONG:
-
-							this .primitiveMode = gl .LINES;
-							this .wireframe     = true;
-							break;
-						}
-					}
-
-					break;
-				}
-				case 2:
-				case 3:
-				{
-					switch (shading)
-					{
-						case "POINT":
-						case "POINTSET":
-						{
-							this .primitiveMode = gl .POINTS;
-							this .wireframe     = true;
-							break;
-						}
-						case "WIREFRAME":
-						{
-							this .primitiveMode = gl .LINE_LOOP;
-							this .wireframe     = true;
-							break;
-						}
-						default:
-						{
-							// case FLAT:
-							// case GOURAUD:
-							// case PHONG:
-		
-							this .primitiveMode = gl .TRIANGLES;
-							this .wireframe     = false;
-							break;
-						}
-					}	
-
-					break;
-				}
-			}
-		},
-	});
-
-	return X3DShaderNode;
-});
-
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Shaders/X3DProgrammableShaderObject',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Matrix3",
-],
-function ($,
-          Fields,
-          X3DCast,
-          X3DConstants,
-          Matrix3)
-{
-
-
-	var NULL = Fields .SFNode ();
-
-	function X3DProgrammableShaderObject (executionContext)
-	{
-		this .addType (X3DConstants .X3DProgrammableShaderObject);
-
-		this .x3d_ClipPlane             = [ ];
-		this .x3d_LightType             = [ ];
-		this .x3d_LightOn               = [ ];
-		this .x3d_LightColor            = [ ];
-		this .x3d_LightIntensity        = [ ];
-		this .x3d_LightAmbientIntensity = [ ];
-		this .x3d_LightAttenuation      = [ ];
-		this .x3d_LightLocation         = [ ];
-		this .x3d_LightDirection        = [ ];
-		this .x3d_LightBeamWidth        = [ ];
-		this .x3d_LightCutOffAngle      = [ ];
-		this .x3d_LightRadius           = [ ];
-		this .x3d_ShadowIntensity       = [ ];
-		this .x3d_ShadowDiffusion       = [ ];
-		this .x3d_ShadowColor           = [ ];
-		this .x3d_ShadowMatrix          = [ ];
-		this .x3d_ShadowMap             = [ ];
-	}
-
-	X3DProgrammableShaderObject .prototype =
-	{
-		constructor: X3DProgrammableShaderObject,
-		x3d_NoneClipPlane: new Float32Array ([ 88, 51, 68, 33 ]), // X3D!
-		fogNode: null,
-		numGlobalLights: 0,
-		normalMatrixArray: new Float32Array (9),
-		initialize: function ()
-		{
-			var browser = this .getBrowser ();
-
-			this .x3d_MaxClipPlanes = browser .getMaxClipPlanes ();
-			this .x3d_MaxLights     = browser .getMaxLights ();
-			this .x3d_MaxTextures   = browser .getMaxTextures ();
-
-			this .textureTypeArray = new Int32Array (this .x3d_MaxTextures);
-		},
-		hasUserDefinedFields: function ()
-		{
-			return true;
-		},
-		bindAttributeLocations: function (gl, program)
-		{
-			gl .bindAttribLocation (program, 3, "x3d_Color");
-			gl .bindAttribLocation (program, 2, "x3d_TexCoord");
-			gl .bindAttribLocation (program, 1, "x3d_Normal");
-			gl .bindAttribLocation (program, 0, "x3d_Vertex");
-		},
-		getDefaultUniforms: function ()
-		{
-			// Get uniforms and attributes.
-
-			var
-				gl      = this .getBrowser () .getContext (),
-				program = this .getProgram ();
-
-			this .x3d_GeometryType = gl .getUniformLocation (program, "x3d_GeometryType");
-
-			for (var i = 0; i < this .x3d_MaxClipPlanes; ++ i)
-				this .x3d_ClipPlane [i]  = gl .getUniformLocation (program, "x3d_ClipPlane[" + i + "]");
-
-			this .x3d_FogType            = gl .getUniformLocation (program, "x3d_FogType");
-			this .x3d_FogColor           = gl .getUniformLocation (program, "x3d_FogColor");
-			this .x3d_FogVisibilityRange = gl .getUniformLocation (program, "x3d_FogVisibilityRange");
-
-			this .x3d_LinewidthScaleFactor = gl .getUniformLocation (program, "x3d_LinewidthScaleFactor");
-
-			this .x3d_Lighting      = gl .getUniformLocation (program, "x3d_Lighting");
-			this .x3d_ColorMaterial = gl .getUniformLocation (program, "x3d_ColorMaterial");
-
-			for (var i = 0; i < this .x3d_MaxLights; ++ i)
-			{
-				this .x3d_LightType [i]             = gl .getUniformLocation (program, "x3d_LightType[" + i + "]");
-				this .x3d_LightColor [i]            = gl .getUniformLocation (program, "x3d_LightColor[" + i + "]");
-				this .x3d_LightAmbientIntensity [i] = gl .getUniformLocation (program, "x3d_LightAmbientIntensity[" + i + "]");
-				this .x3d_LightIntensity [i]        = gl .getUniformLocation (program, "x3d_LightIntensity[" + i + "]");
-				this .x3d_LightAttenuation [i]      = gl .getUniformLocation (program, "x3d_LightAttenuation[" + i + "]");
-				this .x3d_LightLocation [i]         = gl .getUniformLocation (program, "x3d_LightLocation[" + i + "]");
-				this .x3d_LightDirection [i]        = gl .getUniformLocation (program, "x3d_LightDirection[" + i + "]");
-				this .x3d_LightBeamWidth [i]        = gl .getUniformLocation (program, "x3d_LightBeamWidth[" + i + "]");
-				this .x3d_LightCutOffAngle [i]      = gl .getUniformLocation (program, "x3d_LightCutOffAngle[" + i + "]");
-				this .x3d_LightRadius [i]           = gl .getUniformLocation (program, "x3d_LightRadius[" + i + "]");
-
-				this .x3d_ShadowIntensity [i] = gl .getUniformLocation (program, "x3d_ShadowIntensity[" + i + "]");
-				this .x3d_ShadowDiffusion [i] = gl .getUniformLocation (program, "x3d_ShadowDiffusion[" + i + "]");
-				this .x3d_ShadowColor [i]     = gl .getUniformLocation (program, "x3d_ShadowColor[" + i + "]");
-				this .x3d_ShadowMatrix [i]    = gl .getUniformLocation (program, "x3d_ShadowMatrix[" + i + "]");
-				this .x3d_ShadowMap [i]       = gl .getUniformLocation (program, "x3d_ShadowMap[" + i + "]");
-			}
-
-			this .x3d_SeparateBackColor = gl .getUniformLocation (program, "x3d_SeparateBackColor");
-
-			this .x3d_AmbientIntensity = gl .getUniformLocation (program, "x3d_AmbientIntensity");
-			this .x3d_DiffuseColor     = gl .getUniformLocation (program, "x3d_DiffuseColor");
-			this .x3d_SpecularColor    = gl .getUniformLocation (program, "x3d_SpecularColor");
-			this .x3d_EmissiveColor    = gl .getUniformLocation (program, "x3d_EmissiveColor");
-			this .x3d_Shininess        = gl .getUniformLocation (program, "x3d_Shininess");
-			this .x3d_Transparency     = gl .getUniformLocation (program, "x3d_Transparency");
-
-			this .x3d_BackAmbientIntensity = gl .getUniformLocation (program, "x3d_BackAmbientIntensity");
-			this .x3d_BackDiffuseColor     = gl .getUniformLocation (program, "x3d_BackDiffuseColor");
-			this .x3d_BackSpecularColor    = gl .getUniformLocation (program, "x3d_BackSpecularColor");
-			this .x3d_BackEmissiveColor    = gl .getUniformLocation (program, "x3d_BackEmissiveColor");
-			this .x3d_BackShininess        = gl .getUniformLocation (program, "x3d_BackShininess");
-			this .x3d_BackTransparency     = gl .getUniformLocation (program, "x3d_BackTransparency");
-
-			this .x3d_TextureType    = gl .getUniformLocation (program, "x3d_TextureType");
-			this .x3d_Texture2D      = gl .getUniformLocation (program, "x3d_Texture2D");
-			this .x3d_CubeMapTexture = gl .getUniformLocation (program, "x3d_CubeMapTexture");
-
-			this .x3d_Texture = gl .getUniformLocation (program, "x3d_Texture"); // depreciated
-
-			this .x3d_TextureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
-			this .x3d_NormalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
-			this .x3d_ProjectionMatrix = gl .getUniformLocation (program, "x3d_ProjectionMatrix");
-			this .x3d_ModelViewMatrix  = gl .getUniformLocation (program, "x3d_ModelViewMatrix");
-			
-			this .x3d_Color    = gl .getAttribLocation (program, "x3d_Color");
-			this .x3d_TexCoord = gl .getAttribLocation (program, "x3d_TexCoord");
-			this .x3d_Normal   = gl .getAttribLocation (program, "x3d_Normal");
-			this .x3d_Vertex   = gl .getAttribLocation (program, "x3d_Vertex");	
-
-			gl .uniform1f  (this .x3d_LinewidthScaleFactor, 1);
-			gl .uniform1iv (this .x3d_TextureType,          new Int32Array ([0]));
-			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([2])); // depreciated
-			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([2])); // Set texture to active texture unit 2.
-			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([4])); // Set cube map texture to active texture unit 3.
-
-			// Return true if valid, otherwise false.
-
-			if (this .x3d_Color < 0)
-			{
-				this .enableColorAttribute  = Function .prototype;
-				this .disableColorAttribute = Function .prototype;
-			}
-			else
-			{
-				delete this .enableColorAttribute;
-				delete this .disableColorAttribute;
-			}
-
-			if (this .x3d_TexCoord < 0)
-			{
-				this .enableTexCoordAttribute  = Function .prototype;
-				this .disableTexCoordAttribute = Function .prototype;
-			}
-			else
-			{
-				delete this .enableTexCoordAttribute;
-				delete this .disableTexCoordAttribute;
-			}
-
-			if (this .x3d_Normal < 0)
-			{
-				this .enableNormalAttribute  = Function .prototype;
-				this .disableNormalAttribute = Function .prototype;
-			}
-			else
-			{
-				delete this .enableNormalAttribute;
-				delete this .disableNormalAttribute;
-			}
-
-			if (this .x3d_Vertex < 0)
-				return false;
-
-			return true;
-		},
-		addShaderFields: function ()
-		{
-			var
-				gl                = this .getBrowser () .getContext (),
-				program           = this .getProgram (),
-				userDefinedFields = this .getUserDefinedFields ();
-
-			for (var name in userDefinedFields)
-			{
-				var
-					field    = userDefinedFields [name],
-					location = gl .getUniformLocation (program, name);
-
-				if (location)
-				{
-					field ._uniformLocation = location;
-
-					field .addInterest (this, "set_field__");
-
-					switch (field .getType ())
-					{
-						case X3DConstants .SFImage:
-						{
-							location .array = new Int32Array (3 + field .array .length);
-							break;
-						}
-						case X3DConstants .SFMatrix3d:
-						case X3DConstants .SFMatrix3f:
-						{
-							location .array = new Float32Array (9);
-							break;
-						}
-						case X3DConstants .SFMatrix4d:
-						case X3DConstants .SFMatrix4f:
-						{
-							location .array = new Float32Array (16);
-							break;
-						}
-						case X3DConstants .MFBool:
-						case X3DConstants .MFInt32:
-						{
-							location .array = new Int32Array (this .getLocationLength (gl, program, field));
-							break;
-						}
-						case X3DConstants .MFFloat:
-						case X3DConstants .MFDouble:
-						case X3DConstants .MFTime:
-						{
-							location .array = new Float32Array (this .getLocationLength (gl, program, field));
-							break;
-						}
-						case X3DConstants .MFImage:
-						{
-							location .array = new Int32Array (this .getImagesLength (field));
-							break;
-						}
-						case X3DConstants .MFMatrix3d:
-						case X3DConstants .MFMatrix3f:
-						{
-							location .array = new Float32Array (9 * this .getLocationLength (gl, program, field));
-							break;
-						}
-						case X3DConstants .MFMatrix4d:
-						case X3DConstants .MFMatrix4f:
-						{
-							location .array = new Float32Array (16 * this .getLocationLength (gl, program, field));
-							break;
-						}
-						case X3DConstants .MFNode:
-						{
-							var array = field ._uniformLocation = [ ];
-
-							for (var i = 0; ; ++ i)
-							{
-								var location = gl .getUniformLocation (program, name + "[" + i + "]");
-
-								if (location)
-									array [i] = location;
-								else
-									break;
-							}
-
-							break;
-						}
-						case X3DConstants .MFVec2d:
-						case X3DConstants .MFVec2f:
-						{
-							location .array = new Float32Array (2 * this .getLocationLength (gl, program, field));
-							break;
-						}
-						case X3DConstants .MFVec3d:
-						case X3DConstants .MFVec3f:
-						case X3DConstants .MFColor:
-						{
-							location .array = new Float32Array (3 * this .getLocationLength (gl, program, field));
-							break;
-						}
-						case X3DConstants .MFVec4d:
-						case X3DConstants .MFVec4f:
-						case X3DConstants .MFColorRGBA:
-						case X3DConstants .MFRotation:
-						{
-							location .array = new Float32Array (4 * this .getLocationLength (gl, program, field));
-							break;
-						}
-					}
-
-					this .set_field__ (field);
-				}
-			}
-		},
-		removeShaderFields: function ()
-		{
-			var
-				gl                = this .getBrowser () .getContext (),
-				program           = this .getProgram (),
-				userDefinedFields = this .getUserDefinedFields ();
-
-			for (var name in userDefinedFields)
-			{
-				var field = userDefinedFields [name];
-
-				field .removeInterest (this, "set_field__");
-
-				switch (field .getType ())
-				{
-					case X3DConstants .SFNode:
-					{
-						this .removeNode (gl, program, field ._uniformLocation);
-						break;
-					}
-					case X3DConstants .MFNode:
-					{
-						var name = field .getName ();
-
-						for (var i = 0; ; ++ i)
-						{
-							var location = gl .getUniformLocation (program, name + "[" + i + "]");
-
-							if (location)
-								this .removeNode (gl, program, location);
-							else
-								break;
-						}
-
-						break;
-					}
-					default:
-						continue;
-				}
-
-				break;
-			}
-		},
-		set_field__: function (field)
-		{
-			var
-				gl       = this .getBrowser () .getContext (),
-				program  = this .getProgram (),
-				location = field ._uniformLocation;
-
-			if (location)
-			{
-				this .useProgram (gl); // TODO: only in ComposedShader possible.
-
-				switch (field .getType ())
-				{
-					case X3DConstants .SFBool:
-					case X3DConstants .SFInt32:
-					{
-						gl .uniform1i (location, field .getValue ());
-						return;
-					}
-					case X3DConstants .SFColor:
-					{
-						var value = field .getValue ();
-						gl .uniform3f (location, value .r, value .g, value .b);
-						return;
-					}
-					case X3DConstants .SFColorRGBA:
-					{
-						var value = field .getValue ();
-						gl .uniform4f (location, value .r, value .g, value .b, value .a);
-						return;
-					}
-					case X3DConstants .SFDouble:
-					case X3DConstants .SFFloat:
-					case X3DConstants .SFTime:
-					{
-						gl .uniform1f (location, field .getValue ());
-						return;
-					}
-					case X3DConstants .SFImage:
-					{
-						var
-							array  = location .array,
-							pixels = field .array .getValue (),
-							length = 3 + pixels .length;
-	
-						if (length !== array .length)
-							array = location .array = new Int32Array (length);
-	
-						array [0] = field .width;
-						array [1] = field .height;
-						array [2] = field .comp;
-	
-						for (var a = 3, p = 0, length = pixels .length; p < length; ++ p)
-							array [a ++] = pixels [p] .getValue ();
-	
-						gl .uniform1iv (location, array);
-						return;
-					}
-					case X3DConstants .SFMatrix3d:
-					case X3DConstants .SFMatrix3f:
-					{
-						location .array .set (field .getValue ());
-	
-						gl .uniformMatrix3fv (location, false, location .array);
-						return;
-					}
-					case X3DConstants .SFMatrix4d:
-					case X3DConstants .SFMatrix4f:
-					{
-						location .array .set (field .getValue ());
-	
-						gl .uniformMatrix4fv (location, false, location .array);
-						return;
-					}
-					case X3DConstants .SFNode:
-					{
-						this .setNode (gl, program, location, field);
-						return;
-					}
-					case X3DConstants .SFRotation:
-					{
-						var quat = field .getValue () .value;
-						gl .uniform4f (location, quat .x, quat .y, quat .z, quat .w);
-						return;
-					}
-					case X3DConstants .SFString:
-					{
-						return;
-					}
-					case X3DConstants .SFVec2d:
-					case X3DConstants .SFVec2f:
-					{
-						var value = field .getValue ();
-						gl .uniform2f (location, value .x, value .y);
-						return;
-					}
-					case X3DConstants .SFVec3d:
-					case X3DConstants .SFVec3f:
-					{
-						var value = field .getValue ();
-						gl .uniform3f (location, value .x, value .y, value .z);
-						return;
-					}
-					case X3DConstants .SFVec4d:
-					case X3DConstants .SFVec4f:
-					{
-						var value = field .getValue ();
-						gl .uniform4f (location, value .x, value .y, value .z, value .w);
-						return;
-					}
-					case X3DConstants .MFBool:
-					case X3DConstants .MFInt32:
-					{
-						var
-							value = field .getValue (),
-							array = location .array;
-	
-						for (var i = 0, length = value .length; i < length; ++ i)
-							array [i] = value [i] .getValue ();
-	
-						for (var length = array .length; i < length; ++ i)
-							array [i] = 0;
-	
-						gl .uniform1iv (location, array);
-						return;
-					}
-					case X3DConstants .MFColor:
-					{
-						var
-							value = field .getValue (),
-							array = location .array;
-	
-						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
-						{
-							var color = value [i] .getValue ();
-	
-							array [k++] = color .r;
-							array [k++] = color .g;
-							array [k++] = color .b;
-						}
-	
-						for (var length = array .length; k < length; ++ k)
-							array [k] = 0;
-	
-						gl .uniform3fv (location, array);
-						return;
-					}
-					case X3DConstants .MFColorRGBA:
-					{
-						var
-							value = field .getValue (),
-							array = location .array;
-	
-						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
-						{
-							var color = value [i] .getValue ();
-	
-							array [k++] = color .r;
-							array [k++] = color .g;
-							array [k++] = color .b;
-							array [k++] = color .a;
-						}
-	
-						for (var length = array .length; k < length; ++ k)
-							array [k] = 0;
-	
-						gl .uniform4fv (location, array);
-						return;
-					}
-					case X3DConstants .MFDouble:
-					case X3DConstants .MFFloat:
-					case X3DConstants .MFTime:
-					{
-						var
-							value = field .getValue (),
-							array = location .array;
-	
-						for (var i = 0, length = value .length; i < length; ++ i)
-							array [i] = value [i] .getValue ();
-	
-						for (var length = array .length; i < length; ++ i)
-							array [i] = 0;
-	
-						gl .uniform1fv (location, array);
-						return;
-					}
-					case X3DConstants .MFImage:
-					{
-						var
-							images = field .getValue (),
-							array  = location .array,
-							length = this .getImagesLength (field);
-	
-						if (length !== array .length)
-							array = location .array = new Int32Array (length);
-	
-						for (var i = 0, a = 0, length = images .length; i < length; ++ i)
-						{
-							var
-								value  = images [i],
-								pixels = value .array .getValue ();
-	
-							array [a ++] = value .width;
-							array [a ++] = value .height;
-							array [a ++] = value .comp;
-	
-							for (var p = 0, plength = pixels .length; p < plength; ++ p)
-								array [a ++] = pixels [p] .getValue ();
-						}
-	
-						gl .uniform1iv (location, array);
-						return;
-					}
-					case X3DConstants .MFMatrix3d:
-					case X3DConstants .MFMatrix3f:
-					{
-						var
-							value = field .getValue (),
-							array = location .array;
-	
-						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
-						{
-							var matrix = value [i] .getValue ();
-	
-							array [k++] = matrix [0];
-							array [k++] = matrix [1];
-							array [k++] = matrix [2];
-							array [k++] = matrix [3];
-							array [k++] = matrix [4];
-							array [k++] = matrix [5];
-							array [k++] = matrix [6];
-							array [k++] = matrix [7];
-							array [k++] = matrix [8];
-						}
-	
-						for (var length = array .length; k < length; ++ k)
-							array [k] = 0;
-	
-						gl .uniformMatrix3fv (location, false, array);
-						return;
-					}
-					case X3DConstants .MFMatrix4d:
-					case X3DConstants .MFMatrix4f:
-					{
-						var
-							value = field .getValue (),
-							array = location .array;
-	
-						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
-						{
-							var matrix = value [i] .getValue ();
-	
-							array [k++] = matrix [ 0];
-							array [k++] = matrix [ 1];
-							array [k++] = matrix [ 2];
-							array [k++] = matrix [ 3];
-							array [k++] = matrix [ 4];
-							array [k++] = matrix [ 5];
-							array [k++] = matrix [ 6];
-							array [k++] = matrix [ 7];
-							array [k++] = matrix [ 8];
-							array [k++] = matrix [ 9];
-							array [k++] = matrix [10];
-							array [k++] = matrix [11];
-							array [k++] = matrix [12];
-							array [k++] = matrix [13];
-							array [k++] = matrix [14];
-							array [k++] = matrix [15];
-						}
-	
-						for (var length = array .length; k < length; ++ k)
-							array [k] = 0;
-	
-						gl .uniformMatrix4fv (location, false, array);
-						return;
-					}
-					case X3DConstants .MFNode:
-					{
-						var value = field .getValue ();
-	
-						for (var i = 0, length = value .length; i < length; ++ i)
-							this .setNode (gl, program, location [i], value [i]);
-	
-						for (var length = location .length; i < length; ++ i)
-							this .setNode (gl, program, location [i], NULL);
-	
-						return;
-					}
-					case X3DConstants .MFRotation:
-					{
-						var
-							value = field .getValue (),
-							array = location .array;
-	
-						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
-						{
-							var quat = value [i] .getValue () .value;
-	
-							array [k++] = quat .x;
-							array [k++] = quat .y;
-							array [k++] = quat .z;
-							array [k++] = quat .w;
-						}
-	
-						for (var length = array .length; k < length; ++ k)
-							array [k] = 0;
-	
-						gl .uniform4fv (location, array);
-						return;
-					}
-					case X3DConstants .MFString:
-					{
-						return;
-					}
-					case X3DConstants .MFVec2d:
-					case X3DConstants .MFVec2f:
-					{
-						var
-							value = field .getValue (),
-							array = location .array;
-	
-						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
-						{
-							var vector = value [i] .getValue ();
-	
-							array [k++] = vector .x;
-							array [k++] = vector .y;
-						}
-	
-						for (var length = array .length; k < length; ++ k)
-							array [k] = 0;
-	
-						gl .uniform2fv (location, array);
-						return;
-					}
-					case X3DConstants .MFVec3d:
-					case X3DConstants .MFVec3f:
-					{
-						var
-							value = field .getValue (),
-							array = location .array;
-	
-						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
-						{
-							var vector = value [i] .getValue ();
-	
-							array [k++] = vector .x;
-							array [k++] = vector .y;
-							array [k++] = vector .z;
-						}
-	
-						for (var length = array .length; k < length; ++ k)
-							array [k] = 0;
-	
-						gl .uniform3fv (location, array);
-						return;
-					}
-					case X3DConstants .MFVec4d:
-					case X3DConstants .MFVec4f:
-					{
-						var
-							value = field .getValue (),
-							array = location .array;
-	
-						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
-						{
-							var vector = value [i] .getValue ();
-	
-							array [k++] = vector .x;
-							array [k++] = vector .y;
-							array [k++] = vector .z;
-							array [k++] = vector .w;
-						}
-	
-						for (var length = array .length; k < length; ++ k)
-							array [k] = 0;
-	
-						gl .uniform4fv (location, array);
-						return;
-					}
-				}
-			}
-		},
-		setNode: function (gl, program, location, field)
-		{
-			if (location)
-			{
-				var textureUnit = gl .getUniform (program, location);
-
-				if (! textureUnit)
-				{
-					if (this .getBrowser () .getCombinedTextureUnits () .length)
-					{
-						textureUnit = this .getBrowser () .getCombinedTextureUnits () .pop ();
-						gl .uniform1i (location, textureUnit);
-					}
-					else
-					{
-						console .warn ("Not enough combined texture units for uniform variable '", field .getName (), "' available.");
-						return;
-					}
-				}
-
-				gl .activeTexture (gl .TEXTURE0 + textureUnit);
-
-				var texture = X3DCast (X3DConstants .X3DTextureNode, field);
-
-				if (texture)
-					gl .bindTexture (texture .getTarget (), texture .getTexture ());
-
-				gl .activeTexture (gl .TEXTURE0);
-			}
-		},
-		removeNode: function (gl, program, location)
-		{
-			if (location)
-			{
-				var textureUnit = gl .getUniform (program, location);
-	
-				if (textureUnit)
-					this .getBrowser () .getCombinedTextureUnits () .push (textureUnit);
-
-				gl .uniform1i (location, 0);
-			}
-		},
-		getImagesLength: function (field)
-		{
-			var
-				images = field .getValue (),
-				length = 3 * images .length;
-
-			for (var i = 0, l = images .length; i < l; ++ i)
-				length += images [i] .array .length;
-
-			return length;
-		},
-		getLocationLength: function (gl, program, field)
-		{
-			var name = field .getName ();
-
-			for (var i = 0; ; ++ i)
-			{
-				var location = gl .getUniformLocation (program, name + "[" + i + "]");
-
-				if (! location)
-					break;
-			}
-
-			return i;
-		},
-		setClipPlanes: function (gl, clipPlanes)
-		{
-			if (clipPlanes .length)
-			{
-				for (var i = 0, numClipPlanes = Math .min (this .x3d_MaxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
-					clipPlanes [i] .setShaderUniforms (gl, this, i);
-	
-				if (i < this .x3d_MaxClipPlanes)
-					gl .uniform4fv (this .x3d_ClipPlane [i], this .x3d_NoneClipPlane);
-			}
-			else
-				gl .uniform4fv (this .x3d_ClipPlane [0], this .x3d_NoneClipPlane);
-		},
-		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray)
-		{
-			var globalLights = renderObject .getGlobalLights ();
-
-			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, projectionMatrixArray);
-
-			// Set global lights
-
-			this .numGlobalLights = Math .min (this .x3d_MaxLights, globalLights .length);
-
-			for (var i = 0, length = this .numGlobalLights; i < length; ++ i)
-				globalLights [i] .setShaderUniforms (gl, this, i);
-		},
-		setLocalUniforms: function (gl, context)
-		{
-			var
-				linePropertiesNode   = context .linePropertiesNode,
-				materialNode         = context .materialNode,
-				textureNode          = context .textureNode,
-				textureTransformNode = context .textureTransformNode,
-				modelViewMatrix      = context .modelViewMatrix,
-				clipPlaneNodes       = context .clipPlanes;
-
-			// Geometry type
-
-			gl .uniform1i (this .x3d_GeometryType, context .geometryType);
-
-			// Clip planes
-
-			if (clipPlaneNodes .length)
-			{
-				for (var i = 0, numClipPlanes = Math .min (this .x3d_MaxClipPlanes, clipPlaneNodes .length); i < numClipPlanes; ++ i)
-					clipPlaneNodes [i] .setShaderUniforms (gl, this, i);
-	
-				if (i < this .x3d_MaxClipPlanes)
-					gl .uniform4fv (this .x3d_ClipPlane [i], this .x3d_NoneClipPlane);
-			}
-			else
-			{
-				gl .uniform4fv (this .x3d_ClipPlane [0], this .x3d_NoneClipPlane);
-			}
-
-			// Fog, there is always one
-
-			if (context .fogNode !== this .fogNode)
-			{
-				this .fogNode = context .fogNode;
-				context .fogNode .setShaderUniforms (gl, this, context .renderer);
-			}
-
-			// LineProperties
-
-			if (linePropertiesNode && linePropertiesNode .applied_ .getValue ())
-			{
-				var linewidthScaleFactor = linePropertiesNode .getLinewidthScaleFactor ();
-
-				gl .lineWidth (linewidthScaleFactor);
-				gl .uniform1f (this .x3d_LinewidthScaleFactor, linewidthScaleFactor);
-			}
-			else
-			{
-				gl .lineWidth (1);
-				gl .uniform1f (this .x3d_LinewidthScaleFactor, 1);
-			}
-	
-			// Material
-
-			gl .uniform1i (this .x3d_ColorMaterial, context .colorMaterial);
-
-			if (materialNode)
-			{
-				// Lights
-
-				gl .uniform1i  (this .x3d_Lighting, true);
-
-				var
-					localLights = context .localLights,
-					numLights   = Math .min (this .x3d_MaxLights, this .numGlobalLights + localLights .length);
-
-				for (var i = this .numGlobalLights, l = 0; i < numLights; ++ i, ++ l)
-					localLights [l] .setShaderUniforms (gl, this, i);
-
-				if (numLights < this .x3d_MaxLights)
-					gl .uniform1i (this .x3d_LightType [numLights], 0);
-
-				// Material
-
-				materialNode .setShaderUniforms (gl, this);
-
-				// Normal matrix
-
-				try
-				{
-					// Set normal matrix.
-					var normalMatrix = this .normalMatrixArray;
-					normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
-					normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
-					normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
-					Matrix3 .prototype .inverse .call (normalMatrix);
-					gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, normalMatrix);
-				}
-				catch (error)
-				{
-					gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, new Float32Array (Matrix3 .Identity));
-				}
-			}
-			else
-			{
-				gl .uniform1i (this .x3d_Lighting, false);
-
-				if (this .getCustom ())
-				{
-					try
-					{
-						// Set normal matrix.
-						var normalMatrix = this .normalMatrixArray;
-						normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
-						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
-						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
-						Matrix3 .prototype .inverse .call (normalMatrix);
-						gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, normalMatrix);
-					}
-					catch (error)
-					{
-						gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, new Float32Array (Matrix3 .Identity));
-					}
-				}
-			}
-
-			if (textureNode)
-			{
-				textureNode .setShaderUniforms (gl, this, 0);
-				textureTransformNode .setShaderUniforms (gl, this);
-			}
-			else
-			{
-				this .textureTypeArray [0] = 0;
-				gl .uniform1iv (this .x3d_TextureType, this .textureTypeArray);
-
-				if (this .getCustom ())
-				{
-					textureTransformNode .setShaderUniforms (gl, this);
-				}
-			}
-
-			gl .uniformMatrix4fv (this .x3d_ModelViewMatrix, false, modelViewMatrix);
-		},
-		enableFloatAttrib: function (gl, name, buffer, components)
-		{
-			var location = gl. getAttribLocation (this .getProgram (), name);
-		
-			if (location === -1)
-				return;
-		
-			gl .enableVertexAttribArray (location);
-		
-			gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
-			gl .vertexAttribPointer (location, components, gl .FLOAT, false, 0, 0);
-		},
-		disableFloatAttrib: function (gl, name)
-		{
-			var location = gl .getAttribLocation (this .getProgram (), name);
-
-			if (location === -1)
-				return;
-
-			gl .disableVertexAttribArray (location);
-		},
-		enableMatrix3Attrib: function (gl, name, buffer)
-		{
-			var location = gl .getAttribLocation (this .getProgram (), name);
-
-			if (location === -1)
-				return;
-
-			gl .enableVertexAttribArray (location + 0);
-			gl .enableVertexAttribArray (location + 1);
-			gl .enableVertexAttribArray (location + 2);
-
-			gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
-
-			gl .vertexAttribPointer (location + 0, 3, gl .FLOAT, false, 9 * 4, 3 * 4 * 0);
-			gl .vertexAttribPointer (location + 1, 3, gl .FLOAT, false, 9 * 4, 3 * 4 * 1);
-			gl .vertexAttribPointer (location + 2, 3, gl .FLOAT, false, 9 * 4, 3 * 4 * 2);
-		},
-		disableMatrix3Attrib: function (gl, name)
-		{
-			var location = gl .getAttribLocation (this .getProgram (), name);
-
-			if (location === -1)
-				return;
-
-			gl .disableVertexAttribArray (location + 0);
-			gl .disableVertexAttribArray (location + 1);
-			gl .disableVertexAttribArray (location + 2);
-		},
-		enableMatrix4Attrib: function (gl, name, buffer)
-		{
-			var location = gl .getAttribLocation (this .getProgram (), name);
-
-			if (location === -1)
-				return;
-
-			gl .enableVertexAttribArray (location + 0);
-			gl .enableVertexAttribArray (location + 1);
-			gl .enableVertexAttribArray (location + 2);
-			gl .enableVertexAttribArray (location + 3);
-
-			gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
-
-			gl .vertexAttribPointer (location + 0, 4, gl .FLOAT, false, 16 * 4, 4 * 4 * 0);
-			gl .vertexAttribPointer (location + 1, 4, gl .FLOAT, false, 16 * 4, 4 * 4 * 1);
-			gl .vertexAttribPointer (location + 2, 4, gl .FLOAT, false, 16 * 4, 4 * 4 * 2);
-			gl .vertexAttribPointer (location + 3, 4, gl .FLOAT, false, 16 * 4, 4 * 4 * 3);
-		},
-		disableMatrix4Attrib: function (gl, name)
-		{
-			var location = gl .getAttribLocation (this .getProgram (), name);
-
-			if (location === -1)
-				return;
-
-			gl .disableVertexAttribArray (location + 0);
-			gl .disableVertexAttribArray (location + 1);
-			gl .disableVertexAttribArray (location + 2);
-			gl .disableVertexAttribArray (location + 3);
-		},
-		enableColorAttribute: function (gl, colorBuffer)
-		{
-			gl .enableVertexAttribArray (this .x3d_Color);
-			gl .bindBuffer (gl .ARRAY_BUFFER, colorBuffer);
-			gl .vertexAttribPointer (this .x3d_Color, 4, gl .FLOAT, false, 0, 0);
-		},
-		disableColorAttribute: function (gl)
-		{
-			gl .disableVertexAttribArray (this .x3d_Color);
-		},
-		enableTexCoordAttribute: function (gl, texCoordBuffers)
-		{
-			gl .enableVertexAttribArray (this .x3d_TexCoord);
-			gl .bindBuffer (gl .ARRAY_BUFFER, texCoordBuffers [0]);
-			gl .vertexAttribPointer (this .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
-		},
-		disableTexCoordAttribute: function (gl)
-		{
-			gl .disableVertexAttribArray (this .x3d_TexCoord);
-		},
-		enableNormalAttribute: function (gl, normalBuffer)
-		{
-			gl .enableVertexAttribArray (this .x3d_Normal);
-			gl .bindBuffer (gl .ARRAY_BUFFER, normalBuffer);
-			gl .vertexAttribPointer (this .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
-		},
-		disableNormalAttribute: function (gl)
-		{
-			gl .disableVertexAttribArray (this .x3d_Normal);
-		},
-		enableVertexAttribute: function (gl, vertexBuffer)
-		{
-			gl .enableVertexAttribArray (this .x3d_Vertex);
-			gl .bindBuffer (gl .ARRAY_BUFFER, vertexBuffer);
-			gl .vertexAttribPointer (this .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
-		},
-		disableVertexAttribute: function (gl)
-		{
-			gl .disableVertexAttribArray (this .x3d_Vertex);
-		},
-		getProgramInfo: function ()
-		{
-			var
-				gl      = this .getBrowser () .getContext (),
-				program = this .getProgram ();
-
-			var
-				result = {
-					attributes: [ ],
-					uniforms: [ ],
-					attributeCount: 0,
-					uniformCount: 0,
-				},
-				activeUniforms   = gl .getProgramParameter (program, gl.ACTIVE_UNIFORMS),
-				activeAttributes = gl .getProgramParameter (program, gl.ACTIVE_ATTRIBUTES);
-
-			// Taken from the WebGl spec:
-			// http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14
-			var enums = {
-				0x8B50: 'vec2',
-				0x8B51: 'vec3',
-				0x8B52: 'vec4',
-				0x8B53: 'ivec2',
-				0x8B54: 'ivec3',
-				0x8B55: 'ivec4',
-				0x8B56: 'bool',
-				0x8B57: 'bvec2',
-				0x8B58: 'bvec3',
-				0x8B59: 'bvec4',
-				0x8B5A: 'mat2',
-				0x8B5B: 'mat3',
-				0x8B5C: 'mat4',
-				0x8B5E: 'sampler2D',
-				0x8B60: 'samplerCube',
-				0x1400: 'byte',
-				0x1401: 'ubyte',
-				0x1402: 'short',
-				0x1403: 'ushort',
-				0x1404: 'int',
-				0x1405: 'uint',
-				0x1406: 'float',
-			};
-
-			// Loop through active uniforms
-			for (var i = 0; i < activeUniforms; ++ i)
-			{
-				var uniform = gl .getActiveUniform (program, i);
-				uniform .typeName = enums [uniform.type];
-				result .uniforms .push ($.extend ({ }, uniform));
-				result .uniformCount += uniform .size;
-			}
-
-			// Loop through active attributes
-			for (var i = 0; i < activeAttributes; ++ i)
-			{
-				var attribute = gl .getActiveAttrib (program, i);
-				attribute .typeName = enums [attribute .type];
-				result .attributes .push ($.extend ({ }, attribute));
-				result .attributeCount += attribute .size;
-			}
-
-			result .uniforms   .sort (function (a, b) { return a .name < b .name ? -1 : a .name > b .name ? 1 : 0 });
-			result .attributes .sort (function (a, b) { return a .name < b .name ? -1 : a .name > b .name ? 1 : 0 });
-
-			return result;
-		},
-		printProgramInfo: function ()
-		{
-			var programInfo = this .getProgramInfo ();
-
-			console .log (this .getName ());
-			console .table (programInfo .attributes);
-			console .log (this .getName (), "attributeCount", programInfo .attributeCount);
-			console .log (this .getName ());
-			console .table (programInfo .uniforms);
-			console .log (this .getName (), "uniformCount", programInfo .uniformCount);
-		},
-	};
-
-	return X3DProgrammableShaderObject;
-});
-
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Shaders/ComposedShader',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Shaders/X3DShaderNode",
-	"cobweb/Components/Shaders/X3DProgrammableShaderObject",
-	"cobweb/Components/Networking/LoadSensor",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DFieldDefinition,
-          FieldDefinitionArray,
-          X3DShaderNode, 
-          X3DProgrammableShaderObject, 
-          LoadSensor,
-          X3DCast,
-          X3DConstants)
-{
-
-
-	var currentShaderNode = null;
-
-	function ComposedShader (executionContext)
-	{
-		X3DShaderNode               .call (this, executionContext);
-		X3DProgrammableShaderObject .call (this, executionContext);
-
-		this .addType (X3DConstants .ComposedShader);
-
-		this .loadSensor = new LoadSensor (executionContext);
-	}
-
-	ComposedShader .prototype = $.extend (Object .create (X3DShaderNode .prototype),
-		X3DProgrammableShaderObject .prototype,
-	{
-		constructor: ComposedShader,
-		fieldDefinitions: new FieldDefinitionArray ([
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOnly,      "activate",   new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,     "isSelected", new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .outputOnly,     "isValid",    new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new Fields .SFString ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new Fields .MFNode ()),
-		]),
-		wireframe: false,
-		getTypeName: function ()
-		{
-			return "ComposedShader";
-		},
-		getComponentName: function ()
-		{
-			return "Shaders";
-		},
-		getContainerField: function ()
-		{
-			return "shaders";
-		},
-		initialize: function ()
-		{
-			X3DShaderNode               .prototype .initialize .call (this);
-			X3DProgrammableShaderObject .prototype .initialize .call (this);
-
-			var gl = this .getBrowser () .getContext ();
-
-			this .primitiveMode = gl .TRIANGLES;
-
-			this .isLive () .addInterest (this, "set_live__");
-
-			this .activate_ .addInterest (this, "set_activate__");
-			this .parts_    .addFieldInterest (this .loadSensor .watchList_);
-
-			this .loadSensor .isLoaded_ .addInterest (this, "set_loaded__");
-			this .loadSensor .watchList_ = this .parts_;
-			this .loadSensor .setPrivate (true);
-			this .loadSensor .setup ();
-
-			//Must not call set_live__.
-		},
-		getProgram: function ()
-		{
-			return this .program;
-		},
-		set_live__: function ()
-		{
-			if (this .isLive () .getValue ())
-			{
-				if (this .isValid_ .getValue ())
-				{
-					this .useProgram (this .getBrowser () .getContext ());
-					this .addShaderFields ();
-				}
-			}
-			else
-			{
-				if (this .isValid_ .getValue ())
-				{
-					this .useProgram (this .getBrowser () .getContext ());
-					this .removeShaderFields ();
-				}
-			}
-		},
-		set_activate__: function ()
-		{
-			if (this .activate_ .getValue ())
-				this .set_loaded__ ();
-		},
-		set_loaded__: function ()
-		{
-			if (this .loadSensor .isLoaded_ .getValue ())
-			{
-				var
-					gl      = this .getBrowser () .getContext (),
-					program = gl .createProgram (),
-					parts   = this .parts_ .getValue (),
-					valid   = 0;
-
-				if (this .isValid_ .getValue ())
-					this .removeShaderFields ();
-	
-				this .program = program;
-	
-				for (var i = 0, length = parts .length; i < length; ++ i)
-				{
-					var partNode = X3DCast (X3DConstants .ShaderPart, parts [i]);
-
-					if (partNode)
-					{
-						valid += partNode .isValid ();
-						gl .attachShader (program, partNode .getShader ());
-					}
-				}
-	
-				if (valid)
-				{
-					this .bindAttributeLocations (gl, program);
-
-					gl .linkProgram (program);
-
-					valid = valid && gl .getProgramParameter (program, gl .LINK_STATUS);
-				}
-
-				if (valid)
-				{
-					this .useProgram (gl);
-
-					// Initialize uniform variables and attributes
-					if (this .getDefaultUniforms ())
-					{
-						// Setup user-defined fields. 
-						this .addShaderFields ();
-					}
-					else
-						valid = false;
-
-					// Debug
-					// this .printProgramInfo ();
-				}
-				else
-					console .warn ("Couldn't initialize " + this .getTypeName () + " '" + this .getName () + "': " + gl .getProgramInfoLog (program));
-
-				if (valid != this .isValid_ .getValue ())
-					this .isValid_ = valid;
-			}
-			else
-			{
-				if (this .isValid_ .getValue ())
-					this .isValid_ = false;
-			}
-		},
-		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray)
-		{
-			if (currentShaderNode !== this)
-			{
-				currentShaderNode = this;
-
-				gl .useProgram (this .program);
-			}
-			
-			X3DProgrammableShaderObject .prototype .setGlobalUniforms .call (this, renderObject, gl, projectionMatrixArray);
-		},
-		setLocalUniforms: function (gl, context)
-		{
-			if (currentShaderNode !== this)
-			{
-				currentShaderNode = this;
-
-				gl .useProgram (this .program);
-			}
-
-			X3DProgrammableShaderObject .prototype .setLocalUniforms .call (this, gl, context);
-		},
-		useProgram: function (gl)
-		{
-			if (currentShaderNode !== this)
-			{
-				currentShaderNode = this;
-
-				gl .useProgram (this .program);
-			}
-		},
-	});
-
-	return ComposedShader;
-});
-
-define('text!cobweb/Browser/Shaders/Bits/Line3.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\n/* Line */\n\nstruct Line3 {\n\tvec3 point;\n\tvec3 direction;\n};\n\nLine3\nline3 (in vec3 point1, in vec3 point2)\n{\n\treturn Line3 (point1, normalize (point2 - point1));\n}\n';});
-
-define('text!cobweb/Browser/Shaders/Bits/Plane3.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\n#pragma X3D include "Line3.h"\n\n/* Plane */\n\nstruct Plane3\n{\n\tvec3  normal;\n\tfloat distanceFromOrigin;\n};\n\nPlane3\nplane3 (in vec3 point, in vec3 normal)\n{\n\treturn Plane3 (normal, dot (normal, point));\n}\n\n/* Plane intersect line */\nbool\nintersects (in Plane3 plane, in Line3 line, out vec3 point)\n{\n\tpoint = vec3 (0.0);\n\n\t// Check if the line is parallel to the plane.\n\tfloat theta = dot (line .direction, plane .normal);\n\n\t// Plane and line are parallel.\n\tif (theta == 0.0)\n\t\treturn false;\n\n\t// Plane and line are not parallel. The intersection point can be calculated now.\n\tfloat t = (plane .distanceFromOrigin - dot (plane .normal, line .point)) / theta;\n\n\tpoint = line .point + line .direction * t;\n\n\treturn true;\n}\n\n///  Returns the closest point on the plane to a given point @a point.\nvec3\nclosest_point (in Plane3 plane, in vec3 point)\n{\n\tvec3 closest_point;\n\tintersects (plane, Line3 (point, plane .normal), closest_point);\n\treturn closest_point;\n}\n';});
-
-define('text!cobweb/Browser/Shaders/Bits/Random.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\nconst int RAND_MAX = int (0x7fffffff);\nconst int RAND_MIN = int (0x80000000);\n\nint seedValue = 0;\n\nvoid\nseed (in int value)\n{\n\tseedValue = value;\n}\n\n// Return a uniform distributed random floating point number in the interval [-1, 1].\nfloat\nrandom1 ()\n{\n\treturn float (seedValue = seedValue * 1103515245 + 12345) / float (RAND_MAX);\n}\n\nvec2\nrandom2 ()\n{\n\treturn vec2 (random1 (), random1 ());\n}\n\nvec3\nrandom3 ()\n{\n\treturn vec3 (random1 (), random1 (), random1 ());\n}\n';});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public LicINFINITY, 88, 51, 68ense version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Browser/Shaders/Shader',[
-	"text!cobweb/Browser/Shaders/Bits/Line3.h",
-	"text!cobweb/Browser/Shaders/Bits/Plane3.h",
-	"text!cobweb/Browser/Shaders/Bits/Random.h",
-],
-function (Line3,
-          Plane3,
-          Random)
-{
-
-
-	var includes = {
-		Line3: Line3,
-		Plane3: Plane3,
-		Random: Random,
-	};
-
-	var
-		include  = /#pragma\s+X3D\s+include\s+".*?([^\/]+).h"/,
-		newLines = /\n/g;
-
-	var Shader =
-	{
-		getShaderSource: function (browser, source)
-		{
-			var includeMatch = null;
-
-			while (includeMatch = source .match (include))
-			{
-				source = source .replace (includeMatch [0], includes [includeMatch [1]]);
-			}
-
-			var constants = "";
-
-			constants += "#define x3d_GeometryPoints  0\n";
-			constants += "#define x3d_GeometryLines   1\n";
-			constants += "#define x3d_Geometry2D      2\n";
-			constants += "#define x3d_Geometry3D      3\n";
-
-			constants += "#define x3d_MaxClipPlanes  " + browser .getMaxClipPlanes () + "\n";
-			constants += "#define x3d_NoneClipPlane  vec4 (88.0, 51.0, 68.0, 33.0)\n"; // X3D!
-
-			constants += "#define x3d_NoneFog          0\n";
-			constants += "#define x3d_LinearFog        1\n";
-			constants += "#define x3d_ExponentialFog   2\n";
-			constants += "#define x3d_Exponential2Fog  3\n";
-
-			constants += "#define x3d_MaxLights         " + browser .getMaxLights () + "\n";
-			constants += "#define x3d_NoneLight         0\n";
-			constants += "#define x3d_DirectionalLight  1\n";
-			constants += "#define x3d_PointLight        2\n";
-			constants += "#define x3d_SpotLight         3\n";
-
-			constants += "#define x3d_MaxTextures                " + browser .getMaxTextures () + "\n";
-			constants += "#define x3d_NoneTexture                0\n";
-			constants += "#define x3d_TextureType2D              2\n";
-			constants += "#define x3d_TextureType3D              3\n";
-			constants += "#define x3d_TextureTypeCubeMapTexture  4\n";
-
-			constants += "#define X3D_SHADOW\n";
-			constants += "#define x3d_MaxShadows     4\n";
-			constants += "#define x3d_ShadowSamples  8\n"; // Range (0, 255)
-
-			constants += "#line 1\n";
-
-			return constants + source;
-		},
-	};
-
-	return Shader;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Networking/X3DUrlObject',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DConstants)
-{
-
-
-	function X3DUrlObject (executionContext)
-	{
-		this .addType (X3DConstants .X3DUrlObject);
-		
-		this .addChildObjects ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
-	}
-
-	X3DUrlObject .prototype =
-	{
-		constructor: X3DUrlObject,
-		initialize: function ()
-		{
-		},
-		setLoadState: function (value, notify)
-		{
-			if (this .hasOwnProperty ("loadId"))
-			{
-				this .getBrowser () .removeLoadCount (this .loadId);
-				
-				delete this .loadId;
-			}
-
-			if (notify !== false && value === X3DConstants .IN_PROGRESS_STATE)
-				this .loadId = this .getBrowser () .addLoadCount ();
-
-			this .loadState_ = value;
-		},
-		checkLoadState: function ()
-		{
-			return this .loadState_ .getValue ();
-		},
-	};
-
-	return X3DUrlObject;
-});
-
 
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -29335,6 +24740,772 @@ function ($,
 	return X3DRoute;
 });
 
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Bits/X3DCast',[
+	"cobweb/Fields",
+],
+function (Fields)
+{
+
+
+	return function (type, node)
+	{
+		try
+		{
+			if (node)
+			{
+				if (node instanceof Fields .SFNode)
+					node = node .getValue ();
+
+				if (node)
+				{
+					node = node .getInnerNode ();
+				
+					if (node .getType () .indexOf (type) !== -1)
+						return node;
+				}
+			}
+		}
+		catch (error)
+		{ }
+
+		return null;
+	};
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('standard/Networking/URI',[
+	"jquery",
+],
+function ($)
+{
+
+
+	/*
+	 *  Path
+	 */
+
+	function Path (path, separator)
+	{
+		switch (arguments .length)
+		{
+			case 2:
+			{
+				this .value                    = path .split (separator);
+				this .value .separator         = separator;
+				this .value .leadingSeparator  = false;
+				this .value .trailingSeparator = false;
+				
+				if (this .value .length)
+				{
+					if (this .value [0] === "")
+					{
+						this .value .shift ();
+						this .value .leadingSeparator = true;
+					}
+				}
+				
+				if (this .value .length)
+				{
+					if (this .value [this .value .length - 1] === "")
+					{
+						this .value .pop ();
+						this .value .trailingSeparator = true;
+					}		
+				}
+				
+				break;
+			}
+			case 4:
+			{
+				this .value                    = arguments [0];
+				this .value .separator         = arguments [1];
+				this .value .leadingSeparator  = arguments [2];
+				this .value .trailingSeparator = arguments [3];					
+				break;
+			}
+		}
+	}
+
+	Path .prototype =
+	{
+		copy: function ()
+		{
+			return new Path (this .value .slice (0, this .value .length), 
+		                    this .value .separator,
+		                    this .value .leadingSeparator,
+		                    this .value .trailingSeparator);
+		},
+		get origin ()
+		{
+			return new Path ([ ], 
+		                    this .value .separator,
+		                    true,
+		                    false);
+		},
+		get base ()
+		{
+			if (this .value .trailingSeparator)
+				return this .copy ();
+
+			return this .parent;	
+		},
+		get parent ()
+		{
+			switch (this .value .length)
+			{
+				case 0:
+				case 1:
+				{
+					if (this .value .leadingSeparator)
+						return this .origin;
+
+					return new Path ([ ".." ], this .value .separator, false, false);
+				}
+
+				default:
+					return new Path (this .value .slice (0, this .value .length - 1), 
+				                    this .value .separator,
+				                    this .value .leadingSeparator,
+				                    true);
+			}
+
+		},
+		isRelative: function ()
+		{
+			return ! this .value .length || this .value [0] == "..";
+		},
+		getRelativePath: function (descendant)
+		{
+			if (this .isRelative ())
+				return descendant;
+		
+			var path = new Path ([ ], "/", false, false);
+
+			var basePath       = this .removeDotSegments () .base;
+			var descendantPath = descendant .removeDotSegments ();
+
+			var i, j;
+
+			for (i = 0; i < basePath .value .length && i < descendantPath .value .length; ++ i)
+			{
+				if (basePath .value [i] !== descendantPath .value [i])
+					break;
+			}
+
+			for (j = i; j < basePath .value .length; ++ j)
+				path .value .push ("..");
+
+			for (j = i; j < descendantPath .value .length; ++ j)
+				path .value .push (descendantPath .value [j]);
+
+			return path;
+		},
+		removeDotSegments: function ()
+		{
+			var path = new Path ([ ], this .value .separator, this .value .leadingSeparator, this .value .trailingSeparator);
+
+			if (this .value .length)
+			{
+				for (var i = 0; i < this .value .length; ++ i)
+				{
+					var segment = this .value [i];
+				
+					if (segment === ".")
+						path .value .trailingSeparator = true;
+
+					else if (segment === "..")
+					{
+						path .value .trailingSeparator = true;
+
+						if (path .value .length)
+							path .value .pop ();
+					}
+
+					else
+					{
+						path .value .trailingSeparator = false;
+						path .value .push (segment);
+					}
+				}
+
+				path .value .trailingSeparator |= this .value .trailingSeparator;
+			}
+
+			return path;
+		},
+		toString: function ()
+		{
+			var string = "";
+		
+			if (this .value .leadingSeparator)
+				string += this .value .separator;
+
+			string += this .value .join (this .value .separator);
+
+			if (this .value .trailingSeparator)
+				string += this .value .separator;
+
+			return string;
+		},
+	};
+
+	/*
+	 *  URI
+	 *  https://tools.ietf.org/html/rfc3986
+	 */
+
+	var wellKnownPorts =
+	{
+		ftp:   21,
+		http:  80,
+		https: 443,
+		ftps:  990,
+	};
+
+	var address   = /^(?:([^:\/?#]*?):)?(?:(\/\/)([^\/?#]*))?([^?#]*)(?:\?([^#]*))?(?:#(.*))?$/;
+	var authority = /^(.*?)(?:\:([^:]*))?$/;
+
+	function parse (uri, string)
+	{
+		var result = address .exec (string);
+	
+		if (result)
+		{
+			uri .scheme    = result [1] || "";
+			uri .slashs    = result [2] || "";
+			uri .authority = result [3] || "";
+			uri .path      = result [4] || "";
+			uri .query     = result [5] || "";
+			uri .fragment  = result [6] || "";
+			
+			var result = authority .exec (uri .authority);
+			
+			if (result)
+			{
+				uri .host      = result [1] || "";
+				uri .port      = result [2] ? parseInt (result [2]) : 0;
+				uri .authority = uri .host;
+
+				if (uri .port)
+					uri .authority += ":" + uri .port;
+			}
+			
+			uri .absolute = Boolean (uri .slashs .length) || uri .path [0] === "/";
+			uri .local    = /^(?:file|data)$/ .test (uri .scheme) || (! uri .scheme && ! uri .authority)
+		}
+
+		uri .string = string;
+	}
+
+	function removeDotSegments (path)
+	{
+		return new Path (path, "/") .removeDotSegments () .toString ();
+	}
+
+	function URI (uri)
+	{
+		this .value =
+		{
+			local:     true,
+			absolute:  true,
+			scheme:    "",
+			slashs:    "",
+			authority: "",
+			host:      "",
+			port:      0,
+			path:      "",
+			query:     "",
+			fragment:  "",
+			string:    "",
+		};
+
+		switch (arguments .length)
+		{
+			case 0:
+				break;
+			case 1:
+			{
+				parse (this .value, uri);
+				break;
+			}
+			case 10:
+			{
+				this .value .local     = arguments [0];
+				this .value .absolute  = arguments [1];
+				this .value .scheme    = arguments [2];
+				this .value .slashs    = arguments [3];
+				this .value .authority = arguments [4];
+				this .value .host      = arguments [5];
+				this .value .port      = arguments [6];
+				this .value .path      = arguments [7];
+				this .value .query     = arguments [8];
+				this .value .fragment  = arguments [9];
+				this .value .string    = this .toString ();
+				break;
+			}
+		}
+	};
+
+	URI .prototype =
+	{
+		copy: function ()
+		{
+			return new URI (this .value .local,
+			                this .value .absolute,
+			                this .value .scheme,
+			                this .value .slashs,
+			                this .value .authority,
+			                this .value .host,
+			                this .value .port,
+			                this .value .path,
+			                this .value .query,
+			                this .value .fragment);
+		},
+		get length ()
+		{
+			return this .value .string .length;
+		},
+		isRelative: function ()
+		{
+			return ! this .value .absolute ();
+		},
+		isAbsolute: function ()
+		{
+			return ! this .value .absolute;
+		},
+		isLocal: function ()
+		{
+			return this .value .local;
+		},
+		isNetwork: function ()
+		{
+			return ! this .value .local;
+		},
+		isDirectory: function ()
+		{
+			return this .value .path .length && this .value .path [this .value .path .length - 1] === "/";
+		},
+		isFile: function ()
+		{
+			return ! this .isDirectory ();
+		},
+		get hierarchy ()
+		{
+			var hierarchy = "";
+
+			hierarchy += this .value .slashs;
+			hierarchy += this .value .authority;
+			hierarchy += this .value .path;
+
+			return hierarchy;
+		},
+		get authority ()
+		{
+			return this .value .authority;
+		},
+		get scheme ()
+		{
+			return this .value .scheme;
+		},
+		get host ()
+		{
+			return this .value .host;
+		},
+		get port ()
+		{
+			return this .value .port;
+		},
+		get wellKnownPort ()
+		{
+			var wellKnownPort = wellKnownPorts [this .value .scheme];
+
+			if (wellKnownPort !== undefined)
+				return wellKnownPort;
+
+			return 0;
+		},
+		get path ()
+		{
+			return this .value .path;
+		},
+		set query (value)
+		{
+			this .value .query = value;
+		},
+		get query ()
+		{
+			return this .value .query;
+		},
+		set fragment (value)
+		{
+			this .value .fragment = value;
+		},
+		get fragment ()
+		{
+			return this .value .fragment;
+		},
+		get location ()
+		{
+			return this .toString ();
+		},
+		get origin ()
+		{
+			return new URI (this .value .local,
+			                this .value .absolute,
+			                this .value .scheme,
+			                this .value .slashs,
+			                this .value .authority,
+			                this .value .host,
+			                this .value .port,
+			                this .value .local ? "/" : "",
+			                "",
+			                "");
+		},
+		get base ()
+		{
+			if (this .isDirectory ())
+				return new URI (this .value .local,
+				                this .value .absolute,
+				                this .value .scheme,
+				                this .value .slashs,
+				                this .value .authority,
+				                this .value .host,
+				                this .value .port,
+				                this .value .path,
+				                "",
+				                "");
+
+			return this .parent;
+		},
+		get parent ()
+		{
+			var path;
+			
+			if (this .isDirectory ())
+			{
+				if (this .value .path .length == 1)
+					return "/";
+
+				path = this .value .path .substr (0, this .value .path .length - 1);
+			}
+			else
+				path = this .path;
+
+			var slash = path .lastIndexOf ("/");
+			
+			path = slash == -1 ? "" : path .substring (0, path .lastIndexOf ("/") + 1);
+
+			return new URI (this .value .local,
+			                this .value .absolute,
+			                this .value .scheme,
+			                this .value .slashs,
+			                this .value .authority,
+			                this .value .host,
+			                this .value .port,
+			                path,
+			                "",
+			                "");	
+		},
+		get filename ()
+		{
+			return new URI (this .value .local,
+			                this .value .absolute,
+			                this .value .scheme,
+			                this .value .slashs,
+			                this .value .authority,
+			                this .value .host,
+			                this .value .port,
+			                this .value .path,
+			                "",
+			                "");
+		},
+		get basename ()
+		{
+			if (this .value .path)
+				return this .value .path .substr (this .value .path. lastIndexOf ("/") + 1);
+
+			return "";
+		},
+		get prefix ()
+		{
+			if (this .value .path .length && this .isFile ())
+			{
+				var basename = this .basename;
+				var suffix   = this .suffix;
+
+				return basename .substr (0, basename .length - suffix .length);
+			}
+
+			return this .basename;
+		},
+		get suffix ()
+		{
+			var dot   = this .value .path .lastIndexOf (".");
+			var slash = this .value .path .lastIndexOf ("/");
+
+			if (slash < dot)
+				return this .value .path .substr (dot);
+
+			return "";
+		},
+		transform: function (reference)
+		{
+			var T_local    = false;
+			var T_absolute = false;
+
+			var T_scheme    = "";
+			var T_slashs    = "";
+			var T_authority = "";
+			var T_host      = "";
+			var T_port      = 0;
+			var T_path      = "";
+			var T_query     = "";
+			var T_fragment  = "";
+
+			if (reference .scheme .length)
+			{
+				T_local     = reference .isLocal ();
+				T_absolute  = reference .isAbsolute ();
+				T_scheme    = reference .scheme;
+				T_slashs    = reference .value .slashs;
+				T_authority = reference .authority;
+				T_host      = reference .host;
+				T_port      = reference .port;
+				T_path      = reference .path;
+				T_query     = reference .query;
+			}
+			else
+			{
+				if (reference .authority .length)
+				{
+					T_local     = reference .isLocal ();
+					T_absolute  = reference .isAbsolute ();
+					T_authority = reference .authority;
+					T_host      = reference .host;
+					T_port      = reference .port;
+					T_path      = reference .path;
+					T_query     = reference .query;
+				}
+				else
+				{
+					if (reference .path .length === 0)
+					{
+						var T_path = this .value .path;
+
+						if (reference .query .length)
+							T_query = reference .query;
+						else
+							T_query = this .value .query;
+					}
+					else
+					{
+						if (reference .path [0] === "/")
+						{
+							T_path = reference .path;
+						}
+						else
+						{
+							// merge (Base .path (), reference .path ());
+
+							var base = this .base;
+
+							if (base .path .length === 0)
+								T_path = "/";
+							else
+								T_path += base .path;
+
+							T_path += reference .path;
+						}
+
+						T_query = reference .query;
+					}
+
+					T_local     = this .isLocal ();
+					T_absolute  = this .isAbsolute () || reference .isAbsolute ();
+					T_authority = this .value .authority;
+					T_host      = this .value .host;
+					T_port      = this .value .port;
+				}
+
+				T_scheme = this .value .scheme;
+				T_slashs = this .value .slashs;
+			}
+
+			T_fragment = reference .fragment;
+
+			return new URI (T_local,
+			                T_absolute,
+			                T_scheme,
+			                T_slashs,
+			                T_authority,
+			                T_host,
+			                T_port,
+			                removeDotSegments (T_path),
+			                T_query,
+			                T_fragment);
+		},
+		removeDotSegments: function ()
+		{
+			return new URI (this .value .local,
+			                this .value .absolute,
+			                this .value .scheme,
+			                this .value .slashs,
+			                this .value .authority,
+			                this .value .host,
+			                this .value .port,
+			                removeDotSegments (this .value .path),
+			                this .value .query,
+			                this .value .fragment);
+		},
+		getRelativePath: function (descendant)
+		{
+			if (this .value .scheme !== descendant .scheme)
+				return descendant;
+
+			if (this .value .authority !== descendant .authority)
+				return descendant;
+
+			var path           = new Path (this .value .path, "/");
+			var descendantPath = new Path (descendant .path,  "/");
+
+			return new URI (true,
+			                false,
+			                "",
+			                "",
+			                "",
+			                "",
+			                0,
+			                path .getRelativePath (descendantPath) .toString (),
+			                descendant .query,
+			                descendant .fragment);
+		},
+		escape: function ()
+		{
+			return new URI (escape (this .location));
+		},
+		unescape: function ()
+		{
+			return new URI (unescape (this .location));	
+		},
+		toString: function ()
+		{
+			var string = this .value .scheme;
+
+			if (this .value .scheme .length)
+				string += ":";
+
+			string += this .hierarchy;
+
+			if (this .value .query .length)
+				string += "?" + this .value .query;
+
+			if (this .value .fragment .length)
+				string += "#" + this .value .fragment;
+
+			return string;
+		},
+	};
+
+	return URI;
+});
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
@@ -30309,32 +26480,19 @@ function ($,
 
 			var Loader = require ("cobweb/InputOutput/Loader");
 
-			new Loader (this) .createX3DFromURL (this .url_, this .setSceneAsync .bind (this));
+			new Loader (this) .createX3DFromURL (this .url_, this .setInternalSceneAsync .bind (this));
 		},
-		setSceneAsync: function (value)
+		setInternalSceneAsync: function (value)
 		{
 			this .getScene () .removeLoadCount (this);
 		
 			if (value)
-				this .setScene (value);
+				this .setInternalScene (value);
 
 			else
 				this .setError ();
 		},
-		setError: function (error)
-		{
-			console .log (error);
-
-			this .setLoadState (X3DConstants .FAILED_STATE);
-
-			this .scene = this .getBrowser () .getPrivateScene ();
-
-			this .setProtoDeclaration (null);
-
-			this .deferred .resolve ();
-			this .deferred = $.Deferred ();
-		},
-		setScene: function (value)
+		setInternalScene: function (value)
 		{
 			this .scene = value;
 
@@ -30351,6 +26509,25 @@ function ($,
 			this .setProtoDeclaration (this .scene .protos [protoName]);
 
 			this .deferred .resolve ();
+		},
+		getInternalScene: function ()
+		{
+			///  Returns the internal X3DScene of this extern proto, that is loaded from the url given.
+
+			return this .scene;
+		},
+		setError: function (error)
+		{
+			console .log (error);
+
+			this .setLoadState (X3DConstants .FAILED_STATE);
+
+			this .scene = this .getBrowser () .getPrivateScene ();
+
+			this .setProtoDeclaration (null);
+
+			this .deferred .resolve ();
+			this .deferred = $.Deferred ();
 		},
 	});
 
@@ -30725,13 +26902,11 @@ function ($,
 	 *  Parser
 	 */
 
-	function Parser (scene, input, isXML)
+	function Parser (scene, isXML)
 	{
 		this .scene             = scene;
 		this .isXML             = isXML;
 		this .executionContexts = [ ];
-
-		this .setInput (input);
 	}
 
 	Parser .prototype =
@@ -30826,10 +27001,11 @@ function ($,
 
 			this .getBrowser () .println (string);
 		},
-		parseIntoScene: function ()
+		parseIntoScene: function (input)
 		{
 			try
 			{
+				this .setInput (input);
 				this .x3dScene ();
 				return;
 			}
@@ -33480,6 +29656,3932 @@ function ($,
  ******************************************************************************/
 
 
+define ('lib/DataStorage',[],function ()
+{
+
+
+	var namespaces = new WeakMap ();
+
+	var handler =
+	{
+		get: function (target, key)
+		{
+			if (key in target)
+				return target [key];
+			
+			var value = localStorage [target .getNameSpace () + key];
+
+			if (value === undefined)
+			   return undefined;
+
+			return JSON .parse (value)
+		},
+		set: function (target, key, value)
+		{
+			localStorage [target .getNameSpace () + key] = JSON .stringify (value);
+			return true;
+		},
+	};
+
+	function DataStorage (namespace)
+	{
+		namespaces .set (this, namespace);
+
+		return new Proxy (this, handler);
+	}
+
+	DataStorage .prototype = {
+		constructor: DataStorage,
+		getNameSpace: function ()
+		{
+			return namespaces .get (this);
+		},
+		removeItem: function (key)
+		{
+			return localStorage .removeItem (this .getNameSpace () + key);
+		},
+		clear: function ()
+		{
+			return localStorage .clear ();
+		},
+	}
+
+	return DataStorage;
+});
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Browser/Core/X3DCoreContext',[
+	"cobweb/Fields",
+	"cobweb/Browser/Core/BrowserOptions",
+	"cobweb/Browser/Core/BrowserProperties",
+	"cobweb/Browser/Core/RenderingProperties",
+	"cobweb/Browser/Core/Notification",
+	"cobweb/Browser/Core/BrowserTimings",
+	"cobweb/Browser/Core/ContextMenu",
+	"cobweb/Parser/Parser",
+	"lib/DataStorage",
+],
+function (Fields,
+          BrowserOptions,
+          BrowserProperties,
+          RenderingProperties,
+          Notification,
+          BrowserTimings,
+          ContextMenu,
+          Parser,
+          DataStorage)
+{
+
+	
+	var number = 0;
+
+	function getContext (canvas)
+	{
+		var gl = canvas .getContext ("webgl") ||
+		         canvas .getContext ("experimental-webgl");
+
+		if (! gl)
+			throw new Error ("Couldn't create WebGL context.");
+
+		// Feature detection:
+		
+		// If the aliased linewidth ranges are both 1, gl.lineWidth is probably not possible,
+		// thus we disable it completely to prevent webgl errors.
+		
+		var aliasedLineWidthRange = gl .getParameter (gl .ALIASED_LINE_WIDTH_RANGE);
+		
+		if (aliasedLineWidthRange [0] === 1 && aliasedLineWidthRange [1] === 1)
+		{
+			gl .lineWidth = Function .prototype;
+		}
+		
+		// Return context.
+		
+		return gl;
+	}
+
+	function X3DCoreContext (element)
+	{
+		this .number  = ++ number;
+		this .element = element;
+
+		// Get canvas & context.
+
+		var browser  = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
+		var loading  = $("<div></div>") .addClass ("cobweb-loading")  .appendTo (browser);
+		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
+		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
+		var surface  = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
+
+		$("<div></div>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
+		$("<div></div>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
+		$("<div></div>") .addClass ("cobweb-spinner-three") .appendTo (spinner);
+		$("<div></div>") .addClass ("cobweb-spinner-text")  .appendTo (progress) .text ("Lade 0 Dateien");
+		$("<div></div>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div></div>"));
+
+		this .loading = loading;
+		this .canvas  = $("<canvas></canvas>") .prependTo (surface);
+		this .context = getContext (this .canvas [0]);
+
+		this .browserOptions      = new BrowserOptions (this);
+		this .browserProperties   = new BrowserProperties (this);
+		this .renderingProperties = new RenderingProperties (this);
+		this .notification        = new Notification (this);
+		this .browserTimings      = new BrowserTimings (this);
+		this .contextMenu         = new ContextMenu (this);
+		this .dataStorage         = new DataStorage ("X3DBrowser(" + this .number + ").");
+		this .mobile              = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
+	}
+
+	X3DCoreContext .prototype =
+	{
+		initialize: function ()
+		{
+			this .browserOptions      .setup ()
+			this .browserProperties   .setup ()
+			this .renderingProperties .setup ();
+			this .notification        .setup ();
+			this .browserTimings      .setup ();
+			this .contextMenu         .setup ();
+
+			// Observe Element's attributes.
+
+			this .observer = new MutationObserver (this .processMutations .bind (this));
+
+			this .observer .observe (this .element [0], { attributes: true, childList: false, characterData: false, subtree: false });
+		},
+		getNumber: function ()
+		{
+			return this .number;
+		},
+		isStrict: function ()
+		{
+			return false;
+		},
+		getElement: function ()
+		{
+			return this .element;
+		},
+		getLoadingElement: function ()
+		{
+			return this .loading;
+		},
+		getCanvas: function ()
+		{
+			return this .canvas;
+		},
+		getContext: function ()
+		{
+			return this .context;
+		},
+		getBrowserOptions: function ()
+		{
+			return this .browserOptions;
+		},
+		getBrowserProperties: function ()
+		{
+			return this .browserProperties;
+		},
+		getRenderingProperties: function ()
+		{
+			return this .renderingProperties;
+		},
+		getNotification: function ()
+		{
+			return this .notification;
+		},
+		getBrowserTimings: function ()
+		{
+			return this .browserTimings;
+		},
+		getDataStorage: function ()
+		{
+			return this .dataStorage;
+		},
+		getMobile: function ()
+		{
+			return this .mobile;
+		},
+		processMutations: function (mutations)
+		{
+			mutations .forEach (function (mutation)
+			{
+				this .processMutation (mutation);
+			},
+			this);
+		},
+		processMutation: function (mutation)
+		{
+			var element = mutation .target;
+			
+			switch (mutation .type)
+			{
+				case "attributes":
+				{
+					this .processAttribute (mutation, element);
+					break;
+				}
+			}
+		},
+		processAttribute: function (mutation, element)
+		{
+			var attributeName = mutation .attributeName;
+
+			switch (attributeName)
+			{
+				case "src":
+					var urlCharacters = this .getElement () .attr ("src");
+		
+					if (urlCharacters)
+						this .load ('"' + urlCharacters + '"');
+
+					break;
+				case "url":
+					this .load (this .getElement () .attr ("url"));
+					break;
+				case "cache":
+					this .setCaching (this .getElement () .attr ("cache") != "false");
+					break;
+			}
+		},
+		load: function (urlCharacters)
+		{
+			if (urlCharacters)
+			{
+			   var
+			      parser    = new Parser (this .getExecutionContext (), true),
+			      url       = new Fields .MFString (),
+					parameter = new Fields .MFString ();
+
+				parser .setInput (urlCharacters);
+				parser .sfstringValues (url);
+
+				if (url .length)
+					this .loadURL (url, parameter);
+			}
+		},
+	};
+
+	return X3DCoreContext;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Routing/X3DRoutingContext',[
+],
+function ()
+{
+
+
+	function X3DRoutingContext ()
+	{
+		this .taintedFields     = [ ];
+		this .taintedFieldsTemp = [ ];
+		this .taintedNodes      = [ ];
+		this .taintedNodesTemp  = [ ];
+	}
+
+	X3DRoutingContext .prototype =
+	{
+		constructor: X3DRoutingContext,
+		initialize: function () { },
+		addTaintedField: function (field, event)
+		{
+			this .taintedFields .push (field, event);
+		},
+		addTaintedNode: function (node)
+		{
+			this .taintedNodes .push (node);
+		},
+		processEvents: function ()
+		{
+			do
+			{
+				// Process field events
+				do
+				{
+					var taintedFields = this .taintedFields;
+
+					// Swap tainted fields.
+					this .taintedFields         = this .taintedFieldsTemp;
+					this .taintedFields .length = 0;
+
+					for (var i = 0, length = taintedFields .length; i < length; i += 2)
+						taintedFields [i] .processEvent (taintedFields [i + 1]);
+
+					// Don't know why this must be done after the for loop, otherwise a fatal error could be thrown.
+					this .taintedFieldsTemp = taintedFields;
+				}
+				while (this .taintedFields .length);
+
+				// Process node events
+				do
+				{
+					var taintedNodes = this .taintedNodes;
+
+					// Swap tainted nodes.
+					this .taintedNodes         = this .taintedNodesTemp;
+					this .taintedNodes .length = 0;
+
+					for (var i = 0, length = taintedNodes .length; i < length; ++ i)
+						taintedNodes [i] .processEvents ();
+					
+					// Don't know why this must be done after the for loop, otherwise a fatal error could be thrown.
+					this .taintedNodesTemp = taintedNodes;
+				}
+				while (! this .taintedFields .length && this .taintedNodes .length);
+			}
+			while (this .taintedFields .length);
+		},
+	};
+
+	return X3DRoutingContext;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Browser/Scripting/X3DScriptingContext',[
+],
+function ()
+{
+
+
+	function X3DScriptingContext ()
+	{
+		this .scripts = [ this ];
+	}
+
+	X3DScriptingContext .prototype =
+	{
+		initialize: function ()
+		{
+		},
+		isExternal: function ()
+		{
+		   return this .scripts .length === 1;
+		},
+		getScriptStack: function ()
+		{
+			return this .scripts;
+		}
+	};
+
+	return X3DScriptingContext;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Core/X3DChildNode',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DNode, 
+          X3DConstants)
+{
+
+
+	function X3DChildNode (executionContext)
+	{
+		if (this .getExecutionContext ())
+			return;
+
+		X3DNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DChildNode);
+
+		this .addChildObjects ("isCameraObject", new Fields .SFBool ());
+	}
+
+	X3DChildNode .prototype = $.extend (Object .create (X3DNode .prototype),
+	{
+		constructor: X3DChildNode,
+		setCameraObject: function (value)
+		{
+			if (value !== this .isCameraObject_ .getValue ())
+				this .isCameraObject_ = value;
+		},
+		getCameraObject: function ()
+		{
+			return this .isCameraObject_ .getValue ();
+		},
+	});
+
+	return X3DChildNode;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Core/X3DSensorNode',[
+	"jquery",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DChildNode, 
+          X3DConstants)
+{
+
+
+	function X3DSensorNode (executionContext)
+	{
+		X3DChildNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DSensorNode);
+	}
+
+	X3DSensorNode .prototype = $.extend (Object .create (X3DChildNode .prototype),
+	{
+		constructor: X3DSensorNode,
+	});
+
+	return X3DSensorNode;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Networking/X3DNetworkSensorNode',[
+	"jquery",
+	"cobweb/Components/Core/X3DSensorNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DSensorNode, 
+          X3DConstants)
+{
+
+
+	function X3DNetworkSensorNode (executionContext)
+	{
+		X3DSensorNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DNetworkSensorNode);
+	}
+
+	X3DNetworkSensorNode .prototype = $.extend (Object .create (X3DSensorNode .prototype),
+	{
+		constructor: X3DNetworkSensorNode,
+	});
+
+	return X3DNetworkSensorNode;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Networking/LoadSensor',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Networking/X3DNetworkSensorNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DNetworkSensorNode,
+          X3DCast,
+          X3DConstants)
+{
+
+
+	function LoadSensor (executionContext)
+	{
+		X3DNetworkSensorNode .call (this, executionContext);
+
+		this .addType (X3DConstants .LoadSensor);
+
+		this .urlObjects = [ ];
+		this .aborted    = false;
+		this .timeOutId  = undefined;
+	}
+
+	LoadSensor .prototype = $.extend (Object .create (X3DNetworkSensorNode .prototype),
+	{
+		constructor: LoadSensor,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",  new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",   new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "timeOut",   new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "isActive",  new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "isLoaded",  new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "progress",  new Fields .SFFloat ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,  "loadTime",  new Fields .SFTime ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "watchList", new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "LoadSensor";
+		},
+		getComponentName: function ()
+		{
+			return "Networking";
+		},
+		getContainerField: function ()
+		{
+			return "children";
+		},
+		initialize: function ()
+		{
+			X3DNetworkSensorNode .prototype .initialize .call (this);
+
+			this .enabled_   .addInterest (this,"set_enabled__");
+			this .timeOut_   .addInterest (this,"set_timeOut__");
+			this .watchList_ .addInterest (this,"set_watchList__");
+
+			this .watchList_ .addEvent ();
+		},
+		set_enabled__: function ()
+		{
+			if (this .enabled_ .getValue ())
+				this .reset ();
+		
+			else
+			{
+				this .abort ();
+				this .remove ();
+			}
+		},
+		set_timeOut__: function ()
+		{
+			if (this .isActive_ .getValue ())
+			{
+				this .clearTimeout ();
+
+				this .aborted = false;
+
+				if (this .timeOut_ .getValue () > 0)
+					this .timeOutId = setTimeout (this .abort .bind (this), this .timeOut_ .getValue () * 1000);
+			}
+		},
+		set_watchList__: function ()
+		{
+			this .reset ();
+		},
+		set_loadState__: function (dummy, urlObject)
+		{
+			switch (urlObject .checkLoadState ())
+			{
+				case X3DConstants .NOT_STARTED_STATE:
+					break;
+				case X3DConstants .IN_PROGRESS_STATE:
+				case X3DConstants .COMPLETE_STATE:
+				case X3DConstants .FAILED_STATE:
+				{
+					this .count ();
+					break;
+				}
+			}
+		},
+		count: function ()
+		{
+			var
+				complete   = 0,
+				failed     = 0,
+				urlObjects = this .urlObjects;
+
+			for (var i = 0, length = urlObjects .length; i < length; ++ i)
+			{
+				var urlObject = urlObjects [i];
+
+				complete += urlObject .checkLoadState () == X3DConstants .COMPLETE_STATE;
+				failed   += urlObject .checkLoadState () == X3DConstants .FAILED_STATE;
+			}
+
+			var progress = complete / urlObjects .length;
+
+			if (this .aborted || failed || complete == urlObjects .length)
+			{
+				var loaded = complete == urlObjects .length;
+
+				this .clearTimeout ();
+
+				this .isActive_ = false;
+				this .isLoaded_ = loaded;
+				this .progress_ = progress;
+
+				if (loaded)
+					this .loadTime_ = this .getBrowser () .getCurrentTime ();
+			}
+			else
+			{
+				if (this .isActive_ .getValue ())
+				{
+					this .progress_ = progress;
+				}
+				else
+				{
+					this .isActive_ = true;
+
+					this .progress_ = progress;
+		
+					this .set_timeOut__ ();
+				}
+			}
+		},
+		abort: function ()
+		{
+			this .clearTimeout ();
+
+			this .aborted = true;
+
+			if (this .enabled_ .getValue ())
+				this .count ();
+		},
+		reset: function ()
+		{
+			this .remove ();
+		
+			if (this .enabled_ .getValue ())
+			{
+				var
+					watchList  = this .watchList_ .getValue (),
+					urlObjects = this .urlObjects;
+
+				for (var i = 0, length = watchList .length; i < length; ++ i)
+				{
+					var urlObject = X3DCast (X3DConstants .X3DUrlObject, watchList [i]);
+		
+					if (urlObject)
+					{
+						urlObjects .push (urlObject);
+		
+						urlObject .loadState_ .addInterest (this, "set_loadState__", urlObject);
+					}
+				}
+
+				this .count ();
+			}
+		},
+		remove: function ()
+		{
+			this .clearTimeout ();
+
+			var urlObjects = this .urlObjects;
+
+			for (var i = 0, length = urlObjects .length; i < length; ++ i)
+				urlObjects [i] .loadState_ .removeInterest (this, "set_loadState__");
+
+			urlObjects .length = 0;
+		},
+		clearTimeout: function ()
+		{
+			clearTimeout (this .timeOutId);
+			this .timeOutId = undefined;
+		},
+	});
+
+	return LoadSensor;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Browser/Networking/urls',[],function ()
+{
+
+
+	return {
+		providerUrl:       "http://titania.create3000.de/cobweb",
+		fallbackUrl:       "https://crossorigin.me/",
+		fallbackExpression: new RegExp ("^https://crossorigin.me/"),
+	};
+});
+
+(function(window) {
+    var re = {
+        not_string: /[^s]/,
+        number: /[diefg]/,
+        json: /[j]/,
+        not_json: /[^j]/,
+        text: /^[^\x25]+/,
+        modulo: /^\x25{2}/,
+        placeholder: /^\x25(?:([1-9]\d*)\$|\(([^\)]+)\))?(\+)?(0|'[^$])?(-)?(\d+)?(?:\.(\d+))?([b-gijosuxX])/,
+        key: /^([a-z_][a-z_\d]*)/i,
+        key_access: /^\.([a-z_][a-z_\d]*)/i,
+        index_access: /^\[(\d+)\]/,
+        sign: /^[\+\-]/
+    }
+
+    function sprintf() {
+        var key = arguments[0], cache = sprintf.cache
+        if (!(cache[key] && cache.hasOwnProperty(key))) {
+            cache[key] = sprintf.parse(key)
+        }
+        return sprintf.format.call(null, cache[key], arguments)
+    }
+
+    sprintf.format = function(parse_tree, argv) {
+        var cursor = 1, tree_length = parse_tree.length, node_type = "", arg, output = [], i, k, match, pad, pad_character, pad_length, is_positive = true, sign = ""
+        for (i = 0; i < tree_length; i++) {
+            node_type = get_type(parse_tree[i])
+            if (node_type === "string") {
+                output[output.length] = parse_tree[i]
+            }
+            else if (node_type === "array") {
+                match = parse_tree[i] // convenience purposes only
+                if (match[2]) { // keyword argument
+                    arg = argv[cursor]
+                    for (k = 0; k < match[2].length; k++) {
+                        if (!arg.hasOwnProperty(match[2][k])) {
+                            throw new Error(sprintf("[sprintf] property '%s' does not exist", match[2][k]))
+                        }
+                        arg = arg[match[2][k]]
+                    }
+                }
+                else if (match[1]) { // positional argument (explicit)
+                    arg = argv[match[1]]
+                }
+                else { // positional argument (implicit)
+                    arg = argv[cursor++]
+                }
+
+                if (get_type(arg) == "function") {
+                    arg = arg()
+                }
+
+                if (re.not_string.test(match[8]) && re.not_json.test(match[8]) && (get_type(arg) != "number" && isNaN(arg))) {
+                    throw new TypeError(sprintf("[sprintf] expecting number but found %s", get_type(arg)))
+                }
+
+                if (re.number.test(match[8])) {
+                    is_positive = arg >= 0
+                }
+
+                switch (match[8]) {
+                    case "b":
+                        arg = arg.toString(2)
+                    break
+                    case "c":
+                        arg = String.fromCharCode(arg)
+                    break
+                    case "d":
+                    case "i":
+                        arg = parseInt(arg, 10)
+                    break
+                    case "j":
+                        arg = JSON.stringify(arg, null, match[6] ? parseInt(match[6]) : 0)
+                    break
+                    case "e":
+                        arg = match[7] ? arg.toExponential(match[7]) : arg.toExponential()
+                    break
+                    case "f":
+                        arg = match[7] ? parseFloat(arg).toFixed(match[7]) : parseFloat(arg)
+                    break
+                    case "g":
+                        arg = match[7] ? parseFloat(arg).toPrecision(match[7]) : parseFloat(arg)
+                    break
+                    case "o":
+                        arg = arg.toString(8)
+                    break
+                    case "s":
+                        arg = ((arg = String(arg)) && match[7] ? arg.substring(0, match[7]) : arg)
+                    break
+                    case "u":
+                        arg = arg >>> 0
+                    break
+                    case "x":
+                        arg = arg.toString(16)
+                    break
+                    case "X":
+                        arg = arg.toString(16).toUpperCase()
+                    break
+                }
+                if (re.json.test(match[8])) {
+                    output[output.length] = arg
+                }
+                else {
+                    if (re.number.test(match[8]) && (!is_positive || match[3])) {
+                        sign = is_positive ? "+" : "-"
+                        arg = arg.toString().replace(re.sign, "")
+                    }
+                    else {
+                        sign = ""
+                    }
+                    pad_character = match[4] ? match[4] === "0" ? "0" : match[4].charAt(1) : " "
+                    pad_length = match[6] - (sign + arg).length
+                    pad = match[6] ? (pad_length > 0 ? str_repeat(pad_character, pad_length) : "") : ""
+                    output[output.length] = match[5] ? sign + arg + pad : (pad_character === "0" ? sign + pad + arg : pad + sign + arg)
+                }
+            }
+        }
+        return output.join("")
+    }
+
+    sprintf.cache = {}
+
+    sprintf.parse = function(fmt) {
+        var _fmt = fmt, match = [], parse_tree = [], arg_names = 0
+        while (_fmt) {
+            if ((match = re.text.exec(_fmt)) !== null) {
+                parse_tree[parse_tree.length] = match[0]
+            }
+            else if ((match = re.modulo.exec(_fmt)) !== null) {
+                parse_tree[parse_tree.length] = "%"
+            }
+            else if ((match = re.placeholder.exec(_fmt)) !== null) {
+                if (match[2]) {
+                    arg_names |= 1
+                    var field_list = [], replacement_field = match[2], field_match = []
+                    if ((field_match = re.key.exec(replacement_field)) !== null) {
+                        field_list[field_list.length] = field_match[1]
+                        while ((replacement_field = replacement_field.substring(field_match[0].length)) !== "") {
+                            if ((field_match = re.key_access.exec(replacement_field)) !== null) {
+                                field_list[field_list.length] = field_match[1]
+                            }
+                            else if ((field_match = re.index_access.exec(replacement_field)) !== null) {
+                                field_list[field_list.length] = field_match[1]
+                            }
+                            else {
+                                throw new SyntaxError("[sprintf] failed to parse named argument key")
+                            }
+                        }
+                    }
+                    else {
+                        throw new SyntaxError("[sprintf] failed to parse named argument key")
+                    }
+                    match[2] = field_list
+                }
+                else {
+                    arg_names |= 2
+                }
+                if (arg_names === 3) {
+                    throw new Error("[sprintf] mixing positional and named placeholders is not (yet) supported")
+                }
+                parse_tree[parse_tree.length] = match
+            }
+            else {
+                throw new SyntaxError("[sprintf] unexpected placeholder")
+            }
+            _fmt = _fmt.substring(match[0].length)
+        }
+        return parse_tree
+    }
+
+    var vsprintf = function(fmt, argv, _argv) {
+        _argv = (argv || []).slice(0)
+        _argv.splice(0, 0, fmt)
+        return sprintf.apply(null, _argv)
+    }
+
+    /**
+     * helpers
+     */
+    function get_type(variable) {
+        return Object.prototype.toString.call(variable).slice(8, -1).toLowerCase()
+    }
+
+    function str_repeat(input, multiplier) {
+        return Array(multiplier + 1).join(input)
+    }
+
+    /**
+     * export to either browser or node.js
+     */
+    if (typeof exports !== "undefined") {
+        exports.sprintf = sprintf
+        exports.vsprintf = vsprintf
+    }
+    else {
+        window.sprintf = sprintf
+        window.vsprintf = vsprintf
+
+        if (typeof define === "function" && define.amd) {
+            define('lib/sprintf.js/src/sprintf',[],function() {
+                return {
+                    sprintf: sprintf,
+                    vsprintf: vsprintf
+                }
+            })
+        }
+    }
+})(typeof window === "undefined" ? this : window);
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Browser/Networking/X3DNetworkingContext',[
+	"cobweb/Fields",
+	"cobweb/Components/Networking/LoadSensor",
+	"cobweb/Browser/Networking/urls",
+	"standard/Networking/URI",
+	"lib/sprintf.js/src/sprintf",
+	"lib/gettext",
+],
+function (Fields,
+          LoadSensor,
+          urls,
+          URI,
+          sprintf,
+          _)
+{
+
+	
+	var loadCountId = 0;
+
+	function getBaseURI (element)
+	{
+		var baseURI = element .baseURI;
+
+		// Fix for Edge.
+		if (baseURI .startsWith ("about:"))
+			baseURI = document .baseURI;
+
+		return new URI (baseURI);
+	}
+
+	function X3DNetworkingContext ()
+	{
+		this .cache = this .getElement () [0] .getAttribute ("cache") != "false";
+
+		this .addChildObjects ("loadCount", new Fields .SFInt32 ());
+
+		this .loadSensor     = new LoadSensor (this);
+		this .loadingTotal   = 0;
+		this .loadingObjects = { };
+		this .location       = getBaseURI (this .getElement () [0]);
+		this .defaultScene   = this .createScene ();
+		this .privateScene   = this .createScene ();
+		this .browserLoading = false;
+	}
+
+	X3DNetworkingContext .prototype =
+	{
+		initialize: function ()
+		{
+			this .loadSensor .setup ();
+
+			this .defaultScene .setup ();
+			this .defaultScene .setLive (true);
+
+			this .privateScene .setPrivate (true);
+			this .privateScene .setup ();
+			this .privateScene .setLive (true);
+		},
+		getProviderUrl: function ()
+		{
+			return urls .providerUrl;
+		},
+		setCaching: function (value)
+		{
+		   this .cache = value;
+		},
+		doCaching: function ()
+		{
+		   return this .cache;
+		},
+		getLocation: function ()
+		{
+			return this .location;
+		},
+		getDefaultScene: function ()
+		{
+			return this .defaultScene;
+		},
+		getPrivateScene: function ()
+		{
+			return this .privateScene;
+		},
+		getLoadSensor: function ()
+		{
+			return this .loadSensor;
+		},
+		setBrowserLoading: function (value)
+		{
+			this .browserLoading = value;
+
+			if (value)
+			{
+				this .resetLoadCount ();
+				this .getCanvas ()         .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
+				this .getLoadingElement () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
+			}
+			else
+			{
+				this .getLoadingElement () .stop (true, true) .fadeOut (2000);
+				this .getCanvas ()         .stop (true, true) .fadeIn (2000);
+			}
+		},
+		addLoadCount: function (object)
+		{
+		   var id = loadCountId ++;
+
+			++ this .loadingTotal;
+		   this .loadingObjects [id] = true;
+			
+			this .setLoadCount (this .loadCount_ = this .loadCount_ .getValue () + 1);
+			this .setCursor ("DEFAULT");
+
+			return id;
+		},
+		removeLoadCount: function (id)
+		{
+		   if (! this .loadingObjects .hasOwnProperty (id))
+		      return;
+		   
+			delete this .loadingObjects [id];
+
+			this .setLoadCount (this .loadCount_ = this .loadCount_ .getValue () - 1);
+		},
+		setLoadCount: function (value)
+		{
+			if (value)
+				var string = sprintf .sprintf (value == 1 ? _ ("Loading %d file") : _ ("Loading %d files"), value);
+			
+			else
+			{
+				var string = _("Loading done");
+				this .setCursor ("DEFAULT");
+			}
+
+			if (! this .browserLoading)
+				this .getNotification () .string_ = string;
+
+			this .getLoadingElement () .find (".cobweb-spinner-text") .text (string);
+
+			this .getLoadingElement () .find (".cobweb-progressbar div") .css ("width", ((this .loadingTotal - value) * 100 / this .loadingTotal) + "%");
+		},
+		resetLoadCount: function ()
+		{
+			this .loadCount_     = 0;
+			this .loadingTotal   = 0;
+			this .loadingObjects = { };			   
+		},
+	};
+
+	return X3DNetworkingContext;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Browser/Shaders/X3DShadersContext',[],function ()
+{
+
+
+	function X3DShadersContext ()
+	{
+		this .shaders = { };
+	}
+
+	X3DShadersContext .prototype =
+	{
+		initialize: function () { },
+		getShadingLanguageVersion: function ()
+		{
+			return this .getContext () .getParameter (this .getContext () .SHADING_LANGUAGE_VERSION);
+		},
+		getMaxVertexUniformVectors: function ()
+		{
+			return this .getContext () .getParameter (this .getContext () .MAX_VERTEX_UNIFORM_VECTORS);
+		},
+		getMaxFragmentUniformVectors: function ()
+		{
+			return this .getContext () .getParameter (this .getContext () .MAX_FRAGMENT_UNIFORM_VECTORS);
+		},
+		getMaxVertexAttribs: function ()
+		{
+			return this .getContext () .getParameter (this .getContext () .MAX_VERTEX_ATTRIBS);
+		},
+		addShader: function (shader)
+		{
+			this .shaders [shader .getId ()] = shader;
+			shader .setShading (this .getBrowserOptions () .getShading ());
+		},
+		removeShader: function (shader)
+		{
+			delete this .shaders [shader .getId ()];
+		},
+		getShaders: function ()
+		{
+			return this .shaders;
+		},
+	};
+
+	return X3DShadersContext;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Shape/X3DAppearanceNode',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DNode, 
+          X3DConstants)
+{
+
+
+	function X3DAppearanceNode (executionContext)
+	{
+		X3DNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DAppearanceNode);
+	}
+
+	X3DAppearanceNode .prototype = $.extend (Object .create (X3DNode .prototype),
+	{
+		constructor: X3DAppearanceNode,
+		initialize: function ()
+		{
+			X3DNode .prototype .initialize .call (this);
+			
+			this .addChildObjects ("transparent", new Fields .SFBool ());
+		},
+	});
+
+	return X3DAppearanceNode;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Shape/Appearance',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shape/X3DAppearanceNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DAppearanceNode,
+          X3DCast,
+          X3DConstants)
+{
+
+
+	function Appearance (executionContext)
+	{
+		X3DAppearanceNode .call (this, executionContext);
+
+		this .addType (X3DConstants .Appearance);
+
+		this .linePropertiesNode   = null;
+		this .materialNode         = null;
+		this .textureNode          = null;
+		this .textureTransformNode = null;
+		this .shaderNodes          = [ ];
+		this .shaderNode           = null;
+	}
+
+	Appearance .prototype = $.extend (Object .create (X3DAppearanceNode .prototype),
+	{
+		constructor: Appearance,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "fillProperties",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "lineProperties",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "material",         new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "texture",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "textureTransform", new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "shaders",          new Fields .MFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "Appearance";
+		},
+		getComponentName: function ()
+		{
+			return "Shape";
+		},
+		getContainerField: function ()
+		{
+			return "appearance";
+		},
+		initialize: function ()
+		{
+			X3DAppearanceNode .prototype .initialize .call (this);
+
+			this .isLive () .addInterest (this, "set_live__");
+
+			this .lineProperties_   .addInterest (this, "set_lineProperties__");
+			this .material_         .addInterest (this, "set_material__");
+			this .texture_          .addInterest (this, "set_texture__");
+			this .textureTransform_ .addInterest (this, "set_textureTransform__");
+			this .shaders_          .addInterest (this, "set_shaders__");
+
+			this .set_lineProperties__ ();
+			this .set_material__ ();
+			this .set_texture__ ();
+			this .set_textureTransform__ ();
+			this .set_shaders__ ();
+		},
+		getLineProperties: function ()
+		{
+			return this .linePropertiesNode;
+		},
+		getMaterial: function ()
+		{
+			return this .materialNode;
+		},
+		getTexture: function ()
+		{
+			return this .textureNode;
+		},
+		getTextureTransform: function ()
+		{
+			return this .textureTransformNode;
+		},
+		set_lineProperties__: function ()
+		{
+			this .linePropertiesNode = X3DCast (X3DConstants .LineProperties, this .lineProperties_);
+		},
+		set_live__: function ()
+		{
+			if (this .isLive () .getValue ())
+			{
+				if (this .shaderNode)
+					this .getBrowser () .addShader (this .shaderNode);
+			}
+			else
+			{
+				if (this .shaderNode)
+				this .getBrowser () .removeShader (this .shaderNode);
+			}
+		},
+		set_material__: function ()
+		{
+			if (this .materialNode)
+				this .materialNode .transparent_ .removeInterest (this, "set_transparent__");
+
+			this .materialNode = X3DCast (X3DConstants .X3DMaterialNode, this .material_);
+
+			if (this .materialNode)
+				this .materialNode .transparent_ .addInterest (this, "set_transparent__");
+			
+			this .set_transparent__ ();
+		},
+		set_texture__: function ()
+		{
+			if (this .textureNode)
+				this .textureNode .transparent_ .removeInterest (this, "set_transparent__");
+
+			this .textureNode = X3DCast (X3DConstants .X3DTextureNode, this .texture_);
+
+			if (this .textureNode)
+				this .textureNode .transparent_ .addInterest (this, "set_transparent__");
+
+			if (X3DCast (X3DConstants .GeneratedCubeMapTexture, this .texture_))
+			{
+				delete this .traverse;
+			}
+			else
+			{
+				this .traverse = Function .prototype;
+			}
+
+			this .set_transparent__ ();
+		},
+		set_textureTransform__: function ()
+		{
+			this .textureTransformNode = X3DCast (X3DConstants .X3DTextureTransformNode, this .textureTransform_);
+			
+			if (this .textureTransformNode)
+				return;
+
+			this .textureTransformNode = this .getBrowser () .getDefaultTextureTransform ();
+		},
+		set_shaders__: function ()
+		{
+			var
+				shaders     = this .shaders_ .getValue (),
+				shaderNodes = this .shaderNodes;
+
+			for (var i = 0, length = shaderNodes .length; i < length; ++ i)
+				shaderNodes [i] .isValid_ .removeInterest (this, "set_shader__");
+		
+			shaderNodes .length = 0;
+		
+			for (var i = 0, length = shaders .length; i < length; ++ i)
+			{
+				var shaderNode = X3DCast (X3DConstants .X3DShaderNode, shaders [i]);
+		
+				if (shaderNode)
+				{
+					shaderNodes .push (shaderNode);
+					shaderNode .isValid_ .addInterest (this, "set_shader__");
+				}
+			}
+
+			this .set_shader__ ();
+		},
+		set_shader__: function ()
+		{
+			var shaderNodes = this .shaderNodes;
+
+			if (this .shaderNode)
+				this .getBrowser () .removeShader (this .shaderNode);
+
+			this .shaderNode = null;
+
+			for (var i = 0, length = shaderNodes .length; i < length; ++ i)
+			{
+				if (shaderNodes [i] .isValid_ .getValue ())
+				{
+					this .shaderNode = shaderNodes [i];
+					break;
+				}
+			}
+
+			if (this .isLive () .getValue ())
+			{
+				if (this .shaderNode)
+					this .getBrowser () .addShader (this .shaderNode);
+			}
+
+			this .set_transparent__ ();
+		},
+		set_transparent__: function ()
+		{
+			this .transparent_ = (this .materialNode && this .materialNode .transparent_ .getValue ()) ||
+			                     (this .textureNode  && this .textureNode  .transparent_ .getValue ());
+		},
+		traverse: function (type, renderObject)
+		{
+			this .textureNode .traverse (type, renderObject);
+		},
+		display: function (context)
+		{
+			context .linePropertiesNode   = this .linePropertiesNode;
+			context .materialNode         = this .materialNode;
+			context .textureNode          = this .textureNode;
+			context .textureTransformNode = this .textureTransformNode;
+			context .shaderNode           = this .shaderNode || context .renderer .getBrowser () .getDefaultShader ();
+		},
+	});
+
+	return Appearance;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Browser/Shape/X3DShapeContext',[
+	"cobweb/Components/Shape/Appearance",
+],
+function (Appearance)
+{
+
+
+	function X3DShapeContext ()
+	{
+		this .defaultAppearance = new Appearance (this);
+	}
+
+	X3DShapeContext .prototype =
+	{
+		initialize: function ()
+		{
+			this .defaultAppearance .setup ();
+		},
+		getDefaultAppearance: function ()
+		{
+			return this .defaultAppearance;
+		},
+	};
+
+	return X3DShapeContext;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Shape/X3DAppearanceChildNode',[
+	"jquery",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DNode, 
+          X3DConstants)
+{
+
+
+	function X3DAppearanceChildNode (executionContext)
+	{
+		X3DNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DAppearanceChildNode);
+	}
+
+	X3DAppearanceChildNode .prototype = $.extend (Object .create (X3DNode .prototype),
+	{
+		constructor: X3DAppearanceChildNode,
+	});
+
+	return X3DAppearanceChildNode;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Shaders/X3DShaderNode',[
+	"jquery",
+	"cobweb/Components/Shape/X3DAppearanceChildNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DAppearanceChildNode, 
+          X3DConstants)
+{
+
+
+	function X3DShaderNode (executionContext)
+	{
+		X3DAppearanceChildNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DShaderNode);
+	}
+
+	X3DShaderNode .prototype = $.extend (Object .create (X3DAppearanceChildNode .prototype),
+	{
+		constructor: X3DShaderNode,
+		custom: true,
+		setCustom: function (value)
+		{
+			this .custom = value;
+		},
+		getCustom: function ()
+		{
+			return this .custom;
+		},
+		setGeometryType: function (value)
+		{
+			this .setShading (value, this .getBrowser () .getBrowserOptions () .Shading_ .getValue ());
+		},
+		setShading: function (geometryType, shading)
+		{
+			var gl = this .getBrowser () .getContext ();
+
+			switch (geometryType)
+			{
+				case 0:
+				{
+					switch (shading)
+					{
+						case "POINT":
+						case "POINTSET":
+						{
+							this .primitiveMode = gl .POINTS;
+							this .wireframe     = true;
+							break;
+						}
+						case "WIREFRAME":
+						{
+							this .primitiveMode = gl .POINTS;
+							this .wireframe     = true;
+							break;
+						}
+						default:
+						{
+							// case FLAT:
+							// case GOURAUD:
+							// case PHONG:
+		
+							this .primitiveMode = gl .POINTS;
+							this .wireframe     = true;
+							break;
+						}
+					}
+
+					break;
+				}
+				case 1:
+				{
+					switch (shading)
+					{
+						case "POINT":
+						case "POINTSET":
+						{
+							this .primitiveMode = gl .POINTS;
+							this .wireframe     = true;
+							break;
+						}
+						case "WIREFRAME":
+						{
+							this .primitiveMode = gl .LINES;
+							this .wireframe     = true;
+							break;
+						}
+						default:
+						{
+							// case FLAT:
+							// case GOURAUD:
+							// case PHONG:
+
+							this .primitiveMode = gl .LINES;
+							this .wireframe     = true;
+							break;
+						}
+					}
+
+					break;
+				}
+				case 2:
+				case 3:
+				{
+					switch (shading)
+					{
+						case "POINT":
+						case "POINTSET":
+						{
+							this .primitiveMode = gl .POINTS;
+							this .wireframe     = true;
+							break;
+						}
+						case "WIREFRAME":
+						{
+							this .primitiveMode = gl .LINE_LOOP;
+							this .wireframe     = true;
+							break;
+						}
+						default:
+						{
+							// case FLAT:
+							// case GOURAUD:
+							// case PHONG:
+		
+							this .primitiveMode = gl .TRIANGLES;
+							this .wireframe     = false;
+							break;
+						}
+					}	
+
+					break;
+				}
+			}
+		},
+	});
+
+	return X3DShaderNode;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Shaders/X3DProgrammableShaderObject',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix3",
+],
+function ($,
+          Fields,
+          X3DCast,
+          X3DConstants,
+          Matrix3)
+{
+
+
+	var NULL = Fields .SFNode ();
+
+	function X3DProgrammableShaderObject (executionContext)
+	{
+		this .addType (X3DConstants .X3DProgrammableShaderObject);
+
+		this .x3d_ClipPlane             = [ ];
+		this .x3d_LightType             = [ ];
+		this .x3d_LightOn               = [ ];
+		this .x3d_LightColor            = [ ];
+		this .x3d_LightIntensity        = [ ];
+		this .x3d_LightAmbientIntensity = [ ];
+		this .x3d_LightAttenuation      = [ ];
+		this .x3d_LightLocation         = [ ];
+		this .x3d_LightDirection        = [ ];
+		this .x3d_LightBeamWidth        = [ ];
+		this .x3d_LightCutOffAngle      = [ ];
+		this .x3d_LightRadius           = [ ];
+		this .x3d_ShadowIntensity       = [ ];
+		this .x3d_ShadowDiffusion       = [ ];
+		this .x3d_ShadowColor           = [ ];
+		this .x3d_ShadowMatrix          = [ ];
+		this .x3d_ShadowMap             = [ ];
+	}
+
+	X3DProgrammableShaderObject .prototype =
+	{
+		constructor: X3DProgrammableShaderObject,
+		x3d_NoneClipPlane: new Float32Array ([ 88, 51, 68, 33 ]), // X3D!
+		fogNode: null,
+		numGlobalLights: 0,
+		normalMatrixArray: new Float32Array (9),
+		initialize: function ()
+		{
+			var browser = this .getBrowser ();
+
+			this .x3d_MaxClipPlanes = browser .getMaxClipPlanes ();
+			this .x3d_MaxLights     = browser .getMaxLights ();
+			this .x3d_MaxTextures   = browser .getMaxTextures ();
+
+			this .textureTypeArray = new Int32Array (this .x3d_MaxTextures);
+		},
+		hasUserDefinedFields: function ()
+		{
+			return true;
+		},
+		bindAttributeLocations: function (gl, program)
+		{
+			gl .bindAttribLocation (program, 3, "x3d_Color");
+			gl .bindAttribLocation (program, 2, "x3d_TexCoord");
+			gl .bindAttribLocation (program, 1, "x3d_Normal");
+			gl .bindAttribLocation (program, 0, "x3d_Vertex");
+		},
+		getDefaultUniforms: function ()
+		{
+			// Get uniforms and attributes.
+
+			var
+				gl      = this .getBrowser () .getContext (),
+				program = this .getProgram ();
+
+			this .x3d_GeometryType = gl .getUniformLocation (program, "x3d_GeometryType");
+
+			for (var i = 0; i < this .x3d_MaxClipPlanes; ++ i)
+				this .x3d_ClipPlane [i]  = gl .getUniformLocation (program, "x3d_ClipPlane[" + i + "]");
+
+			this .x3d_FogType            = gl .getUniformLocation (program, "x3d_FogType");
+			this .x3d_FogColor           = gl .getUniformLocation (program, "x3d_FogColor");
+			this .x3d_FogVisibilityRange = gl .getUniformLocation (program, "x3d_FogVisibilityRange");
+
+			this .x3d_LinewidthScaleFactor = gl .getUniformLocation (program, "x3d_LinewidthScaleFactor");
+
+			this .x3d_Lighting      = gl .getUniformLocation (program, "x3d_Lighting");
+			this .x3d_ColorMaterial = gl .getUniformLocation (program, "x3d_ColorMaterial");
+
+			for (var i = 0; i < this .x3d_MaxLights; ++ i)
+			{
+				this .x3d_LightType [i]             = gl .getUniformLocation (program, "x3d_LightType[" + i + "]");
+				this .x3d_LightColor [i]            = gl .getUniformLocation (program, "x3d_LightColor[" + i + "]");
+				this .x3d_LightAmbientIntensity [i] = gl .getUniformLocation (program, "x3d_LightAmbientIntensity[" + i + "]");
+				this .x3d_LightIntensity [i]        = gl .getUniformLocation (program, "x3d_LightIntensity[" + i + "]");
+				this .x3d_LightAttenuation [i]      = gl .getUniformLocation (program, "x3d_LightAttenuation[" + i + "]");
+				this .x3d_LightLocation [i]         = gl .getUniformLocation (program, "x3d_LightLocation[" + i + "]");
+				this .x3d_LightDirection [i]        = gl .getUniformLocation (program, "x3d_LightDirection[" + i + "]");
+				this .x3d_LightBeamWidth [i]        = gl .getUniformLocation (program, "x3d_LightBeamWidth[" + i + "]");
+				this .x3d_LightCutOffAngle [i]      = gl .getUniformLocation (program, "x3d_LightCutOffAngle[" + i + "]");
+				this .x3d_LightRadius [i]           = gl .getUniformLocation (program, "x3d_LightRadius[" + i + "]");
+
+				this .x3d_ShadowIntensity [i] = gl .getUniformLocation (program, "x3d_ShadowIntensity[" + i + "]");
+				this .x3d_ShadowDiffusion [i] = gl .getUniformLocation (program, "x3d_ShadowDiffusion[" + i + "]");
+				this .x3d_ShadowColor [i]     = gl .getUniformLocation (program, "x3d_ShadowColor[" + i + "]");
+				this .x3d_ShadowMatrix [i]    = gl .getUniformLocation (program, "x3d_ShadowMatrix[" + i + "]");
+				this .x3d_ShadowMap [i]       = gl .getUniformLocation (program, "x3d_ShadowMap[" + i + "]");
+			}
+
+			this .x3d_SeparateBackColor = gl .getUniformLocation (program, "x3d_SeparateBackColor");
+
+			this .x3d_AmbientIntensity = gl .getUniformLocation (program, "x3d_AmbientIntensity");
+			this .x3d_DiffuseColor     = gl .getUniformLocation (program, "x3d_DiffuseColor");
+			this .x3d_SpecularColor    = gl .getUniformLocation (program, "x3d_SpecularColor");
+			this .x3d_EmissiveColor    = gl .getUniformLocation (program, "x3d_EmissiveColor");
+			this .x3d_Shininess        = gl .getUniformLocation (program, "x3d_Shininess");
+			this .x3d_Transparency     = gl .getUniformLocation (program, "x3d_Transparency");
+
+			this .x3d_BackAmbientIntensity = gl .getUniformLocation (program, "x3d_BackAmbientIntensity");
+			this .x3d_BackDiffuseColor     = gl .getUniformLocation (program, "x3d_BackDiffuseColor");
+			this .x3d_BackSpecularColor    = gl .getUniformLocation (program, "x3d_BackSpecularColor");
+			this .x3d_BackEmissiveColor    = gl .getUniformLocation (program, "x3d_BackEmissiveColor");
+			this .x3d_BackShininess        = gl .getUniformLocation (program, "x3d_BackShininess");
+			this .x3d_BackTransparency     = gl .getUniformLocation (program, "x3d_BackTransparency");
+
+			this .x3d_TextureType    = gl .getUniformLocation (program, "x3d_TextureType");
+			this .x3d_Texture2D      = gl .getUniformLocation (program, "x3d_Texture2D");
+			this .x3d_CubeMapTexture = gl .getUniformLocation (program, "x3d_CubeMapTexture");
+
+			this .x3d_Texture = gl .getUniformLocation (program, "x3d_Texture"); // depreciated
+
+			this .x3d_TextureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
+			this .x3d_NormalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
+			this .x3d_ProjectionMatrix = gl .getUniformLocation (program, "x3d_ProjectionMatrix");
+			this .x3d_ModelViewMatrix  = gl .getUniformLocation (program, "x3d_ModelViewMatrix");
+			
+			this .x3d_Color    = gl .getAttribLocation (program, "x3d_Color");
+			this .x3d_TexCoord = gl .getAttribLocation (program, "x3d_TexCoord");
+			this .x3d_Normal   = gl .getAttribLocation (program, "x3d_Normal");
+			this .x3d_Vertex   = gl .getAttribLocation (program, "x3d_Vertex");	
+
+			gl .uniform1f  (this .x3d_LinewidthScaleFactor, 1);
+			gl .uniform1iv (this .x3d_TextureType,          new Int32Array ([0]));
+			gl .uniform1iv (this .x3d_Texture,              new Int32Array ([2])); // depreciated
+			gl .uniform1iv (this .x3d_Texture2D,            new Int32Array ([2])); // Set texture to active texture unit 2.
+			gl .uniform1iv (this .x3d_CubeMapTexture,       new Int32Array ([4])); // Set cube map texture to active texture unit 3.
+
+			// Return true if valid, otherwise false.
+
+			if (this .x3d_Color < 0)
+			{
+				this .enableColorAttribute  = Function .prototype;
+				this .disableColorAttribute = Function .prototype;
+			}
+			else
+			{
+				delete this .enableColorAttribute;
+				delete this .disableColorAttribute;
+			}
+
+			if (this .x3d_TexCoord < 0)
+			{
+				this .enableTexCoordAttribute  = Function .prototype;
+				this .disableTexCoordAttribute = Function .prototype;
+			}
+			else
+			{
+				delete this .enableTexCoordAttribute;
+				delete this .disableTexCoordAttribute;
+			}
+
+			if (this .x3d_Normal < 0)
+			{
+				this .enableNormalAttribute  = Function .prototype;
+				this .disableNormalAttribute = Function .prototype;
+			}
+			else
+			{
+				delete this .enableNormalAttribute;
+				delete this .disableNormalAttribute;
+			}
+
+			if (this .x3d_Vertex < 0)
+				return false;
+
+			return true;
+		},
+		addShaderFields: function ()
+		{
+			var
+				gl                = this .getBrowser () .getContext (),
+				program           = this .getProgram (),
+				userDefinedFields = this .getUserDefinedFields ();
+
+			for (var name in userDefinedFields)
+			{
+				var
+					field    = userDefinedFields [name],
+					location = gl .getUniformLocation (program, name);
+
+				if (location)
+				{
+					field ._uniformLocation = location;
+
+					field .addInterest (this, "set_field__");
+
+					switch (field .getType ())
+					{
+						case X3DConstants .SFImage:
+						{
+							location .array = new Int32Array (3 + field .array .length);
+							break;
+						}
+						case X3DConstants .SFMatrix3d:
+						case X3DConstants .SFMatrix3f:
+						{
+							location .array = new Float32Array (9);
+							break;
+						}
+						case X3DConstants .SFMatrix4d:
+						case X3DConstants .SFMatrix4f:
+						{
+							location .array = new Float32Array (16);
+							break;
+						}
+						case X3DConstants .MFBool:
+						case X3DConstants .MFInt32:
+						{
+							location .array = new Int32Array (this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFFloat:
+						case X3DConstants .MFDouble:
+						case X3DConstants .MFTime:
+						{
+							location .array = new Float32Array (this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFImage:
+						{
+							location .array = new Int32Array (this .getImagesLength (field));
+							break;
+						}
+						case X3DConstants .MFMatrix3d:
+						case X3DConstants .MFMatrix3f:
+						{
+							location .array = new Float32Array (9 * this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFMatrix4d:
+						case X3DConstants .MFMatrix4f:
+						{
+							location .array = new Float32Array (16 * this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFNode:
+						{
+							var array = field ._uniformLocation = [ ];
+
+							for (var i = 0; ; ++ i)
+							{
+								var location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+								if (location)
+									array [i] = location;
+								else
+									break;
+							}
+
+							break;
+						}
+						case X3DConstants .MFVec2d:
+						case X3DConstants .MFVec2f:
+						{
+							location .array = new Float32Array (2 * this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFVec3d:
+						case X3DConstants .MFVec3f:
+						case X3DConstants .MFColor:
+						{
+							location .array = new Float32Array (3 * this .getLocationLength (gl, program, field));
+							break;
+						}
+						case X3DConstants .MFVec4d:
+						case X3DConstants .MFVec4f:
+						case X3DConstants .MFColorRGBA:
+						case X3DConstants .MFRotation:
+						{
+							location .array = new Float32Array (4 * this .getLocationLength (gl, program, field));
+							break;
+						}
+					}
+
+					this .set_field__ (field);
+				}
+			}
+		},
+		removeShaderFields: function ()
+		{
+			var
+				gl                = this .getBrowser () .getContext (),
+				program           = this .getProgram (),
+				userDefinedFields = this .getUserDefinedFields ();
+
+			for (var name in userDefinedFields)
+			{
+				var field = userDefinedFields [name];
+
+				field .removeInterest (this, "set_field__");
+
+				switch (field .getType ())
+				{
+					case X3DConstants .SFNode:
+					{
+						this .removeNode (gl, program, field ._uniformLocation);
+						break;
+					}
+					case X3DConstants .MFNode:
+					{
+						var name = field .getName ();
+
+						for (var i = 0; ; ++ i)
+						{
+							var location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+							if (location)
+								this .removeNode (gl, program, location);
+							else
+								break;
+						}
+
+						break;
+					}
+					default:
+						continue;
+				}
+
+				break;
+			}
+		},
+		set_field__: function (field)
+		{
+			var
+				gl       = this .getBrowser () .getContext (),
+				program  = this .getProgram (),
+				location = field ._uniformLocation;
+
+			if (location)
+			{
+				this .useProgram (gl); // TODO: only in ComposedShader possible.
+
+				switch (field .getType ())
+				{
+					case X3DConstants .SFBool:
+					case X3DConstants .SFInt32:
+					{
+						gl .uniform1i (location, field .getValue ());
+						return;
+					}
+					case X3DConstants .SFColor:
+					{
+						var value = field .getValue ();
+						gl .uniform3f (location, value .r, value .g, value .b);
+						return;
+					}
+					case X3DConstants .SFColorRGBA:
+					{
+						var value = field .getValue ();
+						gl .uniform4f (location, value .r, value .g, value .b, value .a);
+						return;
+					}
+					case X3DConstants .SFDouble:
+					case X3DConstants .SFFloat:
+					case X3DConstants .SFTime:
+					{
+						gl .uniform1f (location, field .getValue ());
+						return;
+					}
+					case X3DConstants .SFImage:
+					{
+						var
+							array  = location .array,
+							pixels = field .array .getValue (),
+							length = 3 + pixels .length;
+	
+						if (length !== array .length)
+							array = location .array = new Int32Array (length);
+	
+						array [0] = field .width;
+						array [1] = field .height;
+						array [2] = field .comp;
+	
+						for (var a = 3, p = 0, length = pixels .length; p < length; ++ p)
+							array [a ++] = pixels [p] .getValue ();
+	
+						gl .uniform1iv (location, array);
+						return;
+					}
+					case X3DConstants .SFMatrix3d:
+					case X3DConstants .SFMatrix3f:
+					{
+						location .array .set (field .getValue ());
+	
+						gl .uniformMatrix3fv (location, false, location .array);
+						return;
+					}
+					case X3DConstants .SFMatrix4d:
+					case X3DConstants .SFMatrix4f:
+					{
+						location .array .set (field .getValue ());
+	
+						gl .uniformMatrix4fv (location, false, location .array);
+						return;
+					}
+					case X3DConstants .SFNode:
+					{
+						this .setNode (gl, program, location, field);
+						return;
+					}
+					case X3DConstants .SFRotation:
+					{
+						var quat = field .getValue () .value;
+						gl .uniform4f (location, quat .x, quat .y, quat .z, quat .w);
+						return;
+					}
+					case X3DConstants .SFString:
+					{
+						return;
+					}
+					case X3DConstants .SFVec2d:
+					case X3DConstants .SFVec2f:
+					{
+						var value = field .getValue ();
+						gl .uniform2f (location, value .x, value .y);
+						return;
+					}
+					case X3DConstants .SFVec3d:
+					case X3DConstants .SFVec3f:
+					{
+						var value = field .getValue ();
+						gl .uniform3f (location, value .x, value .y, value .z);
+						return;
+					}
+					case X3DConstants .SFVec4d:
+					case X3DConstants .SFVec4f:
+					{
+						var value = field .getValue ();
+						gl .uniform4f (location, value .x, value .y, value .z, value .w);
+						return;
+					}
+					case X3DConstants .MFBool:
+					case X3DConstants .MFInt32:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, length = value .length; i < length; ++ i)
+							array [i] = value [i] .getValue ();
+	
+						for (var length = array .length; i < length; ++ i)
+							array [i] = 0;
+	
+						gl .uniform1iv (location, array);
+						return;
+					}
+					case X3DConstants .MFColor:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var color = value [i] .getValue ();
+	
+							array [k++] = color .r;
+							array [k++] = color .g;
+							array [k++] = color .b;
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniform3fv (location, array);
+						return;
+					}
+					case X3DConstants .MFColorRGBA:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var color = value [i] .getValue ();
+	
+							array [k++] = color .r;
+							array [k++] = color .g;
+							array [k++] = color .b;
+							array [k++] = color .a;
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniform4fv (location, array);
+						return;
+					}
+					case X3DConstants .MFDouble:
+					case X3DConstants .MFFloat:
+					case X3DConstants .MFTime:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, length = value .length; i < length; ++ i)
+							array [i] = value [i] .getValue ();
+	
+						for (var length = array .length; i < length; ++ i)
+							array [i] = 0;
+	
+						gl .uniform1fv (location, array);
+						return;
+					}
+					case X3DConstants .MFImage:
+					{
+						var
+							images = field .getValue (),
+							array  = location .array,
+							length = this .getImagesLength (field);
+	
+						if (length !== array .length)
+							array = location .array = new Int32Array (length);
+	
+						for (var i = 0, a = 0, length = images .length; i < length; ++ i)
+						{
+							var
+								value  = images [i],
+								pixels = value .array .getValue ();
+	
+							array [a ++] = value .width;
+							array [a ++] = value .height;
+							array [a ++] = value .comp;
+	
+							for (var p = 0, plength = pixels .length; p < plength; ++ p)
+								array [a ++] = pixels [p] .getValue ();
+						}
+	
+						gl .uniform1iv (location, array);
+						return;
+					}
+					case X3DConstants .MFMatrix3d:
+					case X3DConstants .MFMatrix3f:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var matrix = value [i] .getValue ();
+	
+							array [k++] = matrix [0];
+							array [k++] = matrix [1];
+							array [k++] = matrix [2];
+							array [k++] = matrix [3];
+							array [k++] = matrix [4];
+							array [k++] = matrix [5];
+							array [k++] = matrix [6];
+							array [k++] = matrix [7];
+							array [k++] = matrix [8];
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniformMatrix3fv (location, false, array);
+						return;
+					}
+					case X3DConstants .MFMatrix4d:
+					case X3DConstants .MFMatrix4f:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var matrix = value [i] .getValue ();
+	
+							array [k++] = matrix [ 0];
+							array [k++] = matrix [ 1];
+							array [k++] = matrix [ 2];
+							array [k++] = matrix [ 3];
+							array [k++] = matrix [ 4];
+							array [k++] = matrix [ 5];
+							array [k++] = matrix [ 6];
+							array [k++] = matrix [ 7];
+							array [k++] = matrix [ 8];
+							array [k++] = matrix [ 9];
+							array [k++] = matrix [10];
+							array [k++] = matrix [11];
+							array [k++] = matrix [12];
+							array [k++] = matrix [13];
+							array [k++] = matrix [14];
+							array [k++] = matrix [15];
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniformMatrix4fv (location, false, array);
+						return;
+					}
+					case X3DConstants .MFNode:
+					{
+						var value = field .getValue ();
+	
+						for (var i = 0, length = value .length; i < length; ++ i)
+							this .setNode (gl, program, location [i], value [i]);
+	
+						for (var length = location .length; i < length; ++ i)
+							this .setNode (gl, program, location [i], NULL);
+	
+						return;
+					}
+					case X3DConstants .MFRotation:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var quat = value [i] .getValue () .value;
+	
+							array [k++] = quat .x;
+							array [k++] = quat .y;
+							array [k++] = quat .z;
+							array [k++] = quat .w;
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniform4fv (location, array);
+						return;
+					}
+					case X3DConstants .MFString:
+					{
+						return;
+					}
+					case X3DConstants .MFVec2d:
+					case X3DConstants .MFVec2f:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var vector = value [i] .getValue ();
+	
+							array [k++] = vector .x;
+							array [k++] = vector .y;
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniform2fv (location, array);
+						return;
+					}
+					case X3DConstants .MFVec3d:
+					case X3DConstants .MFVec3f:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var vector = value [i] .getValue ();
+	
+							array [k++] = vector .x;
+							array [k++] = vector .y;
+							array [k++] = vector .z;
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniform3fv (location, array);
+						return;
+					}
+					case X3DConstants .MFVec4d:
+					case X3DConstants .MFVec4f:
+					{
+						var
+							value = field .getValue (),
+							array = location .array;
+	
+						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
+						{
+							var vector = value [i] .getValue ();
+	
+							array [k++] = vector .x;
+							array [k++] = vector .y;
+							array [k++] = vector .z;
+							array [k++] = vector .w;
+						}
+	
+						for (var length = array .length; k < length; ++ k)
+							array [k] = 0;
+	
+						gl .uniform4fv (location, array);
+						return;
+					}
+				}
+			}
+		},
+		setNode: function (gl, program, location, field)
+		{
+			if (location)
+			{
+				var textureUnit = gl .getUniform (program, location);
+
+				if (! textureUnit)
+				{
+					if (this .getBrowser () .getCombinedTextureUnits () .length)
+					{
+						textureUnit = this .getBrowser () .getCombinedTextureUnits () .pop ();
+						gl .uniform1i (location, textureUnit);
+					}
+					else
+					{
+						console .warn ("Not enough combined texture units for uniform variable '", field .getName (), "' available.");
+						return;
+					}
+				}
+
+				gl .activeTexture (gl .TEXTURE0 + textureUnit);
+
+				var texture = X3DCast (X3DConstants .X3DTextureNode, field);
+
+				if (texture)
+					gl .bindTexture (texture .getTarget (), texture .getTexture ());
+
+				gl .activeTexture (gl .TEXTURE0);
+			}
+		},
+		removeNode: function (gl, program, location)
+		{
+			if (location)
+			{
+				var textureUnit = gl .getUniform (program, location);
+	
+				if (textureUnit)
+					this .getBrowser () .getCombinedTextureUnits () .push (textureUnit);
+
+				gl .uniform1i (location, 0);
+			}
+		},
+		getImagesLength: function (field)
+		{
+			var
+				images = field .getValue (),
+				length = 3 * images .length;
+
+			for (var i = 0, l = images .length; i < l; ++ i)
+				length += images [i] .array .length;
+
+			return length;
+		},
+		getLocationLength: function (gl, program, field)
+		{
+			var name = field .getName ();
+
+			for (var i = 0; ; ++ i)
+			{
+				var location = gl .getUniformLocation (program, name + "[" + i + "]");
+
+				if (! location)
+					break;
+			}
+
+			return i;
+		},
+		setClipPlanes: function (gl, clipPlanes)
+		{
+			if (clipPlanes .length)
+			{
+				for (var i = 0, numClipPlanes = Math .min (this .x3d_MaxClipPlanes, clipPlanes .length); i < numClipPlanes; ++ i)
+					clipPlanes [i] .setShaderUniforms (gl, this, i);
+	
+				if (i < this .x3d_MaxClipPlanes)
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .x3d_NoneClipPlane);
+			}
+			else
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .x3d_NoneClipPlane);
+		},
+		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray)
+		{
+			var globalLights = renderObject .getGlobalLights ();
+
+			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, projectionMatrixArray);
+
+			// Set global lights
+
+			this .numGlobalLights = Math .min (this .x3d_MaxLights, globalLights .length);
+
+			for (var i = 0, length = this .numGlobalLights; i < length; ++ i)
+				globalLights [i] .setShaderUniforms (gl, this, i);
+		},
+		setLocalUniforms: function (gl, context)
+		{
+			var
+				linePropertiesNode   = context .linePropertiesNode,
+				materialNode         = context .materialNode,
+				textureNode          = context .textureNode,
+				textureTransformNode = context .textureTransformNode,
+				modelViewMatrix      = context .modelViewMatrix,
+				clipPlaneNodes       = context .clipPlanes;
+
+			// Geometry type
+
+			gl .uniform1i (this .x3d_GeometryType, context .geometryType);
+
+			// Clip planes
+
+			if (clipPlaneNodes .length)
+			{
+				for (var i = 0, numClipPlanes = Math .min (this .x3d_MaxClipPlanes, clipPlaneNodes .length); i < numClipPlanes; ++ i)
+					clipPlaneNodes [i] .setShaderUniforms (gl, this, i);
+	
+				if (i < this .x3d_MaxClipPlanes)
+					gl .uniform4fv (this .x3d_ClipPlane [i], this .x3d_NoneClipPlane);
+			}
+			else
+			{
+				gl .uniform4fv (this .x3d_ClipPlane [0], this .x3d_NoneClipPlane);
+			}
+
+			// Fog, there is always one
+
+			if (context .fogNode !== this .fogNode)
+			{
+				this .fogNode = context .fogNode;
+				context .fogNode .setShaderUniforms (gl, this, context .renderer);
+			}
+
+			// LineProperties
+
+			if (linePropertiesNode && linePropertiesNode .applied_ .getValue ())
+			{
+				var linewidthScaleFactor = linePropertiesNode .getLinewidthScaleFactor ();
+
+				gl .lineWidth (linewidthScaleFactor);
+				gl .uniform1f (this .x3d_LinewidthScaleFactor, linewidthScaleFactor);
+			}
+			else
+			{
+				gl .lineWidth (1);
+				gl .uniform1f (this .x3d_LinewidthScaleFactor, 1);
+			}
+	
+			// Material
+
+			gl .uniform1i (this .x3d_ColorMaterial, context .colorMaterial);
+
+			if (materialNode)
+			{
+				// Lights
+
+				gl .uniform1i  (this .x3d_Lighting, true);
+
+				var
+					localLights = context .localLights,
+					numLights   = Math .min (this .x3d_MaxLights, this .numGlobalLights + localLights .length);
+
+				for (var i = this .numGlobalLights, l = 0; i < numLights; ++ i, ++ l)
+					localLights [l] .setShaderUniforms (gl, this, i);
+
+				if (numLights < this .x3d_MaxLights)
+					gl .uniform1i (this .x3d_LightType [numLights], 0);
+
+				// Material
+
+				materialNode .setShaderUniforms (gl, this);
+
+				// Normal matrix
+
+				try
+				{
+					// Set normal matrix.
+					var normalMatrix = this .normalMatrixArray;
+					normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+					normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+					normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+					Matrix3 .prototype .inverse .call (normalMatrix);
+					gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, normalMatrix);
+				}
+				catch (error)
+				{
+					gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, new Float32Array (Matrix3 .Identity));
+				}
+			}
+			else
+			{
+				gl .uniform1i (this .x3d_Lighting, false);
+
+				if (this .getCustom ())
+				{
+					try
+					{
+						// Set normal matrix.
+						var normalMatrix = this .normalMatrixArray;
+						normalMatrix [0] = modelViewMatrix [0]; normalMatrix [1] = modelViewMatrix [4]; normalMatrix [2] = modelViewMatrix [ 8];
+						normalMatrix [3] = modelViewMatrix [1]; normalMatrix [4] = modelViewMatrix [5]; normalMatrix [5] = modelViewMatrix [ 9];
+						normalMatrix [6] = modelViewMatrix [2]; normalMatrix [7] = modelViewMatrix [6]; normalMatrix [8] = modelViewMatrix [10];
+						Matrix3 .prototype .inverse .call (normalMatrix);
+						gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, normalMatrix);
+					}
+					catch (error)
+					{
+						gl .uniformMatrix3fv (this .x3d_NormalMatrix, false, new Float32Array (Matrix3 .Identity));
+					}
+				}
+			}
+
+			if (textureNode)
+			{
+				textureNode .setShaderUniforms (gl, this, 0);
+				textureTransformNode .setShaderUniforms (gl, this);
+			}
+			else
+			{
+				this .textureTypeArray [0] = 0;
+				gl .uniform1iv (this .x3d_TextureType, this .textureTypeArray);
+
+				if (this .getCustom ())
+				{
+					textureTransformNode .setShaderUniforms (gl, this);
+				}
+			}
+
+			gl .uniformMatrix4fv (this .x3d_ModelViewMatrix, false, modelViewMatrix);
+		},
+		enableFloatAttrib: function (gl, name, buffer, components)
+		{
+			var location = gl. getAttribLocation (this .getProgram (), name);
+		
+			if (location === -1)
+				return;
+		
+			gl .enableVertexAttribArray (location);
+		
+			gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
+			gl .vertexAttribPointer (location, components, gl .FLOAT, false, 0, 0);
+		},
+		disableFloatAttrib: function (gl, name)
+		{
+			var location = gl .getAttribLocation (this .getProgram (), name);
+
+			if (location === -1)
+				return;
+
+			gl .disableVertexAttribArray (location);
+		},
+		enableMatrix3Attrib: function (gl, name, buffer)
+		{
+			var location = gl .getAttribLocation (this .getProgram (), name);
+
+			if (location === -1)
+				return;
+
+			gl .enableVertexAttribArray (location + 0);
+			gl .enableVertexAttribArray (location + 1);
+			gl .enableVertexAttribArray (location + 2);
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
+
+			gl .vertexAttribPointer (location + 0, 3, gl .FLOAT, false, 9 * 4, 3 * 4 * 0);
+			gl .vertexAttribPointer (location + 1, 3, gl .FLOAT, false, 9 * 4, 3 * 4 * 1);
+			gl .vertexAttribPointer (location + 2, 3, gl .FLOAT, false, 9 * 4, 3 * 4 * 2);
+		},
+		disableMatrix3Attrib: function (gl, name)
+		{
+			var location = gl .getAttribLocation (this .getProgram (), name);
+
+			if (location === -1)
+				return;
+
+			gl .disableVertexAttribArray (location + 0);
+			gl .disableVertexAttribArray (location + 1);
+			gl .disableVertexAttribArray (location + 2);
+		},
+		enableMatrix4Attrib: function (gl, name, buffer)
+		{
+			var location = gl .getAttribLocation (this .getProgram (), name);
+
+			if (location === -1)
+				return;
+
+			gl .enableVertexAttribArray (location + 0);
+			gl .enableVertexAttribArray (location + 1);
+			gl .enableVertexAttribArray (location + 2);
+			gl .enableVertexAttribArray (location + 3);
+
+			gl .bindBuffer (gl .ARRAY_BUFFER, buffer);
+
+			gl .vertexAttribPointer (location + 0, 4, gl .FLOAT, false, 16 * 4, 4 * 4 * 0);
+			gl .vertexAttribPointer (location + 1, 4, gl .FLOAT, false, 16 * 4, 4 * 4 * 1);
+			gl .vertexAttribPointer (location + 2, 4, gl .FLOAT, false, 16 * 4, 4 * 4 * 2);
+			gl .vertexAttribPointer (location + 3, 4, gl .FLOAT, false, 16 * 4, 4 * 4 * 3);
+		},
+		disableMatrix4Attrib: function (gl, name)
+		{
+			var location = gl .getAttribLocation (this .getProgram (), name);
+
+			if (location === -1)
+				return;
+
+			gl .disableVertexAttribArray (location + 0);
+			gl .disableVertexAttribArray (location + 1);
+			gl .disableVertexAttribArray (location + 2);
+			gl .disableVertexAttribArray (location + 3);
+		},
+		enableColorAttribute: function (gl, colorBuffer)
+		{
+			gl .enableVertexAttribArray (this .x3d_Color);
+			gl .bindBuffer (gl .ARRAY_BUFFER, colorBuffer);
+			gl .vertexAttribPointer (this .x3d_Color, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableColorAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Color);
+		},
+		enableTexCoordAttribute: function (gl, texCoordBuffers)
+		{
+			gl .enableVertexAttribArray (this .x3d_TexCoord);
+			gl .bindBuffer (gl .ARRAY_BUFFER, texCoordBuffers [0]);
+			gl .vertexAttribPointer (this .x3d_TexCoord, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableTexCoordAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_TexCoord);
+		},
+		enableNormalAttribute: function (gl, normalBuffer)
+		{
+			gl .enableVertexAttribArray (this .x3d_Normal);
+			gl .bindBuffer (gl .ARRAY_BUFFER, normalBuffer);
+			gl .vertexAttribPointer (this .x3d_Normal, 3, gl .FLOAT, false, 0, 0);
+		},
+		disableNormalAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Normal);
+		},
+		enableVertexAttribute: function (gl, vertexBuffer)
+		{
+			gl .enableVertexAttribArray (this .x3d_Vertex);
+			gl .bindBuffer (gl .ARRAY_BUFFER, vertexBuffer);
+			gl .vertexAttribPointer (this .x3d_Vertex, 4, gl .FLOAT, false, 0, 0);
+		},
+		disableVertexAttribute: function (gl)
+		{
+			gl .disableVertexAttribArray (this .x3d_Vertex);
+		},
+		getProgramInfo: function ()
+		{
+			var
+				gl      = this .getBrowser () .getContext (),
+				program = this .getProgram ();
+
+			var
+				result = {
+					attributes: [ ],
+					uniforms: [ ],
+					attributeCount: 0,
+					uniformCount: 0,
+				},
+				activeUniforms   = gl .getProgramParameter (program, gl.ACTIVE_UNIFORMS),
+				activeAttributes = gl .getProgramParameter (program, gl.ACTIVE_ATTRIBUTES);
+
+			// Taken from the WebGl spec:
+			// http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.14
+			var enums = {
+				0x8B50: 'vec2',
+				0x8B51: 'vec3',
+				0x8B52: 'vec4',
+				0x8B53: 'ivec2',
+				0x8B54: 'ivec3',
+				0x8B55: 'ivec4',
+				0x8B56: 'bool',
+				0x8B57: 'bvec2',
+				0x8B58: 'bvec3',
+				0x8B59: 'bvec4',
+				0x8B5A: 'mat2',
+				0x8B5B: 'mat3',
+				0x8B5C: 'mat4',
+				0x8B5E: 'sampler2D',
+				0x8B60: 'samplerCube',
+				0x1400: 'byte',
+				0x1401: 'ubyte',
+				0x1402: 'short',
+				0x1403: 'ushort',
+				0x1404: 'int',
+				0x1405: 'uint',
+				0x1406: 'float',
+			};
+
+			// Loop through active uniforms
+			for (var i = 0; i < activeUniforms; ++ i)
+			{
+				var uniform = gl .getActiveUniform (program, i);
+				uniform .typeName = enums [uniform.type];
+				result .uniforms .push ($.extend ({ }, uniform));
+				result .uniformCount += uniform .size;
+			}
+
+			// Loop through active attributes
+			for (var i = 0; i < activeAttributes; ++ i)
+			{
+				var attribute = gl .getActiveAttrib (program, i);
+				attribute .typeName = enums [attribute .type];
+				result .attributes .push ($.extend ({ }, attribute));
+				result .attributeCount += attribute .size;
+			}
+
+			result .uniforms   .sort (function (a, b) { return a .name < b .name ? -1 : a .name > b .name ? 1 : 0 });
+			result .attributes .sort (function (a, b) { return a .name < b .name ? -1 : a .name > b .name ? 1 : 0 });
+
+			return result;
+		},
+		printProgramInfo: function ()
+		{
+			var programInfo = this .getProgramInfo ();
+
+			console .log (this .getName ());
+			console .table (programInfo .attributes);
+			console .log (this .getName (), "attributeCount", programInfo .attributeCount);
+			console .log (this .getName ());
+			console .table (programInfo .uniforms);
+			console .log (this .getName (), "uniformCount", programInfo .uniformCount);
+		},
+	};
+
+	return X3DProgrammableShaderObject;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Shaders/ComposedShader',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shaders/X3DShaderNode",
+	"cobweb/Components/Shaders/X3DProgrammableShaderObject",
+	"cobweb/Components/Networking/LoadSensor",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DShaderNode, 
+          X3DProgrammableShaderObject, 
+          LoadSensor,
+          X3DCast,
+          X3DConstants)
+{
+
+
+	var currentShaderNode = null;
+
+	function ComposedShader (executionContext)
+	{
+		X3DShaderNode               .call (this, executionContext);
+		X3DProgrammableShaderObject .call (this, executionContext);
+
+		this .addType (X3DConstants .ComposedShader);
+
+		this .loadSensor = new LoadSensor (executionContext);
+	}
+
+	ComposedShader .prototype = $.extend (Object .create (X3DShaderNode .prototype),
+		X3DProgrammableShaderObject .prototype,
+	{
+		constructor: ComposedShader,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",   new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOnly,      "activate",   new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isSelected", new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .outputOnly,     "isValid",    new Fields .SFBool ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "language",   new Fields .SFString ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "parts",      new Fields .MFNode ()),
+		]),
+		wireframe: false,
+		getTypeName: function ()
+		{
+			return "ComposedShader";
+		},
+		getComponentName: function ()
+		{
+			return "Shaders";
+		},
+		getContainerField: function ()
+		{
+			return "shaders";
+		},
+		initialize: function ()
+		{
+			X3DShaderNode               .prototype .initialize .call (this);
+			X3DProgrammableShaderObject .prototype .initialize .call (this);
+
+			var gl = this .getBrowser () .getContext ();
+
+			this .primitiveMode = gl .TRIANGLES;
+
+			this .isLive () .addInterest (this, "set_live__");
+
+			this .activate_ .addInterest (this, "set_activate__");
+			this .parts_    .addFieldInterest (this .loadSensor .watchList_);
+
+			this .loadSensor .isLoaded_ .addInterest (this, "set_loaded__");
+			this .loadSensor .watchList_ = this .parts_;
+			this .loadSensor .setPrivate (true);
+			this .loadSensor .setup ();
+
+			//Must not call set_live__.
+		},
+		getProgram: function ()
+		{
+			return this .program;
+		},
+		set_live__: function ()
+		{
+			if (this .isLive () .getValue ())
+			{
+				if (this .isValid_ .getValue ())
+				{
+					this .useProgram (this .getBrowser () .getContext ());
+					this .addShaderFields ();
+				}
+			}
+			else
+			{
+				if (this .isValid_ .getValue ())
+				{
+					this .useProgram (this .getBrowser () .getContext ());
+					this .removeShaderFields ();
+				}
+			}
+		},
+		set_activate__: function ()
+		{
+			if (this .activate_ .getValue ())
+				this .set_loaded__ ();
+		},
+		set_loaded__: function ()
+		{
+			if (this .loadSensor .isLoaded_ .getValue ())
+			{
+				var
+					gl      = this .getBrowser () .getContext (),
+					program = gl .createProgram (),
+					parts   = this .parts_ .getValue (),
+					valid   = 0;
+
+				if (this .isValid_ .getValue ())
+					this .removeShaderFields ();
+	
+				this .program = program;
+	
+				for (var i = 0, length = parts .length; i < length; ++ i)
+				{
+					var partNode = X3DCast (X3DConstants .ShaderPart, parts [i]);
+
+					if (partNode)
+					{
+						valid += partNode .isValid ();
+						gl .attachShader (program, partNode .getShader ());
+					}
+				}
+	
+				if (valid)
+				{
+					this .bindAttributeLocations (gl, program);
+
+					gl .linkProgram (program);
+
+					valid = valid && gl .getProgramParameter (program, gl .LINK_STATUS);
+				}
+
+				if (valid)
+				{
+					this .useProgram (gl);
+
+					// Initialize uniform variables and attributes
+					if (this .getDefaultUniforms ())
+					{
+						// Setup user-defined fields. 
+						this .addShaderFields ();
+					}
+					else
+						valid = false;
+
+					// Debug
+					// this .printProgramInfo ();
+				}
+				else
+					console .warn ("Couldn't initialize " + this .getTypeName () + " '" + this .getName () + "': " + gl .getProgramInfoLog (program));
+
+				if (valid != this .isValid_ .getValue ())
+					this .isValid_ = valid;
+			}
+			else
+			{
+				if (this .isValid_ .getValue ())
+					this .isValid_ = false;
+			}
+		},
+		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray)
+		{
+			if (currentShaderNode !== this)
+			{
+				currentShaderNode = this;
+
+				gl .useProgram (this .program);
+			}
+			
+			X3DProgrammableShaderObject .prototype .setGlobalUniforms .call (this, renderObject, gl, projectionMatrixArray);
+		},
+		setLocalUniforms: function (gl, context)
+		{
+			if (currentShaderNode !== this)
+			{
+				currentShaderNode = this;
+
+				gl .useProgram (this .program);
+			}
+
+			X3DProgrammableShaderObject .prototype .setLocalUniforms .call (this, gl, context);
+		},
+		useProgram: function (gl)
+		{
+			if (currentShaderNode !== this)
+			{
+				currentShaderNode = this;
+
+				gl .useProgram (this .program);
+			}
+		},
+	});
+
+	return ComposedShader;
+});
+
+define('text!cobweb/Browser/Shaders/Bits/Line3.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\n/* Line */\n\nstruct Line3 {\n\tvec3 point;\n\tvec3 direction;\n};\n\nLine3\nline3 (in vec3 point1, in vec3 point2)\n{\n\treturn Line3 (point1, normalize (point2 - point1));\n}\n';});
+
+define('text!cobweb/Browser/Shaders/Bits/Plane3.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\n#pragma X3D include "Line3.h"\n\n/* Plane */\n\nstruct Plane3\n{\n\tvec3  normal;\n\tfloat distanceFromOrigin;\n};\n\nPlane3\nplane3 (in vec3 point, in vec3 normal)\n{\n\treturn Plane3 (normal, dot (normal, point));\n}\n\n/* Plane intersect line */\nbool\nintersects (in Plane3 plane, in Line3 line, out vec3 point)\n{\n\tpoint = vec3 (0.0);\n\n\t// Check if the line is parallel to the plane.\n\tfloat theta = dot (line .direction, plane .normal);\n\n\t// Plane and line are parallel.\n\tif (theta == 0.0)\n\t\treturn false;\n\n\t// Plane and line are not parallel. The intersection point can be calculated now.\n\tfloat t = (plane .distanceFromOrigin - dot (plane .normal, line .point)) / theta;\n\n\tpoint = line .point + line .direction * t;\n\n\treturn true;\n}\n\n///  Returns the closest point on the plane to a given point @a point.\nvec3\nclosest_point (in Plane3 plane, in vec3 point)\n{\n\tvec3 closest_point;\n\tintersects (plane, Line3 (point, plane .normal), closest_point);\n\treturn closest_point;\n}\n';});
+
+define('text!cobweb/Browser/Shaders/Bits/Random.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\nconst int RAND_MAX = int (0x7fffffff);\nconst int RAND_MIN = int (0x80000000);\n\nint seedValue = 0;\n\nvoid\nseed (in int value)\n{\n\tseedValue = value;\n}\n\n// Return a uniform distributed random floating point number in the interval [-1, 1].\nfloat\nrandom1 ()\n{\n\treturn float (seedValue = seedValue * 1103515245 + 12345) / float (RAND_MAX);\n}\n\nvec2\nrandom2 ()\n{\n\treturn vec2 (random1 (), random1 ());\n}\n\nvec3\nrandom3 ()\n{\n\treturn vec3 (random1 (), random1 (), random1 ());\n}\n';});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public LicINFINITY, 88, 51, 68ense version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Browser/Shaders/Shader',[
+	"text!cobweb/Browser/Shaders/Bits/Line3.h",
+	"text!cobweb/Browser/Shaders/Bits/Plane3.h",
+	"text!cobweb/Browser/Shaders/Bits/Random.h",
+],
+function (Line3,
+          Plane3,
+          Random)
+{
+
+
+	var includes = {
+		Line3: Line3,
+		Plane3: Plane3,
+		Random: Random,
+	};
+
+	var
+		include  = /#pragma\s+X3D\s+include\s+".*?([^\/]+).h"/,
+		newLines = /\n/g;
+
+	var Shader =
+	{
+		getShaderSource: function (browser, source)
+		{
+			var includeMatch = null;
+
+			while (includeMatch = source .match (include))
+			{
+				source = source .replace (includeMatch [0], includes [includeMatch [1]]);
+			}
+
+			var constants = "";
+
+			constants += "#define x3d_GeometryPoints  0\n";
+			constants += "#define x3d_GeometryLines   1\n";
+			constants += "#define x3d_Geometry2D      2\n";
+			constants += "#define x3d_Geometry3D      3\n";
+
+			constants += "#define x3d_MaxClipPlanes  " + browser .getMaxClipPlanes () + "\n";
+			constants += "#define x3d_NoneClipPlane  vec4 (88.0, 51.0, 68.0, 33.0)\n"; // X3D!
+
+			constants += "#define x3d_NoneFog          0\n";
+			constants += "#define x3d_LinearFog        1\n";
+			constants += "#define x3d_ExponentialFog   2\n";
+			constants += "#define x3d_Exponential2Fog  3\n";
+
+			constants += "#define x3d_MaxLights         " + browser .getMaxLights () + "\n";
+			constants += "#define x3d_NoneLight         0\n";
+			constants += "#define x3d_DirectionalLight  1\n";
+			constants += "#define x3d_PointLight        2\n";
+			constants += "#define x3d_SpotLight         3\n";
+
+			constants += "#define x3d_MaxTextures                " + browser .getMaxTextures () + "\n";
+			constants += "#define x3d_NoneTexture                0\n";
+			constants += "#define x3d_TextureType2D              2\n";
+			constants += "#define x3d_TextureType3D              3\n";
+			constants += "#define x3d_TextureTypeCubeMapTexture  4\n";
+
+			constants += "#define X3D_SHADOW\n";
+			constants += "#define x3d_MaxShadows     4\n";
+			constants += "#define x3d_ShadowSamples  8\n"; // Range (0, 255)
+
+			constants += "#line 1\n";
+
+			return constants + source;
+		},
+	};
+
+	return Shader;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
 define ('cobweb/Parser/XMLParser',[
 	"jquery",
 	"cobweb/Basic/X3DField",
@@ -33509,14 +33611,13 @@ function ($,
 		inputOutput:    X3DConstants .inputOutput,
 	};
 
-	function XMLParser (scene, xml)
+	function XMLParser (scene)
 	{
 		this .scene             = scene;
-		this .xml               = xml;
 		this .executionContexts = [ scene ];
 		this .protoDeclarations = [ ];
 		this .parents           = [ ];
-		this .parser            = new Parser (this .scene, "", true);
+		this .parser            = new Parser (this .scene, true);
 		this .url               = new Fields .MFString ();
 	}
 
@@ -33551,13 +33652,23 @@ function ($,
 		{
 			this .parents .pop ();
 		},
-		parseIntoScene: function ()
+		parseIntoNode: function (node, xml)
 		{
-			switch (this .xml .nodeName)
+			this .pushExecutionContext (node .getExecutionContext ());
+			this .pushParent (node);
+
+			this .statement (xml);
+
+			this .popParent ();
+			this .popExecutionContext ();
+		},
+		parseIntoScene: function (xml)
+		{
+			switch (xml .nodeName)
 			{
 				case "#document":
 				{
-					var X3D = $(this .xml) .children ("X3D");
+					var X3D = $(xml) .children ("X3D");
 
 					if (X3D .length)
 					{
@@ -33565,18 +33676,18 @@ function ($,
 							this .X3D (X3D [i]);
 					}
 					else
-						this .Scene (this .xml);
+						this .Scene (xml);
 
 					break;
 				}
 				case "X3D":
-					this .X3D (this .xml);
+					this .X3D (xml);
 					break;
 				case "Scene":
-					this .Scene (this .xml);
+					this .Scene (xml);
 					break;
 				default:
-					this .statement (this .xml);
+					this .statement (xml);
 					break;
 			}
 		},
@@ -33759,7 +33870,7 @@ function ($,
 				var node = this .getExecutionContext () .createNode (element .nodeName, false);
 
 				//AP: attach node to DOM element for access from DOM.
-            element .x3dnode = node;
+            element .x3d = node;
 
 				this .DEF (element, node);
 				this .addNode (element, node);
@@ -33908,7 +34019,7 @@ function ($,
 					switch (parent .getType ())
 					{
 						case X3DConstants .SFNode:
-							parent .set (node);
+							parent .setValue (node);
 							parent .setSet (true);
 							return;
 
@@ -33933,7 +34044,7 @@ function ($,
 							switch (field .getType ())
 							{
 								case X3DConstants .SFNode:
-									field .set (node);
+									field .setValue (node);
 									field .setSet (true);
 									return;
 
@@ -33958,7 +34069,7 @@ function ($,
 						switch (field .getType ())
 						{
 							case X3DConstants .SFNode:
-								field .set (node);
+								field .setValue (node);
 								field .setSet (true);
 								return;
 
@@ -34290,9 +34401,10 @@ function ($,
 
 				var
 					sourceNode      = this .getExecutionContext () .getLocalNode (sourceNodeName),
-					destinationNode = this .getExecutionContext () .getLocalNode (destinationNodeName);
+					destinationNode = this .getExecutionContext () .getLocalNode (destinationNodeName),
+					route           = this .getExecutionContext () .addRoute (sourceNode, sourceField, destinationNode, destinationField);
 
-				this .getExecutionContext () .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+				element .x3d = route;
 			}
 			catch (error)
 			{
@@ -37734,6 +37846,12 @@ function ($,
 	Loader .prototype = $.extend (Object .create (X3DObject .prototype),
 	{
 		constructor: Loader,
+		abort: function ()
+		{
+			this .callback      = Function .prototype;
+			this .bindViewpoint = Function .prototype;
+			this .foreign       = Function .prototype;
+		},
 		getWorldURL: function ()
 		{
 			return this .URL;
@@ -37754,7 +37872,7 @@ function ($,
 				{
 					// If we cannot parse XML we try to parse X3D Classic Encoding.	
 
-					new Parser (scene, string) .parseIntoScene ();
+					new Parser (scene) .parseIntoScene (string);
 
 					this .setScene (scene, success);
 				}
@@ -37772,7 +37890,7 @@ function ($,
 
 					// If we cannot parse XML we try to parse X3D Classic Encoding.	
 
-					new Parser (scene, string) .parseIntoScene ();
+					new Parser (scene) .parseIntoScene (string);
 					return scene;
 				}
 			}
@@ -37781,7 +37899,7 @@ function ($,
 		{
 			try
 			{
-				new XMLParser (scene, dom) .parseIntoScene ();
+				new XMLParser (scene) .parseIntoScene (dom);
 				
 				//AP: add reference to dom for later access
 				this .node .dom = dom;
@@ -38282,13 +38400,13 @@ define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:
 
 define('text!cobweb/Browser/Shaders/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoneFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Gouraud.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix [1];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4  frontColor; // color\nvarying vec4  backColor;  // color\nvarying vec4  t;          // texCoord\nvarying vec3  v;          // point on geometry\n\nvec4\ngetMaterialColor (in vec3 N,\n                  in vec3 v,\n                  in float x3d_AmbientIntensity,\n                  in vec3  x3d_DiffuseColor,\n                  in vec3  x3d_SpecularColor,\n                  in vec3  x3d_EmissiveColor,\n                  in float x3d_Shininess,\n                  in float x3d_Transparency)\n{\n\tvec3 V = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\n\t// Calculate diffuseFactor & alpha\n\n\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\tfloat alpha         = 1.0 - x3d_Transparency;\n\n\tif (x3d_ColorMaterial)\n\t{\n\t\tdiffuseFactor  = x3d_Color .rgb;\n\t\talpha         *= x3d_Color .a;\n\t}\n\telse\n\t\tdiffuseFactor = x3d_DiffuseColor;\n\n\tvec3 ambientTerm = diffuseFactor * x3d_AmbientIntensity;\n\n\t// Apply light sources\n\n\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t{\n\t\tint lightType = x3d_LightType [i];\n\n\t\tif (lightType != x3d_NoneLight)\n\t\t{\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\t\tvec3 H = normalize (L + V); // specular term\n\t\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\t\tfloat specularFactor = x3d_Shininess > 0.0 ? pow (max (dot (N, H), 0.0), x3d_Shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = x3d_SpecularColor * specularFactor;\n\t\n\t\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spot        = 1.0;\n\t\n\t\t\t\tif (lightType == x3d_SpotLight)\n\t\t\t\t{\n\t\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\t\n\t\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\t\tspot = 0.0;\n\t\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\t\tspot = 1.0;\n\t\t\t\t\telse\n\t\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t\t}\n\t\t\t\n\t\t\t\tvec3 lightFactor  = (attenuation * spot) * x3d_LightColor [i];\n\t\t\t\tvec3 ambientLight = (lightFactor * x3d_LightAmbientIntensity [i]) * ambientTerm;\n\t\n\t\t\t\tlightFactor *= x3d_LightIntensity [i];\n\t\t\t\tfinalColor  += ambientLight + lightFactor * (diffuseTerm + specularTerm);\n\t\t\t}\n\t\t}\n\t\telse\n\t\t\tbreak;\n\t}\n\n\tfinalColor += x3d_EmissiveColor;\n\n\treturn vec4 (clamp (finalColor, 0.0, 1.0), alpha);\n}\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3 N = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\t\tfloat ambientIntensity = x3d_AmbientIntensity;\n\t\tvec3  diffuseColor     = x3d_DiffuseColor;\n\t\tvec3  specularColor    = x3d_SpecularColor;\n\t\tvec3  emissiveColor    = x3d_EmissiveColor;\n\t\tfloat shininess        = x3d_Shininess;\n\t\tfloat transparency     = x3d_Transparency;\n\n\t\tfrontColor = getMaterialColor (N, v,\n\t\t                               ambientIntensity,\n\t\t                               diffuseColor,\n\t\t                               specularColor,\n\t\t                               emissiveColor,\n\t\t                               shininess,\n\t\t                               transparency);\n\n\t\tif (x3d_SeparateBackColor)\n\t\t{\n\t\t\tambientIntensity = x3d_BackAmbientIntensity;\n\t\t\tdiffuseColor     = x3d_BackDiffuseColor;\n\t\t\tspecularColor    = x3d_BackSpecularColor;\n\t\t\temissiveColor    = x3d_BackEmissiveColor;\n\t\t\tshininess        = x3d_BackShininess;\n\t\t\ttransparency     = x3d_BackTransparency;\n\t\t}\n\n\t\tbackColor = getMaterialColor (-N, v,\n\t\t                              ambientIntensity,\n\t\t                              diffuseColor,\n\t\t                              specularColor,\n\t\t                              emissiveColor,\n\t\t                              shininess,\n\t\t                              transparency);\n\t}\n\telse\n\t{\n\t   frontColor = backColor = x3d_ColorMaterial ? x3d_Color : vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
+define('text!cobweb/Browser/Shaders/Gouraud.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix [1];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4  frontColor; // color\nvarying vec4  backColor;  // color\nvarying vec4  t;          // texCoord\nvarying vec3  v;          // point on geometry\n\nvec4\ngetMaterialColor (in vec3 N,\n                  in vec3 v,\n                  in float x3d_AmbientIntensity,\n                  in vec3  x3d_DiffuseColor,\n                  in vec3  x3d_SpecularColor,\n                  in vec3  x3d_EmissiveColor,\n                  in float x3d_Shininess,\n                  in float x3d_Transparency)\n{\n\tvec3 V = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\n\t// Calculate diffuseFactor & alpha\n\n\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\tfloat alpha         = 1.0 - x3d_Transparency;\n\n\tif (x3d_ColorMaterial)\n\t{\n\t\tdiffuseFactor  = x3d_Color .rgb;\n\t\talpha         *= x3d_Color .a;\n\t}\n\telse\n\t\tdiffuseFactor = x3d_DiffuseColor;\n\n\tvec3 ambientTerm = diffuseFactor * x3d_AmbientIntensity;\n\n\t// Apply light sources\n\n\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t{\n\t\tint lightType = x3d_LightType [i];\n\n\t\tif (lightType == x3d_NoneLight)\n\t\t\tbreak;\n\n\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\tfloat dL = length (vL);\n\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t{\n\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\tvec3 H = normalize (L + V); // specular term\n\n\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\tfloat specularFactor = x3d_Shininess > 0.0 ? pow (max (dot (N, H), 0.0), x3d_Shininess * 128.0) : 1.0;\n\t\t\tvec3  specularTerm   = x3d_SpecularColor * specularFactor;\n\n\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\tfloat spot        = 1.0;\n\n\t\t\tif (lightType == x3d_SpotLight)\n\t\t\t{\n\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\n\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\tspot = 0.0;\n\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\tspot = 1.0;\n\t\t\t\telse\n\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t}\n\t\t\n\t\t\tvec3 lightFactor  = (attenuation * spot) * x3d_LightColor [i];\n\t\t\tvec3 ambientLight = (lightFactor * x3d_LightAmbientIntensity [i]) * ambientTerm;\n\n\t\t\tlightFactor *= x3d_LightIntensity [i];\n\t\t\tfinalColor  += ambientLight + lightFactor * (diffuseTerm + specularTerm);\n\t\t}\n\t}\n\n\tfinalColor += x3d_EmissiveColor;\n\n\treturn vec4 (clamp (finalColor, 0.0, 1.0), alpha);\n}\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3 N = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\t\tfloat ambientIntensity = x3d_AmbientIntensity;\n\t\tvec3  diffuseColor     = x3d_DiffuseColor;\n\t\tvec3  specularColor    = x3d_SpecularColor;\n\t\tvec3  emissiveColor    = x3d_EmissiveColor;\n\t\tfloat shininess        = x3d_Shininess;\n\t\tfloat transparency     = x3d_Transparency;\n\n\t\tfrontColor = getMaterialColor (N, v,\n\t\t                               ambientIntensity,\n\t\t                               diffuseColor,\n\t\t                               specularColor,\n\t\t                               emissiveColor,\n\t\t                               shininess,\n\t\t                               transparency);\n\n\t\tif (x3d_SeparateBackColor)\n\t\t{\n\t\t\tambientIntensity = x3d_BackAmbientIntensity;\n\t\t\tdiffuseColor     = x3d_BackDiffuseColor;\n\t\t\tspecularColor    = x3d_BackSpecularColor;\n\t\t\temissiveColor    = x3d_BackEmissiveColor;\n\t\t\tshininess        = x3d_BackShininess;\n\t\t\ttransparency     = x3d_BackTransparency;\n\t\t}\n\n\t\tbackColor = getMaterialColor (-N, v,\n\t\t                              ambientIntensity,\n\t\t                              diffuseColor,\n\t\t                              specularColor,\n\t\t                              emissiveColor,\n\t\t                              shininess,\n\t\t                              transparency);\n\t}\n\telse\n\t{\n\t   frontColor = backColor = x3d_ColorMaterial ? x3d_Color : vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
 define('text!cobweb/Browser/Shaders/Gouraud.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // x3d_NoneTexture, x3d_TextureType2D or x3d_TextureTypeCubeMapTexture\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 frontColor; // color\nvarying vec4 backColor;  // color\nvarying vec4 t;          // texCoord\nvarying vec3 v;          // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoneFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n \tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n \n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n \tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tvec4 finalColor = gl_FrontFacing ? frontColor : backColor;\n\n\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t{\n\t\tif (x3d_Lighting)\n\t\t\tfinalColor *= getTextureColor ();\n\t\telse\n\t\t{\n\t\t\tif (x3d_ColorMaterial)\n\t\t\t\tfinalColor *= getTextureColor ();\n\t\t\telse\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, finalColor .rgb, f0);\n\tgl_FragColor .a   = finalColor .a;\n}\n';});
 
 define('text!cobweb/Browser/Shaders/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix [x3d_MaxTextures];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n\n#ifdef X3D_SHADOW\nuniform vec3      x3d_ShadowColor [x3d_MaxLights];\nuniform float     x3d_ShadowIntensity [x3d_MaxLights];\nuniform float     x3d_ShadowDiffusion [x3d_MaxLights];\nuniform mat4      x3d_ShadowMatrix [x3d_MaxLights];\nuniform sampler2D x3d_ShadowMap [x3d_MaxLights];\n#endif\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\n#pragma X3D include "Bits/Random.h"\n#pragma X3D include "Bits/Plane3.h"\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nfloat\ngetSpotFactor (in float cutOffAngle, in float beamWidth, in vec3 L, in vec3 d)\n{\n\tfloat spotAngle = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\n\tif (spotAngle >= cutOffAngle)\n\t\treturn 0.0;\n\telse if (spotAngle <= beamWidth)\n\t\treturn 1.0;\n\n\treturn (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n}\n\n#ifdef X3D_SHADOW\nfloat\nunpack (in vec4 color)\n{\n\treturn color .r + color .g / 255.0 + color .b / 65025.0 + color .a / 16581375.0;\n}\n\nfloat\ngetShadowDepth (in int index, in vec2 shadowCoord)\n{\n\t#if x3d_MaxShadows > 0\n\tif (index == 0)\n\t\treturn unpack (texture2D (x3d_ShadowMap [0], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 1\n\tif (index == 1)\n\t\treturn unpack (texture2D (x3d_ShadowMap [1], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 2\n\tif (index == 2)\n\t\treturn unpack (texture2D (x3d_ShadowMap [2], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 3\n\tif (index == 3)\n\t\treturn unpack (texture2D (x3d_ShadowMap [3], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 4\n\tif (index == 4)\n\t\treturn unpack (texture2D (x3d_ShadowMap [4], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 5\n\tif (index == 5)\n\t\treturn unpack (texture2D (x3d_ShadowMap [5], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 6\n\tif (index == 6)\n\t\treturn unpack (texture2D (x3d_ShadowMap [6], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 7\n\tif (index == 7)\n\t\treturn unpack (texture2D (x3d_ShadowMap [7], shadowCoord));\n\t#endif\n\n\treturn 0.0;\n}\n\nfloat\ngetShadowIntensity (in int index, in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in Plane3 plane, in float angle)\n{\n\t#define SHADOW_TEXTURE_EPS 0.01\n\t#define SHADOW_BIAS_OFFSET 0.002\n\t#define SHADOW_BIAS_FACTOR 0.004\n\t\t\n\tfloat shadowBias = SHADOW_BIAS_OFFSET + SHADOW_BIAS_FACTOR * (1.0 - abs (angle));\n\n\tif (lightType == x3d_PointLight)\n\t{\n\t\t// The projection bias matrix should be a uniform but this would require x3d_MaxLights * 16 floats.\n\t\tmat4 projectionBias = mat4 (0.09622504486493766, 0.0, 0.0, 0.0, 0.0, 0.1443375672974065, 0.0, 0.0, -0.16666666666666666, -0.25, -1.0001250156269532, -1.0, 0.0, 0.0, -0.12501562695336918, 0.0); // fov: 120deg, 1000m\n\n\t\t// Normals of the point light cube.\n\t\tmat4 rotations [6];\n\t\trotations [0] = mat4 ( 0.0, 0.0,  1.0, 0.0, 0.0, 1.0,  0.0, 0.0, -1.0,  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // left\n\t\trotations [1] = mat4 ( 0.0, 0.0, -1.0, 0.0, 0.0, 1.0,  0.0, 0.0,  1.0,  0.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // right\n\t\trotations [2] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 1.0,  0.0, 0.0,  0.0,  0.0,  1.0, 0.0, 0.0, 0.0, 0.0, 1.0); // back\n\t\trotations [3] = mat4 (-1.0, 0.0,  0.0, 0.0, 0.0, 1.0,  0.0, 0.0,  0.0,  0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 1.0); // front\n\t\trotations [4] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 0.0,  1.0, 0.0,  0.0, -1.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // bottom\n\t\trotations [5] = mat4 ( 1.0, 0.0,  0.0, 0.0, 0.0, 0.0, -1.0, 0.0,  0.0,  1.0,  0.0, 0.0, 0.0, 0.0, 0.0, 1.0); // top\n\n\t\t// Offsets to the shadow map.\n\t\tvec2 offsets [6];\n\t\toffsets [0] = vec2 (0.0,       0.0);\n\t\toffsets [1] = vec2 (1.0 / 3.0, 0.0);\n\t\toffsets [2] = vec2 (2.0 / 3.0, 0.0);\n\t\toffsets [3] = vec2 (0.0,       0.5);\n\t\toffsets [4] = vec2 (1.0 / 3.0, 0.5);\n\t\toffsets [5] = vec2 (2.0 / 3.0, 0.5);\n\n\t\tint value   = 0;\n\t\tint samples = 0;\n\n\t\tfor (int m = 0; m < 6; ++ m)\n\t\t{\n\t\t\tif (samples >= x3d_ShadowSamples)\n\t\t\t\tbreak;\n\n\t\t\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t\t\t{\n\t\t\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\t\t\tvec4  shadowCoord = projectionBias * rotations [m] * shadowMatrix * vec4 (vertex, 1.0);\n\t\t\t\tfloat bias        = shadowBias / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\t\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\t\t\tif (shadowCoord .x < SHADOW_TEXTURE_EPS || shadowCoord .x > 1.0 / 3.0 - SHADOW_TEXTURE_EPS)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .y < SHADOW_TEXTURE_EPS || shadowCoord .y > 1.0 / 2.0 - SHADOW_TEXTURE_EPS)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .z >= 1.0)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (getShadowDepth (index, shadowCoord .xy + offsets [m]) < shadowCoord .z - bias)\n\t\t\t\t{\n\t\t\t\t\t++ value;\n\t\t\t\t}\n\n\t\t\t\t// We definitely have a shadow sample.\n\t\t\t\t++ samples;\n\t\t\t}\n\t\t}\n\n\t\treturn shadowIntensity * min (float (value), float (x3d_ShadowSamples)) / float (x3d_ShadowSamples);\n\t}\n\n\tint value = 0;\n\n\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t{\n\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\tvec4  shadowCoord = shadowMatrix * vec4 (vertex, 1.0);\n\t\tfloat bias        = shadowBias / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\tif (shadowCoord .z >= 1.0)\n\t\t\tcontinue;\n\n\t\tif (getShadowDepth (index, shadowCoord .xy) < shadowCoord .z - bias)\n\t\t{\n\t\t\t++ value;\n\t\t}\n\t}\n\n\treturn shadowIntensity * float (value) / float (x3d_ShadowSamples);\n}\n#endif\n\nvec4\ngetMaterialColor ()\n{\n\tif (x3d_Lighting)\n\t{\n\t\tPlane3 plane = plane3 (v, vN);\n\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint lightType = x3d_LightType [i];\n\n\t\t\tif (lightType == x3d_NoneLight)\n\t\t\t\tbreak;\n\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3  d = x3d_LightDirection [i];\n\t\t\t\tvec3  c = x3d_LightAttenuation [i];\n\t\t\t\tvec3  L = di ? -d : normalize (vL);      // Normalized vector from point on geometry to light source i position.\n\t\t\t\tvec3  H = normalize (L + V);             // Specular term\n\t\t\t\tfloat a = dot (N, L);                    // Angle between normal and light ray.\n\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * clamp (a, 0.0, 1.0);\n\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\n\t\t\t\tfloat attenuationFactor           = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spotFactor                  = lightType == x3d_SpotLight ? getSpotFactor (x3d_LightCutOffAngle [i], x3d_LightBeamWidth [i], L, d) : 1.0;\n\t\t\t\tfloat attenuationSpotFactor       = attenuationFactor * spotFactor;\n\t\t\t\tvec3  ambientColor                = x3d_LightAmbientIntensity [i] * ambientTerm;\n\t\t\t\tvec3  ambientDiffuseSpecularColor = ambientColor + x3d_LightIntensity [i] * (diffuseTerm + specularTerm);\n\n\t\t\t\t#ifdef X3D_SHADOW\n\n\t\t\t\tif (x3d_ShadowIntensity [i] > 0.0 && a > 0.0)\n\t\t\t\t{\n\t\t\t\t\tfloat shadowIntensity = getShadowIntensity (i, lightType, x3d_ShadowIntensity [i], x3d_ShadowDiffusion [i], x3d_ShadowMatrix [i], plane, a);\n\t\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (mix (x3d_LightColor [i], x3d_ShadowColor [i], shadowIntensity) * ambientDiffuseSpecularColor);\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\n\t\t\t\t#else\n\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\n\t\t\t\t#endif\n\t\t\t}\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\treturn vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\treturn finalColor;\n\t}\n}\n\nvec3\ngetFogColor (in vec3 color)\n{\n\tif (x3d_FogType == x3d_NoneFog)\n\t\treturn color;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn x3d_FogColor;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn mix (x3d_FogColor, color, (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange);\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn mix (x3d_FogColor, color, exp (-dV / (x3d_FogVisibilityRange - dV)));\n\n\treturn color;\n}\n\nvoid\nmain ()\n{\n\tseed (int (fract (dot (v, v)) * float (RAND_MAX)));\n\n\tclip ();\n\n\tgl_FragColor = getMaterialColor ();\n\n\tgl_FragColor .rgb = getFogColor (gl_FragColor .rgb);\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n\n#ifdef X3D_SHADOW\nuniform vec3      x3d_ShadowColor [x3d_MaxLights];\nuniform float     x3d_ShadowIntensity [x3d_MaxLights];\nuniform float     x3d_ShadowDiffusion [x3d_MaxLights];\nuniform mat4      x3d_ShadowMatrix [x3d_MaxLights];\nuniform sampler2D x3d_ShadowMap [x3d_MaxLights];\n#endif\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\n#pragma X3D include "Bits/Random.h"\n#pragma X3D include "Bits/Plane3.h"\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nfloat\ngetSpotFactor (in float cutOffAngle, in float beamWidth, in vec3 L, in vec3 d)\n{\n\tfloat spotAngle = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\n\tif (spotAngle >= cutOffAngle)\n\t\treturn 0.0;\n\telse if (spotAngle <= beamWidth)\n\t\treturn 1.0;\n\n\treturn (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n}\n\n#ifdef X3D_SHADOW\nfloat\nunpack (in vec4 color)\n{\n\treturn color .r + color .g / 255.0 + color .b / 65025.0 + color .a / 16581375.0;\n}\n\nfloat\ngetShadowDepth (in int index, in vec2 shadowCoord)\n{\n\t#if x3d_MaxShadows > 0\n\tif (index == 0)\n\t\treturn unpack (texture2D (x3d_ShadowMap [0], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 1\n\tif (index == 1)\n\t\treturn unpack (texture2D (x3d_ShadowMap [1], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 2\n\tif (index == 2)\n\t\treturn unpack (texture2D (x3d_ShadowMap [2], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 3\n\tif (index == 3)\n\t\treturn unpack (texture2D (x3d_ShadowMap [3], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 4\n\tif (index == 4)\n\t\treturn unpack (texture2D (x3d_ShadowMap [4], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 5\n\tif (index == 5)\n\t\treturn unpack (texture2D (x3d_ShadowMap [5], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 6\n\tif (index == 6)\n\t\treturn unpack (texture2D (x3d_ShadowMap [6], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 7\n\tif (index == 7)\n\t\treturn unpack (texture2D (x3d_ShadowMap [7], shadowCoord));\n\t#endif\n\n\treturn 0.0;\n}\n\nfloat\ngetShadowIntensity (in int index, in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in Plane3 plane, in float lightAngle)\n{\n\t#define SHADOW_TEXTURE_EPS 0.01\n\t#define SHADOW_BIAS_OFFSET 0.002\n\t#define SHADOW_BIAS_FACTOR 0.004\n\t\t\n\tfloat shadowBias = SHADOW_BIAS_OFFSET + SHADOW_BIAS_FACTOR * (1.0 - abs (lightAngle));\n\n\tif (lightType == x3d_PointLight)\n\t{\n\t\tmat4 rotationProjectionBias [6];\n\t\trotationProjectionBias [0] = mat4 (-0.1666666666666667, -0.25, -1.0001250156269537, -1.0, 0, 0.1443375672974065, 0.0, 0.0, -0.09622504486493763, 0.0, 0.0, 0.0, 0.0, 0.0, -0.12501562695336918, 0.0);\n\t\trotationProjectionBias [1] = mat4 (0.16666666666666666, 0.25, 1.0001250156269537, 1.0, 0, 0.1443375672974065, 0.0, 0.0, 0.09622504486493771, 0.0, 0.0, 0.0, 0.0, 0.0, -0.12501562695336918, 0.0);\n\t\trotationProjectionBias [2] = mat4 (0.09622504486493766, 0.0, 0.0, 0.0, 0.0, 0.1443375672974065, 0.0, 0.0, -0.16666666666666666, -0.25, -1.0001250156269532, -1.0, 0.0, 0.0, -0.12501562695336918, 0.0);\n\t\trotationProjectionBias [3] = mat4 (-0.09622504486493766, 0.0, 0.0, 0.0, 0, 0.1443375672974065, 0.0, 0.0, 0.16666666666666666, 0.25, 1.0001250156269532, 1.0, 0.0, 0.0, -0.12501562695336918, 0.0);\n\t\trotationProjectionBias [4] = mat4 (0.09622504486493766, 0.0, 0.0, 0.0, -0.16666666666666669, -0.25, -1.0001250156269537, -1.0, 0.0, -0.14433756729740646, 0.0, 0.0, 0.0, 0, -0.12501562695336918, 0.0);\n\t\trotationProjectionBias [5] = mat4 (0.09622504486493766, 0.0, 0.0, 0.0, 0.16666666666666669, 0.25, 1.0001250156269537, 1.0, 0.0, 0.14433756729740657, 0.0, 0.0, 0.0, 0.0, -0.12501562695336918, 0.0);\n\n\t\t// Offsets to the shadow map.\n\t\tvec2 offsets [6];\n\t\toffsets [0] = vec2 (0.0,       0.0);\n\t\toffsets [1] = vec2 (1.0 / 3.0, 0.0);\n\t\toffsets [2] = vec2 (2.0 / 3.0, 0.0);\n\t\toffsets [3] = vec2 (0.0,       0.5);\n\t\toffsets [4] = vec2 (1.0 / 3.0, 0.5);\n\t\toffsets [5] = vec2 (2.0 / 3.0, 0.5);\n\n\t\tint value   = 0;\n\t\tint samples = 0;\n\n\t\tfor (int m = 0; m < 6; ++ m)\n\t\t{\n\t\t\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t\t\t{\n\t\t\t\tif (samples >= x3d_ShadowSamples)\n\t\t\t\t\treturn shadowIntensity * float (value) / float (x3d_ShadowSamples);\n\n\t\t\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\t\t\tvec4  shadowCoord = rotationProjectionBias [m] * shadowMatrix * vec4 (vertex, 1.0);\n\t\t\t\tfloat bias        = shadowBias / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\t\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\t\t\tif (shadowCoord .x < SHADOW_TEXTURE_EPS || shadowCoord .x > 1.0 / 3.0 - SHADOW_TEXTURE_EPS)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .y < SHADOW_TEXTURE_EPS || shadowCoord .y > 1.0 / 2.0 - SHADOW_TEXTURE_EPS)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .z >= 1.0)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (getShadowDepth (index, shadowCoord .xy + offsets [m]) < shadowCoord .z - bias)\n\t\t\t\t{\n\t\t\t\t\t++ value;\n\t\t\t\t}\n\n\t\t\t\t// We definitely have a shadow sample.\n\t\t\t\t++ samples;\n\t\t\t}\n\t\t}\n\n\t\treturn shadowIntensity * float (value) / float (x3d_ShadowSamples);\n\t}\n\n\tint value = 0;\n\n\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t{\n\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\tvec4  shadowCoord = shadowMatrix * vec4 (vertex, 1.0);\n\t\tfloat bias        = shadowBias / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\tif (shadowCoord .z >= 1.0)\n\t\t\tcontinue;\n\n\t\tif (getShadowDepth (index, shadowCoord .xy) < shadowCoord .z - bias)\n\t\t{\n\t\t\t++ value;\n\t\t}\n\t}\n\n\treturn shadowIntensity * float (value) / float (x3d_ShadowSamples);\n}\n#endif\n\nvec4\ngetMaterialColor ()\n{\n\tif (x3d_Lighting)\n\t{\n\t\tPlane3 plane = plane3 (v, vN);\n\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint lightType = x3d_LightType [i];\n\n\t\t\tif (lightType == x3d_NoneLight)\n\t\t\t\tbreak;\n\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);      // Normalized vector from point on geometry to light source i position.\n\t\t\t\tvec3 H = normalize (L + V);             // Specular term\n\n\t\t\t\tfloat lightAngle     = dot (N, L);       // Angle between normal and light ray.\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * clamp (lightAngle, 0.0, 1.0);\n\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\n\t\t\t\tfloat attenuationFactor           = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spotFactor                  = lightType == x3d_SpotLight ? getSpotFactor (x3d_LightCutOffAngle [i], x3d_LightBeamWidth [i], L, d) : 1.0;\n\t\t\t\tfloat attenuationSpotFactor       = attenuationFactor * spotFactor;\n\t\t\t\tvec3  ambientColor                = x3d_LightAmbientIntensity [i] * ambientTerm;\n\t\t\t\tvec3  ambientDiffuseSpecularColor = ambientColor + x3d_LightIntensity [i] * (diffuseTerm + specularTerm);\n\n\t\t\t\t#ifdef X3D_SHADOW\n\n\t\t\t\tif (x3d_ShadowIntensity [i] > 0.0 && lightAngle > 0.0)\n\t\t\t\t{\n\t\t\t\t\tfloat shadowIntensity = getShadowIntensity (i, lightType, x3d_ShadowIntensity [i], x3d_ShadowDiffusion [i], x3d_ShadowMatrix [i], plane, lightAngle);\n\t\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (mix (x3d_LightColor [i], x3d_ShadowColor [i], shadowIntensity) * ambientDiffuseSpecularColor);\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\n\t\t\t\t#else\n\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\n\t\t\t\t#endif\n\t\t\t}\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\treturn vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\treturn finalColor;\n\t}\n}\n\nvec3\ngetFogColor (in vec3 color)\n{\n\tif (x3d_FogType == x3d_NoneFog)\n\t\treturn color;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn x3d_FogColor;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn mix (x3d_FogColor, color, (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange);\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn mix (x3d_FogColor, color, exp (-dV / (x3d_FogVisibilityRange - dV)));\n\n\treturn color;\n}\n\nvoid\nmain ()\n{\n\tseed (int (fract (dot (v, v)) * float (RAND_MAX)));\n\n\tclip ();\n\n\tgl_FragColor = getMaterialColor ();\n\n\tgl_FragColor .rgb = getFogColor (gl_FragColor .rgb);\n}\n';});
 
 define('text!cobweb/Browser/Shaders/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
@@ -38401,6 +38519,8 @@ function (Fields,
 			gl .enable (gl .BLEND);
 
 			// Configure viewport.
+
+			$(document) .on ('webkitfullscreenchange mozfullscreenchange fullscreenchange MSFullscreenChange', this .onfullscreen .bind (this));
 
 			setInterval (this .reshape .bind (this), 401); // Detect canvas resize.
 
@@ -38559,6 +38679,13 @@ function (Fields,
 
 				this .addBrowserEvent ();
 			}
+		},
+		onfullscreen: function ()
+		{
+			if (this .getElement () .fullScreen ())
+				this .getElement () .addClass  ("cobweb-fullscreen");
+			else
+				this .getElement () .removeClass ("cobweb-fullscreen");
 		},
 	};
 
@@ -56033,10 +56160,14 @@ function (ViewVolume,
 
 		// Always check that our framebuffer is ok
 
-		if (gl .checkFramebufferStatus (gl .FRAMEBUFFER) !== gl .FRAMEBUFFER_COMPLETE)
-			throw new Error ("Couldn't create frame buffer.");
+		var complete = gl .checkFramebufferStatus (gl .FRAMEBUFFER) === gl .FRAMEBUFFER_COMPLETE;
 
 		gl .bindFramebuffer (gl .FRAMEBUFFER, this .lastBuffer);
+
+		if (complete)
+			return;
+
+		throw new Error ("Couldn't create frame buffer.");
 	}
 
 	DepthBuffer .prototype =
@@ -56176,7 +56307,8 @@ function (DepthBuffer)
 
 	X3DLightingContext .prototype =
 	{
-		initialize: function () { },
+		initialize: function ()
+		{ },
 		getMaxLights: function ()
 		{
 			return 8;
@@ -56270,10 +56402,8 @@ function (DepthBuffer)
 
 define ('cobweb/Browser/Sound/X3DSoundContext',[
 	"cobweb/Fields",
-	"lib/dataStorage",
 ],
-function (Fields,
-          dataStorage)
+function (Fields)
 {
 
 
@@ -56291,19 +56421,19 @@ function (Fields,
 			this .mute_   .addInterest (this, "set_mute__");
 
 			var
-				volume = dataStorage ["X3DSoundContext.volume"],
-				mute   = dataStorage ["X3DSoundContext.mute"];
+				volume = this .getDataStorage () ["X3DSoundContext.volume"],
+				mute   = this .getDataStorage () ["X3DSoundContext.mute"];
 
 			if (volume !== undefined) this .volume_ = volume;
 			if (mute   !== undefined) this .mute_   = mute;
 		},
 		set_volume__: function (volume)
 		{
-			dataStorage ["X3DSoundContext.volume"] = volume .getValue ();
+			this .getDataStorage () ["X3DSoundContext.volume"] = volume .getValue ();
 		},
 		set_mute__: function (mute)
 		{
-			dataStorage ["X3DSoundContext.mute"] = mute .getValue ();
+			this .getDataStorage () ["X3DSoundContext.mute"] = mute .getValue ();
 		},
 	};
 
@@ -61243,6 +61373,11 @@ function loadFromUrl(url, callback) {
         return callback(null, request.response);
     };
 
+	// Ho: fixes font loading errors.
+	request.onerror = function () {
+		return callback('Font could not be loaded: error');
+	}; 
+
     request.send();
 }
 
@@ -65661,6 +65796,7 @@ function (TextureProperties,
 			this .maxTextureSize          = gl .getParameter (gl .MAX_TEXTURE_SIZE);
 			this .maxTextureUnits         = gl .getParameter (gl .MAX_TEXTURE_IMAGE_UNITS);
 			this .maxCombinedTextureUnits = gl .getParameter (gl .MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+			this .textureMemory           = NaN;
 
 			var
 				textureUnits         = this .textureUnits,
@@ -65727,6 +65863,10 @@ function (TextureProperties,
 		getCombinedTextureUnits: function ()
 		{
 			return this .combinedTextureUnits;
+		},
+		getTextureMemory: function ()
+		{
+			return this .textureMemory;
 		},
 		getDefaultTextureProperties: function ()
 		{
@@ -68316,6 +68456,7 @@ function ($,
 	X3DBackgroundNode .prototype = $.extend (Object .create (X3DBindableNode .prototype),
 	{
 		constructor: X3DBackgroundNode,
+		modelViewMatrix: new Matrix4 (),
 		rotation: new Rotation4 (),
 		textureMatrixArray: new Float32Array (new Matrix4 ()),
 		rectangleCount: 6,
@@ -68618,7 +68759,7 @@ function ($,
 				case TraverseType .CAMERA:
 				{
 					renderObject .getLayer () .getBackgrounds () .push (this);
-		
+
 					this .transformationMatrix .assign (renderObject .getModelViewMatrix () .get ());
 					break;
 				}
@@ -68627,10 +68768,10 @@ function ($,
 					var
 						sourcePlanes = renderObject .getClipPlanes (),
 						destPlanes   = this .clipPlanes;
-	
+
 					for (var i = 0, length = sourcePlanes .length; i < length; ++ i)
 						destPlanes [i] = sourcePlanes [i];
-					
+
 					destPlanes .length = sourcePlanes .length;
 					break;
 				}
@@ -68658,7 +68799,7 @@ function ($,
 				viewpoint       = renderObject .getViewpoint (),
 				scale           = viewpoint .getScreenScale (point, viewport),
 				rotation        = this .rotation,
-				modelViewMatrix = this .transformationMatrix;
+				modelViewMatrix = this .modelViewMatrix .assign (this .transformationMatrix);
 
 			scale .multiply (Math .max (viewport [2], viewport [3]));
 
@@ -68675,7 +68816,7 @@ function ($,
 			modelViewMatrix .rotate (rotation);
 
 			this .modelViewMatrixArray .set (modelViewMatrix);
-		
+
 			// Draw.
 
 			this .drawSphere (renderObject);
@@ -69090,6 +69231,7 @@ function ($,
 			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
 
 			this .updateTextureProperties ();
+			this .addNodeEvent ();
 		},
 		updateTexture: function (data, flipY)
 		{
@@ -69103,6 +69245,8 @@ function ($,
 
 			if (this .texturePropertiesNode .generateMipMaps_ .getValue ())
 				gl .generateMipmap (gl .TEXTURE_2D);
+
+			this .addNodeEvent ();
 		},
 		updateTextureProperties: function ()
 		{
@@ -69288,7 +69432,8 @@ function ($,
 			this .image .load (this .setImage .bind (this));
 			this .image .error (this .setError .bind (this));
 			this .image .bind ("abort", this .setError .bind (this));
-			this .image .attr ("crossOrigin", "anonymous");
+
+			this .image [0] .crossOrigin = "Anonymous";
 
 			this .requestAsyncLoad ();
 		},
@@ -73190,9 +73335,10 @@ function ($,
 			this .audio = $("<audio></audio>");
 			this .audio .error (this .setError .bind (this));
 			this .audio .bind ("abort", this .setError .bind (this));
-			this .audio .attr ("preload", "auto");
-			this .audio .attr ("volume", 0);
-			this .audio .attr ("crossOrigin", "anonymous");
+
+			this .audio [0] .preload     = "auto";
+			this .audio [0] .volume      = 0;
+			this .audio [0] .crossOrigin = "Anonymous";
 
 			this .requestAsyncLoad ();
 		},
@@ -77465,13 +77611,25 @@ function ($,
 		},
 		set_texture__: function (node, index)
 		{
-			if (this .textures [index])
-				this .textures [index] .loadState_ .removeInterest (this, "set_loadState__");
+			var texture = this .textures [index];
+
+			if (texture)
+			{
+				var callbackName = "set_loadState__" + texture .getId () + "_" + index;
+
+				texture .removeInterest (this, "set_loadState__");
+				texture .loadState_ .removeFieldCallback (callbackName);
+			}
 
 			var texture = this .textures [index] = X3DCast (X3DConstants .X3DTexture2DNode, node);
 
 			if (texture)
-				texture .loadState_ .addInterest (this, "set_loadState__", texture, index);
+			{
+				var callbackName = "set_loadState__" + texture .getId () + "_" + index;
+
+				texture .addInterest (this, "set_loadState__", texture, index);
+				texture .loadState_ .addFieldCallback (callbackName, this .set_loadState__ .bind (this, null, texture, index));
+			}
 
 			this .set_loadState__ (null, texture, index);
 		},
@@ -77534,7 +77692,13 @@ function ($,
 	
 					gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, !texture .getFlipY ());
 					gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
-					gl .texImage2D (this .targets [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
+
+					if (data instanceof Uint8Array)
+						gl .texImage2D (this .targets [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
+					else
+					{
+						gl .texImage2D  (this .targets [i], 0, gl .RGBA, gl .RGBA, gl .UNSIGNED_BYTE, data);
+					}
 				}
 
 				this .set_textureQuality__ ();
@@ -82257,6 +82421,10 @@ function ($,
 		},
 		getInternalScene: function ()
 		{
+			///  Returns the internal X3DScene of this extern proto, that is loaded from the url given.
+			///  If the load field was false an empty scene is returned.  This empty scene is the same for all Inline
+			///  nodes (due to performance reasons).
+
 			return this .scene;
 		},
 		traverse: function (type, renderObject)
@@ -88736,6 +88904,7 @@ define ('cobweb/Components/Texturing/MovieTexture',[
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
+	"standard/Math/Algorithm",
 	"cobweb/DEBUG",
 ],
 function ($,
@@ -88748,6 +88917,7 @@ function ($,
           X3DConstants,
           urls,
           URI,
+          Algorithm,
           DEBUG)
 {
 
@@ -88814,9 +88984,10 @@ function ($,
 			this .video = $("<video></video>");
 			this .video .error (this .setError .bind (this));
 			this .video .bind ("abort", this .setError .bind (this));
-			this .video .attr ("preload", "auto");
-			this .video .attr ("volume", 0);
-			this .video .attr ("crossOrigin", "anonymous");
+
+			this .video [0] .preload     = "auto";
+			this .video [0] .volume      = 0;
+			this .video [0] .crossOrigin = "Anonymous";
 
 			this .requestAsyncLoad ();
 		},
@@ -88889,6 +89060,9 @@ function ($,
 					canvas = this .canvas [0],
 					cx     = canvas .getContext ("2d");
 
+				if (! Algorithm .isPowerOfTwo (width) || ! Algorithm .isPowerOfTwo (height))
+					throw new Error ("The movie texture is a non power-of-two texture.");
+
 				canvas .width  = width;
 				canvas .height = height;
 
@@ -88916,10 +89090,8 @@ function ($,
 		{
 		   X3DSoundSourceNode .prototype .prepareEvents .call (this);
 
-		   var video = this .getMedia ();
-
-			if (video)
-				this .updateTexture (video [0], true);
+			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE)
+				this .updateTexture (this .getMedia () [0], true);
 		},
 		traverse: X3DTexture2DNode .prototype .traverse,
 	});
@@ -92195,6 +92367,8 @@ function ($,
 		
 						renderObject .getModelViewMatrix  () .pop ();
 						renderObject .getViewVolumes () .pop ();
+
+						//console .log (y * 3 + x, this .rotationMatrix .multRight (this .projectionMatrix) .multRight (biasMatrix) .toString ());
 					}
 				}
 
@@ -103494,7 +103668,6 @@ define ('cobweb/Browser/X3DBrowser',[
 	"cobweb/Execution/Scene",
 	"cobweb/InputOutput/Loader",
 	"cobweb/Parser/XMLParser",
-	"cobweb/Parser/Parser",
 	"cobweb/Bits/X3DConstants",
 	"lib/gettext",
 ],
@@ -103510,7 +103683,6 @@ function ($,
           Scene,
           Loader,
           XMLParser,
-          Parser,
           X3DConstants,
           _)
 {
@@ -103564,6 +103736,7 @@ function ($,
 			                "                Max lights: 8\n" +
 			                "                Texture units: " + this .getMaxTextureUnits () + " / " + this .getMaxCombinedTextureUnits () + "\n" +
 			                "                Max texture size: " + this .getMaxTextureSize () + " × " + this .getMaxTextureSize () + " pixel\n" +
+			                "                Texture memory: " + this .getTextureMemory () + "\n" +
 			                "                Max vertex uniform vectors: " + this .getMaxVertexUniformVectors () + "\n" +
 			                "                Max fragment uniform vectors: " + this .getMaxFragmentUniformVectors () + "\n" +
 			                "                Max vertex attribs: " + this .getMaxVertexAttribs () + "\n");
@@ -103581,19 +103754,7 @@ function ($,
 			else
 				urlCharacters = this .getElement () [0] .getAttribute ("url");
 
-			if (urlCharacters)
-			{
-			   var
-			      parser    = new Parser (this .getExecutionContext (), "", true),
-			      url       = new Fields .MFString (),
-					parameter = new Fields .MFString ();
-
-				parser .setInput (urlCharacters);
-				parser .sfstringValues (url);
-
-				if (url .length)
-					this .loadURL (url, parameter);
-			}
+			this .load (urlCharacters);
 		},
 		getName: function ()
 		{
@@ -103663,6 +103824,11 @@ function ($,
 		},
 		replaceWorld: function (scene)
 		{
+			// Stop any loading from loadURL.
+
+			if (this .loader)
+				this .loader .abort ();
+
 			// Remove world.
 
 			if (this .getWorld ())
@@ -103810,9 +103976,11 @@ function ($,
 
 			this .setBrowserLoading (true);
 
-			var id = this .addLoadCount ();
+			var id = this .addLoadCount (this);
 
-			new Loader (this .getWorld ()) .createX3DFromURL (url,
+			this .loader = new Loader (this .getWorld ());
+
+			this .loader .createX3DFromURL (url,
 			function (scene)
 			{
 				if (scene)
@@ -103868,7 +104036,7 @@ function ($,
 				external     = this .isExternal (),
 				scene        = this .createScene ();
 
-			new XMLParser (scene, dom) .parseIntoScene ();
+			new XMLParser (scene) .parseIntoScene (dom);
 
 			if (! external)
 			{
@@ -104227,12 +104395,24 @@ function ($,
 
 	// X3D
 
+	function createBrowser (url, parameter)
+	{
+		var element = $("<X3DCanvas></X3DCanvas>");
+
+		if (url instanceof Fields .MFString)
+			 element .attr ("url", url .toString ())
+
+		createBrowserFromElement (element);
+
+		return element [0];
+	}
+
 	function getBrowser (dom)
 	{
 		return $(dom) .data ("browser");
 	}
 
-	function createBrowser (dom)
+	function createBrowserFromElement (dom)
 	{
 		dom = $(dom);
 
@@ -104272,7 +104452,7 @@ function ($,
 
 			try
 			{
-				var browsers = $.map (elements, createBrowser);
+				var browsers = $.map (elements, createBrowserFromElement);
 
 				numBrowsers = browsers .length;
 
@@ -104285,6 +104465,8 @@ function ($,
 						browser .initialized () .addFieldCallback ("initialized" + browser .getId (), set_initialized .bind (null, browser, elements));
 					}
 				}
+				else
+					set_initialized (null, []);
 			}
 			catch (error)
 			{
@@ -104298,13 +104480,13 @@ function ($,
 
 	function set_initialized (browser, elements)
 	{
-		browser .initialized () .removeFieldCallback ("initialized" + browser .getId ());
+		if (browser)
+			browser .initialized () .removeFieldCallback ("initialized" + browser .getId ());
 
-		if (-- numBrowsers)
+		if (-- numBrowsers > 0)
 			return;
 
-		callbacks .resolve (elements);
-		
+		callbacks .resolve (Array .prototype .slice .call (elements));
 	}
 
 	$.extend (X3D,

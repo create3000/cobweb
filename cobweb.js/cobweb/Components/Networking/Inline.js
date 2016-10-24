@@ -227,6 +227,10 @@ function ($,
 		},
 		getInternalScene: function ()
 		{
+			///  Returns the internal X3DScene of this extern proto, that is loaded from the url given.
+			///  If the load field was false an empty scene is returned.  This empty scene is the same for all Inline
+			///  nodes (due to performance reasons).
+
 			return this .scene;
 		},
 		traverse: function (type, renderObject)

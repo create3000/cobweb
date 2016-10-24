@@ -1,13 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 	<head>
       <title>XHTML DOM access for Cobweb</title>
       <meta charset="utf-8"/>
       <link rel="stylesheet" type="text/css" href="http://titania.create3000.de/fileadmin/styles.css"/>
-      <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/create3000/cobweb/master/stable/2/2.1/cobweb.css"/>
-      <script type="text/javascript" src="https://cdn.rawgit.com/create3000/cobweb/master/stable/2/2.1/cobweb.min.js"></script>
-      <script type="text/javascript" src="https://rawgit.com/andreasplesch/cobweb_dom/inline/cobweb/cobweb_dom.js"></script>
+      <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/create3000/cobweb/master/stable/2/2.2/cobweb.css"/>
+      <script type="text/javascript" src="https://cdn.rawgit.com/create3000/cobweb/master/stable/2/2.2/cobweb.min.js"></script>
+      <script type="text/javascript" src="https://cdn.rawgit.com/andreasplesch/cobweb_dom/master/release/cobweb_dom.0.5.js"></script>
    <style>
 html, body {
 	margin: 0px;
@@ -31,6 +30,8 @@ body {
 	right: 0px;
 	bottom: 30px;
 	left: 0px;
+	width: auto;
+	height: auto;
 }
 
 .button {
@@ -52,39 +53,179 @@ body {
 }
    </style>
    </head>
-   <body>
-      <X3DCanvas class="browser">
-        <X3D profile='Full' version='3.2'>
-          <Scene>
-            <Viewpoint position='-2 1 -15' orientation='0 1 0 3.14' description='start'></Viewpoint>
-            <Inline DEF="ExampleWorld" url='"https://cdn.rawgit.com/create3000/Library/master/Examples/Mushrooms/index.x3d"' />
-          </Scene>
-        </X3D>
-        <p class="fallback">Sorry,<br/>
-          it wasn't me!<br/>
-           <br/>
-           Your browser may not support all features required by Cobweb! You should use the latest version of Firefox, Chrome,
-           or Microsoft Edge, because this is currently the choice of the choice. We will continuously
-           keep you informed on technical developments and as soon as Cobweb is running in other browser too.
-        </p>
-      </X3DCanvas>
+	<body>
+		<X3DCanvas class="browser">
+			<X3D xmlns="http://www.web3d.org/specifications/x3d-namespace" id="spheres">
+ 				<Scene DEF='scene'>
+					<Viewpoint position='16.0328 13.056 34.2417' orientation='-0.624839 0.780206 0.0292506 0.543473' />
+    				<Background skyColor='1 1 1'/>
+    
+					<Transform scale='2.5 2.5 2.5'>
+						<Shape DEF='CUBE1'>
+ 							<Appearance>
+								<Material specularColor='.2 .2 .2' />
+								<ImageTexture url='"textures/x3d_256.jpg"'/>
+							</Appearance>
+							<Box/>
+						</Shape>
+						<Shape DEF='CUBE2'>
+							<Appearance>
+								<Material specularColor='.2 .2 .2' />
+								<ImageTexture url='"textures/webgl_256.jpg"'/>
+							</Appearance>
+							<Box/>
+						</Shape>
+						<Shape DEF='CUBE3'>
+							<Appearance>
+								<Material specularColor='.2 .2 .2' />
+								<ImageTexture url='"textures/w3c_256.jpg"'/>
+							</Appearance>
+							<Box/>
+						</Shape>
+						<Shape DEF='CUBE4'>
+							<Appearance>
+								<Material specularColor='.2 .2 .2' />
+								<ImageTexture url='"textures/web3d_256.jpg"'/>
+							</Appearance>
+							<Box/>
+						</Shape>
+						<Transform DEF='XFORM0a' center='0 0 10'>
+							<Shape USE='CUBE1'/>
+						</Transform>
+						<Transform DEF='XFORM0b' center='0 7 7'>
+							<Shape USE='CUBE2'/>
+						</Transform>
+						<Transform DEF='XFORM0c' center='10 0 0'>
+							<Shape USE='CUBE3'/>
+						</Transform>
+						<Transform DEF='XFORM0d' center='0 10 0'>
+							<Shape USE='CUBE4'/>
+						</Transform>
+						<Transform DEF='XFORM1a'>
+							<Transform USE='XFORM0a'/>
+							<Transform USE='XFORM0b'/>
+							<Transform USE='XFORM0c'/>
+							<Transform USE='XFORM0d'/>
+						</Transform>
+						<Transform DEF='XFORM1b'>
+							<Transform USE='XFORM0a'/>
+							<Transform USE='XFORM0b'/>
+							<Transform USE='XFORM0c'/>
+							<Transform USE='XFORM0d'/>
+						</Transform>
+						<Transform DEF='XFORM1c'>
+							<Transform USE='XFORM0a'/>
+							<Transform USE='XFORM0b'/>
+							<Transform USE='XFORM0c'/>
+							<Transform USE='XFORM0d'/>
+						</Transform>
+						<Transform DEF='XFORM1d'>
+							<Transform USE='XFORM0a'/>
+							<Transform USE='XFORM0b'/>
+							<Transform USE='XFORM0c'/>
+							<Transform USE='XFORM0d'/>
+						</Transform>
+						<Transform DEF='XFORM2a'>
+							<Transform USE='XFORM1a'/>
+							<Transform USE='XFORM1b'/>
+							<Transform USE='XFORM1c'/>
+							<Transform USE='XFORM1d'/>
+						</Transform>
+						<Transform DEF='XFORM2b'>
+							<Transform USE='XFORM1a'/>
+							<Transform USE='XFORM1b'/>
+							<Transform USE='XFORM1c'/>
+							<Transform USE='XFORM1d'/>
+						</Transform>
+						<Transform DEF='XFORM2c'>
+							<Transform USE='XFORM1a'/>
+							<Transform USE='XFORM1b'/>
+							<Transform USE='XFORM1c'/>
+							<Transform USE='XFORM1d'/>
+						</Transform>
+						<Transform DEF='XFORM2d'>
+							<Transform USE='XFORM1a'/>
+							<Transform USE='XFORM1b'/>
+							<Transform USE='XFORM1c'/>
+							<Transform USE='XFORM1d'/>
+						</Transform>
+					</Transform>
+					<Transform DEF='TREE'>
+						<Transform USE='XFORM2a'/>
+						<Transform USE='XFORM2b'/>
+						<Transform USE='XFORM2c'/>
+						<Transform USE='XFORM2d'/>
+					</Transform>
+	
+					<TimeSensor DEF='TIMER' cycleInterval='30' loop='true'/>
+					<OrientationInterpolator DEF='ROTOR_A' key='0 0.5 1' keyValue='1 0 0 0, 1 0 0 3.14, 1 0 0 6.28'/>
+					<OrientationInterpolator DEF='ROTOR_B' key='0 0.5 1' keyValue='0 1 0 0, 0 1 0 3.14, 0 1 0 6.28'/>
+					<OrientationInterpolator DEF='ROTOR_C' key='0 0.5 1' keyValue='0 0 1 0, 0 0 1 3.14, 0 0 1 6.28'/>
+					<OrientationInterpolator DEF='ROTOR_D' key='0 0.5 1' keyValue='0.707 0 0.707 0, 0.707 0 0.707 3.14, 0.707 0 0.707 6.28'/>
+					<PositionInterpolator DEF='POS_A' key='0 0.5 1' keyValue='0 0 0, 2 0 0, 0 0 0'/>
+					<ROUTE fromNode='TIMER' fromField='fraction_changed' toNode='ROTOR_A' toField='set_fraction'/>
+					<ROUTE fromNode='TIMER' fromField='fraction_changed' toNode='ROTOR_B' toField='set_fraction'/>
+					<ROUTE fromNode='TIMER' fromField='fraction_changed' toNode='ROTOR_C' toField='set_fraction'/>
+					<ROUTE fromNode='TIMER' fromField='fraction_changed' toNode='ROTOR_D' toField='set_fraction'/>
+					<ROUTE fromNode='ROTOR_A' fromField='value_changed' toNode='XFORM0a' toField='rotation'/>
+					<ROUTE fromNode='ROTOR_A' fromField='value_changed' toNode='XFORM1a' toField='rotation'/>
+					<ROUTE fromNode='ROTOR_A' fromField='value_changed' toNode='XFORM2a' toField='rotation'/>
+					<ROUTE fromNode='ROTOR_B' fromField='value_changed' toNode='XFORM0b' toField='rotation'/>
+					<ROUTE fromNode='ROTOR_B' fromField='value_changed' toNode='XFORM1b' toField='rotation'/>
+					<ROUTE fromNode='ROTOR_B' fromField='value_changed' toNode='XFORM2b' toField='rotation'/>
+					<ROUTE fromNode='ROTOR_C' fromField='value_changed' toNode='XFORM0c' toField='rotation'/>
+					<ROUTE fromNode='ROTOR_C' fromField='value_changed' toNode='XFORM1c' toField='rotation'/>
+					<ROUTE fromNode='ROTOR_C' fromField='value_changed' toNode='XFORM2c' toField='rotation'/>
+					<ROUTE fromNode='ROTOR_D' fromField='value_changed' toNode='XFORM0d' toField='rotation'/>
+					<ROUTE fromNode='ROTOR_D' fromField='value_changed' toNode='XFORM1d' toField='rotation'/>
+					<ROUTE fromNode='ROTOR_D' fromField='value_changed' toNode='XFORM2d' toField='rotation'/>
+				</Scene>
+			</X3D>
+		</X3DCanvas>
+		
+		<button id="toggleAnimation" class="button input input-button" onclick="toggleAnimation ()">HTML Button to Freeze Animation</button>
 
-      <button class="button input input-button" onclick='moveHouse ()'>XHTML Button to Move House</button>
+		<script>
+var routeA, routeB, routeC, routeD;
+var scene = document.querySelector('Scene');
 
-      <script type="text/javascript">
-function moveHouse ()
+
+function toggleAnimation ()
 {
-   var RANGE = 5;
-
-   var
-      houseTransform = document .querySelector ("[DEF='pilzhaus']"); // Unique DEF inside inlined inlines.
-      position       = houseTransform .getAttribute ("translation") .split (" "); // Poor man's parse.
-      x              = 1.0 * position [0] + RANGE * (Math .random () - 0.5);
-      y              = 1.0 * position [1];
-      z              = 1.0 * position [2] + RANGE * (Math .random () - 0.5);
-
-   houseTransform .setAttribute ("translation", x + " " + y + " " + z);
+	freezeA ();
+	freezeB ();
+	freezeC ();
+	freezeD ();
 }
-     </script>
-   </body>
+
+function freezeA () {
+	var el = document.querySelector('ROUTE[fromNode="TIMER"][toNode="ROTOR_A"]');
+	if (el) {
+		routeA = el;
+		el.remove(); }
+	else { scene.appendChild(routeA); }
+}
+function freezeB () {
+	var el = document.querySelector('ROUTE[fromNode="TIMER"][toNode="ROTOR_B"]');
+	if (el) {
+		routeB = el;
+		el.remove(); }
+	else { scene.appendChild(routeB); }
+}
+function freezeC () {
+	var el = document.querySelector('ROUTE[fromNode="TIMER"][toNode="ROTOR_C"]');
+	if (el) {
+		routeC = el;
+		el.remove(); }
+	else { scene.appendChild(routeC); }
+}
+function freezeD () {
+	var el = document.querySelector('ROUTE[fromNode="TIMER"][toNode="ROTOR_D"]');
+	if (el) {
+		routeD = el;
+		el.remove(); }
+	else { scene.appendChild(routeD); }
+}
+		</script>
+	</body>
 </html>

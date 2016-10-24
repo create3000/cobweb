@@ -62,7 +62,8 @@ function (DepthBuffer)
 
 	X3DLightingContext .prototype =
 	{
-		initialize: function () { },
+		initialize: function ()
+		{ },
 		getMaxLights: function ()
 		{
 			return 8;

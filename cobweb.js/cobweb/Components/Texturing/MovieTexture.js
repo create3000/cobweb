@@ -58,6 +58,7 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
+	"standard/Math/Algorithm",
 	"cobweb/DEBUG",
 ],
 function ($,
@@ -70,6 +71,7 @@ function ($,
           X3DConstants,
           urls,
           URI,
+          Algorithm,
           DEBUG)
 {
 "use strict";
@@ -136,9 +138,10 @@ function ($,
 			this .video = $("<video></video>");
 			this .video .error (this .setError .bind (this));
 			this .video .bind ("abort", this .setError .bind (this));
-			this .video .attr ("preload", "auto");
-			this .video .attr ("volume", 0);
-			this .video .attr ("crossOrigin", "anonymous");
+
+			this .video [0] .preload     = "auto";
+			this .video [0] .volume      = 0;
+			this .video [0] .crossOrigin = "Anonymous";
 
 			this .requestAsyncLoad ();
 		},
@@ -211,6 +214,9 @@ function ($,
 					canvas = this .canvas [0],
 					cx     = canvas .getContext ("2d");
 
+				if (! Algorithm .isPowerOfTwo (width) || ! Algorithm .isPowerOfTwo (height))
+					throw new Error ("The movie texture is a non power-of-two texture.");
+
 				canvas .width  = width;
 				canvas .height = height;
 
@@ -238,10 +244,8 @@ function ($,
 		{
 		   X3DSoundSourceNode .prototype .prepareEvents .call (this);
 
-		   var video = this .getMedia ();
-
-			if (video)
-				this .updateTexture (video [0], true);
+			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE)
+				this .updateTexture (this .getMedia () [0], true);
 		},
 		traverse: X3DTexture2DNode .prototype .traverse,
 	});

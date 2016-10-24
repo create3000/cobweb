@@ -117,6 +117,16 @@ function ($,
 		{
 			this .parents .pop ();
 		},
+		parseIntoNode: function (node, xml)
+		{
+			this .pushExecutionContext (node .getExecutionContext ());
+			this .pushParent (node);
+
+			this .statement (xml);
+
+			this .popParent ();
+			this .popExecutionContext ();
+		},
 		parseIntoScene: function (xml)
 		{
 			switch (xml .nodeName)
@@ -325,7 +335,7 @@ function ($,
 				var node = this .getExecutionContext () .createNode (element .nodeName, false);
 
 				//AP: attach node to DOM element for access from DOM.
-            element .x3dnode = node;
+            element .x3d = node;
 
 				this .DEF (element, node);
 				this .addNode (element, node);
@@ -474,7 +484,7 @@ function ($,
 					switch (parent .getType ())
 					{
 						case X3DConstants .SFNode:
-							parent .set (node);
+							parent .setValue (node);
 							parent .setSet (true);
 							return;
 
@@ -499,7 +509,7 @@ function ($,
 							switch (field .getType ())
 							{
 								case X3DConstants .SFNode:
-									field .set (node);
+									field .setValue (node);
 									field .setSet (true);
 									return;
 
@@ -524,7 +534,7 @@ function ($,
 						switch (field .getType ())
 						{
 							case X3DConstants .SFNode:
-								field .set (node);
+								field .setValue (node);
 								field .setSet (true);
 								return;
 
@@ -856,9 +866,10 @@ function ($,
 
 				var
 					sourceNode      = this .getExecutionContext () .getLocalNode (sourceNodeName),
-					destinationNode = this .getExecutionContext () .getLocalNode (destinationNodeName);
+					destinationNode = this .getExecutionContext () .getLocalNode (destinationNodeName),
+					route           = this .getExecutionContext () .addRoute (sourceNode, sourceField, destinationNode, destinationField);
 
-				this .getExecutionContext () .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+				element .x3d = route;
 			}
 			catch (error)
 			{

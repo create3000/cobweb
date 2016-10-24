@@ -6,8 +6,8 @@
     <meta name='created' content='Fri, 07 Oct 2016 02:56:59 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
-    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Shaders/Matrix3VertexAttribute.x3d'/>
-    <meta name='modified' content='Fri, 07 Oct 2016 05:17:33 GMT'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Shaders/LineMatrix3VertexAttribute.x3d'/>
+    <meta name='modified' content='Wed, 19 Oct 2016 08:51:01 GMT'/>
   </head>
   <Scene>
     <ProtoDeclare name='Grid'>
@@ -344,7 +344,20 @@ main ()
           <MetadataSet DEF='children' containerField='value'
               name='children'
               reference='http://titania.create3000.de'>
-            <Transform USE='Rectangle2D' containerField='value'/>
+            <Transform DEF='Text' containerField='value'
+                translation='-5.01454 -2.98505 0'>
+              <Shape>
+                <Appearance>
+                  <Material/>
+                </Appearance>
+                <Text
+                    string='"Must show a 2x2 rectangle."'
+                    solid='true'>
+                  <FontStyle DEF='_1'
+                      size='0.39'/>
+                </Text>
+              </Shape>
+            </Transform>
           </MetadataSet>
         </MetadataSet>
       </MetadataSet>
@@ -355,5 +368,6 @@ main ()
       <fieldValue name='transparency' value='0.8'/>
     </ProtoInstance>
     <Transform USE='Rectangle2D'/>
+    <Transform USE='Text'/>
   </Scene>
 </X3D>

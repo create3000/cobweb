@@ -66,6 +66,17 @@ function (Fields,
 	
 	var loadCountId = 0;
 
+	function getBaseURI (element)
+	{
+		var baseURI = element .baseURI;
+
+		// Fix for Edge.
+		if (baseURI .startsWith ("about:"))
+			baseURI = document .baseURI;
+
+		return new URI (baseURI);
+	}
+
 	function X3DNetworkingContext ()
 	{
 		this .cache = this .getElement () [0] .getAttribute ("cache") != "false";
@@ -75,7 +86,7 @@ function (Fields,
 		this .loadSensor     = new LoadSensor (this);
 		this .loadingTotal   = 0;
 		this .loadingObjects = { };
-		this .location       = new URI (this .getElement () [0] .baseURI);
+		this .location       = getBaseURI (this .getElement () [0]);
 		this .defaultScene   = this .createScene ();
 		this .privateScene   = this .createScene ();
 		this .browserLoading = false;
@@ -97,6 +108,10 @@ function (Fields,
 		getProviderUrl: function ()
 		{
 			return urls .providerUrl;
+		},
+		setCaching: function (value)
+		{
+		   this .cache = value;
 		},
 		doCaching: function ()
 		{
@@ -134,7 +149,7 @@ function (Fields,
 				this .getCanvas ()         .stop (true, true) .fadeIn (2000);
 			}
 		},
-		addLoadCount: function ()
+		addLoadCount: function (object)
 		{
 		   var id = loadCountId ++;
 
