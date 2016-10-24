@@ -98,6 +98,11 @@ Programmer's Style Guide
 Programmers who want to work on Cobweb shall first read the [Style Guide](STYLE_GUIDE.md).
 
 
+Tests
+--------------------------------------
+[Cobweb Test Page](http://rawgit.com/create3000/cobweb/master/cobweb.js/cobweb.min.html)
+
+
 Authors
 --------------------------------------
 All authors contributed to this project can be found in the [list of authors](AUTHORS.md).
