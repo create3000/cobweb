@@ -165,11 +165,12 @@ function ($,
 			var
 				viewVolumes = renderObject .getViewVolumes (),
 				rectangle   = this .getRectangle (renderObject .getBrowser ()),
-				viewport    = viewVolumes .length ? viewVolumes [viewVolumes .length - 1] .getViewport () : rectangle;
+				viewport    = viewVolumes .length ? viewVolumes [viewVolumes .length - 1] .getViewport () : rectangle,
+				viewVolume  = ViewVolumes .pop ();
 
-			viewVolumes .push (ViewVolumes .pop (renderObject .getProjectionMatrix () .get (),
-			                                     viewport,
-			                                     rectangle));
+			viewVolume .set (renderObject .getProjectionMatrix () .get (), viewport, rectangle);
+
+			viewVolumes .push (viewVolume);
 		},
 		pop: function (renderObject)
 		{

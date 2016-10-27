@@ -388,6 +388,7 @@ function ($,
 					return;
 				}
 				case TraverseType .DISPLAY:
+				case TraverseType .DRAW:
 				{
 					var
 						clipPlanes = this .clipPlanes,

@@ -69,6 +69,55 @@ function ($,
 	X3DEnvironmentTextureNode .prototype = $.extend (Object .create (X3DTextureNode .prototype),
 	{
 		constructor: X3DEnvironmentTextureNode,
+		initialize: function ()
+		{
+			X3DTextureNode .prototype .initialize .call (this);
+
+			var gl = this .getBrowser () .getContext ();
+
+			this .target = gl .TEXTURE_CUBE_MAP;
+
+			this .targets = [
+				gl .TEXTURE_CUBE_MAP_POSITIVE_Z, // Front
+				gl .TEXTURE_CUBE_MAP_NEGATIVE_Z, // Back
+				gl .TEXTURE_CUBE_MAP_NEGATIVE_X, // Left
+				gl .TEXTURE_CUBE_MAP_POSITIVE_X, // Right
+				gl .TEXTURE_CUBE_MAP_POSITIVE_Y, // Top
+				gl .TEXTURE_CUBE_MAP_NEGATIVE_Y, // Bottom
+			];
+		},
+		set_live__: function ()
+		{
+			if (this .isLive () .getValue ())
+			{
+				this .getBrowser () .getBrowserOptions () .TextureQuality_ .addInterest (this, "set_textureQuality__");
+	
+				this .set_textureQuality__ ();
+			}
+			else
+				this .getBrowser () .getBrowserOptions () .TextureQuality_ .removeInterest (this, "set_textureQuality__");
+		},
+		set_textureQuality__: function ()
+		{
+			var textureProperties = this .getBrowser () .getDefaultTextureProperties ();
+
+			this .updateTextureProperties (this .target, false, textureProperties, 128, 128, false, false, false);
+		},
+		getTarget: function ()
+		{
+			return this .target;
+		},
+		getTargets: function ()
+		{
+			return this .targets;
+		},
+		setShaderUniforms: function (gl, shaderObject, i)
+		{
+			shaderObject .textureTypeArray [i] = 4;
+			gl .activeTexture (gl .TEXTURE4);
+			gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
+			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray); // TODO: Put this in X3DProgramableShaderObject
+		},
 	});
 
 	return X3DEnvironmentTextureNode;

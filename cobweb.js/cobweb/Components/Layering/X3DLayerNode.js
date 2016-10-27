@@ -267,7 +267,11 @@ function ($,
 		},
 		traverse: function (type, renderObject)
 		{
-			this .getProjectionMatrix () .pushMatrix (this .getViewpoint () .getProjectionMatrix (this));
+			var viewpoint = this .getViewpoint ();
+
+			this .getCameraSpaceMatrix        () .pushMatrix (viewpoint .getCameraSpaceMatrix ());
+			this .getInverseCameraSpaceMatrix () .pushMatrix (viewpoint .getInverseCameraSpaceMatrix ());
+			this .getProjectionMatrix         () .pushMatrix (viewpoint .getProjectionMatrix (this));
 
 			switch (type)
 			{
@@ -284,11 +288,14 @@ function ($,
 					this .display (type);
 					break;
 				case TraverseType .DISPLAY:
+				case TraverseType .DRAW:
 					this .display (type);
 					break;
 			}
 
-			this .getProjectionMatrix () .pop ();
+			this .getProjectionMatrix         () .pop ();
+			this .getInverseCameraSpaceMatrix () .pop ();
+			this .getCameraSpaceMatrix        () .pop ();
 		},
 		pointer: function (type)
 		{
@@ -310,7 +317,7 @@ function ($,
 				}
 
 				browser .setHitRay (this .getProjectionMatrix () .get (), viewport);
-				this .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+				this .getModelViewMatrix () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 
 				this .currentViewport .push (this);
 				this .groupNode .traverse (type, this);
@@ -349,7 +356,7 @@ function ($,
 			Camera .ortho (-size, size, -size, size, -size, size, projectionMatrix);
 
 			this .getProjectionMatrix () .pushMatrix (projectionMatrix);
-			this .getModelViewMatrix  () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+			this .getModelViewMatrix  () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 	
 			// Render
 			this .currentViewport .push (this);
@@ -363,7 +370,7 @@ function ($,
 		{
 			this .getNavigationInfo () .enable (type, this);
 
-			this .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+			this .getModelViewMatrix () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 
 			this .currentViewport .push (this);
 			this .render (type, this .groupNode);

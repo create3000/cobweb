@@ -216,7 +216,7 @@ function ($,
 			shaderObject .textureTypeArray [i] = 2;
 			gl .activeTexture (gl .TEXTURE2);
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
-			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray);
+			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray); // TODO: Put this in X3DProgramableShaderObject
 		},
 	});
 

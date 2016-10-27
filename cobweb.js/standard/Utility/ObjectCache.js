@@ -64,21 +64,15 @@ define (function ()
 				
 					this .last --;
 
-					object .set .apply (object, arguments);
-				}
-				else
-				{
-					var object = Object .create (Type .prototype);
-
-					Type .apply (object, arguments);
+	            return object;
 				}
 
-	         return object;
+				return new Type ();
 	      },
 			push: function (object)
 	      {
 	         this .last ++;
-	         this .stack [this .last] = object;
+	         return this .stack [this .last] = object;
 	      },
 			clear: function ()
 			{

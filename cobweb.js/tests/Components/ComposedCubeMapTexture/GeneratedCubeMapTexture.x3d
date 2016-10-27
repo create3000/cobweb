@@ -5,9 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Sun, 18 Sep 2016 14:43:01 GMT'/>
     <meta name='creator' content='holger'/>
-    <meta name='generator' content='Titania V2.0.0, http://titania.create3000.de'/>
+    <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ComposedCubeMapTexture/GeneratedCubeMapTexture.x3d'/>
-    <meta name='modified' content='Thu, 22 Sep 2016 12:42:53 GMT'/>
+    <meta name='modified' content='Thu, 27 Oct 2016 08:23:54 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -101,15 +101,15 @@
           <MetadataDouble DEF='position_1' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='6.04104051553517, 8.61971014855869, 2.07860788782392'/>
+              value='-7.70126864156333, 7.65516934130237, -12.541139334121'/>
           <MetadataDouble DEF='orientation_1' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.414716691621526, -0.898787258036881, -0.142096905247938, 4.98402318008064'/>
+              value='0.0251737756288675, 0.995704428983739, 0.0891009041635008, 3.69005258034088'/>
           <MetadataDouble DEF='centerOfRotation_1' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='0, 5, 0'/>
+              value='6.75912303904624e-09, 5, 1.85829520660263e-07'/>
         </MetadataSet>
         <MetadataSet DEF='Selection_1' containerField='value'
             name='Selection'
@@ -120,8 +120,10 @@
           <MetadataSet DEF='children_1' containerField='value'
               name='children'
               reference='http://titania.create3000.de'>
-            <PointLight DEF='_1' containerField='value'
-                location='0 5 0'/>
+            <DirectionalLight DEF='_1' containerField='value'
+                intensity='0.466321'
+                direction='0 -1 0'
+                shadowIntensity='1'/>
           </MetadataSet>
         </MetadataSet>
       </MetadataSet>
@@ -138,9 +140,9 @@
         skyColor='0.2 0.2 0.2'/>
     <Viewpoint
         description='Home'
-        position='-11.1769 4.30377 2.86063'
-        orientation='0.0397507340809531 -0.998800456347203 -0.0285924385221893 1.32833775689261'
-        centerOfRotation='0.100791 4.5 0.0633195'/>
+        position='-3.62059 4.37055 -6.35706'
+        orientation='0.0113594255351824 -0.999014879526897 0.042897947915607 2.62436040032247'
+        centerOfRotation='6.75912e-09 5 1.8583e-07'/>
     <Transform DEF='Box'
         translation='0.100791 -0.5 0.0633195'
         scale='13.9742 0.5 13.9367'>
@@ -291,6 +293,9 @@ function initialize ()
         </IndexedFaceSet>
       </Shape>
     </Transform>
-    <PointLight USE='_1'/>
+    <PointLight DEF='_2'
+        intensity='0.375648'
+        location='0 5 0'/>
+    <DirectionalLight USE='_1'/>
   </Scene>
 </X3D>

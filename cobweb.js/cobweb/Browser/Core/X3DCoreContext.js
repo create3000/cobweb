@@ -70,7 +70,7 @@ function (Fields,
 {
 "use strict";
 	
-	var number = 0;
+	var browserNumber = 0;
 
 	function getContext (canvas)
 	{
@@ -99,7 +99,7 @@ function (Fields,
 
 	function X3DCoreContext (element)
 	{
-		this .number  = ++ number;
+		this .number  = ++ browserNumber;
 		this .element = element;
 
 		// Get canvas & context.

@@ -61,6 +61,7 @@ define ([
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
 	"standard/Math/Utility/MatrixStack",
+	"standard/Utility/ObjectCache",
 ],
 function ($,
           DepthBuffer,
@@ -74,7 +75,8 @@ function ($,
           Vector4,
           Rotation4,
           Matrix4,
-          MatrixStack)
+          MatrixStack,
+          ObjectCache)
 {
 "use strict";
 
@@ -95,32 +97,44 @@ function ($,
 		collisionBox                = new Box3 (Vector3 .Zero, Vector3 .Zero),
 		collisionSize               = new Vector3 (0, 0, 0);
 
+	var Arrays = ObjectCache (Array);
+
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
 	function X3DRenderObject (executionContext)
 	{
-		this .projectionMatrix     = new MatrixStack (Matrix4);
-		this .modelViewMatrix      = new MatrixStack (Matrix4);
-		this .viewVolumes          = [ ];
-		this .clipPlanes           = [ ];
-		this .globalLights         = [ ];
-		this .localLights          = [ ];
-		this .lights               = [ ];
-		this .localFogs            = [ ];
-		this .layouts              = [ ];
-		this .collisions           = [ ];
-		this .numOpaqueShapes      = 0;
-		this .numTransparentShapes = 0;
-		this .numCollisionShapes   = 0;
-		this .numDepthShapes       = 0;
-		this .opaqueShapes         = [ ];
-		this .transparentShapes    = [ ];
-		this .transparencySorter   = new QuickSort (this .transparentShapes, compareDistance);
-		this .collisionShapes      = [ ];
-		this .activeCollisions     = { };
-		this .depthShapes          = [ ];
-		this .invModelViewMatrix   = new Matrix4 ();
-		this .speed                = 0;
+		this .cameraSpaceMatrix           = new MatrixStack (Matrix4);
+		this .inverseCameraSpaceMatrix    = new MatrixStack (Matrix4);
+		this .projectionMatrix            = new MatrixStack (Matrix4);
+		this .modelViewMatrix             = new MatrixStack (Matrix4);
+		this .viewVolumes                 = [ ];
+		this .clipPlanes                  = [ ];
+		this .globalLights                = [ ];
+		this .localLights                 = [ ];
+		this .lights                      = [ ];
+		this .localFogs                   = [ ];
+		this .layouts                     = [ ];
+		this .generatedCubeMapTextures    = [ ];
+		this .shaders                     = [ ];
+		this .collisions                  = [ ];
+		this .lightId                     = 0;
+		this .numOpaqueDisplayShapes      = 0;
+		this .numTransparentDisplayShapes = 0;
+		this .numOpaqueDrawShapes         = 0;
+		this .numTransparentDrawShapes    = 0;
+		this .numCollisionShapes          = 0;
+		this .numDepthShapes              = 0;
+		this .opaqueDisplayShapes         = [ ];
+		this .transparentDisplayShapes    = [ ];
+		this .opaqueDrawShapes            = [ ];
+		this .transparentDrawShapes       = [ ];
+		this .transparencySorterDisplay   = new QuickSort (this .transparentDisplayShapes, compareDistance);
+		this .transparencySorterDraw      = new QuickSort (this .transparentDrawShapes,    compareDistance);
+		this .collisionShapes             = [ ];
+		this .activeCollisions            = { };
+		this .depthShapes                 = [ ];
+		this .invModelViewMatrix          = new Matrix4 ();
+		this .speed                       = 0;
 
 		try
 		{
@@ -142,6 +156,14 @@ function ($,
 		translation: new Vector3 (0, 0, 0),
 		initialize: function ()
 		{ },
+		getCameraSpaceMatrix: function ()
+		{
+			return this .cameraSpaceMatrix;
+		},
+		getInverseCameraSpaceMatrix: function ()
+		{
+			return this .inverseCameraSpaceMatrix;
+		},
 		getProjectionMatrix: function ()
 		{
 			return this .projectionMatrix;
@@ -174,6 +196,10 @@ function ($,
 		{
 			return this .lights;
 		},
+		getLight: function ()
+		{
+			return this .lights [this .lightId ++];
+		},
 		setGlobalFog: function (fog)
 		{
 			this .localFog = this .localFogs [0] = fog;
@@ -197,6 +223,14 @@ function ($,
 		getParentLayout: function ()
 		{
 			return this .layouts .length ? this .layouts [this .layouts .length - 1] : null;
+		},
+		getGeneratedCubeMapTextures: function ()
+		{
+			return this .generatedCubeMapTextures;
+		},
+		getShaders: function ()
+		{
+			return this .shaders [this .shaders .length - 1];
 		},
 		getCollisions: function ()
 		{
@@ -333,14 +367,37 @@ function ($,
 					this .depth (this .depthShapes, this .numDepthShapes);
 					break;
 				}
+				case TraverseType .DRAW:
+				{
+					this .lightId             = 0;
+					this .numOpaqueDrawShapes = 0;
+					this .numOpaqueDrawShapes = 0;
+
+					this .shaders .push (Arrays .pop ());
+
+					group .traverse (type, this);
+					this .draw (this .opaqueDrawShapes, this .numOpaqueDrawShapes, this .transparentDrawShapes, this .numTransparentDrawShapes, this .transparencySorterDraw);
+
+					var lights = this .lights;
+
+					for (var i = 0, length = lights .length; i < length; ++ i)
+						lights [i] .getModelViewMatrix () .pop ();
+
+					Arrays .push (this .shaders .pop ()) .length = 0;
+					break;
+				}
 				case TraverseType .DISPLAY:
 				{
-					this .numOpaqueShapes      = 0;
-					this .numTransparentShapes = 0;
+					this .numOpaqueDisplayShapes      = 0;
+					this .numTransparentDisplayShapes = 0;
 
 					this .setGlobalFog (this .getFog ());
+					this .shaders .push (Arrays .pop ());
+
 					group .traverse (type, this);
-					this .draw ();
+					this .displayGroup (group);
+
+					Arrays .push (this .shaders .pop ()) .length = 0;
 					break;
 				}
 			}
@@ -432,7 +489,15 @@ function ($,
 
 			return false;
 		},
+		addDrawShape: function (shapeNode)
+		{
+			return this .addShape (shapeNode, this .opaqueDrawShapes, "numOpaqueDrawShapes", this .transparentDrawShapes, "numTransparentDrawShapes");
+		},
 		addDisplayShape: function (shapeNode)
+		{
+			return this .addShape (shapeNode, this .opaqueDisplayShapes, "numOpaqueDisplayShapes", this .transparentDisplayShapes, "numTransparentDisplayShapes");
+		},
+		addShape: function (shapeNode, opaqueShapes, numOpaqueShapes, transparentShapes, numTransparentShapes)
 		{
 			var
 				modelViewMatrix = this .getModelViewMatrix () .get (),
@@ -446,21 +511,25 @@ function ($,
 			{
 				if (shapeNode .isTransparent ())
 				{
-					if (this .numTransparentShapes === this .transparentShapes .length)
-						this .transparentShapes .push (this .createShapeContext (true));
+					var num = this [numTransparentShapes];
 
-					var context = this .transparentShapes [this .numTransparentShapes];
+					if (num === transparentShapes .length)
+						transparentShapes .push (this .createShapeContext (true));
 
-					++ this .numTransparentShapes;
+					var context = transparentShapes [num];
+
+					++ this [numTransparentShapes];
 				}
 				else
 				{
-					if (this .numOpaqueShapes === this .opaqueShapes .length)
-						this .opaqueShapes .push (this .createShapeContext (false));
+					var num = this [numOpaqueShapes];
 
-					var context = this .opaqueShapes [this .numOpaqueShapes];
+					if (num === opaqueShapes .length)
+						opaqueShapes .push (this .createShapeContext (false));
 
-					++ this .numOpaqueShapes;
+					var context = opaqueShapes [num];
+
+					++ this [numOpaqueShapes];
 				}
 
 				context .modelViewMatrix .set (modelViewMatrix);
@@ -739,22 +808,63 @@ function ($,
 				context .shapeNode .depth (context, shaderNode);
 			}
 		},
-		draw: function ()
+		displayGroup: function (group)
 		{
-			var
-				browser           = this .getBrowser (),
-				gl                = browser .getContext (),
-				viewport          = this .getViewVolume () .getViewport (),
-				opaqueShapes      = this .opaqueShapes,
-				transparentShapes = this .transparentShapes,
-				shaders           = browser .getShaders ();
-
 			// Render shadow maps.
 		
-			var lights = this .lights;
+			var
+				lights                   = this .lights,
+				generatedCubeMapTextures = this .generatedCubeMapTextures;
 
 			for (var i = 0, length = lights .length; i < length; ++ i)
 				lights [i] .renderShadowMap (this);
+
+			for (var i = 0, length = generatedCubeMapTextures .length; i < length; ++ i)
+				generatedCubeMapTextures [i] .renderTexture (this, group);
+
+			// Draw.
+
+			this .draw (this .opaqueDisplayShapes, this .numOpaqueDisplayShapes, this .transparentDisplayShapes, this .numTransparentDisplayShapes, this .transparencySorterDisplay);
+
+			generatedCubeMapTextures .length = 0;
+
+			// Recycle global lights.
+
+			var lights = this .getGlobalLights ();
+
+			for (var i = 0, length = lights .length; i < length; ++ i)
+			   lights [i] .dispose ();
+
+			lights .length = 0;
+
+			// Recycle local lights.
+
+			var lights = this .getBrowser () .getLocalLights ();
+
+			for (var i = 0, length = lights .length; i < length; ++ i)
+			   lights [i] .dispose ();
+
+			lights .length = 0;
+
+			// Clear lights.
+
+			this .lights .length = 0;
+		},
+		draw: function (opaqueShapes, numOpaqueShapes, transparentShapes, numTransparentShapes, transparencySorter)
+		{
+			var
+				browser  = this .getBrowser (),
+				gl       = browser .getContext (),
+				viewport = this .getViewVolume () .getViewport (),
+				shaders  = this .getShaders (),
+				lights   = this .lights;
+
+			// Set shadow matrix for all lights.
+
+			browser .getHeadlight () .setGlobalVariables (this);
+
+			for (var i = 0, length = lights .length; i < length; ++ i)
+				lights [i] .setGlobalVariables (this);
 
 			// Configure viewport and background
 
@@ -776,8 +886,8 @@ function ($,
 
 			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
-			browser .getPointShader ()   .setGlobalUniforms (this, gl, projectionMatrixArray);
-			browser .getLineShader ()    .setGlobalUniforms (this, gl, projectionMatrixArray);
+			browser .getPointShader   () .setGlobalUniforms (this, gl, projectionMatrixArray);
+			browser .getLineShader    () .setGlobalUniforms (this, gl, projectionMatrixArray);
 			browser .getDefaultShader () .setGlobalUniforms (this, gl, projectionMatrixArray);
 
 			for (var id in shaders)
@@ -789,7 +899,7 @@ function ($,
 			gl .depthMask (true);
 			gl .disable (gl .BLEND);
 
-			for (var i = 0, length = this .numOpaqueShapes; i < length; ++ i)
+			for (var i = 0; i < numOpaqueShapes; ++ i)
 			{
 				var
 					context = opaqueShapes [i],
@@ -808,9 +918,9 @@ function ($,
 			gl .depthMask (false);
 			gl .enable (gl .BLEND);
 
-			this .transparencySorter .sort (0, this .numTransparentShapes);
+			transparencySorter .sort (0, numTransparentShapes);
 
-			for (var i = 0, length = this .numTransparentShapes; i < length; ++ i)
+			for (var i = 0; i < numTransparentShapes; ++ i)
 			{
 				var
 					context = transparentShapes [i],
@@ -835,28 +945,6 @@ function ($,
 			   clipPlanes [i] .dispose ();
 
 			clipPlanes .length = 0;
-
-			// Recycle global lights.
-
-			var lights = this .getGlobalLights ();
-
-			for (var i = 0, length = lights .length; i < length; ++ i)
-			   lights [i] .dispose ();
-
-			lights .length = 0;
-
-			// Recycle local lights.
-
-			var lights = this .getBrowser () .getLocalLights ();
-
-			for (var i = 0, length = lights .length; i < length; ++ i)
-			   lights [i] .dispose ();
-
-			lights .length = 0;
-
-			// Clear lights.
-
-			this .lights .length = 0;
 
 			// Reset.
 

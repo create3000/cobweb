@@ -51,10 +51,12 @@ define ([
 	"jquery",
 	"cobweb/Components/Shape/X3DAppearanceChildNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
 ],
 function ($,
           X3DAppearanceChildNode, 
-          X3DConstants)
+          X3DConstants,
+          TraverseType)
 {
 "use strict";
 
@@ -181,6 +183,18 @@ function ($,
 
 					break;
 				}
+			}
+		},
+		traverse: function (type, renderObject)
+		{
+			switch (type)
+			{
+				case TraverseType .DISPLAY:
+				case TraverseType .DRAW:
+					renderObject .getShaders () [this .getId ()] = this;
+					break;
+				default:
+					break;
 			}
 		},
 	});

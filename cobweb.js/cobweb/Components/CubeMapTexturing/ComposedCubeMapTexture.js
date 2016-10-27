@@ -107,25 +107,16 @@ function ($,
 		{
 			X3DEnvironmentTextureNode .prototype .initialize .call (this);
 
+			// Upload default data.
+
 			var gl = this .getBrowser () .getContext ();
 
-			this .target = gl .TEXTURE_CUBE_MAP;
+			gl .bindTexture (this .getTarget (), this .getTexture ());
 
-			this .targets = [
-				gl .TEXTURE_CUBE_MAP_POSITIVE_Z, // Front
-				gl .TEXTURE_CUBE_MAP_NEGATIVE_Z, // Back
-				gl .TEXTURE_CUBE_MAP_NEGATIVE_X, // Left
-				gl .TEXTURE_CUBE_MAP_POSITIVE_X, // Right
-				gl .TEXTURE_CUBE_MAP_POSITIVE_Y, // Top
-				gl .TEXTURE_CUBE_MAP_NEGATIVE_Y, // Bottom
-			];
+			for (var i = 0; i < 6; ++ i)
+				gl .texImage2D  (this .getTargets () [i], 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
 
-			gl .bindTexture (this .target, this .getTexture ());
-
-			for (var i = 0, length = this .targets .length; i < length; ++ i)
-				gl .texImage2D  (this .targets [i], 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
-
-			//
+			// Initialize.
 
 			this .isLive () .addInterest (this, "set_live__");
 
@@ -144,27 +135,6 @@ function ($,
 			this .set_texture__ (this .bottom_, 5);
 
 			this .set_live__ ();
-		},
-		getTarget: function ()
-		{
-			return this .target;
-		},
-		set_live__: function ()
-		{
-			if (this .isLive () .getValue ())
-			{
-				this .getBrowser () .getBrowserOptions () .TextureQuality_ .addInterest (this, "set_textureQuality__");
-	
-				this .set_textureQuality__ ();
-			}
-			else
-				this .getBrowser () .getBrowserOptions () .TextureQuality_ .removeInterest (this, "set_textureQuality__");
-		},
-		set_textureQuality__: function ()
-		{
-			var textureProperties = this .getBrowser () .getDefaultTextureProperties ();
-
-			this .updateTextureProperties (this .target, false, textureProperties, 128, 128, false, false, false);
 		},
 		set_texture__: function (node, index)
 		{
@@ -232,7 +202,8 @@ function ($,
 		{
 			var gl = this .getBrowser () .getContext ();
 
-			gl .bindTexture (this .target, this .getTexture ());
+			gl .bindTexture (this .getTarget (), this .getTexture ());
+			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
 
 			if (this .isComplete ())
 			{
@@ -251,10 +222,10 @@ function ($,
 					gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
 
 					if (data instanceof Uint8Array)
-						gl .texImage2D (this .targets [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
+						gl .texImage2D (this .getTargets () [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
 					else
 					{
-						gl .texImage2D  (this .targets [i], 0, gl .RGBA, gl .RGBA, gl .UNSIGNED_BYTE, data);
+						gl .texImage2D  (this .getTargets () [i], 0, gl .RGBA, gl .RGBA, gl .UNSIGNED_BYTE, data);
 					}
 				}
 
@@ -264,7 +235,7 @@ function ($,
 			{
 				for (var i = 0; i < 6; ++ i)
 				{
-					gl .texImage2D (this .targets [i], 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+					gl .texImage2D (this .getTargets () [i], 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
 				}
 			}
 
@@ -290,13 +261,6 @@ function ($,
 
 			if (transparent !== this .transparent_ .getValue ())
 				this .transparent_ = transparent;
-		},
-		setShaderUniforms: function (gl, shaderObject, i)
-		{
-			shaderObject .textureTypeArray [i] = 4;
-			gl .activeTexture (gl .TEXTURE4);
-			gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
-			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray);
 		},
 	});
 

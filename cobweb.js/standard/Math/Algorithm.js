@@ -145,6 +145,8 @@ define (function ()
 		},
 		nextPowerOfTwo: function (n)
 		{
+			///  Returns the next power of two of @a n. If n is a power of two, n is returned.
+
 			-- n;
 
 			for (var k = 1; ! (k & (1 << (4 + 1))); k <<= 1)

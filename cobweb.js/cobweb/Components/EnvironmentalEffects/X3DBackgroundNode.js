@@ -52,6 +52,7 @@ define ([
 	"cobweb/Components/Core/X3DBindableNode",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Numbers/Complex",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
@@ -62,6 +63,7 @@ function ($,
           X3DBindableNode,
           TraverseType,
           X3DConstants,
+          ViewVolume,
           Complex,
           Vector3,
           Rotation4,
@@ -69,13 +71,12 @@ function ($,
           Algorithm)
 {
 "use strict";
-
 	var
-		SIZE        = 10000,
-		U_DIMENSION = 20,
-		point       = new Vector3 (0, 0, SIZE);
+		RADIUS      = 1,
+		SIZE        = Math .sqrt (RADIUS * RADIUS / 2),
+		U_DIMENSION = 20;
 
-	var s = Math .sqrt (Math .pow (2 * SIZE, 2) / 2) / 2;
+	var s = SIZE;
 
 	var texCoords = [
 		1, 1, 0, 1,
@@ -148,6 +149,10 @@ function ($,
 		y3 = new Complex (0, 0),
 		y4 = new Complex (0, 0);
 
+	var
+		farVector         = new Vector3 (0, 0, 0),
+		projectionMatrix  = new Matrix4 ();
+
 	function X3DBackgroundNode (executionContext)
 	{
 		X3DBindableNode .call (this, executionContext);
@@ -169,6 +174,7 @@ function ($,
 		constructor: X3DBackgroundNode,
 		modelViewMatrix: new Matrix4 (),
 		rotation: new Rotation4 (),
+		scale: new Vector3 (0, 0, 0),
 		textureMatrixArray: new Float32Array (new Matrix4 ()),
 		rectangleCount: 6,
 		initialize: function ()
@@ -266,6 +272,34 @@ function ($,
 		{
 			return this .hidden;
 		},
+		isTransparent: function ()
+		{
+			if (this .hidden)
+				return true;
+
+			if (this .transparency_ .getValue () === 0)
+				return false;
+
+			if (! this .frontTexture  || this .frontTexture  .transparent_ .getValue ())
+					return true;
+
+			if (! this .backTexture   || this .backTexture   .transparent_ .getValue ())
+					return true;
+
+			if (! this .leftTexture   || this .leftTexture   .transparent_ .getValue ())
+					return true;
+
+			if (! this .rightTexture  || this .rightTexture  .transparent_ .getValue ())
+					return true;
+
+			if (! this .topTexture    || this .topTexture    .transparent_ .getValue ())
+					return true;
+
+			if (! this .bottomTexture || this .bottomTexture .transparent_ .getValue ())
+					return true;
+
+			return false;
+		},
 		getColor: function (theta, color, angle)
 		{
 			var index = Algorithm .upperBound (angle, 0, angle .length, theta, Algorithm .less);
@@ -312,8 +346,6 @@ function ($,
 			{
 				// Build sphere
 
-				var radius = Math .sqrt (2 * Math .pow (SIZE, 2));
-			
 				if (this .skyColor_ .length > this .skyAngle_ .length)
 				{
 					var vAngle = [ ];
@@ -329,7 +361,7 @@ function ($,
 					if (vAngle [vAngle .length - 1] < vAngleMax)
 						vAngle .push (vAngleMax);
 
-					this .buildSphere (radius, vAngle, this .skyAngle_, this .skyColor_, alpha, false);
+					this .buildSphere (RADIUS, vAngle, this .skyAngle_, this .skyColor_, alpha, false);
 				}
 
 				if (this .groundColor_ .length > this .groundAngle_ .length)
@@ -347,7 +379,7 @@ function ($,
 					if (vAngle [vAngle .length - 1] > 0)
 						vAngle .push (0);
 
-					this .buildSphere (radius, vAngle, this .groundAngle_, this .groundColor_, alpha, true);
+					this .buildSphere (RADIUS, vAngle, this .groundAngle_, this .groundColor_, alpha, true);
 				}
 			}
 
@@ -475,6 +507,7 @@ function ($,
 					break;
 				}
 				case TraverseType .DISPLAY:
+				case TraverseType .DRAW:
 				{
 					var
 						sourcePlanes = renderObject .getClipPlanes (),
@@ -507,24 +540,21 @@ function ($,
 			// Get background scale.
 
 			var
-				viewpoint       = renderObject .getViewpoint (),
-				scale           = viewpoint .getScreenScale (point, viewport),
+				farValue        = -ViewVolume .unProjectPointMatrix (0, 0, 0.99999, projectionMatrix .assign (renderObject .getProjectionMatrix () .get ()) .inverse (), viewport, farVector) .z,
 				rotation        = this .rotation,
 				modelViewMatrix = this .modelViewMatrix .assign (this .transformationMatrix);
 
-			scale .multiply (Math .max (viewport [2], viewport [3]));
-
 			// Get projection matrix.
 
-			this .projectionMatrixArray .set (viewpoint .getProjectionMatrixWithLimits (1, Math .max (2, 3 * SIZE * scale .z), viewport, true));	
+			this .projectionMatrixArray .set (renderObject .getProjectionMatrix () .get ());	
 
 			// Rotate and scale background.
 
-			modelViewMatrix .multRight (viewpoint .getInverseCameraSpaceMatrix ());
+			modelViewMatrix .multRight (renderObject .getInverseCameraSpaceMatrix () .get ());
 			modelViewMatrix .get (null, rotation);
 			modelViewMatrix .identity ();
-			modelViewMatrix .scale (scale);
 			modelViewMatrix .rotate (rotation);
+			modelViewMatrix .scale (this .scale .set (farValue, farValue, farValue));
 
 			this .modelViewMatrixArray .set (modelViewMatrix);
 

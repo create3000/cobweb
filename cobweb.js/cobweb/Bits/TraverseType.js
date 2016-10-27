@@ -60,6 +60,7 @@ define (function ()
 		COLLISION: i ++,
 		DEPTH:     i ++,
 		DISPLAY:   i ++,
+		DRAW:      i ++,
 	};
 
 	Object .preventExtensions (TraverseType);

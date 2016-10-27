@@ -123,25 +123,47 @@ function ($,
 		{
 			if (this .on_ .getValue ())
 			{
-				if (this .global_ .getValue ())
+				if (type === TraverseType .DISPLAY)
 				{
-					var lightContainer = this .getLights () .pop (renderObject .getBrowser (),
-					                                              this,
-					                                              renderObject .getLayer () .getGroup (),
-					                                              renderObject .getModelViewMatrix () .get ());
-
-					renderObject .getGlobalLights () .push (lightContainer);
-					renderObject .getLights ()       .push (lightContainer);
+					var lightContainer = this .getLights () .pop ();
+	
+					if (this .global_ .getValue ())
+					{
+						lightContainer .set (renderObject .getBrowser (),
+						                     this,
+						                     renderObject .getLayer () .getGroup (),
+						                     renderObject .getModelViewMatrix () .get ());
+	
+						renderObject .getGlobalLights () .push (lightContainer);
+						renderObject .getLights ()       .push (lightContainer);
+					}
+					else
+					{
+						lightContainer .set (renderObject .getBrowser (),
+						                     this,
+						                     group,
+						                     renderObject .getModelViewMatrix () .get ());
+	
+						renderObject .getLocalLights () .push (lightContainer);
+						renderObject .getLights ()      .push (lightContainer);
+					}
 				}
 				else
 				{
-					var lightContainer = this .getLights () .pop (renderObject .getBrowser (),
-					                                              this,
-					                                              group,
-					                                              renderObject .getModelViewMatrix () .get ());
+					if (this .global_ .getValue ())
+					{
+						var lightContainer = renderObject .getLight ();
+		
+						lightContainer .getModelViewMatrix () .pushMatrix (renderObject .getModelViewMatrix () .get ());
+					}
+					else
+					{
+						var lightContainer = renderObject .getLight ();
 
-					renderObject .getLocalLights () .push (lightContainer);
-					renderObject .getLights ()      .push (lightContainer);
+						lightContainer .getModelViewMatrix () .pushMatrix (renderObject .getModelViewMatrix () .get ());
+	
+						renderObject .getLocalLights () .push (lightContainer);
+					}
 				}
 			}
 		},
@@ -152,7 +174,10 @@ function ($,
 				if (this .global_ .getValue ())
 				   return;
 
-				renderObject .getBrowser () .getLocalLights () .push (renderObject .getLocalLights () .pop ());
+				if (type === TraverseType .DISPLAY)
+					renderObject .getBrowser () .getLocalLights () .push (renderObject .getLocalLights () .pop ());
+				else
+					renderObject .getLocalLights () .pop ();
 			}
 		},
 	});

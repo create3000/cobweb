@@ -89,6 +89,14 @@ function ($)
 			{
 				-- this .top;
 			},
+			clear: function ()
+			{
+				this .top = 0;
+			},
+			size: function ()
+			{
+				return this .top + 1;
+			},
 			identity: function ()
 			{
 				this [this .top] .identity ();
@@ -96,6 +104,14 @@ function ($)
 			multLeft: function (matrix)
 			{
 				this [this .top] .multLeft (matrix);
+			},
+			translate: function (vector)
+			{
+				this [this .top] .translate (vector);
+			},
+			rotate: function (rotation)
+			{
+				this [this .top] .rotate (rotation);
 			},
 			scale: function (vector)
 			{
