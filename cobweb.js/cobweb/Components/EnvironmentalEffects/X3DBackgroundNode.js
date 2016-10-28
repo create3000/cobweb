@@ -507,7 +507,6 @@ function ($,
 					break;
 				}
 				case TraverseType .DISPLAY:
-				case TraverseType .DRAW:
 				{
 					var
 						sourcePlanes = renderObject .getClipPlanes (),

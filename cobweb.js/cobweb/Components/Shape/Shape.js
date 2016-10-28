@@ -155,14 +155,6 @@ function ($,
 
 					break;
 				}
-
-				case TraverseType .DRAW:
-				{
-					if (renderObject .addDrawShape (this))
-						this .getAppearance () .traverse (type, renderObject); // Currently used for GeneratedCubeMapTexture.
-
-					break;
-				}
 			}
 		},
 		pointer: function (renderObject)

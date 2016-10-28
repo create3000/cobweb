@@ -1259,6 +1259,7 @@
     <None Include="tests\HTML\X3DCanvasSetUrlAttribute.html" />
     <None Include="tests\HTML\Box.x3d" />
     <None Include="tests\HTML\README" />
+    <None Include="cobweb\Rendering\DependentRenderer.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

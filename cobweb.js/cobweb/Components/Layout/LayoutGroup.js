@@ -152,7 +152,6 @@ function ($,
 				case TraverseType .CAMERA:
 				case TraverseType .DEPTH:
 				case TraverseType .DISPLAY:
-				case TraverseType .DRAW:
 				{
 					if (this .viewportNode)
 						this .viewportNode .push ();

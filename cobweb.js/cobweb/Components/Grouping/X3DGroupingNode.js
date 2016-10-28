@@ -388,7 +388,6 @@ function ($,
 					return;
 				}
 				case TraverseType .DISPLAY:
-				case TraverseType .DRAW:
 				{
 					var
 						clipPlanes = this .clipPlanes,
@@ -403,13 +402,13 @@ function ($,
 						localFogs [i] .push (renderObject);
 
 					for (var i = 0, length = lights .length; i < length; ++ i)
-						lights [i] .push (type, renderObject, this);
+						lights [i] .push (renderObject, this);
 
 					for (var i = 0, length = childNodes .length; i < length; ++ i)
 						childNodes [i] .traverse (type, renderObject);
 					
 					for (var i = 0, length = lights .length; i < length; ++ i)
-						lights [i] .pop (type, renderObject);
+						lights [i] .pop (renderObject);
 
 					for (var i = 0, length = localFogs .length; i < length; ++ i)
 						localFogs [i] .pop (renderObject);

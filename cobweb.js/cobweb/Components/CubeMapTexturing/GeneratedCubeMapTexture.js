@@ -54,6 +54,7 @@ define ("cobweb/Components/CubeMapTexturing/GeneratedCubeMapTexture",
 	"cobweb/Basic/X3DFieldDefinition",
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode",
+	"cobweb/Rendering/DependentRenderer",
 	"cobweb/Rendering/DepthBuffer",
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Bits/TraverseType",
@@ -70,6 +71,7 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           X3DEnvironmentTextureNode, 
+          DependentRenderer, 
           DepthBuffer, 
           X3DConstants,
           TraverseType,
@@ -113,6 +115,7 @@ function ($,
 
 		this .addType (X3DConstants .GeneratedCubeMapTexture);
 
+		this .renderer             = new DependentRenderer (executionContext);
 		this .projectionMatrix     = new Matrix4 ();
 		this .transformationMatrix = new Matrix4 ();
 		this .viewVolume           = new ViewVolume ();
@@ -142,6 +145,10 @@ function ($,
 		initialize: function ()
 		{
 			X3DEnvironmentTextureNode .prototype .initialize .call (this);
+
+			this .renderer .setup ();
+
+			// Transfer 6 textures of size x size pixels.
 
 			var size = Algorithm .nextPowerOfTwo (this .size_ .getValue ());
 
@@ -179,21 +186,29 @@ function ($,
 		
 			if (! this .frameBuffer)
 				return;
-
-			this .transformationMatrix .assign (renderObject .getModelViewMatrix () .get ()) .multRight (renderObject .getCameraSpaceMatrix () .get ());
+		
+			if (! renderObject .isIndependent ())
+				return;
 
 			renderObject .getGeneratedCubeMapTextures () .push (this);
+
+			this .transformationMatrix .assign (renderObject .getModelViewMatrix () .get ()) .multRight (renderObject .getCameraSpaceMatrix () .get ());
 		},
 		renderTexture: function (renderObject, group)
 		{
 			try
 			{
+				this .renderer .setRenderer (renderObject);
+
 				var
-					gl                 = renderObject .getBrowser () .getContext (),
-					background         = renderObject .getBackground (),
-					navigationInfo     = renderObject .getNavigationInfo (),
-					viewpoint          = renderObject .getViewpoint (),
-					headlightContainer = renderObject .getBrowser () .getHeadlight (),
+					renderer           = this .renderer,
+					browser            = renderObject .getBrowser (),
+					layer              = renderObject .getLayer (),
+					gl                 = browser .getContext (),
+					background         = renderer .getBackground (),
+					navigationInfo     = renderer .getNavigationInfo (),
+					viewpoint          = renderer .getViewpoint (),
+					headlightContainer = browser .getHeadlight (),
 					headlight          = navigationInfo .headlight_ .getValue (),
 					nearValue          = navigationInfo .getNearValue (),
 					farValue           = navigationInfo .getFarValue (viewpoint),
@@ -205,8 +220,8 @@ function ($,
 
 				this .frameBuffer .bind ();
 
-				renderObject .getViewVolumes      () .push (this .viewVolume .set (projectionMatrix, this .viewport, this .viewport));
-				renderObject .getProjectionMatrix () .pushMatrix (projectionMatrix);
+				renderer .getViewVolumes      () .push (this .viewVolume .set (projectionMatrix, this .viewport, this .viewport));
+				renderer .getProjectionMatrix () .pushMatrix (projectionMatrix);
 
 				gl .bindTexture (this .getTarget (), this .getTexture ());
 				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, false);
@@ -217,12 +232,12 @@ function ($,
 
 					// Setup inverse texture space matrix.
 
-					renderObject .getCameraSpaceMatrix        () .pushMatrix (this .transformationMatrix);
-					renderObject .getCameraSpaceMatrix        () .rotate (rotations [i]);
-					renderObject .getCameraSpaceMatrix        () .scale (scales [i]);
-					renderObject .getInverseCameraSpaceMatrix () .pushMatrix (invCameraSpaceMatrix .assign (renderObject .getCameraSpaceMatrix () .get ()) .inverse ());
+					renderer .getCameraSpaceMatrix        () .pushMatrix (this .transformationMatrix);
+					renderer .getCameraSpaceMatrix        () .rotate (rotations [i]);
+					renderer .getCameraSpaceMatrix        () .scale (scales [i]);
+					renderer .getInverseCameraSpaceMatrix () .pushMatrix (invCameraSpaceMatrix .assign (renderer .getCameraSpaceMatrix () .get ()) .inverse ());
 
-					renderObject .getModelViewMatrix () .pushMatrix (invCameraSpaceMatrix);
+					renderer .getModelViewMatrix () .pushMatrix (invCameraSpaceMatrix);
 
 					// Setup headlight if enabled.
 
@@ -234,16 +249,16 @@ function ($,
 
 					// Render layer's children.
 
-					renderObject .render (TraverseType .DRAW, group);
+					layer .traverse (TraverseType .DISPLAY, renderer);
 
 					// Pop matrices.
 
 					if (headlight)
 						headlightContainer .getModelViewMatrix () .pop ();
 
-					renderObject .getModelViewMatrix          () .pop ();
-					renderObject .getCameraSpaceMatrix        () .pop ();
-					renderObject .getInverseCameraSpaceMatrix () .pop ();
+					renderer .getModelViewMatrix          () .pop ();
+					renderer .getCameraSpaceMatrix        () .pop ();
+					renderer .getInverseCameraSpaceMatrix () .pop ();
 
 					// Transfer image.
 
@@ -257,8 +272,8 @@ function ($,
 
 				this .set_textureQuality__ ();
 
-				renderObject .getProjectionMatrix () .pop ();
-				renderObject .getViewVolumes      () .pop ();
+				renderer .getProjectionMatrix () .pop ();
+				renderer .getViewVolumes      () .pop ();
 
 				this .frameBuffer .unbind ();
 

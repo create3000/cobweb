@@ -190,7 +190,6 @@ function ($,
 			switch (type)
 			{
 				case TraverseType .DISPLAY:
-				case TraverseType .DRAW:
 					renderObject .getShaders () [this .getId ()] = this;
 					break;
 				default:
