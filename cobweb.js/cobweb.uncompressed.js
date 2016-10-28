@@ -11309,6 +11309,8 @@ define ('standard/Math/Algorithm',[],function ()
 		},
 		nextPowerOfTwo: function (n)
 		{
+			///  Returns the next power of two of @a n. If n is a power of two, n is returned.
+
 			-- n;
 
 			for (var k = 1; ! (k & (1 << (4 + 1))); k <<= 1)
@@ -31505,14 +31507,7 @@ function ($,
 			if (this .textureNode)
 				this .textureNode .transparent_ .addInterest (this, "set_transparent__");
 
-			if (X3DCast (X3DConstants .GeneratedCubeMapTexture, this .texture_))
-			{
-				delete this .traverse;
-			}
-			else
-			{
-				this .traverse = Function .prototype;
-			}
+			this .generatedCubeMapTexture = X3DCast (X3DConstants .GeneratedCubeMapTexture, this .texture_);
 
 			this .set_transparent__ ();
 		},
@@ -31582,7 +31577,11 @@ function ($,
 		},
 		traverse: function (type, renderObject)
 		{
-			this .textureNode .traverse (type, renderObject);
+			if (this .generatedCubeMapTexture)
+				this .generatedCubeMapTexture .traverse (type, renderObject);
+
+			if (this .shaderNode)
+				this .shaderNode .traverse (type, renderObject);
 		},
 		display: function (context)
 		{
@@ -31801,14 +31800,88 @@ function ($,
  ******************************************************************************/
 
 
+define ('cobweb/Bits/TraverseType',[],function ()
+{
+
+
+	var i = 0;
+
+	var TraverseType =
+	{
+		POINTER:   i ++,
+		CAMERA:    i ++,
+		COLLISION: i ++,
+		DEPTH:     i ++,
+		DISPLAY:   i ++,
+		DRAW:      i ++,
+	};
+
+	Object .preventExtensions (TraverseType);
+	Object .freeze (TraverseType);
+	Object .seal (TraverseType);
+
+	return TraverseType;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
 define ('cobweb/Components/Shaders/X3DShaderNode',[
 	"jquery",
 	"cobweb/Components/Shape/X3DAppearanceChildNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
 ],
 function ($,
           X3DAppearanceChildNode, 
-          X3DConstants)
+          X3DConstants,
+          TraverseType)
 {
 
 
@@ -31935,6 +32008,17 @@ function ($,
 
 					break;
 				}
+			}
+		},
+		traverse: function (type, renderObject)
+		{
+			switch (type)
+			{
+				case TraverseType .DISPLAY:
+					renderObject .getShaders () [this .getId ()] = this;
+					break;
+				default:
+					break;
 			}
 		},
 	});
@@ -46905,77 +46989,6 @@ function (jquery,
  ******************************************************************************/
 
 
-define ('cobweb/Bits/TraverseType',[],function ()
-{
-
-
-	var i = 0;
-
-	var TraverseType =
-	{
-		POINTER:   i ++,
-		CAMERA:    i ++,
-		COLLISION: i ++,
-		DEPTH:     i ++,
-		DISPLAY:   i ++,
-	};
-
-	Object .preventExtensions (TraverseType);
-	Object .freeze (TraverseType);
-	Object .seal (TraverseType);
-
-	return TraverseType;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
 define ('standard/Math/Geometry/Line3',[
 	"standard/Math/Numbers/Vector3",
 ],
@@ -47205,7 +47218,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 		normal = new Vector3 (0, 0, 0),
 		vin    = new Vector4 (0, 0, 0, 0);
 
-	function ViewVolume (projectionMatrix, viewport, scissor)
+	function ViewVolume ()
 	{
 		this .viewport = new Vector4 (0, 0, 0, 0);
 		this .scissor  = new Vector4 (0, 0, 0, 0);
@@ -47218,8 +47231,6 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			new Plane3 (Vector3 .Zero, Vector3 .Zero),  // bottom
 			new Plane3 (Vector3 .Zero, Vector3 .Zero),  // back
 		];
-	   
-	   this .set (projectionMatrix, viewport, scissor);
 	}
 
 	ViewVolume .prototype =
@@ -53213,9 +53224,9 @@ function ($,
 		set_headlight__: function ()
 		{
 			if (this .headlight_ .getValue ())
-				this .enable = enable;
-			else
 				delete this .enable;
+			else
+				this .enable = Function .prototype;
 		},
 		bindToLayer: function (layer)
 		{
@@ -53289,17 +53300,13 @@ function ($,
 		},
 		enable: function (type, renderObject)
 		{
+			renderObject .getGlobalLights () .push (renderObject .getBrowser () .getHeadlight ());
 		},
 		traverse: function (type, renderObject)
 		{
 			renderObject .getLayer () .getNavigationInfos () .push (this);
 		}
 	});
-
-	function enable (type, renderObject)
-	{
-		renderObject .getGlobalLights () .push (renderObject .getBrowser () .getHeadlight ());
-	}
 
 	return NavigationInfo;
 });
@@ -54159,40 +54166,67 @@ function ($,
 		{
 			return biasMatrix;
 		},
-		push: function (type, renderObject, group)
+		push: function (renderObject, group)
 		{
 			if (this .on_ .getValue ())
 			{
-				if (this .global_ .getValue ())
+				if (renderObject .isIndependent ())
 				{
-					var lightContainer = this .getLights () .pop (renderObject .getBrowser (),
-					                                              this,
-					                                              renderObject .getLayer () .getGroup (),
-					                                              renderObject .getModelViewMatrix () .get ());
+					var lightContainer = this .getLights () .pop ();
 
-					renderObject .getGlobalLights () .push (lightContainer);
-					renderObject .getLights ()       .push (lightContainer);
+					if (this .global_ .getValue ())
+					{
+						lightContainer .set (renderObject .getBrowser (),
+						                     this,
+						                     renderObject .getLayer () .getGroup (),
+						                     renderObject .getModelViewMatrix () .get ());
+
+						renderObject .getGlobalLights () .push (lightContainer);
+						renderObject .getLights ()       .push (lightContainer);
+					}
+					else
+					{
+						lightContainer .set (renderObject .getBrowser (),
+						                     this,
+						                     group,
+						                     renderObject .getModelViewMatrix () .get ());
+
+						renderObject .getLocalLights () .push (lightContainer);
+						renderObject .getLights ()      .push (lightContainer);
+					}
 				}
 				else
 				{
-					var lightContainer = this .getLights () .pop (renderObject .getBrowser (),
-					                                              this,
-					                                              group,
-					                                              renderObject .getModelViewMatrix () .get ());
+					var lightContainer = renderObject .getLightContainer ();
+		
+					if (this .global_ .getValue ())
+					{
+						lightContainer .getModelViewMatrix () .pushMatrix (renderObject .getModelViewMatrix () .get ());
 
-					renderObject .getLocalLights () .push (lightContainer);
-					renderObject .getLights ()      .push (lightContainer);
+						renderObject .getGlobalLights () .push (lightContainer);
+						renderObject .getLights ()       .push (lightContainer);
+					}
+					else
+					{
+						lightContainer .getModelViewMatrix () .pushMatrix (renderObject .getModelViewMatrix () .get ());
+	
+						renderObject .getLocalLights () .push (lightContainer);
+						renderObject .getLights ()      .push (lightContainer);
+					}
 				}
 			}
 		},
-		pop: function (type, renderObject)
+		pop: function (renderObject)
 		{
 			if (this .on_ .getValue ())
 			{
 				if (this .global_ .getValue ())
 				   return;
 
-				renderObject .getBrowser () .getLocalLights () .push (renderObject .getLocalLights () .pop ());
+				if (renderObject .isIndependent ())
+					renderObject .getBrowser () .getLocalLights () .push (renderObject .getLocalLights () .pop ());
+				else
+					renderObject .getLocalLights () .pop ();
 			}
 		},
 	});
@@ -54706,13 +54740,13 @@ function ($,
 						localFogs [i] .push (renderObject);
 
 					for (var i = 0, length = lights .length; i < length; ++ i)
-						lights [i] .push (type, renderObject, this);
+						lights [i] .push (renderObject, this);
 
 					for (var i = 0, length = childNodes .length; i < length; ++ i)
 						childNodes [i] .traverse (type, renderObject);
 					
 					for (var i = 0, length = lights .length; i < length; ++ i)
-						lights [i] .pop (type, renderObject);
+						lights [i] .pop (renderObject);
 
 					for (var i = 0, length = localFogs .length; i < length; ++ i)
 						localFogs [i] .pop (renderObject);
@@ -54780,6 +54814,131 @@ function ($,
  ******************************************************************************/
 
 
+define ('standard/Math/Utility/MatrixStack',[
+	"jquery",
+],
+function ($)
+{
+
+
+	function MatrixStack (Type)
+	{
+		return $.extend ([ new Type () ],
+		{
+			top: 0,
+			set: function (matrix)
+			{
+				this [this .top] .assign (matrix);
+			},
+			get: function (matrix)
+			{
+				return this [this .top];
+			},
+			push: function ()
+			{
+				var top = ++ this .top;
+			
+				if (top < this .length)
+					this [top] .assign (this [top - 1]);
+				else
+					this [top] = this [top - 1] .copy ();
+			},
+			pushMatrix: function (matrix)
+			{
+				var top = ++ this .top;
+
+				if (top < this .length)
+					this [top] .assign (matrix);
+				else
+					this [top] = matrix .copy ();
+			},
+			pop: function ()
+			{
+				-- this .top;
+			},
+			clear: function ()
+			{
+				this .top = 0;
+			},
+			size: function ()
+			{
+				return this .top + 1;
+			},
+			identity: function ()
+			{
+				this [this .top] .identity ();
+			},
+			multLeft: function (matrix)
+			{
+				this [this .top] .multLeft (matrix);
+			},
+			translate: function (vector)
+			{
+				this [this .top] .translate (vector);
+			},
+			rotate: function (rotation)
+			{
+				this [this .top] .rotate (rotation);
+			},
+			scale: function (vector)
+			{
+				this [this .top] .scale (vector);
+			},
+		});
+	}
+
+	return MatrixStack;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
 define ('standard/Utility/ObjectCache',[],function ()
 {
 
@@ -54797,21 +54956,15 @@ define ('standard/Utility/ObjectCache',[],function ()
 				
 					this .last --;
 
-					object .set .apply (object, arguments);
-				}
-				else
-				{
-					var object = Object .create (Type .prototype);
-
-					Type .apply (object, arguments);
+	            return object;
 				}
 
-	         return object;
+				return new Type ();
 	      },
 			push: function (object)
 	      {
 	         this .last ++;
-	         this .stack [this .last] = object;
+	         return this .stack [this .last] = object;
 	      },
 			clear: function ()
 			{
@@ -54888,6 +55041,7 @@ define ('cobweb/Components/Lighting/DirectionalLight',[
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Utility/MatrixStack",
 	"standard/Utility/ObjectCache",
 ],
 function ($,
@@ -54905,34 +55059,38 @@ function ($,
           Vector4,
           Rotation4,
           Matrix4,
+          MatrixStack,
           ObjectCache)
 {
 
 
 	var DirectionalLights = ObjectCache (DirectionalLightContainer);
 	
-	function DirectionalLightContainer (browser, lightNode, groupNode, modelViewMatrix)
+	function DirectionalLightContainer ()
 	{
-		this .direction            = new Vector3 (0, 0, 0);
-		this .shadowBuffer         = null;
-		this .bbox                 = new Box3 ();
-		this .viewVolume           = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
-		this .viewport             = new Vector4 (0, 0, 0, 0);
-		this .projectionMatrix     = new Matrix4 ();
-		this .modelViewMatrix      = new Matrix4 ();
-		this .transformationMatrix = new Matrix4 ();
-		this .invLightSpaceMatrix  = new Matrix4 ();
-		this .shadowMatrix         = new Matrix4 ();
-		this .shadowMatrixArray    = new Float32Array (16);
-		this .rotation             = new Rotation4 ();
-		this .textureUnit          = 0;
-	
-		this .set (browser, lightNode, groupNode, modelViewMatrix);
+		this .direction                     = new Vector3 (0, 0, 0);
+		this .shadowBuffer                  = null;
+		this .bbox                          = new Box3 ();
+		this .viewVolume                    = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
+		this .viewport                      = new Vector4 (0, 0, 0, 0);
+		this .projectionMatrix              = new Matrix4 ();
+		this .modelViewMatrix               = new MatrixStack (Matrix4);
+		this .transformationMatrix          = new Matrix4 ();
+		this .invLightSpaceMatrix           = new Matrix4 ();
+		this .invLightSpaceProjectionMatrix = new Matrix4 ();
+		this .shadowMatrix                  = new Matrix4 ();
+		this .shadowMatrixArray             = new Float32Array (16);
+		this .rotation                      = new Rotation4 ();
+		this .textureUnit                   = 0;
 	}
 
 	DirectionalLightContainer .prototype =
 	{
 		constructor: DirectionalLightContainer,
+		getModelViewMatrix: function ()
+		{
+			return this .modelViewMatrix;
+		},
 		set: function (browser, lightNode, groupNode, modelViewMatrix)
 		{
 			var
@@ -54943,7 +55101,7 @@ function ($,
 			this .lightNode = lightNode;
 			this .groupNode = groupNode;
 
-			this .modelViewMatrix .assign (modelViewMatrix);
+			this .modelViewMatrix .pushMatrix (modelViewMatrix);
 
 			// Get shadow buffer from browser.
 
@@ -54981,8 +55139,8 @@ function ($,
 
 				var
 					lightNode            = this .lightNode,
-					cameraSpaceMatrix    = renderObject .getViewpoint () .getCameraSpaceMatrix (),
-					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
+					cameraSpaceMatrix    = renderObject .getCameraSpaceMatrix () .get (),
+					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix .get ()) .multRight (cameraSpaceMatrix),
 					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
 
 				invLightSpaceMatrix .rotate (this .rotation .setFromToVec (Vector3 .zAxis, this .direction .assign (lightNode .getDirection ()) .negate ()));
@@ -55013,7 +55171,7 @@ function ($,
 				if (! lightNode .getGlobal ())
 					invLightSpaceMatrix .multLeft (transformationMatrix .inverse ());
 
-				this .shadowMatrix .assign (cameraSpaceMatrix) .multRight (invLightSpaceMatrix) .multRight (projectionMatrix) .multRight (lightNode .getBiasMatrix ());
+				this .invLightSpaceProjectionMatrix .assign (invLightSpaceMatrix) .multRight (projectionMatrix) .multRight (lightNode .getBiasMatrix ());
 			}
 			catch (error)
 			{
@@ -55021,12 +55179,19 @@ function ($,
 				console .log (error);
 			}
 		},
+		setGlobalVariables: function (renderObject)
+		{
+			this .modelViewMatrix .get () .multDirMatrix (this .direction .assign (this .lightNode .getDirection ())) .normalize ();
+
+			this .shadowMatrix .assign (renderObject .getCameraSpaceMatrix () .get ()) .multRight (this .invLightSpaceProjectionMatrix);
+			this .shadowMatrixArray .set (this .shadowMatrix);
+		},
 		setShaderUniforms: function (gl, shaderObject, i)
 		{
 			var
 				lightNode   = this .lightNode,
 				color       = lightNode .getColor (),
-				direction   = this .modelViewMatrix .multDirMatrix (this .direction .assign (lightNode .getDirection ())) .normalize (),
+				direction   = this .direction,
 				shadowColor = lightNode .getShadowColor ();
 
 			gl .uniform1i (shaderObject .x3d_LightType [i],             1);
@@ -55037,8 +55202,6 @@ function ($,
 
 			if (this .textureUnit)
 			{
-				this .shadowMatrixArray .set (this .shadowMatrix);
-
 				gl .uniform1f        (shaderObject .x3d_ShadowIntensity [i],     lightNode .getShadowIntensity ());
 				gl .uniform1f        (shaderObject .x3d_ShadowDiffusion [i],     lightNode .getShadowDiffusion ());
 				gl .uniform3f        (shaderObject .x3d_ShadowColor [i],         shadowColor .r, shadowColor .g, shadowColor .b);
@@ -55056,6 +55219,7 @@ function ($,
 				this .browser .getCombinedTextureUnits () .push (this .textureUnit);
 
 			this .browser .pushShadowBuffer (this .shadowBuffer);
+			this .modelViewMatrix .clear ();
 
 			this .browser      = null;
 			this .lightNode    = null;
@@ -55192,7 +55356,8 @@ function (Fields,
 	{
 		var light = new DirectionalLight (executionContext);
 		light .setup ();
-		var headlight = light .getLights () .pop (executionContext .getBrowser (), light, null, Matrix4 .Identity);
+		var headlight = light .getLights () .pop ();
+		headlight .set (executionContext .getBrowser (), light, null, Matrix4 .Identity);
 		headlight .dispose = function () { };
 		return headlight;
 	};
@@ -55584,11 +55749,12 @@ function ($,
 			var
 				viewVolumes = renderObject .getViewVolumes (),
 				rectangle   = this .getRectangle (renderObject .getBrowser ()),
-				viewport    = viewVolumes .length ? viewVolumes [viewVolumes .length - 1] .getViewport () : rectangle;
+				viewport    = viewVolumes .length ? viewVolumes [viewVolumes .length - 1] .getViewport () : rectangle,
+				viewVolume  = ViewVolumes .pop ();
 
-			viewVolumes .push (ViewVolumes .pop (renderObject .getProjectionMatrix () .get (),
-			                                     viewport,
-			                                     rectangle));
+			viewVolume .set (renderObject .getProjectionMatrix () .get (), viewport, rectangle);
+
+			viewVolumes .push (viewVolume);
 		},
 		pop: function (renderObject)
 		{
@@ -56184,6 +56350,18 @@ function (ViewVolume,
 		getDepthTexture: function ()
 		{
 			return this .depthTexture;
+		},
+		readPixels: function ()
+		{
+			var
+				gl     = this .browser .getContext (),
+				array  = this .array,
+				width  = this .width,
+				height = this .height;
+
+			gl .readPixels (0, 0, width, height, gl .RGBA, gl .UNSIGNED_BYTE, array);
+
+			return array;
 		},
 		getDepth: function (projectionMatrix, viewport)
 		{
@@ -66779,115 +66957,6 @@ function (PointEmitter)
  ******************************************************************************/
 
 
-define ('standard/Math/Utility/MatrixStack',[
-	"jquery",
-],
-function ($)
-{
-
-
-	function MatrixStack (Type)
-	{
-		return $.extend ([ new Type () ],
-		{
-			top: 0,
-			set: function (matrix)
-			{
-				this [this .top] .assign (matrix);
-			},
-			get: function (matrix)
-			{
-				return this [this .top];
-			},
-			push: function ()
-			{
-				var top = ++ this .top;
-			
-				if (top < this .length)
-					this [top] .assign (this [top - 1]);
-				else
-					this [top] = this [top - 1] .copy ();
-			},
-			pushMatrix: function (matrix)
-			{
-				var top = ++ this .top;
-
-				if (top < this .length)
-					this [top] .assign (matrix);
-				else
-					this [top] = matrix .copy ();
-			},
-			pop: function ()
-			{
-				-- this .top;
-			},
-			identity: function ()
-			{
-				this [this .top] .identity ();
-			},
-			multLeft: function (matrix)
-			{
-				this [this .top] .multLeft (matrix);
-			},
-			scale: function (vector)
-			{
-				this [this .top] .scale (vector);
-			},
-		});
-	}
-
-	return MatrixStack;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
 define ('cobweb/Rendering/X3DRenderObject',[
 	"jquery",
 	"cobweb/Rendering/DepthBuffer",
@@ -66940,32 +67009,36 @@ function ($,
 
 	function X3DRenderObject (executionContext)
 	{
-		this .projectionMatrix     = new MatrixStack (Matrix4);
-		this .modelViewMatrix      = new MatrixStack (Matrix4);
-		this .viewVolumes          = [ ];
-		this .clipPlanes           = [ ];
-		this .globalLights         = [ ];
-		this .localLights          = [ ];
-		this .lights               = [ ];
-		this .localFogs            = [ ];
-		this .layouts              = [ ];
-		this .collisions           = [ ];
-		this .numOpaqueShapes      = 0;
-		this .numTransparentShapes = 0;
-		this .numCollisionShapes   = 0;
-		this .numDepthShapes       = 0;
-		this .opaqueShapes         = [ ];
-		this .transparentShapes    = [ ];
-		this .transparencySorter   = new QuickSort (this .transparentShapes, compareDistance);
-		this .collisionShapes      = [ ];
-		this .activeCollisions     = { };
-		this .depthShapes          = [ ];
-		this .invModelViewMatrix   = new Matrix4 ();
-		this .speed                = 0;
+		this .cameraSpaceMatrix        = new MatrixStack (Matrix4);
+		this .inverseCameraSpaceMatrix = new MatrixStack (Matrix4);
+		this .projectionMatrix         = new MatrixStack (Matrix4);
+		this .modelViewMatrix          = new MatrixStack (Matrix4);
+		this .viewVolumes              = [ ];
+		this .clipPlanes               = [ ];
+		this .globalLights             = [ ];
+		this .localLights              = [ ];
+		this .lights                   = [ ];
+		this .localFogs                = [ ];
+		this .layouts                  = [ ];
+		this .generatedCubeMapTextures = [ ];
+		this .shaders                  = [ ];
+		this .collisions               = [ ];
+		this .numOpaqueShapes          = 0;
+		this .numTransparentShapes     = 0;
+		this .numCollisionShapes       = 0;
+		this .numDepthShapes           = 0;
+		this .opaqueShapes             = [ ];
+		this .transparentShapes        = [ ];
+		this .transparencySorter       = new QuickSort (this .transparentShapes, compareDistance);
+		this .collisionShapes          = [ ];
+		this .activeCollisions         = { };
+		this .depthShapes              = [ ];
+		this .invModelViewMatrix       = new Matrix4 ();
+		this .speed                    = 0;
 
 		try
 		{
-			this .depthBuffer = new DepthBuffer (this .getBrowser (), DEPTH_BUFFER_WIDTH, DEPTH_BUFFER_HEIGHT);
+			this .depthBuffer = new DepthBuffer (executionContext .getBrowser (), DEPTH_BUFFER_WIDTH, DEPTH_BUFFER_HEIGHT);
 		}
 		catch (error)
 		{
@@ -66983,6 +67056,18 @@ function ($,
 		translation: new Vector3 (0, 0, 0),
 		initialize: function ()
 		{ },
+		isIndependent: function ()
+		{
+			return true;
+		},
+		getCameraSpaceMatrix: function ()
+		{
+			return this .cameraSpaceMatrix;
+		},
+		getInverseCameraSpaceMatrix: function ()
+		{
+			return this .inverseCameraSpaceMatrix;
+		},
 		getProjectionMatrix: function ()
 		{
 			return this .projectionMatrix;
@@ -67038,6 +67123,14 @@ function ($,
 		getParentLayout: function ()
 		{
 			return this .layouts .length ? this .layouts [this .layouts .length - 1] : null;
+		},
+		getGeneratedCubeMapTextures: function ()
+		{
+			return this .generatedCubeMapTextures;
+		},
+		getShaders: function ()
+		{
+			return this .shaders;
 		},
 		getCollisions: function ()
 		{
@@ -67176,12 +67269,14 @@ function ($,
 				}
 				case TraverseType .DISPLAY:
 				{
+					this .lightIndex           = 0;
 					this .numOpaqueShapes      = 0;
 					this .numTransparentShapes = 0;
 
 					this .setGlobalFog (this .getFog ());
+
 					group .traverse (type, this);
-					this .draw ();
+					this .draw (group);
 					break;
 				}
 			}
@@ -67287,19 +67382,23 @@ function ($,
 			{
 				if (shapeNode .isTransparent ())
 				{
-					if (this .numTransparentShapes === this .transparentShapes .length)
+					var num = this .numTransparentShapes;
+
+					if (num === this .transparentShapes .length)
 						this .transparentShapes .push (this .createShapeContext (true));
 
-					var context = this .transparentShapes [this .numTransparentShapes];
+					var context = this .transparentShapes [num];
 
 					++ this .numTransparentShapes;
 				}
 				else
 				{
-					if (this .numOpaqueShapes === this .opaqueShapes .length)
+					var num = this .numOpaqueShapes;
+
+					if (num === this .opaqueShapes .length)
 						this .opaqueShapes .push (this .createShapeContext (false));
 
-					var context = this .opaqueShapes [this .numOpaqueShapes];
+					var context = this .opaqueShapes [num];
 
 					++ this .numOpaqueShapes;
 				}
@@ -67580,22 +67679,43 @@ function ($,
 				context .shapeNode .depth (context, shaderNode);
 			}
 		},
-		draw: function ()
+		draw: function (group)
 		{
 			var
-				browser           = this .getBrowser (),
-				gl                = browser .getContext (),
-				viewport          = this .getViewVolume () .getViewport (),
-				opaqueShapes      = this .opaqueShapes,
-				transparentShapes = this .transparentShapes,
-				shaders           = browser .getShaders ();
+				browser                  = this .getBrowser (),
+				gl                       = browser .getContext (),
+				viewport                 = this .getViewVolume () .getViewport (),
+				shaders                  = this .shaders,
+				lights                   = this .lights,
+				generatedCubeMapTextures = this .generatedCubeMapTextures;
 
-			// Render shadow maps.
-		
-			var lights = this .lights;
+
+			// PREPARATIONS
+
+
+			if (this .isIndependent ())
+			{
+				// Render shadow maps.
+
+				for (var i = 0, length = lights .length; i < length; ++ i)
+					lights [i] .renderShadowMap (this);
+	
+				// Render GeneratedCubeMapTextures.
+			
+				for (var i = 0, length = generatedCubeMapTextures .length; i < length; ++ i)
+					generatedCubeMapTextures [i] .renderTexture (this, group);
+			}
+
+
+			// DRAW
+
+
+			// Set shadow matrix for all lights.
+
+			browser .getHeadlight () .setGlobalVariables (this);
 
 			for (var i = 0, length = lights .length; i < length; ++ i)
-				lights [i] .renderShadowMap (this);
+				lights [i] .setGlobalVariables (this);
 
 			// Configure viewport and background
 
@@ -67617,8 +67737,8 @@ function ($,
 
 			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
-			browser .getPointShader ()   .setGlobalUniforms (this, gl, projectionMatrixArray);
-			browser .getLineShader ()    .setGlobalUniforms (this, gl, projectionMatrixArray);
+			browser .getPointShader   () .setGlobalUniforms (this, gl, projectionMatrixArray);
+			browser .getLineShader    () .setGlobalUniforms (this, gl, projectionMatrixArray);
 			browser .getDefaultShader () .setGlobalUniforms (this, gl, projectionMatrixArray);
 
 			for (var id in shaders)
@@ -67630,10 +67750,10 @@ function ($,
 			gl .depthMask (true);
 			gl .disable (gl .BLEND);
 
-			for (var i = 0, length = this .numOpaqueShapes; i < length; ++ i)
+			for (var i = 0; i < this .numOpaqueShapes; ++ i)
 			{
 				var
-					context = opaqueShapes [i],
+					context = this .opaqueShapes [i],
 					scissor = context .scissor;
 
 				gl .scissor (scissor .x,
@@ -67651,10 +67771,10 @@ function ($,
 
 			this .transparencySorter .sort (0, this .numTransparentShapes);
 
-			for (var i = 0, length = this .numTransparentShapes; i < length; ++ i)
+			for (var i = 0; i < this .numTransparentShapes; ++ i)
 			{
 				var
-					context = transparentShapes [i],
+					context = this .transparentShapes [i],
 					scissor = context .scissor;
 
 				gl .scissor (scissor .x,
@@ -67668,7 +67788,13 @@ function ($,
 			gl .depthMask (true);
 			gl .disable (gl .BLEND);
 
-			// Recycle local lights.
+
+			// POST DRAW
+
+
+			gl .activeTexture (gl .TEXTURE0);
+
+			// Recycle clip planes.
 
 			var clipPlanes = this .getBrowser () .getClipPlanes ();
 
@@ -67677,31 +67803,32 @@ function ($,
 
 			clipPlanes .length = 0;
 
-			// Recycle global lights.
+			// Reset GeneratedCubeMapTextures.
 
-			var lights = this .getGlobalLights ();
+			generatedCubeMapTextures .length = 0;
 
-			for (var i = 0, length = lights .length; i < length; ++ i)
-			   lights [i] .dispose ();
 
-			lights .length = 0;
+			if (this .isIndependent ())
+			{
+				// Recycle global lights.
+	
+				var lights = this .globalLights;
+	
+				for (var i = 0, length = lights .length; i < length; ++ i)
+				   lights [i] .dispose ();
+	
+				// Recycle local lights.
+	
+				var lights = this .getBrowser () .getLocalLights ();
+	
+				for (var i = 0, length = lights .length; i < length; ++ i)
+				   lights [i] .dispose ();
+	
+				lights .length = 0;
+			}
 
-			// Recycle local lights.
-
-			var lights = this .getBrowser () .getLocalLights ();
-
-			for (var i = 0, length = lights .length; i < length; ++ i)
-			   lights [i] .dispose ();
-
-			lights .length = 0;
-
-			// Clear lights.
-
-			this .lights .length = 0;
-
-			// Reset.
-
-			gl .activeTexture (gl .TEXTURE0);
+			this .globalLights .length = 0;
+			this .lights       .length = 0;
 		},
 	};
 
@@ -68341,6 +68468,7 @@ define ('cobweb/Components/EnvironmentalEffects/X3DBackgroundNode',[
 	"cobweb/Components/Core/X3DBindableNode",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/ViewVolume",
 	"standard/Math/Numbers/Complex",
 	"standard/Math/Numbers/Vector3",
 	"standard/Math/Numbers/Rotation4",
@@ -68351,6 +68479,7 @@ function ($,
           X3DBindableNode,
           TraverseType,
           X3DConstants,
+          ViewVolume,
           Complex,
           Vector3,
           Rotation4,
@@ -68358,13 +68487,12 @@ function ($,
           Algorithm)
 {
 
-
 	var
-		SIZE        = 10000,
-		U_DIMENSION = 20,
-		point       = new Vector3 (0, 0, SIZE);
+		RADIUS      = 1,
+		SIZE        = Math .sqrt (RADIUS * RADIUS / 2),
+		U_DIMENSION = 20;
 
-	var s = Math .sqrt (Math .pow (2 * SIZE, 2) / 2) / 2;
+	var s = SIZE;
 
 	var texCoords = [
 		1, 1, 0, 1,
@@ -68437,6 +68565,10 @@ function ($,
 		y3 = new Complex (0, 0),
 		y4 = new Complex (0, 0);
 
+	var
+		farVector         = new Vector3 (0, 0, 0),
+		projectionMatrix  = new Matrix4 ();
+
 	function X3DBackgroundNode (executionContext)
 	{
 		X3DBindableNode .call (this, executionContext);
@@ -68458,6 +68590,7 @@ function ($,
 		constructor: X3DBackgroundNode,
 		modelViewMatrix: new Matrix4 (),
 		rotation: new Rotation4 (),
+		scale: new Vector3 (0, 0, 0),
 		textureMatrixArray: new Float32Array (new Matrix4 ()),
 		rectangleCount: 6,
 		initialize: function ()
@@ -68555,6 +68688,34 @@ function ($,
 		{
 			return this .hidden;
 		},
+		isTransparent: function ()
+		{
+			if (this .hidden)
+				return true;
+
+			if (this .transparency_ .getValue () === 0)
+				return false;
+
+			if (! this .frontTexture  || this .frontTexture  .transparent_ .getValue ())
+					return true;
+
+			if (! this .backTexture   || this .backTexture   .transparent_ .getValue ())
+					return true;
+
+			if (! this .leftTexture   || this .leftTexture   .transparent_ .getValue ())
+					return true;
+
+			if (! this .rightTexture  || this .rightTexture  .transparent_ .getValue ())
+					return true;
+
+			if (! this .topTexture    || this .topTexture    .transparent_ .getValue ())
+					return true;
+
+			if (! this .bottomTexture || this .bottomTexture .transparent_ .getValue ())
+					return true;
+
+			return false;
+		},
 		getColor: function (theta, color, angle)
 		{
 			var index = Algorithm .upperBound (angle, 0, angle .length, theta, Algorithm .less);
@@ -68601,8 +68762,6 @@ function ($,
 			{
 				// Build sphere
 
-				var radius = Math .sqrt (2 * Math .pow (SIZE, 2));
-			
 				if (this .skyColor_ .length > this .skyAngle_ .length)
 				{
 					var vAngle = [ ];
@@ -68618,7 +68777,7 @@ function ($,
 					if (vAngle [vAngle .length - 1] < vAngleMax)
 						vAngle .push (vAngleMax);
 
-					this .buildSphere (radius, vAngle, this .skyAngle_, this .skyColor_, alpha, false);
+					this .buildSphere (RADIUS, vAngle, this .skyAngle_, this .skyColor_, alpha, false);
 				}
 
 				if (this .groundColor_ .length > this .groundAngle_ .length)
@@ -68636,7 +68795,7 @@ function ($,
 					if (vAngle [vAngle .length - 1] > 0)
 						vAngle .push (0);
 
-					this .buildSphere (radius, vAngle, this .groundAngle_, this .groundColor_, alpha, true);
+					this .buildSphere (RADIUS, vAngle, this .groundAngle_, this .groundColor_, alpha, true);
 				}
 			}
 
@@ -68796,24 +68955,21 @@ function ($,
 			// Get background scale.
 
 			var
-				viewpoint       = renderObject .getViewpoint (),
-				scale           = viewpoint .getScreenScale (point, viewport),
+				farValue        = -ViewVolume .unProjectPointMatrix (0, 0, 0.99999, projectionMatrix .assign (renderObject .getProjectionMatrix () .get ()) .inverse (), viewport, farVector) .z,
 				rotation        = this .rotation,
 				modelViewMatrix = this .modelViewMatrix .assign (this .transformationMatrix);
 
-			scale .multiply (Math .max (viewport [2], viewport [3]));
-
 			// Get projection matrix.
 
-			this .projectionMatrixArray .set (viewpoint .getProjectionMatrixWithLimits (1, Math .max (2, 3 * SIZE * scale .z), viewport, true));	
+			this .projectionMatrixArray .set (renderObject .getProjectionMatrix () .get ());	
 
 			// Rotate and scale background.
 
-			modelViewMatrix .multRight (viewpoint .getInverseCameraSpaceMatrix ());
+			modelViewMatrix .multRight (renderObject .getInverseCameraSpaceMatrix () .get ());
 			modelViewMatrix .get (null, rotation);
 			modelViewMatrix .identity ();
-			modelViewMatrix .scale (scale);
 			modelViewMatrix .rotate (rotation);
+			modelViewMatrix .scale (this .scale .set (farValue, farValue, farValue));
 
 			this .modelViewMatrixArray .set (modelViewMatrix);
 
@@ -69301,7 +69457,7 @@ function ($,
 			shaderObject .textureTypeArray [i] = 2;
 			gl .activeTexture (gl .TEXTURE2);
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
-			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray);
+			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray); // TODO: Put this in X3DProgramableShaderObject
 		},
 	});
 
@@ -69992,30 +70148,36 @@ function ($,
 		},
 		traverse: function (type, renderObject)
 		{
-			this .getProjectionMatrix () .pushMatrix (this .getViewpoint () .getProjectionMatrix (this));
+			renderObject = renderObject || this;
+
+			var viewpoint = this .getViewpoint ();
+
+			this .getCameraSpaceMatrix        () .pushMatrix (viewpoint .getCameraSpaceMatrix ());
+			this .getInverseCameraSpaceMatrix () .pushMatrix (viewpoint .getInverseCameraSpaceMatrix ());
+			this .getProjectionMatrix         () .pushMatrix (viewpoint .getProjectionMatrix (this));
 
 			switch (type)
 			{
 				case TraverseType .POINTER:
-					this .pointer (type);
+					this .pointer (type, renderObject);
 					break;
 				case TraverseType .CAMERA:
-					this .camera (type);
+					this .camera (type, renderObject);
 					break;
 				case TraverseType .COLLISION:
-					this .collision (type);
+					this .collision (type, renderObject);
 					break;
 				case TraverseType .DEPTH:
-					this .display (type);
-					break;
 				case TraverseType .DISPLAY:
-					this .display (type);
+					this .display (type, renderObject);
 					break;
 			}
 
-			this .getProjectionMatrix () .pop ();
+			this .getProjectionMatrix         () .pop ();
+			this .getInverseCameraSpaceMatrix () .pop ();
+			this .getCameraSpaceMatrix        () .pop ();
 		},
-		pointer: function (type)
+		pointer: function (type, renderObject)
 		{
 			if (this .isPickable_ .getValue ())
 			{
@@ -70035,22 +70197,22 @@ function ($,
 				}
 
 				browser .setHitRay (this .getProjectionMatrix () .get (), viewport);
-				this .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+				this .getModelViewMatrix () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 
-				this .currentViewport .push (this);
-				this .groupNode .traverse (type, this);
-				this .currentViewport .pop (this);
+				this .currentViewport .push (renderObject);
+				this .groupNode .traverse (type, renderObject);
+				this .currentViewport .pop (renderObject);
 
 				this .getModelViewMatrix () .pop ()
 			}
 		},
-		camera: function (type)
+		camera: function (type, renderObject)
 		{
 			this .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
 	
-			this .currentViewport .push (this);
-			this .groupNode .traverse (type, this);
-			this .currentViewport .pop (this);
+			this .currentViewport .push (renderObject);
+			this .groupNode .traverse (type, renderObject);
+			this .currentViewport .pop (renderObject);
 
 			this .navigationInfos .update ();
 			this .backgrounds     .update ();
@@ -70061,7 +70223,7 @@ function ($,
 
 			this .getModelViewMatrix () .pop ()
 		},
-		collision: function (type)
+		collision: function (type, renderObject)
 		{
 			this .collisionTime = 0;
 
@@ -70074,25 +70236,25 @@ function ($,
 			Camera .ortho (-size, size, -size, size, -size, size, projectionMatrix);
 
 			this .getProjectionMatrix () .pushMatrix (projectionMatrix);
-			this .getModelViewMatrix  () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+			this .getModelViewMatrix  () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 	
 			// Render
-			this .currentViewport .push (this);
-			this .render (type, this .groupNode);
-			this .currentViewport .pop (this);
+			this .currentViewport .push (renderObject);
+			renderObject .render (type, this .groupNode);
+			this .currentViewport .pop (renderObject);
 
 			this .getModelViewMatrix  () .pop ()
 			this .getProjectionMatrix () .pop ()
 		},
-		display: function (type)
+		display: function (type, renderObject)
 		{
-			this .getNavigationInfo () .enable (type, this);
+			this .getNavigationInfo () .enable (type, renderObject);
 
-			this .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+			this .getModelViewMatrix () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 
-			this .currentViewport .push (this);
-			this .render (type, this .groupNode);
-			this .currentViewport .pop (this);
+			this .currentViewport .push (renderObject);
+			renderObject .render (type, this .groupNode);
+			this .currentViewport .pop (renderObject);
 
 			this .getModelViewMatrix () .pop ()
 		},
@@ -73585,7 +73747,6 @@ function ($,
 				{
 					case TraverseType .CAMERA:
 					case TraverseType .DEPTH:
-					case TraverseType .DRAW:
 						// No clone support for shadow, generated cube map texture, and bbox
 						modelViewMatrix .multLeft (this .matrix);
 						break;
@@ -75711,11 +75872,9 @@ function ($,
 
 	var ClipPlanes = ObjectCache (ClipPlaneContainer);
 
-	function ClipPlaneContainer (clipPlane, modelViewMatrix)
+	function ClipPlaneContainer ()
 	{
 		this .plane = new Plane3 (Vector3 .Zero, Vector3 .Zero);
-
-		this .set (clipPlane, modelViewMatrix);
 	}
 
 	ClipPlaneContainer .prototype =
@@ -75806,7 +75965,13 @@ function ($,
 		push: function (renderObject)
 		{
 			if (this .enabled)
-				renderObject .getClipPlanes () .push (ClipPlanes .pop (this, renderObject .getModelViewMatrix () .get ()));
+			{
+				var clipPlaneContainer = ClipPlanes .pop ();
+
+				clipPlaneContainer .set (this, renderObject .getModelViewMatrix () .get ());
+
+				renderObject .getClipPlanes () .push (clipPlaneContainer);
+			}
 		},
 		pop: function (renderObject)
 		{
@@ -77434,6 +77599,55 @@ function ($,
 	X3DEnvironmentTextureNode .prototype = $.extend (Object .create (X3DTextureNode .prototype),
 	{
 		constructor: X3DEnvironmentTextureNode,
+		initialize: function ()
+		{
+			X3DTextureNode .prototype .initialize .call (this);
+
+			var gl = this .getBrowser () .getContext ();
+
+			this .target = gl .TEXTURE_CUBE_MAP;
+
+			this .targets = [
+				gl .TEXTURE_CUBE_MAP_POSITIVE_Z, // Front
+				gl .TEXTURE_CUBE_MAP_NEGATIVE_Z, // Back
+				gl .TEXTURE_CUBE_MAP_NEGATIVE_X, // Left
+				gl .TEXTURE_CUBE_MAP_POSITIVE_X, // Right
+				gl .TEXTURE_CUBE_MAP_POSITIVE_Y, // Top
+				gl .TEXTURE_CUBE_MAP_NEGATIVE_Y, // Bottom
+			];
+		},
+		set_live__: function ()
+		{
+			if (this .isLive () .getValue ())
+			{
+				this .getBrowser () .getBrowserOptions () .TextureQuality_ .addInterest (this, "set_textureQuality__");
+	
+				this .set_textureQuality__ ();
+			}
+			else
+				this .getBrowser () .getBrowserOptions () .TextureQuality_ .removeInterest (this, "set_textureQuality__");
+		},
+		set_textureQuality__: function ()
+		{
+			var textureProperties = this .getBrowser () .getDefaultTextureProperties ();
+
+			this .updateTextureProperties (this .target, false, textureProperties, 128, 128, false, false, false);
+		},
+		getTarget: function ()
+		{
+			return this .target;
+		},
+		getTargets: function ()
+		{
+			return this .targets;
+		},
+		setShaderUniforms: function (gl, shaderObject, i)
+		{
+			shaderObject .textureTypeArray [i] = 4;
+			gl .activeTexture (gl .TEXTURE4);
+			gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
+			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray); // TODO: Put this in X3DProgramableShaderObject
+		},
 	});
 
 	return X3DEnvironmentTextureNode;
@@ -77550,25 +77764,16 @@ function ($,
 		{
 			X3DEnvironmentTextureNode .prototype .initialize .call (this);
 
+			// Upload default data.
+
 			var gl = this .getBrowser () .getContext ();
 
-			this .target = gl .TEXTURE_CUBE_MAP;
+			gl .bindTexture (this .getTarget (), this .getTexture ());
 
-			this .targets = [
-				gl .TEXTURE_CUBE_MAP_POSITIVE_Z, // Front
-				gl .TEXTURE_CUBE_MAP_NEGATIVE_Z, // Back
-				gl .TEXTURE_CUBE_MAP_NEGATIVE_X, // Left
-				gl .TEXTURE_CUBE_MAP_POSITIVE_X, // Right
-				gl .TEXTURE_CUBE_MAP_POSITIVE_Y, // Top
-				gl .TEXTURE_CUBE_MAP_NEGATIVE_Y, // Bottom
-			];
+			for (var i = 0; i < 6; ++ i)
+				gl .texImage2D  (this .getTargets () [i], 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
 
-			gl .bindTexture (this .target, this .getTexture ());
-
-			for (var i = 0, length = this .targets .length; i < length; ++ i)
-				gl .texImage2D  (this .targets [i], 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
-
-			//
+			// Initialize.
 
 			this .isLive () .addInterest (this, "set_live__");
 
@@ -77587,27 +77792,6 @@ function ($,
 			this .set_texture__ (this .bottom_, 5);
 
 			this .set_live__ ();
-		},
-		getTarget: function ()
-		{
-			return this .target;
-		},
-		set_live__: function ()
-		{
-			if (this .isLive () .getValue ())
-			{
-				this .getBrowser () .getBrowserOptions () .TextureQuality_ .addInterest (this, "set_textureQuality__");
-	
-				this .set_textureQuality__ ();
-			}
-			else
-				this .getBrowser () .getBrowserOptions () .TextureQuality_ .removeInterest (this, "set_textureQuality__");
-		},
-		set_textureQuality__: function ()
-		{
-			var textureProperties = this .getBrowser () .getDefaultTextureProperties ();
-
-			this .updateTextureProperties (this .target, false, textureProperties, 128, 128, false, false, false);
 		},
 		set_texture__: function (node, index)
 		{
@@ -77675,7 +77859,8 @@ function ($,
 		{
 			var gl = this .getBrowser () .getContext ();
 
-			gl .bindTexture (this .target, this .getTexture ());
+			gl .bindTexture (this .getTarget (), this .getTexture ());
+			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
 
 			if (this .isComplete ())
 			{
@@ -77694,10 +77879,10 @@ function ($,
 					gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
 
 					if (data instanceof Uint8Array)
-						gl .texImage2D (this .targets [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
+						gl .texImage2D (this .getTargets () [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
 					else
 					{
-						gl .texImage2D  (this .targets [i], 0, gl .RGBA, gl .RGBA, gl .UNSIGNED_BYTE, data);
+						gl .texImage2D  (this .getTargets () [i], 0, gl .RGBA, gl .RGBA, gl .UNSIGNED_BYTE, data);
 					}
 				}
 
@@ -77707,7 +77892,7 @@ function ($,
 			{
 				for (var i = 0; i < 6; ++ i)
 				{
-					gl .texImage2D (this .targets [i], 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+					gl .texImage2D (this .getTargets () [i], 0, gl .RGBA, 1, 1, false, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
 				}
 			}
 
@@ -77733,13 +77918,6 @@ function ($,
 
 			if (transparent !== this .transparent_ .getValue ())
 				this .transparent_ = transparent;
-		},
-		setShaderUniforms: function (gl, shaderObject, i)
-		{
-			shaderObject .textureTypeArray [i] = 4;
-			gl .activeTexture (gl .TEXTURE4);
-			gl .bindTexture (gl .TEXTURE_CUBE_MAP, this .getTexture ());
-			gl .uniform1iv (shaderObject .x3d_TextureType, shaderObject .textureTypeArray);
 		},
 	});
 
@@ -81569,6 +81747,450 @@ function ($,
 	});
 
 	return ForcePhysicsModel;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Rendering/DependentRenderer',[
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Rendering/X3DRenderObject",
+	"cobweb/Bits/TraverseType",
+],
+function (X3DBaseNode,
+          X3DRenderObject,
+          TraverseType)
+{
+
+
+	function DependentRenderer (executionContext)
+	{
+		X3DBaseNode     .call (this, executionContext);
+		X3DRenderObject .call (this, executionContext);
+
+		this .renderObject = null;
+	}
+
+	DependentRenderer .prototype = $.extend (Object .create (X3DBaseNode .prototype),
+		X3DRenderObject .prototype,
+	{
+		constructor: DependentRenderer,
+		initialize: function ()
+		{
+			X3DRenderObject .prototype .initialize .call (this);
+		},
+		isIndependent: function ()
+		{
+			return false;
+		},
+		setRenderer: function (value)
+		{
+			this .renderObject = value;
+		},
+		getBrowser: function ()
+		{
+			return this .renderObject .getBrowser ();
+		},
+		getLayer: function ()
+		{
+			return this .renderObject .getLayer ();
+		},
+		getBackground: function ()
+		{
+			return this .renderObject .getBackground ();
+		},
+		getFog: function ()
+		{
+			return this .renderObject .getFog ();
+		},
+		getNavigationInfo: function ()
+		{
+			return this .renderObject .getNavigationInfo ();
+		},
+		getViewpoint: function ()
+		{
+			return this .renderObject .getViewpoint ();
+		},
+		getLightContainer: function ()
+		{
+			return this .renderObject .getLights () [this .lightIndex ++];
+		},
+		render: function (type, group)
+		{
+			switch (type)
+			{
+				case TraverseType .COLLISION:
+				{
+					X3DRenderObject .prototype .render .call (this, type, group);
+					break;
+				}
+				case TraverseType .DEPTH:
+				{
+					X3DRenderObject .prototype .render .call (this, type, group);
+					break;
+				}
+				case TraverseType .DISPLAY:
+				{
+					this .lightIndex = 0;
+
+					X3DRenderObject .prototype .render .call (this, type, group);
+
+					var lights = this .renderObject .getLights ();
+
+					for (var i = 0, length = lights .length; i < length; ++ i)
+						lights [i] .getModelViewMatrix () .pop ();
+
+					break;
+				}
+			}
+		},
+	});
+
+	return DependentRenderer;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ("cobweb/Components/CubeMapTexturing/GeneratedCubeMapTexture",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode",
+	"cobweb/Rendering/DependentRenderer",
+	"cobweb/Rendering/DepthBuffer",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithm",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DEnvironmentTextureNode, 
+          DependentRenderer, 
+          DepthBuffer, 
+          X3DConstants,
+          TraverseType,
+          Camera,
+          ViewVolume,
+          Rotation4,
+          Vector3,
+          Vector4,
+          Matrix4,
+          Algorithm)
+{
+
+
+	// Rotations to negated normals of the texture cube.
+
+	var rotations = [
+		new Rotation4 (Vector3 .zAxis, new Vector3 ( 0,  0, -1)), // front
+		new Rotation4 (Vector3 .zAxis, new Vector3 ( 0,  0,  1)), // back
+		new Rotation4 (Vector3 .zAxis, new Vector3 ( 1,  0,  0)), // left
+		new Rotation4 (Vector3 .zAxis, new Vector3 (-1,  0,  0)), // right
+		new Rotation4 (Vector3 .zAxis, new Vector3 ( 0, -1,  0)), // top
+		new Rotation4 (Vector3 .zAxis, new Vector3 ( 0,  1,  0)), // bottom
+	];
+
+	// Negated scales of the texture cube.
+
+	var scales = [
+		new Vector3 (-1, -1,  1), // front
+		new Vector3 (-1, -1,  1), // back
+		new Vector3 (-1, -1,  1), // left
+		new Vector3 (-1, -1,  1), // right
+		new Vector3 ( 1,  1,  1), // top
+		new Vector3 ( 1,  1,  1), // bottom
+	];
+
+	var invCameraSpaceMatrix = new Matrix4 ();
+
+	function GeneratedCubeMapTexture (executionContext)
+	{
+		X3DEnvironmentTextureNode .call (this, executionContext);
+
+		this .addType (X3DConstants .GeneratedCubeMapTexture);
+
+		this .renderer             = new DependentRenderer (executionContext);
+		this .projectionMatrix     = new Matrix4 ();
+		this .transformationMatrix = new Matrix4 ();
+		this .viewVolume           = new ViewVolume ();
+	}
+
+	GeneratedCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),
+	{
+		constructor: GeneratedCubeMapTexture,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "update",            new Fields .SFString ("NONE")),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "size",              new Fields .SFInt32 (128)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "textureProperties", new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "GeneratedCubeMapTexture";
+		},
+		getComponentName: function ()
+		{
+			return "CubeMapTexturing";
+		},
+		getContainerField: function ()
+		{
+			return "texture";
+		},
+		initialize: function ()
+		{
+			X3DEnvironmentTextureNode .prototype .initialize .call (this);
+
+			this .renderer .setup ();
+
+			// Transfer 6 textures of size x size pixels.
+
+			var size = Algorithm .nextPowerOfTwo (this .size_ .getValue ());
+
+			if (size > 0)
+			{
+				size = Algorithm .nextPowerOfTwo (size);
+
+				// Upload default data.
+
+				var
+					gl          = this .getBrowser () .getContext (),
+               defaultData = new Uint8Array (size * size * 4);
+	
+				gl .bindTexture (this .getTarget (), this .getTexture ());
+	
+				for (var i = 0; i < 6; ++ i)
+					gl .texImage2D  (this .getTargets () [i], 0, gl .RGBA, size, size, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+
+				// Properties
+
+				this .viewport    = new Vector4 (0, 0, size, size);
+				this .frameBuffer = new DepthBuffer (this .getBrowser (), size, size);
+
+				// Apply texture properties.
+
+				this .isLive () .addInterest (this, "set_live__");
+
+				this .set_live__ ();
+			}
+		},
+		traverse: function (type, renderObject)
+		{
+			if (type !== TraverseType .DISPLAY)
+				return;
+		
+			if (! this .frameBuffer)
+				return;
+		
+			if (! renderObject .isIndependent ())
+				return;
+
+			renderObject .getGeneratedCubeMapTextures () .push (this);
+
+			this .transformationMatrix .assign (renderObject .getModelViewMatrix () .get ()) .multRight (renderObject .getCameraSpaceMatrix () .get ());
+		},
+		renderTexture: function (renderObject, group)
+		{
+			try
+			{
+				this .renderer .setRenderer (renderObject);
+
+				var
+					renderer           = this .renderer,
+					browser            = renderObject .getBrowser (),
+					layer              = renderObject .getLayer (),
+					gl                 = browser .getContext (),
+					background         = renderer .getBackground (),
+					navigationInfo     = renderer .getNavigationInfo (),
+					viewpoint          = renderer .getViewpoint (),
+					headlightContainer = browser .getHeadlight (),
+					headlight          = navigationInfo .headlight_ .getValue (),
+					nearValue          = navigationInfo .getNearValue (),
+					farValue           = navigationInfo .getFarValue (viewpoint),
+					projectionMatrix   = Camera .perspective (Algorithm .radians (90.0), nearValue, farValue, 1, 1, this .projectionMatrix),
+					transparent        = background .isTransparent ();
+
+				if (transparent !== this .transparent_ .getValue ())
+					this .transparent_ = transparent;
+
+				this .frameBuffer .bind ();
+
+				renderer .getViewVolumes      () .push (this .viewVolume .set (projectionMatrix, this .viewport, this .viewport));
+				renderer .getProjectionMatrix () .pushMatrix (projectionMatrix);
+
+				gl .bindTexture (this .getTarget (), this .getTexture ());
+				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, false);
+
+				for (var i = 0; i < 6; ++ i)
+				{
+					gl .clear (gl .COLOR_BUFFER_BIT); // Always clear, X3DBackground could be transparent!
+
+					// Setup inverse texture space matrix.
+
+					renderer .getCameraSpaceMatrix        () .pushMatrix (this .transformationMatrix);
+					renderer .getCameraSpaceMatrix        () .rotate (rotations [i]);
+					renderer .getCameraSpaceMatrix        () .scale (scales [i]);
+					renderer .getInverseCameraSpaceMatrix () .pushMatrix (invCameraSpaceMatrix .assign (renderer .getCameraSpaceMatrix () .get ()) .inverse ());
+
+					renderer .getModelViewMatrix () .pushMatrix (invCameraSpaceMatrix);
+
+					// Setup headlight if enabled.
+
+					if (headlight)
+					{
+						headlightContainer .getModelViewMatrix () .pushMatrix (invCameraSpaceMatrix);
+						headlightContainer .getModelViewMatrix () .multLeft (viewpoint .getCameraSpaceMatrix ());
+					}
+
+					// Render layer's children.
+
+					layer .traverse (TraverseType .DISPLAY, renderer);
+
+					// Pop matrices.
+
+					if (headlight)
+						headlightContainer .getModelViewMatrix () .pop ();
+
+					renderer .getModelViewMatrix          () .pop ();
+					renderer .getCameraSpaceMatrix        () .pop ();
+					renderer .getInverseCameraSpaceMatrix () .pop ();
+
+					// Transfer image.
+
+					var
+						data   = this .frameBuffer .readPixels (),
+						width  = this .frameBuffer .getWidth (),
+						height = this .frameBuffer .getHeight ();
+
+					gl .texImage2D (this .getTargets () [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
+				}
+
+				this .set_textureQuality__ ();
+
+				renderer .getProjectionMatrix () .pop ();
+				renderer .getViewVolumes      () .pop ();
+
+				this .frameBuffer .unbind ();
+
+				//this .setLoadState (X3DConstants .COMPLETE_STATE);
+
+				if (this .update_ .getValue () === "NEXT_FRAME_ONLY")
+				   this .update_ = "NONE";
+			}
+			catch (error)
+			{
+				console .log (error);
+
+				//this .setLoadState (X3DConstants .FAILED_STATE);
+			}
+		},
+	});
+
+	return GeneratedCubeMapTexture;
 });
 
 
@@ -92218,6 +92840,7 @@ define ('cobweb/Components/Lighting/PointLight',[
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Utility/MatrixStack",
 	"standard/Math/Algorithm",
 	"standard/Utility/ObjectCache",
 ],
@@ -92236,6 +92859,7 @@ function ($,
           Vector4,
           Rotation4,
           Matrix4,
+          MatrixStack,
           Algorithm,
           ObjectCache)
 {
@@ -92258,7 +92882,7 @@ function ($,
 
 	var PointLights = ObjectCache (PointLightContainer);
 	
-	function PointLightContainer (browser, lightNode, groupNode, modelViewMatrix)
+	function PointLightContainer ()
 	{
 		var
 			nearValue        = 0.125,
@@ -92271,7 +92895,7 @@ function ($,
 		this .viewVolume           = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
 		this .viewport             = new Vector4 (0, 0, 0, 0);
 		this .projectionMatrix     = projectionMatrix;
-		this .modelViewMatrix      = new Matrix4 ();
+		this .modelViewMatrix      = new MatrixStack (Matrix4);
 		this .transformationMatrix = new Matrix4 ();
 		this .invLightSpaceMatrix  = new Matrix4 ();
 		this .shadowMatrix         = new Matrix4 ();
@@ -92279,13 +92903,15 @@ function ($,
 		this .rotation             = new Rotation4 ();
 		this .rotationMatrix       = new Matrix4 ();
 		this .textureUnit          = 0;
-	
-		this .set (browser, lightNode, groupNode, modelViewMatrix);
 	}
 
 	PointLightContainer .prototype =
 	{
 		constructor: PointLightContainer,
+		getModelViewMatrix: function ()
+		{
+			return this .modelViewMatrix;
+		},
 	   set: function (browser, lightNode, groupNode, modelViewMatrix)
 	   {
 			var
@@ -92296,7 +92922,7 @@ function ($,
 			this .lightNode = lightNode;
 			this .groupNode = groupNode;
 
-			this .modelViewMatrix .assign (modelViewMatrix);
+			this .modelViewMatrix .pushMatrix (modelViewMatrix);
 
 			// Get shadow buffer from browser.
 
@@ -92334,8 +92960,8 @@ function ($,
 
 				var
 					lightNode            = this .lightNode,
-					cameraSpaceMatrix    = renderObject .getViewpoint () .getCameraSpaceMatrix (),
-					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
+					cameraSpaceMatrix    = renderObject .getCameraSpaceMatrix () .get (),
+					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix .get ()) .multRight (cameraSpaceMatrix),
 					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
 
 				invLightSpaceMatrix .translate (lightNode .getLocation ());
@@ -92377,14 +93003,19 @@ function ($,
 	
 				if (! lightNode .getGlobal ())
 					invLightSpaceMatrix .multLeft (transformationMatrix .inverse ());
-
-				this .shadowMatrix .assign (cameraSpaceMatrix) .multRight (invLightSpaceMatrix);
 			}
 			catch (error)
 			{
 				// Catch error from matrix inverse.
 				console .log (error);
 			}
+		},
+		setGlobalVariables: function (renderObject)
+		{
+			this .modelViewMatrix .get () .multVecMatrix (this .location .assign (this .lightNode .location_ .getValue ()));
+
+			this .shadowMatrix .assign (renderObject .getCameraSpaceMatrix () .get ()) .multRight (this .invLightSpaceMatrix);
+			this .shadowMatrixArray .set (this .shadowMatrix);
 		},
 		setShaderUniforms: function (gl, shaderObject, i)
 		{
@@ -92396,7 +93027,7 @@ function ($,
 				lightNode   = this .lightNode,
 				color       = lightNode .getColor (),
 				attenuation = lightNode .getAttenuation (),
-				location    = this .modelViewMatrix .multVecMatrix (this .location  .assign (lightNode .location_  .getValue ())),
+				location    = this .location,
 				shadowColor = lightNode .getShadowColor ();
 
 			gl .uniform1i (shaderObject .x3d_LightType [i],             2);
@@ -92409,8 +93040,6 @@ function ($,
 
 			if (this .textureUnit)
 			{
-				this .shadowMatrixArray .set (this .shadowMatrix);
-
 				gl .uniform1f        (shaderObject .x3d_ShadowIntensity [i],     lightNode .getShadowIntensity ());
 				gl .uniform1f        (shaderObject .x3d_ShadowDiffusion [i],     lightNode .getShadowDiffusion ());
 				gl .uniform3f        (shaderObject .x3d_ShadowColor [i],         shadowColor .r, shadowColor .g, shadowColor .b);
@@ -92428,6 +93057,7 @@ function ($,
 				this .browser .getCombinedTextureUnits () .push (this .textureUnit);
 
 			this .browser .pushShadowBuffer (this .shadowBuffer);
+			this .modelViewMatrix .clear ();
 
 			this .browser      = null;
 			this .lightNode    = null;
@@ -95112,7 +95742,6 @@ function ($,
 				{
 					case TraverseType .CAMERA:
 					case TraverseType .DEPTH: // ???
-					case TraverseType .DRAW:
 						// No clone support for shadow, generated cube map texture and bbox
 						modelViewMatrix .pushMatrix (this .screenMatrix);
 						break;
@@ -98336,6 +98965,7 @@ define ('cobweb/Components/Lighting/SpotLight',[
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Utility/MatrixStack",
 	"standard/Math/Algorithm",
 	"standard/Utility/ObjectCache",
 ],
@@ -98354,6 +98984,7 @@ function ($,
           Vector4,
           Rotation4,
           Matrix4,
+          MatrixStack,
           Algorithm,
           ObjectCache)
 {
@@ -98361,32 +98992,35 @@ function ($,
 
 	var SpotLights = ObjectCache (SpotLightContainer);
 	
-	function SpotLightContainer (browser, lightNode, groupNode, modelViewMatrix)
+	function SpotLightContainer ()
 	{
-		this .location             = new Vector3 (0, 0, 0);
-		this .direction            = new Vector3 (0, 0, 0);
-		this .renderShadow         = true; 
-		this .shadowBuffer         = null;
-		this .bbox                 = new Box3 ();
-		this .viewVolume           = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
-		this .viewport             = new Vector4 (0, 0, 0, 0);
-		this .projectionMatrix     = new Matrix4 ();
-		this .modelViewMatrix      = new Matrix4 ();
-		this .transformationMatrix = new Matrix4 ();
-		this .invLightSpaceMatrix  = new Matrix4 ();
-		this .shadowMatrix         = new Matrix4 ();
-		this .shadowMatrixArray    = new Float32Array (16);
-		this .rotation             = new Rotation4 ();
-		this .lightBBoxMin         = new Vector3 (0, 0, 0);
-		this .lightBBoxMax         = new Vector3 (0, 0, 0);
-		this .textureUnit          = 0;
-
-	   this .set (browser, lightNode, groupNode, modelViewMatrix);
+		this .location                      = new Vector3 (0, 0, 0);
+		this .direction                     = new Vector3 (0, 0, 0);
+		this .renderShadow                  = true; 
+		this .shadowBuffer                  = null;
+		this .bbox                          = new Box3 ();
+		this .viewVolume                    = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
+		this .viewport                      = new Vector4 (0, 0, 0, 0);
+		this .projectionMatrix              = new Matrix4 ();
+		this .modelViewMatrix               = new MatrixStack (Matrix4);
+		this .transformationMatrix          = new Matrix4 ();
+		this .invLightSpaceMatrix           = new Matrix4 ();
+		this .invLightSpaceProjectionMatrix = new Matrix4 ();
+		this .shadowMatrix                  = new Matrix4 ();
+		this .shadowMatrixArray             = new Float32Array (16);
+		this .rotation                      = new Rotation4 ();
+		this .lightBBoxMin                  = new Vector3 (0, 0, 0);
+		this .lightBBoxMax                  = new Vector3 (0, 0, 0);
+		this .textureUnit                   = 0;
 	}
 
 	SpotLightContainer .prototype =
 	{
 		constructor: SpotLightContainer,
+		getModelViewMatrix: function ()
+		{
+			return this .modelViewMatrix;
+		},
 	   set: function (browser, lightNode, groupNode, modelViewMatrix)
 	   {
 			var
@@ -98397,7 +99031,7 @@ function ($,
 			this .lightNode = lightNode;
 			this .groupNode = groupNode;
 
-			this .modelViewMatrix .assign (modelViewMatrix);
+			this .modelViewMatrix .pushMatrix (modelViewMatrix);
 
 			// Get shadow buffer from browser.
 
@@ -98435,8 +99069,8 @@ function ($,
 
 				var
 					lightNode            = this .lightNode,
-					cameraSpaceMatrix    = renderObject .getViewpoint () .getCameraSpaceMatrix (),
-					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
+					cameraSpaceMatrix    = renderObject .getCameraSpaceMatrix () .get (),
+					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix .get ()) .multRight (cameraSpaceMatrix),
 					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
 
 				invLightSpaceMatrix .translate (lightNode .getLocation ());
@@ -98472,7 +99106,7 @@ function ($,
 				if (! lightNode .getGlobal ())
 					invLightSpaceMatrix .multLeft (transformationMatrix .inverse ());
 
-				this .shadowMatrix .assign (cameraSpaceMatrix) .multRight (invLightSpaceMatrix) .multRight (projectionMatrix) .multRight (lightNode .getBiasMatrix ());
+				this .invLightSpaceProjectionMatrix .assign (invLightSpaceMatrix) .multRight (projectionMatrix) .multRight (lightNode .getBiasMatrix ());
 			}
 			catch (error)
 			{
@@ -98480,15 +99114,28 @@ function ($,
 				console .log (error);
 			}
 		},
+		setGlobalVariables: function (renderObject)
+		{
+			var 
+				lightNode       = this .lightNode,
+				modelViewMatrix = this .modelViewMatrix .get ();
+
+			modelViewMatrix .multVecMatrix (this .location  .assign (lightNode .location_  .getValue ()));
+			modelViewMatrix .multDirMatrix (this .direction .assign (lightNode .direction_ .getValue ())) .normalize ();
+
+			this .shadowMatrix .assign (renderObject .getCameraSpaceMatrix () .get ()) .multRight (this .invLightSpaceProjectionMatrix);
+			this .shadowMatrixArray .set (this .shadowMatrix);
+		},
 		setShaderUniforms: function (gl, shaderObject, i)
 		{
 			var 
-				lightNode   = this .lightNode,
-				color       = lightNode .getColor (),
-				attenuation = lightNode .getAttenuation (),
-				location    = this .modelViewMatrix .multVecMatrix (this .location  .assign (lightNode .location_  .getValue ())),
-				direction   = this .modelViewMatrix .multDirMatrix (this .direction .assign (lightNode .direction_ .getValue ())) .normalize (),
-				shadowColor = lightNode .getShadowColor ();
+				lightNode       = this .lightNode,
+				color           = lightNode .getColor (),
+				attenuation     = lightNode .getAttenuation (),
+				modelViewMatrix = this .modelViewMatrix .get (),
+				location        = this .location,
+				direction       = this .direction,
+				shadowColor     = lightNode .getShadowColor ();
 
 			gl .uniform1i (shaderObject .x3d_LightType [i],             3);
 			gl .uniform3f (shaderObject .x3d_LightColor [i],            color .r, color .g, color .b);
@@ -98522,6 +99169,7 @@ function ($,
 				this .browser .getCombinedTextureUnits () .push (this .textureUnit);
 
 			this .browser .pushShadowBuffer (this .shadowBuffer);
+			this .modelViewMatrix .clear ();
 
 			this .browser      = null;
 			this .lightNode    = null;
@@ -102911,7 +103559,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/EnvironmentalEffects/FogCoordinate",
 	"cobweb/Components/Text/FontStyle", // VRML
 	"cobweb/Components/ParticleSystems/ForcePhysicsModel",
-	//"cobweb/Components/CubeMapTexturing/GeneratedCubeMapTexture",
+	"cobweb/Components/CubeMapTexturing/GeneratedCubeMapTexture",
 	"cobweb/Components/Geospatial/GeoCoordinate",
 	"cobweb/Components/Geospatial/GeoElevationGrid",
 	"cobweb/Components/Geospatial/GeoLOD",
@@ -103133,7 +103781,7 @@ function (Anchor,
           //FogCoordinate,
           FontStyle,
           ForcePhysicsModel,
-          //GeneratedCubeMapTexture,
+          GeneratedCubeMapTexture,
           GeoCoordinate,
           GeoElevationGrid,
           GeoLOD,
@@ -103362,7 +104010,7 @@ function (Anchor,
 		//FogCoordinate:                FogCoordinate,
 		FontStyle:                    FontStyle,
 		ForcePhysicsModel:            ForcePhysicsModel,
-		//GeneratedCubeMapTexture:      GeneratedCubeMapTexture,
+		GeneratedCubeMapTexture:      GeneratedCubeMapTexture,
 		GeoCoordinate:                GeoCoordinate,
 		GeoElevationGrid:             GeoElevationGrid,
 		GeoLOD:                       GeoLOD,
