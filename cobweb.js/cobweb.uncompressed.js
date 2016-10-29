@@ -31813,7 +31813,6 @@ define ('cobweb/Bits/TraverseType',[],function ()
 		COLLISION: i ++,
 		DEPTH:     i ++,
 		DISPLAY:   i ++,
-		DRAW:      i ++,
 	};
 
 	Object .preventExtensions (TraverseType);
@@ -33983,6 +33982,9 @@ function ($,
 				if (this .id (name))
 				{
 					var node = this .getExecutionContext () .createProto (name, false);
+
+					//AP: attach node to DOM element for access from DOM.
+					element .x3d = node;
 
 					this .DEF (element, node);
 					this .addNode (element, node);
