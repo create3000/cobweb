@@ -19449,6 +19449,12 @@ function ($,
 		_private: false,
 		_live: true,
 		_initialized: false,
+		setExecutionContext: function (value)
+		{
+			// Currently only usefull for Sene.
+
+			this ._executionContext = value;
+		},
 		getScene: function ()
 		{
 			var executionContext = this ._executionContext;
@@ -23677,239 +23683,6 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Networking/X3DUrlObject',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DConstants)
-{
-
-
-	function X3DUrlObject (executionContext)
-	{
-		this .addType (X3DConstants .X3DUrlObject);
-		
-		this .addChildObjects ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
-	}
-
-	X3DUrlObject .prototype =
-	{
-		constructor: X3DUrlObject,
-		initialize: function ()
-		{
-		},
-		setLoadState: function (value, notify)
-		{
-			if (this .hasOwnProperty ("loadId"))
-			{
-				this .getBrowser () .removeLoadCount (this .loadId);
-				
-				delete this .loadId;
-			}
-
-			if (notify !== false && value === X3DConstants .IN_PROGRESS_STATE)
-				this .loadId = this .getBrowser () .addLoadCount (this);
-
-			this .loadState_ = value;
-		},
-		checkLoadState: function ()
-		{
-			return this .loadState_ .getValue ();
-		},
-	};
-
-	return X3DUrlObject;
-});
-
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Components/Core/X3DNode',[
-	"jquery",
-	"cobweb/Basic/X3DBaseNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          X3DBaseNode,
-          X3DConstants)
-{
-
-
-	function X3DNode (executionContext)
-	{
-		X3DBaseNode .call (this, executionContext);
-
-		this .addType (X3DConstants .X3DNode);
-	}
-
-	X3DNode .prototype = $.extend (Object .create (X3DBaseNode .prototype),
-	{
-		constructor: X3DNode,
-		getLayers: function ()
-		{
-			return this .findParents (X3DConstants .X3DLayerNode, this);
-		},
-		findParents: function (type, object)
-		{
-			var
-				parents = object .getParents (),
-				array   = [ ],
-				seen    = { };
-	
-			for (var id in parents)
-				this .findParentsImpl (type, parents [id], array, seen);
-	
-			return array;
-		},
-		findParentsImpl: function (type, object, array, seen)
-		{
-			if (seen .hasOwnProperty (object .getId ()))
-				return;
-
-			seen [object .getId ()] = true;
-
-			if (object instanceof X3DBaseNode)
-			{
-				var types = object .getType ();
-
-				for (var t = types .length - 1; t >= 0; -- t)
-				{
-					switch (types [t])
-					{
-						case X3DConstants .X3DProtoDeclarationNode:
-						case X3DConstants .X3DNode:
-							break;
-						case X3DConstants .LayerSet:
-						case X3DConstants .X3DBaseNode:
-						case X3DConstants .X3DMetadataObject:
-						case X3DConstants .X3DProgrammableShaderObject:
-						case X3DConstants .X3DScriptNode:
-							return;
-						default:
-							continue;
-					}
-		
-					break;
-				}
-
-				if (object .getType () .indexOf (type) !== -1)
-				{
-					array .push (object);
-					return;
-				}
-			}
-
-			var parents = object .getParents ();
-
-			for (var id in parents)
-				this .findParentsImpl (type, parents [id], array, seen);
-		},
-	});
-
-	return X3DNode;
-});
-
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
 define ('cobweb/Configuration/X3DInfoArray',[
 	"jquery",
 ],
@@ -25595,8 +25368,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("rootNodes", new Fields .MFNode (),
-                             "loadCount", new Fields .SFInt32 ());
+		this .addChildObjects ("rootNodes", new Fields .MFNode ());
 
 		this .specificationVersion = "3.3";
 		this .encoding             = "SCRIPTED";
@@ -25604,6 +25376,7 @@ function ($,
 		this .components           = new ComponentInfoArray (this .getBrowser ());
 		this .url                  = new URI (window .location);
 		this .uninitializedNodes   = [ ];
+		this .uninitializedNodes2  = [ ];
 		this .namedNodes           = { };
 		this .importedNodes        = { };
 		this .protos               = new ProtoDeclarationArray ();
@@ -25621,12 +25394,22 @@ function ($,
 
 			// Setup nodes
 
-			var uninitializedNodes = this .uninitializedNodes;
+			while (this .uninitializedNodes .length)
+			{
+				var uninitializedNodes = this .uninitializedNodes;
 
-			for (var i = 0, length = uninitializedNodes .length; i < length; ++ i)
-				uninitializedNodes [i] .setup ();
+				this .uninitializedNodes  = this .uninitializedNodes2;
+				this .uninitializedNodes2 = uninitializedNodes;
+	
+				for (var i = 0, length = uninitializedNodes .length; i < length; ++ i)
+					uninitializedNodes [i] .setup ();
 
-			uninitializedNodes .length = 0;
+				uninitializedNodes .length = 0;
+			}
+		},
+		isMasterContext: function ()
+		{
+			return false;
 		},
 		isRootContext: function ()
 		{
@@ -25948,14 +25731,6 @@ function ($,
 					throw new Error ("Viewpoint named '" + name + "' not found.");
 			}
 		},
-		addLoadCount: function (node)
-		{
-			this .loadCount_ = this .loadCount_ .getValue () + 1;
-		},
-		removeLoadCount: function (node)
-		{
-			this .loadCount_ = this .loadCount_ .getValue () - 1;
-		},
 	});
 
 	Object .defineProperty (X3DExecutionContext .prototype, "worldURL",
@@ -25975,6 +25750,810 @@ function ($,
 
 	return X3DExecutionContext;
 });
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Configuration/UnitInfo',[
+	"jquery",
+],
+function ($)
+{
+
+
+	function UnitInfo (category, name, conversionFactor)
+	{
+		this .category         = category;
+		this .name             = name;
+		this .conversionFactor = conversionFactor;
+	}
+
+	$.extend (UnitInfo .prototype,
+	{
+		constructor: UnitInfo,
+	});
+
+	Object .defineProperty (UnitInfo .prototype, "conversion_factor",
+	{
+		get: function () { return this .conversionFactor; },
+		enumerable: true,
+		configurable: false
+	});
+
+	return UnitInfo;
+});
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Configuration/UnitInfoArray',[
+	"jquery",
+	"cobweb/Configuration/X3DInfoArray",
+],
+function ($, X3DInfoArray)
+{
+
+
+	function UnitInfoArray ()
+	{
+		return X3DInfoArray .call (this);
+	}
+
+	UnitInfoArray .prototype = $.extend (Object .create (X3DInfoArray .prototype),
+	{
+		constructor: UnitInfoArray,
+	});
+
+	return UnitInfoArray;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Execution/ExportedNode',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Base/X3DObject",
+],
+function ($,
+          Fields,
+          X3DObject)
+{
+
+
+	function ExportedNode (exportedName, localNode)
+	{
+		X3DObject .call (this);
+
+		this .exportedName = exportedName;
+		this .localNode    = localNode;
+	}
+
+	ExportedNode .prototype = $.extend (Object .create (X3DObject .prototype),
+	{
+		constructor: ExportedNode,
+		getExportedName: function ()
+		{
+			return this .exportedName;
+		},
+		getLocalNode: function ()
+		{
+			return new Fields .SFNode (this .localNode);
+		},
+	});
+
+	return ExportedNode;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Execution/X3DScene',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Execution/X3DExecutionContext",
+	"cobweb/Configuration/UnitInfo",
+	"cobweb/Configuration/UnitInfoArray",
+	"cobweb/Execution/ExportedNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DExecutionContext,
+          UnitInfo,
+          UnitInfoArray,
+          ExportedNode,
+          X3DConstants)
+{
+
+
+	function X3DScene (executionContext)
+	{
+		X3DExecutionContext .call (this, executionContext);
+
+		this .getRootNodes () .setAccessType (X3DConstants .inputOutput);
+
+		this .units = new UnitInfoArray ();
+
+		this .units .add ("angle",  new UnitInfo ("angle",  "radian",   1));
+		this .units .add ("force",  new UnitInfo ("force",  "newton",   1));
+		this .units .add ("length", new UnitInfo ("length", "metre",    1));
+		this .units .add ("mass",   new UnitInfo ("mass",   "kilogram", 1));
+
+		this .metaData      = { };
+		this .exportedNodes = { };
+
+		this .setLive (false);
+	}
+
+	X3DScene .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
+	{
+		constructor: X3DScene,
+		isMasterContext: function ()
+		{
+			return this === this .getExecutionContext ();
+		},
+		isRootContext: function ()
+		{
+			return true;
+		},
+		getScene: function ()
+		{
+			if (this .isMasterContext ())
+				return this;
+
+			return this .getExecutionContext () .getScene ();
+		},
+		updateUnit: function (category, name, conversionFactor)
+		{
+			var unit = this .units .get (category);
+
+			if (! unit)
+				return;
+
+			unit .name             = name;
+			unit .conversionFactor = conversionFactor;
+		},
+		setMetaData: function (name, value)
+		{
+			if (! name .length)
+				return;
+
+			this .metaData [name] = String (value);
+		},
+		getMetaData: function (name)
+		{
+			return this .metaData [name];
+		},
+		addExportedNode: function (exportedName, node)
+		{
+			if (this .exportedNodes [exportedName])
+				throw new Error ("Couldn't add exported node: exported name '" + exportedName + "' already in use.");
+
+			this .updateExportedNode (exportedName, node);
+		},
+		updateExportedNode: function (exportedName, node)
+		{
+			exportedName = String (exportedName);
+
+			if (exportedName .length === 0)
+				throw new Error ("Couldn't update exported node: node exported name is empty.");
+
+			if (! (node instanceof Fields .SFNode))
+				throw new Error ("Couldn't update exported node: node must be of type SFNode.");
+
+			if (! node .getValue ())
+				throw new Error ("Couldn't update exported node: node IS NULL.");
+
+			//if (node .getValue () .getExecutionContext () !== this)
+			//	throw new Error ("Couldn't update exported node: node does not belong to this execution context.");
+
+			this .exportedNodes [exportedName] = new ExportedNode (exportedName, node .getValue ());
+		},
+		removeExportedNode: function (exportedName)
+		{
+			delete this .exportedNodes [exportedName];
+		},
+		getExportedNode: function (exportedName)
+		{
+			var exportedNode = this .exportedNodes [exportedName];
+
+			if (exportedNode)
+				return exportedNode .getLocalNode ();	
+
+			throw new Error ("Exported node '" + exportedName + "' not found.");
+		},
+		addRootNode: function (node)
+		{
+			if (! (node instanceof Fields .SFNode || node === null))
+				throw new Error ("Couldn't add root node: node must be of type SFNode.");
+
+			//if (node && node .getValue () && node .getValue () .getExecutionContext () !== this)
+			//	throw new Error ("Couldn't add root node: node does not belong to this execution context.");
+
+			this .getRootNodes () .push (node);
+		},
+		removeRootNode: function (node)
+		{
+			if (! (node instanceof Fields .SFNode || node === null))
+				throw new Error ("Couldn't remove root node: node must be of type SFNode.");
+
+			var
+				rootNodes = this .getRootNodes (),
+				length    = rootNodes .length;
+
+			rootNodes .erase (rootNodes .remove (0, length, node), length);
+		},
+		setRootNodes: function (value)
+		{
+			this .getRootNodes () .setValue (value);
+		},
+	});
+
+	return X3DScene;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Execution/Scene',[
+	"cobweb/Fields",
+	"cobweb/Execution/X3DScene",
+],
+function (Fields,
+          X3DScene)
+{
+
+
+	function Scene (browser)
+	{
+		this ._browser = browser;
+
+		X3DScene .call (this, this);
+
+		this .addChildObjects ("initLoadCount", new Fields .SFInt32 (),  // Pre load count, must be zero before the scene can be passed to the requester.
+                             "loadCount",     new Fields .SFInt32 ()); // Load count of all X3DUrlObjects.
+
+		this .loadingObjects = { };
+	}
+
+	Scene .prototype = $.extend (Object .create (X3DScene .prototype),
+	{
+		constructor: Scene,
+		getTypeName: function ()
+		{
+			return "Scene";
+		},
+		setExecutionContext: function (value)
+		{
+			if (! this .isMasterContext ())
+			{
+				var
+					scene          = this .getScene (),
+					loadingObjects = this .loadingObjects;
+
+				for (var id in loadingObjects)
+					scene .removeLoadCount (loadingObjects [id]);
+			}
+
+			X3DScene .prototype .setExecutionContext .call (this, value);
+
+			if (! this .isMasterContext ())
+			{
+				var
+					scene          = this .getScene (),
+					loadingObjects = this .loadingObjects;
+
+				for (var id in loadingObjects)
+					scene .addLoadCount (loadingObjects [id]);
+			}
+		},
+		addInitLoadCount: function (node)
+		{
+			this .initLoadCount_ = this .initLoadCount_ .getValue () + 1;
+		},
+		removeInitLoadCount: function (node)
+		{
+			this .initLoadCount_ = this .initLoadCount_ .getValue () - 1;
+		},
+		addLoadCount: function (node)
+		{
+			var id = node .getId ();
+
+			if (this .loadingObjects .hasOwnProperty (id))
+				return;
+
+			this .loadingObjects [id] = node;
+
+			this .loadCount_ = this .loadCount_ .getValue () + 1;
+
+			if (this === this .getBrowser () .getExecutionContext ())
+				this .getBrowser () .addLoadCount (node);
+
+			if (! this .isMasterContext ())
+				this .getScene () .addLoadCount (node);
+		},
+		removeLoadCount: function (node)
+		{
+			var id = node .getId ();
+
+			if (! this .loadingObjects .hasOwnProperty (id))
+				return;
+
+			delete this .loadingObjects [id];
+
+			this .loadCount_ = this .loadCount_ .getValue () - 1;
+
+			if (this === this .getBrowser () .getExecutionContext ())
+				this .getBrowser () .removeLoadCount (node);
+
+			if (! this .isMasterContext ())
+				this .getScene () .removeLoadCount (node);
+		},
+		getLoadingObjects: function ()
+		{
+			return this .loadingObjects;
+		},
+	});
+
+	return Scene;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Networking/X3DUrlObject',[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          Fields,
+          X3DConstants)
+{
+
+
+	function X3DUrlObject (executionContext)
+	{
+		this .addType (X3DConstants .X3DUrlObject);
+		
+		this .addChildObjects ("loadState", new Fields .SFInt32 (X3DConstants .NOT_STARTED_STATE));
+	}
+
+	X3DUrlObject .prototype =
+	{
+		constructor: X3DUrlObject,
+		initialize: function ()
+		{ },
+		setLoadState: function (value, notify)
+		{
+			this .loadState_ = value;
+
+			this .getScene () .removeLoadCount (this);
+
+			if (notify !== false && value === X3DConstants .IN_PROGRESS_STATE)
+				this .getScene () .addLoadCount (this);
+		},
+		checkLoadState: function ()
+		{
+			return this .loadState_ .getValue ();
+		},
+	};
+
+	return X3DUrlObject;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Components/Core/X3DNode',[
+	"jquery",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Bits/X3DConstants",
+],
+function ($,
+          X3DBaseNode,
+          X3DConstants)
+{
+
+
+	function X3DNode (executionContext)
+	{
+		X3DBaseNode .call (this, executionContext);
+
+		this .addType (X3DConstants .X3DNode);
+	}
+
+	X3DNode .prototype = $.extend (Object .create (X3DBaseNode .prototype),
+	{
+		constructor: X3DNode,
+		getLayers: function ()
+		{
+			return this .findParents (X3DConstants .X3DLayerNode, this);
+		},
+		findParents: function (type, object)
+		{
+			var
+				parents = object .getParents (),
+				array   = [ ],
+				seen    = { };
+	
+			for (var id in parents)
+				this .findParentsImpl (type, parents [id], array, seen);
+	
+			return array;
+		},
+		findParentsImpl: function (type, object, array, seen)
+		{
+			if (seen .hasOwnProperty (object .getId ()))
+				return;
+
+			seen [object .getId ()] = true;
+
+			if (object instanceof X3DBaseNode)
+			{
+				var types = object .getType ();
+
+				for (var t = types .length - 1; t >= 0; -- t)
+				{
+					switch (types [t])
+					{
+						case X3DConstants .X3DProtoDeclarationNode:
+						case X3DConstants .X3DNode:
+							break;
+						case X3DConstants .LayerSet:
+						case X3DConstants .X3DBaseNode:
+						case X3DConstants .X3DMetadataObject:
+						case X3DConstants .X3DProgrammableShaderObject:
+						case X3DConstants .X3DScriptNode:
+							return;
+						default:
+							continue;
+					}
+		
+					break;
+				}
+
+				if (object .getType () .indexOf (type) !== -1)
+				{
+					array .push (object);
+					return;
+				}
+			}
+
+			var parents = object .getParents ();
+
+			for (var id in parents)
+				this .findParentsImpl (type, parents [id], array, seen);
+		},
+	});
+
+	return X3DNode;
+});
+
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
@@ -26055,7 +26634,7 @@ function ($,
 		this .addType (X3DConstants .X3DPrototypeInstance);
 		this .getRootNodes () .setAccessType (X3DConstants .initializeOnly);
 
-		this .getScene () .addLoadCount (this);
+		this .getScene () .addInitLoadCount (this);
 
 		if (protoNode .isExternProto)
 			protoNode .requestAsyncLoad (this .construct .bind (this));
@@ -26086,7 +26665,7 @@ function ($,
 		},
 		construct: function ()
 		{
-			this .getScene () .removeLoadCount (this);
+			this .getScene () .removeInitLoadCount (this);
 
 			var proto = this .protoNode .getProtoDeclaration ();
 
@@ -26476,7 +27055,7 @@ function ($,
 				return;
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
-			this .getScene () .addLoadCount (this);
+			this .getScene () .addInitLoadCount (this);
 			
 			// Don't create scene cache, as of possible default nodes and complete scenes.
 
@@ -26486,7 +27065,7 @@ function ($,
 		},
 		setInternalSceneAsync: function (value)
 		{
-			this .getScene () .removeLoadCount (this);
+			this .getScene () .removeInitLoadCount (this);
 		
 			if (value)
 				this .setInternalScene (value);
@@ -29767,6 +30346,7 @@ define ('cobweb/Browser/Core/X3DCoreContext',[
 	"cobweb/Browser/Core/Notification",
 	"cobweb/Browser/Core/BrowserTimings",
 	"cobweb/Browser/Core/ContextMenu",
+	"cobweb/Execution/Scene",
 	"cobweb/Parser/Parser",
 	"lib/DataStorage",
 ],
@@ -29777,6 +30357,7 @@ function (Fields,
           Notification,
           BrowserTimings,
           ContextMenu,
+          Scene,
           Parser,
           DataStorage)
 {
@@ -29832,20 +30413,31 @@ function (Fields,
 		this .canvas  = $("<canvas></canvas>") .prependTo (surface);
 		this .context = getContext (this .canvas [0]);
 
-		this .browserOptions      = new BrowserOptions (this);
-		this .browserProperties   = new BrowserProperties (this);
-		this .renderingProperties = new RenderingProperties (this);
-		this .notification        = new Notification (this);
-		this .browserTimings      = new BrowserTimings (this);
-		this .contextMenu         = new ContextMenu (this);
-		this .dataStorage         = new DataStorage ("X3DBrowser(" + this .number + ").");
-		this .mobile              = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
+		this .privateScene = new Scene (this); // Scene for default nodes.
+
+		this .browserOptions      = new BrowserOptions      (this .getPrivateScene ());
+		this .browserProperties   = new BrowserProperties   (this .getPrivateScene ());
+		this .renderingProperties = new RenderingProperties (this .getPrivateScene ());
+		this .notification        = new Notification        (this .getPrivateScene ());
+		this .browserTimings      = new BrowserTimings      (this .getPrivateScene ());
+		this .contextMenu         = new ContextMenu         (this .getPrivateScene ());
+
+		this .dataStorage = new DataStorage ("X3DBrowser(" + this .number + ").");
+		this .mobile      = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
 	}
 
 	X3DCoreContext .prototype =
 	{
 		initialize: function ()
 		{
+			// Scene for default nodes.
+
+			this .privateScene .setPrivate (true);
+			this .privateScene .setLive (true);
+			this .privateScene .setup ();
+
+			// Setup browser nodes.
+
 			this .browserOptions      .setup ()
 			this .browserProperties   .setup ()
 			this .renderingProperties .setup ();
@@ -29968,6 +30560,10 @@ function (Fields,
 				if (url .length)
 					this .loadURL (url, parameter);
 			}
+		},
+		getPrivateScene: function ()
+		{
+			return this .privateScene;
 		},
 	};
 
@@ -31013,8 +31609,6 @@ function (Fields,
 {
 
 	
-	var loadCountId = 0;
-
 	function getBaseURI (element)
 	{
 		var baseURI = element .baseURI;
@@ -31032,12 +31626,11 @@ function (Fields,
 
 		this .addChildObjects ("loadCount", new Fields .SFInt32 ());
 
-		this .loadSensor     = new LoadSensor (this);
+		this .loadSensor     = new LoadSensor (this .getPrivateScene ());
 		this .loadingTotal   = 0;
 		this .loadingObjects = { };
 		this .location       = getBaseURI (this .getElement () [0]);
-		this .defaultScene   = this .createScene ();
-		this .privateScene   = this .createScene ();
+		this .defaultScene   = this .createScene (); // Inline node's empty scene.
 		this .browserLoading = false;
 	}
 
@@ -31047,12 +31640,11 @@ function (Fields,
 		{
 			this .loadSensor .setup ();
 
-			this .defaultScene .setup ();
-			this .defaultScene .setLive (true);
+			// Inline node's empty scene.
 
-			this .privateScene .setPrivate (true);
-			this .privateScene .setup ();
-			this .privateScene .setLive (true);
+			this .defaultScene .setPrivate (true);
+			this .defaultScene .setLive (true);
+			this .defaultScene .setup ();
 		},
 		getProviderUrl: function ()
 		{
@@ -31073,10 +31665,6 @@ function (Fields,
 		getDefaultScene: function ()
 		{
 			return this .defaultScene;
-		},
-		getPrivateScene: function ()
-		{
-			return this .privateScene;
 		},
 		getLoadSensor: function ()
 		{
@@ -31100,21 +31688,24 @@ function (Fields,
 		},
 		addLoadCount: function (object)
 		{
-		   var id = loadCountId ++;
+		   var id = object .getId ();
+
+			if (this .loadingObjects .hasOwnProperty (id))
+				return;
 
 			++ this .loadingTotal;
-		   this .loadingObjects [id] = true;
+			this .loadingObjects [id] = object;
 			
 			this .setLoadCount (this .loadCount_ = this .loadCount_ .getValue () + 1);
 			this .setCursor ("DEFAULT");
-
-			return id;
 		},
-		removeLoadCount: function (id)
+		removeLoadCount: function (object)
 		{
-		   if (! this .loadingObjects .hasOwnProperty (id))
-		      return;
-		   
+         var id = object .getId ();
+
+			if (! this .loadingObjects .hasOwnProperty (id))
+				return;
+
 			delete this .loadingObjects [id];
 
 			this .setLoadCount (this .loadCount_ = this .loadCount_ .getValue () - 1);
@@ -31656,7 +32247,7 @@ function (Appearance)
 
 	function X3DShapeContext ()
 	{
-		this .defaultAppearance = new Appearance (this);
+		this .defaultAppearance = new Appearance (this .getPrivateScene ());
 	}
 
 	X3DShapeContext .prototype =
@@ -38003,15 +38594,15 @@ function ($,
 		},
 		setScene: function (scene, success)
 		{
-			scene .loadCount_ .addInterest (this, "set_loadCount__", scene, success);
-			scene .loadCount_ .addEvent ();
+			scene .initLoadCount_ .addInterest (this, "set_initLoadCount__", scene, success);
+			scene .initLoadCount_ .addEvent ();
 		},
-		set_loadCount__: function (field, scene, success)
+		set_initLoadCount__: function (field, scene, success)
 		{
 			if (field .getValue ())
 				return;
 
-			scene .loadCount_ .removeInterest (this, "set_loadCount__");
+			scene .initLoadCount_ .removeInterest (this, "set_initLoadCount__");
 
 			success (scene);
 
@@ -38661,18 +39252,18 @@ function (Fields,
 		{
 			return this .viewport_;
 		},
-		createShader: function (executionContext, name, vs, fs)
+		createShader: function (browser, name, vs, fs)
 		{
-			var vertexShader = new ShaderPart (executionContext);
+			var vertexShader = new ShaderPart (browser .getPrivateScene ());
 			vertexShader .url_ .push (vs);
 			vertexShader .setup ();
 
-			var fragmentShader = new ShaderPart (executionContext);
+			var fragmentShader = new ShaderPart (browser .getPrivateScene ());
 			fragmentShader .type_ = "FRAGMENT";
 			fragmentShader .url_ .push (fs);
 			fragmentShader .setup ();
 	
-			var shader = new ComposedShader (executionContext);
+			var shader = new ComposedShader (browser .getPrivateScene ());
 			shader .setName (name);
 			shader .language_ = "GLSL";
 			shader .parts_ .push (vertexShader);
@@ -45968,7 +46559,7 @@ function (Arc2DOptions,
 		if (this [name])
 			return this [name];
 
-		this [name] = new Type (this);
+		this [name] = new Type (this .getPrivateScene ());
 		this [name] .setup ();
 
 		return this [name];
@@ -45979,8 +46570,7 @@ function (Arc2DOptions,
 	X3DGeometry2DContext .prototype =
 	{
 		initialize: function ()
-		{
-		},
+		{ },
 		getArc2DOptions: function ()
 		{
 			return getOptionNode .call (this, "arc2DOptions", Arc2DOptions);
@@ -46699,7 +47289,7 @@ function (BoxOptions,
 		if (this [name])
 			return this [name];
 
-		this [name] = new Type (this);
+		this [name] = new Type (this .getPrivateScene ());
 		this [name] .setup ();
 
 		return this [name];
@@ -46710,8 +47300,7 @@ function (BoxOptions,
 	X3DGeometry3DContext .prototype =
 	{
 		initialize: function ()
-		{
-		},
+		{ },
 		getBoxOptions: function ()
 		{
 			return getOptionNode .call (this, "boxOptions", BoxOptions);
@@ -55073,7 +55662,7 @@ function ($,
 		this .direction                     = new Vector3 (0, 0, 0);
 		this .shadowBuffer                  = null;
 		this .bbox                          = new Box3 ();
-		this .viewVolume                    = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
+		this .viewVolume                    = new ViewVolume ();
 		this .viewport                      = new Vector4 (0, 0, 0, 0);
 		this .projectionMatrix              = new Matrix4 ();
 		this .modelViewMatrix               = new MatrixStack (Matrix4);
@@ -55354,14 +55943,18 @@ function (Fields,
 {
 
 	
-	function getHeadLight (executionContext)
+	function getHeadLight (browser)
 	{
-		var light = new DirectionalLight (executionContext);
+		var light = new DirectionalLight (browser .getPrivateScene ());
+
 		light .setup ();
-		var headlight = light .getLights () .pop ();
-		headlight .set (executionContext .getBrowser (), light, null, Matrix4 .Identity);
-		headlight .dispose = function () { };
-		return headlight;
+
+		var headlightContainer = light .getLights () .pop ();
+
+		headlightContainer .set (browser, light, null, Matrix4 .Identity);
+		headlightContainer .dispose = function () { };
+
+		return headlightContainer;
 	};
 
 	function X3DNavigationContext ()
@@ -55385,11 +55978,11 @@ function (Fields,
 			this .initialized () .addInterest (this, "set_world__");
 			this .shutdown ()    .addInterest (this, "remove_world__");
 
-			this .headlight = getHeadLight (this);
+			this .headlightContainer = getHeadLight (this);
 		},
 		getHeadlight: function ()
 		{
-			return this .headlight;
+			return this .headlightContainer;
 		},
 		getActiveLayer: function ()
 		{
@@ -55827,7 +56420,7 @@ function (Viewport)
 	
 	function X3DLayeringContext ()
 	{
-		this .defaultViewport = new Viewport (this);
+		this .defaultViewport = new Viewport (this .getPrivateScene ());
 	}
 
 	X3DLayeringContext .prototype =
@@ -56095,7 +56688,7 @@ function ($, TextureProperties)
 
 	function X3DLayoutContext ()
 	{
-		this .screenTextureProperties = new TextureProperties (this);
+		this .screenTextureProperties = new TextureProperties (this .getPrivateScene ());
 	}
 
 	X3DLayoutContext .prototype =
@@ -56198,7 +56791,7 @@ function (ComposedShader,
 	
 	function X3DEnvironmentalEffectsContext ()
 	{
-		this .backgroundTextureProperties = new TextureProperties (this);
+		this .backgroundTextureProperties = new TextureProperties (this .getPrivateScene ());
 	}
 
 	X3DEnvironmentalEffectsContext .prototype =
@@ -65954,9 +66547,9 @@ function (TextureProperties,
 		this .textureUnits             = [ ];
 		this .combinedTextureUnits     = [ ];
 		this .textureStages            = 1;
-		this .defaultTextureProperties = new TextureProperties (this);
-		this .defaultTextureTransform  = new TextureTransform (this);
-		this .defaultTextureCoordinate = new TextureCoordinate (this);
+		this .defaultTextureProperties = new TextureProperties (this .getPrivateScene ());
+		this .defaultTextureTransform  = new TextureTransform (this .getPrivateScene ());
+		this .defaultTextureCoordinate = new TextureCoordinate (this .getPrivateScene ());
 	}
 
 	X3DTexturingContext .prototype =
@@ -66892,7 +67485,7 @@ function (PointEmitter)
 	
 	function X3DParticleSystemsContext ()
 	{
-		this .defaultEmitter = new PointEmitter (this);
+		this .defaultEmitter = new PointEmitter (this .getPrivateScene ());
 	}
 
 	X3DParticleSystemsContext .prototype =
@@ -67003,9 +67596,11 @@ function ($,
 		vector                      = new Vector3 (0, 0, 0),
 		rotation                    = new Rotation4 (0, 0, 1, 0),
 		depthBufferViewport         = new Vector4 (0, 0, DEPTH_BUFFER_WIDTH, DEPTH_BUFFER_HEIGHT),
-		depthBufferViewVolume       = new ViewVolume (Matrix4 .Identity, depthBufferViewport, depthBufferViewport),
+		depthBufferViewVolume       = new ViewVolume (),
 		collisionBox                = new Box3 (Vector3 .Zero, Vector3 .Zero),
 		collisionSize               = new Vector3 (0, 0, 0);
+
+	depthBufferViewVolume .set (Matrix4 .Identity, depthBufferViewport, depthBufferViewport);
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 
@@ -68125,7 +68720,7 @@ function ($, X3DBaseNode)
 		},
 		getBound: function ()
 		{
-			for (var i = 1; i < this .array .length; ++ i)
+			for (var i = 1, length = this .array .length; i < length; ++ i)
 			{
 				var node = this .array [i];
 
@@ -68133,7 +68728,7 @@ function ($, X3DBaseNode)
 					return node;
 			}
 
-			if (this .array .length > 1)
+			if (length > 1)
 				return this .array [1];
 
 			return this .array [0];
@@ -82951,7 +83546,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			if (this .checkLoadState () == X3DConstants .COMPLETE_STATE)
+			if (! this .getPrivate ())
 			{
 				this .scene .setLive (this .isLive () .getValue ());
 			}
@@ -83032,10 +83627,10 @@ function ($,
 			// Set new scene.
 
 			this .scene = scene;
+			this .scene .setExecutionContext (this .getExecutionContext ());
 			this .scene .setPrivate (this .getExecutionContext () .getPrivate ());
 			this .scene .setup ();
 
-			//this .scene .setExecutionContext (this .getExecutionContext ());
 			this .scene .rootNodes .addInterest (this .group .children_, "setValue");
 			this .group .children_ = this .scene .rootNodes;
 
@@ -91564,7 +92159,7 @@ function ($,
 				{
 					var
 						now          = performance .now () / 1000,
-						newParticles = Math .ceil ((now - this .creationTime) * this .maxParticles / this .particleLifetime);
+						newParticles = Math .max (0, Math .ceil ((now - this .creationTime) * this .maxParticles / this .particleLifetime));
 	
 					if (newParticles)
 						this .creationTime = now;
@@ -92074,7 +92669,7 @@ function ($,
 			}
 			else
 			{
-				if (this .numParticles === 0)
+				if (this .numParticles <= 0)
 					return;
 
 				var gl = context .renderer .getBrowser () .getContext ();
@@ -92117,7 +92712,7 @@ function ($,
 					if (shaderNode === browser .getDefaultShader ())
 						shaderNode = this .shaderNode;
 		
-					if (this .numParticles === 0)
+					if (this .numParticles <= 0)
 						return;
 	
 					// Setup shader.
@@ -92169,7 +92764,7 @@ function ($,
 						gl .frontFace (positiveScale ? gl .CCW : gl .CW);
 						gl .enable (gl .CULL_FACE);
 						gl .cullFace (gl .BACK);
-			
+
 						gl .drawArrays (this .shaderNode .primitiveMode, 0, this .numParticles * this .vertexCount);
 					}
 		
@@ -92894,7 +93489,7 @@ function ($,
 		this .location             = new Vector3 (0, 0, 0);
 		this .direction            = new Vector3 (0, 0, 0);
 		this .shadowBuffer         = null;
-		this .viewVolume           = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
+		this .viewVolume           = new ViewVolume ();
 		this .viewport             = new Vector4 (0, 0, 0, 0);
 		this .projectionMatrix     = projectionMatrix;
 		this .modelViewMatrix      = new MatrixStack (Matrix4);
@@ -95815,420 +96410,6 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Configuration/UnitInfo',[
-	"jquery",
-],
-function ($)
-{
-
-
-	function UnitInfo (category, name, conversionFactor)
-	{
-		this .category         = category;
-		this .name             = name;
-		this .conversionFactor = conversionFactor;
-	}
-
-	$.extend (UnitInfo .prototype,
-	{
-		constructor: UnitInfo,
-	});
-
-	Object .defineProperty (UnitInfo .prototype, "conversion_factor",
-	{
-		get: function () { return this .conversionFactor; },
-		enumerable: true,
-		configurable: false
-	});
-
-	return UnitInfo;
-});
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Configuration/UnitInfoArray',[
-	"jquery",
-	"cobweb/Configuration/X3DInfoArray",
-],
-function ($, X3DInfoArray)
-{
-
-
-	function UnitInfoArray ()
-	{
-		return X3DInfoArray .call (this);
-	}
-
-	UnitInfoArray .prototype = $.extend (Object .create (X3DInfoArray .prototype),
-	{
-		constructor: UnitInfoArray,
-	});
-
-	return UnitInfoArray;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Execution/ExportedNode',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Base/X3DObject",
-],
-function ($,
-          Fields,
-          X3DObject)
-{
-
-
-	function ExportedNode (exportedName, localNode)
-	{
-		X3DObject .call (this);
-
-		this .exportedName = exportedName;
-		this .localNode    = localNode;
-	}
-
-	ExportedNode .prototype = $.extend (Object .create (X3DObject .prototype),
-	{
-		constructor: ExportedNode,
-		getExportedName: function ()
-		{
-			return this .exportedName;
-		},
-		getLocalNode: function ()
-		{
-			return new Fields .SFNode (this .localNode);
-		},
-	});
-
-	return ExportedNode;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
-define ('cobweb/Execution/X3DScene',[
-	"jquery",
-	"cobweb/Fields",
-	"cobweb/Execution/X3DExecutionContext",
-	"cobweb/Configuration/UnitInfo",
-	"cobweb/Configuration/UnitInfoArray",
-	"cobweb/Execution/ExportedNode",
-	"cobweb/Bits/X3DConstants",
-],
-function ($,
-          Fields,
-          X3DExecutionContext,
-          UnitInfo,
-          UnitInfoArray,
-          ExportedNode,
-          X3DConstants)
-{
-
-
-	function X3DScene (executionContext)
-	{
-		X3DExecutionContext .call (this, executionContext);
-
-		this .getRootNodes () .setAccessType (X3DConstants .inputOutput);
-
-		this .units = new UnitInfoArray ();
-
-		this .units .add ("angle",  new UnitInfo ("angle",  "radian",   1));
-		this .units .add ("force",  new UnitInfo ("force",  "newton",   1));
-		this .units .add ("length", new UnitInfo ("length", "metre",    1));
-		this .units .add ("mass",   new UnitInfo ("mass",   "kilogram", 1));
-
-		this .metaData      = { };
-		this .exportedNodes = { };
-
-		this .setLive (false);
-	}
-
-	X3DScene .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
-	{
-		constructor: X3DScene,
-		isRootContext: function ()
-		{
-			return true;
-		},
-		updateUnit: function (category, name, conversionFactor)
-		{
-			var unit = this .units .get (category);
-
-			if (! unit)
-				return;
-
-			unit .name             = name;
-			unit .conversionFactor = conversionFactor;
-		},
-		setMetaData: function (name, value)
-		{
-			if (! name .length)
-				return;
-
-			this .metaData [name] = String (value);
-		},
-		getMetaData: function (name)
-		{
-			return this .metaData [name];
-		},
-		addExportedNode: function (exportedName, node)
-		{
-			if (this .exportedNodes [exportedName])
-				throw new Error ("Couldn't add exported node: exported name '" + exportedName + "' already in use.");
-
-			this .updateExportedNode (exportedName, node);
-		},
-		updateExportedNode: function (exportedName, node)
-		{
-			exportedName = String (exportedName);
-
-			if (exportedName .length === 0)
-				throw new Error ("Couldn't update exported node: node exported name is empty.");
-
-			if (! (node instanceof Fields .SFNode))
-				throw new Error ("Couldn't update exported node: node must be of type SFNode.");
-
-			if (! node .getValue ())
-				throw new Error ("Couldn't update exported node: node IS NULL.");
-
-			//if (node .getValue () .getExecutionContext () !== this)
-			//	throw new Error ("Couldn't update exported node: node does not belong to this execution context.");
-
-			this .exportedNodes [exportedName] = new ExportedNode (exportedName, node .getValue ());
-		},
-		removeExportedNode: function (exportedName)
-		{
-			delete this .exportedNodes [exportedName];
-		},
-		getExportedNode: function (exportedName)
-		{
-			var exportedNode = this .exportedNodes [exportedName];
-
-			if (exportedNode)
-				return exportedNode .getLocalNode ();	
-
-			throw new Error ("Exported node '" + exportedName + "' not found.");
-		},
-		addRootNode: function (node)
-		{
-			if (! (node instanceof Fields .SFNode || node === null))
-				throw new Error ("Couldn't add root node: node must be of type SFNode.");
-
-			//if (node && node .getValue () && node .getValue () .getExecutionContext () !== this)
-			//	throw new Error ("Couldn't add root node: node does not belong to this execution context.");
-
-			this .getRootNodes () .push (node);
-		},
-		removeRootNode: function (node)
-		{
-			if (! (node instanceof Fields .SFNode || node === null))
-				throw new Error ("Couldn't remove root node: node must be of type SFNode.");
-
-			var
-				rootNodes = this .getRootNodes (),
-				length    = rootNodes .length;
-
-			rootNodes .erase (rootNodes .remove (0, length, node), length);
-		},
-		setRootNodes: function (value)
-		{
-			this .getRootNodes () .setValue (value);
-		},
-	});
-
-	return X3DScene;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
 define ("cobweb/Browser/Scripting/evaluate",[],
 function ()
 {
@@ -96480,12 +96661,12 @@ function ($,
 				return;
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
-			this .getScene () .addLoadCount (this);
+			this .getScene () .addInitLoadCount (this);
 
 			new Loader (this) .loadScript (this .url_,
 			function (data)
 			{
-				this .getScene () .removeLoadCount (this);
+				this .getScene () .removeInitLoadCount (this);
 
 				if (data === null)
 				{
@@ -99001,7 +99182,7 @@ function ($,
 		this .renderShadow                  = true; 
 		this .shadowBuffer                  = null;
 		this .bbox                          = new Box3 ();
-		this .viewVolume                    = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
+		this .viewVolume                    = new ViewVolume ();
 		this .viewport                      = new Vector4 (0, 0, 0, 0);
 		this .projectionMatrix              = new Matrix4 ();
 		this .modelViewMatrix               = new MatrixStack (Matrix4);
@@ -104230,81 +104411,6 @@ function (Anchor,
  ******************************************************************************/
 
 
-define ('cobweb/Execution/Scene',[
-	"cobweb/Execution/X3DScene",
-],
-function (X3DScene)
-{
-
-
-	function Scene (browser)
-	{
-		this ._browser = browser;
-
-		X3DScene .call (this, this);
-	}
-
-	Scene .prototype = $.extend (Object .create (X3DScene .prototype),
-	{
-		constructor: Scene,
-		getTypeName: function ()
-		{
-			return "Scene";
-		},
-	});
-
-	return Scene;
-});
-
-/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
- *******************************************************************************
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
- *
- * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
- *
- * The copyright notice above does not evidence any actual of intended
- * publication of such source code, and is an unpublished work by create3000.
- * This material contains CONFIDENTIAL INFORMATION that is the property of
- * create3000.
- *
- * No permission is granted to copy, distribute, or create derivative works from
- * the contents of this software, in whole or in part, without the prior written
- * permission of create3000.
- *
- * NON-MILITARY USE ONLY
- *
- * All create3000 software are effectively free software with a non-military use
- * restriction. It is free. Well commented source is provided. You may reuse the
- * source in any way you please with the exception anything that uses it must be
- * marked to indicate is contains 'non-military use only' components.
- *
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
- *
- * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
- *
- * This file is part of the Cobweb Project.
- *
- * Cobweb is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License version 3 only, as published by the
- * Free Software Foundation.
- *
- * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
- * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
- * details (a copy is included in the LICENSE file that accompanied this code).
- *
- * You should have received a copy of the GNU General Public License version 3
- * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
- * copy of the GPLv3 License.
- *
- * For Silvio, Joy and Adi.
- *
- ******************************************************************************/
-
-
 define ('cobweb/Browser/X3DBrowser',[
 	"jquery",
 	"cobweb/Browser/VERSION",
@@ -104474,7 +104580,10 @@ function ($,
 		},
 		replaceWorld: function (scene)
 		{
-			// Stop any loading from loadURL.
+			// Cancel any loading.
+
+			this .loadCount_       .removeInterest (this, "set_loadCount__");
+			this .prepareEvents () .removeInterest (this, "bind");
 
 			if (this .loader)
 				this .loader .abort ();
@@ -104496,11 +104605,13 @@ function ($,
 				scene = this .createScene ();
 			
 			// bindWorld
-			this .loadCount_ .removeFieldCallback ("bindWorld" + this .loadId);
-			this .loadId      = performance .now ();
 			this .description = "";
+
 			this .setBrowserLoading (true);
-			this .loadCount_ .addFieldCallback ("bindWorld" + this .loadId, this .bindWorld .bind (this));
+			this .loadCount_ .addInterest (this, "set_loadCount__");
+	
+			for (var id in scene .getLoadingObjects ())
+				this .addLoadCount (scene .getLoadingObjects () [id]);
 
 			scene .setLive (this .isLive () .getValue ())
 
@@ -104508,15 +104619,21 @@ function ($,
 
 			this .initialized () .setValue (this .getCurrentTime ());
 		},
-		bindWorld: function (value)
+		set_loadCount__: function (loadCount)
 		{
-			if (value)
+			if (loadCount .getValue ())
 				return;
 
-			this .loadCount_ .removeFieldCallback ("bindWorld" + this .loadId);
+			this .loadCount_ .removeInterest (this, "set_loadCount__");
+
+			this .prepareEvents () .addInterest (this, "bind");
+		},
+		bind: function ()
+		{
+			this .prepareEvents () .removeInterest (this, "bind");
 
 			this .getWorld () .bind ();
-			this .setBrowserLoading (false);
+			this .setBrowserLoading (false);	
 		},
 		createVrmlFromString: function (vrmlSyntax)
 		{
@@ -104535,6 +104652,7 @@ function ($,
 
 			if (! external)
 			{
+				scene .setExecutionContext (currentScene);
 				currentScene .isLive () .addInterest (scene, "setLive");
 
 				if (currentScene .isLive () .getValue ())
@@ -104563,17 +104681,23 @@ function ($,
 
 			var
 				currentScene = this .currentScene,
-				external     = this .isExternal ();
+				external     = this .isExternal (),
+				loader       = new Loader (this .getWorld ());
 
-			new Loader (this .getWorld ()) .createX3DFromURL (url,
+			this .addLoadCount (loader);
+
+			loader .createX3DFromURL (url,
 			function (scene)
 			{
+				this .removeLoadCount (loader);
+
 				if (scene)
 				{
 					// Handle isLive for script scenes here:
 
 				   if (! external)
 				   {
+						scene .setExecutionContext (currentScene);
 				      currentScene .isLive () .addInterest (scene, "setLive");
 
 						if (currentScene .isLive () .getValue ())
@@ -104585,7 +104709,8 @@ function ($,
 					// Wait until scene is completely loaded, scene .loadCount_ must be 0.
 					field .setValue (scene .rootNodes);
 				}
-			});
+			}
+			.bind (this));
 		},
 		createX3DFromURL: function (url, event, node)
 		{
@@ -104599,6 +104724,7 @@ function ($,
 
 			if (! external)
 			{
+				scene .setExecutionContext (currentScene);
 				currentScene .isLive () .addInterest (scene, "setLive");
 						
 				if (currentScene .isLive () .getValue ())
@@ -104624,9 +104750,18 @@ function ($,
 					target = pair [1];
 			}
 
-			this .setBrowserLoading (true);
+			// Cancel any loading.
 
-			var id = this .addLoadCount (this);
+			this .loadCount_       .removeInterest (this, "set_loadCount__");
+			this .prepareEvents () .removeInterest (this, "bind");
+
+			if (this .loader)
+				this .loader .abort ();
+
+			// Start loading.
+
+			this .setBrowserLoading (true);
+			this .addLoadCount (this);
 
 			this .loader = new Loader (this .getWorld ());
 
@@ -104638,7 +104773,7 @@ function ($,
 				else
 					setTimeout (function () { this .getLoadingElement () .find (".cobweb-spinner-text") .text (_ ("Failed loading world.")); } .bind (this), 31);
 
-				this .removeLoadCount (id);
+				// Must not remove load count, replaceWorld does a resetLoadCount when it sets setBrowserLoading to true.
 				// Don't set browser loading to false.
 			}
 			.bind (this),
@@ -104690,6 +104825,7 @@ function ($,
 
 			if (! external)
 			{
+				scene .setExecutionContext (currentScene);
 				currentScene .isLive () .addInterest (scene, "setLive");
 						
 				if (currentScene .isLive () .getValue ())

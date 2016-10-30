@@ -317,11 +317,16 @@ function ($,
 
 			var
 				currentScene = this .currentScene,
-				external     = this .isExternal ();
+				external     = this .isExternal (),
+				loader       = new Loader (this .getWorld ());
 
-			new Loader (this .getWorld ()) .createX3DFromURL (url,
+			this .addLoadCount (loader);
+
+			loader .createX3DFromURL (url,
 			function (scene)
 			{
+				this .removeLoadCount (loader);
+
 				if (scene)
 				{
 					// Handle isLive for script scenes here:
@@ -340,7 +345,8 @@ function ($,
 					// Wait until scene is completely loaded, scene .loadCount_ must be 0.
 					field .setValue (scene .rootNodes);
 				}
-			});
+			}
+			.bind (this));
 		},
 		createX3DFromURL: function (url, event, node)
 		{

@@ -138,7 +138,7 @@ function (Fields,
 			if (this === this .getBrowser () .getExecutionContext ())
 				this .getBrowser () .removeLoadCount (node);
 
-			else if (! this .isMasterContext ())
+			if (! this .isMasterContext ())
 				this .getScene () .removeLoadCount (node);
 		},
 		getLoadingObjects: function ()
