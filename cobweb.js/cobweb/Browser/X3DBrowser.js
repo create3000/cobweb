@@ -216,7 +216,10 @@ function ($,
 		},
 		replaceWorld: function (scene)
 		{
-			// Stop any loading from loadURL.
+			// Cancel any loading.
+
+			this .loadCount_       .removeInterest (this, "set_loadCount__");
+			this .prepareEvents () .removeInterest (this, "bind");
 
 			if (this .loader)
 				this .loader .abort ();
@@ -238,11 +241,13 @@ function ($,
 				scene = this .createScene ();
 			
 			// bindWorld
-			this .loadCount_ .removeFieldCallback ("bindWorld" + this .loadId);
-			this .loadId      = performance .now ();
 			this .description = "";
+
 			this .setBrowserLoading (true);
-			this .loadCount_ .addFieldCallback ("bindWorld" + this .loadId, this .bindWorld .bind (this));
+			this .loadCount_ .addInterest (this, "set_loadCount__");
+	
+			for (var id in scene .getLoadingObjects ())
+				this .addLoadCount (scene .getLoadingObjects () [id]);
 
 			scene .setLive (this .isLive () .getValue ())
 
@@ -250,15 +255,21 @@ function ($,
 
 			this .initialized () .setValue (this .getCurrentTime ());
 		},
-		bindWorld: function (value)
+		set_loadCount__: function (loadCount)
 		{
-			if (value)
+			if (loadCount .getValue ())
 				return;
 
-			this .loadCount_ .removeFieldCallback ("bindWorld" + this .loadId);
+			this .loadCount_ .removeInterest (this, "set_loadCount__");
+
+			this .prepareEvents () .addInterest (this, "bind");
+		},
+		bind: function ()
+		{
+			this .prepareEvents () .removeInterest (this, "bind");
 
 			this .getWorld () .bind ();
-			this .setBrowserLoading (false);
+			this .setBrowserLoading (false);	
 		},
 		createVrmlFromString: function (vrmlSyntax)
 		{
@@ -277,6 +288,7 @@ function ($,
 
 			if (! external)
 			{
+				scene .setExecutionContext (currentScene);
 				currentScene .isLive () .addInterest (scene, "setLive");
 
 				if (currentScene .isLive () .getValue ())
@@ -316,6 +328,7 @@ function ($,
 
 				   if (! external)
 				   {
+						scene .setExecutionContext (currentScene);
 				      currentScene .isLive () .addInterest (scene, "setLive");
 
 						if (currentScene .isLive () .getValue ())
@@ -341,6 +354,7 @@ function ($,
 
 			if (! external)
 			{
+				scene .setExecutionContext (currentScene);
 				currentScene .isLive () .addInterest (scene, "setLive");
 						
 				if (currentScene .isLive () .getValue ())
@@ -366,9 +380,18 @@ function ($,
 					target = pair [1];
 			}
 
-			this .setBrowserLoading (true);
+			// Cancel any loading.
 
-			var id = this .addLoadCount (this);
+			this .loadCount_       .removeInterest (this, "set_loadCount__");
+			this .prepareEvents () .removeInterest (this, "bind");
+
+			if (this .loader)
+				this .loader .abort ();
+
+			// Start loading.
+
+			this .setBrowserLoading (true);
+			this .addLoadCount (this);
 
 			this .loader = new Loader (this .getWorld ());
 
@@ -380,7 +403,7 @@ function ($,
 				else
 					setTimeout (function () { this .getLoadingElement () .find (".cobweb-spinner-text") .text (_ ("Failed loading world.")); } .bind (this), 31);
 
-				this .removeLoadCount (id);
+				// Must not remove load count, replaceWorld does a resetLoadCount when it sets setBrowserLoading to true.
 				// Don't set browser loading to false.
 			}
 			.bind (this),
@@ -432,6 +455,7 @@ function ($,
 
 			if (! external)
 			{
+				scene .setExecutionContext (currentScene);
 				currentScene .isLive () .addInterest (scene, "setLive");
 						
 				if (currentScene .isLive () .getValue ())

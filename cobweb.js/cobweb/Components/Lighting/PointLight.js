@@ -115,7 +115,7 @@ function ($,
 		this .location             = new Vector3 (0, 0, 0);
 		this .direction            = new Vector3 (0, 0, 0);
 		this .shadowBuffer         = null;
-		this .viewVolume           = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
+		this .viewVolume           = new ViewVolume ();
 		this .viewport             = new Vector4 (0, 0, 0, 0);
 		this .projectionMatrix     = projectionMatrix;
 		this .modelViewMatrix      = new MatrixStack (Matrix4);

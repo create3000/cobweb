@@ -97,7 +97,7 @@ function ($,
 		this .renderShadow                  = true; 
 		this .shadowBuffer                  = null;
 		this .bbox                          = new Box3 ();
-		this .viewVolume                    = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
+		this .viewVolume                    = new ViewVolume ();
 		this .viewport                      = new Vector4 (0, 0, 0, 0);
 		this .projectionMatrix              = new Matrix4 ();
 		this .modelViewMatrix               = new MatrixStack (Matrix4);

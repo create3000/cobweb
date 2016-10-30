@@ -103,6 +103,12 @@ function ($,
 		_private: false,
 		_live: true,
 		_initialized: false,
+		setExecutionContext: function (value)
+		{
+			// Currently only usefull for Sene.
+
+			this ._executionContext = value;
+		},
 		getScene: function ()
 		{
 			var executionContext = this ._executionContext;

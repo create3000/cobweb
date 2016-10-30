@@ -91,9 +91,11 @@ function ($,
 		vector                      = new Vector3 (0, 0, 0),
 		rotation                    = new Rotation4 (0, 0, 1, 0),
 		depthBufferViewport         = new Vector4 (0, 0, DEPTH_BUFFER_WIDTH, DEPTH_BUFFER_HEIGHT),
-		depthBufferViewVolume       = new ViewVolume (Matrix4 .Identity, depthBufferViewport, depthBufferViewport),
+		depthBufferViewVolume       = new ViewVolume (),
 		collisionBox                = new Box3 (Vector3 .Zero, Vector3 .Zero),
 		collisionSize               = new Vector3 (0, 0, 0);
+
+	depthBufferViewVolume .set (Matrix4 .Identity, depthBufferViewport, depthBufferViewport);
 
 	function compareDistance (lhs, rhs) { return lhs .distance < rhs .distance; }
 

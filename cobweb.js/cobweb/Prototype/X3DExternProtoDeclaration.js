@@ -127,7 +127,7 @@ function ($,
 				return;
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
-			this .getScene () .addLoadCount (this);
+			this .getScene () .addInitLoadCount (this);
 			
 			// Don't create scene cache, as of possible default nodes and complete scenes.
 
@@ -137,7 +137,7 @@ function ($,
 		},
 		setInternalSceneAsync: function (value)
 		{
-			this .getScene () .removeLoadCount (this);
+			this .getScene () .removeInitLoadCount (this);
 		
 			if (value)
 				this .setInternalScene (value);

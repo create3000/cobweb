@@ -56,7 +56,7 @@ function (PointEmitter)
 	
 	function X3DParticleSystemsContext ()
 	{
-		this .defaultEmitter = new PointEmitter (this);
+		this .defaultEmitter = new PointEmitter (this .getPrivateScene ());
 	}
 
 	X3DParticleSystemsContext .prototype =

@@ -57,7 +57,7 @@ function ($, TextureProperties)
 
 	function X3DLayoutContext ()
 	{
-		this .screenTextureProperties = new TextureProperties (this);
+		this .screenTextureProperties = new TextureProperties (this .getPrivateScene ());
 	}
 
 	X3DLayoutContext .prototype =

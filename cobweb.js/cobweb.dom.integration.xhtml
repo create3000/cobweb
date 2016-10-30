@@ -43,6 +43,20 @@ body {
 	left: 0px;
 }
 
+.html {
+	position: absolute;
+	bottom: 30px;
+	left: 0px;
+	font-size: 30px;
+	color: black;
+	/* xOffset yOffset blur color */
+	text-shadow: 0px 0px 3px white;
+}
+
+.html p {
+	margin: 20px 30px;
+}
+
 .fallback {
 	position: absolute;
 	display: block;
@@ -183,6 +197,13 @@ body {
 			</X3D>
 		</X3DCanvas>
 		
+		<div class="html">
+			<p>
+				XHTML and Cobweb can<br/>
+				operate seamlessly together
+			</p>
+		</div>
+
 		<button id="toggleAnimation" class="button input input-button" onclick="toggleAnimation ()">HTML Button to Freeze Animation</button>
 
 		<script>

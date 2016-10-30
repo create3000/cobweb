@@ -77,7 +77,7 @@ function ($,
 		this .addType (X3DConstants .X3DPrototypeInstance);
 		this .getRootNodes () .setAccessType (X3DConstants .initializeOnly);
 
-		this .getScene () .addLoadCount (this);
+		this .getScene () .addInitLoadCount (this);
 
 		if (protoNode .isExternProto)
 			protoNode .requestAsyncLoad (this .construct .bind (this));
@@ -108,7 +108,7 @@ function ($,
 		},
 		construct: function ()
 		{
-			this .getScene () .removeLoadCount (this);
+			this .getScene () .removeInitLoadCount (this);
 
 			var proto = this .protoNode .getProtoDeclaration ();
 

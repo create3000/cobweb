@@ -56,7 +56,7 @@ function (Viewport)
 	
 	function X3DLayeringContext ()
 	{
-		this .defaultViewport = new Viewport (this);
+		this .defaultViewport = new Viewport (this .getPrivateScene ());
 	}
 
 	X3DLayeringContext .prototype =

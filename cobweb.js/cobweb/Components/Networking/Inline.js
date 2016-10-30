@@ -133,7 +133,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			if (this .checkLoadState () == X3DConstants .COMPLETE_STATE)
+			if (! this .getPrivate ())
 			{
 				this .scene .setLive (this .isLive () .getValue ());
 			}
@@ -214,10 +214,10 @@ function ($,
 			// Set new scene.
 
 			this .scene = scene;
+			this .scene .setExecutionContext (this .getExecutionContext ());
 			this .scene .setPrivate (this .getExecutionContext () .getPrivate ());
 			this .scene .setup ();
 
-			//this .scene .setExecutionContext (this .getExecutionContext ());
 			this .scene .rootNodes .addInterest (this .group .children_, "setValue");
 			this .group .children_ = this .scene .rootNodes;
 

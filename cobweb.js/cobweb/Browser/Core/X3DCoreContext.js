@@ -55,6 +55,7 @@ define ([
 	"cobweb/Browser/Core/Notification",
 	"cobweb/Browser/Core/BrowserTimings",
 	"cobweb/Browser/Core/ContextMenu",
+	"cobweb/Execution/Scene",
 	"cobweb/Parser/Parser",
 	"lib/DataStorage",
 ],
@@ -65,6 +66,7 @@ function (Fields,
           Notification,
           BrowserTimings,
           ContextMenu,
+          Scene,
           Parser,
           DataStorage)
 {
@@ -120,20 +122,31 @@ function (Fields,
 		this .canvas  = $("<canvas></canvas>") .prependTo (surface);
 		this .context = getContext (this .canvas [0]);
 
-		this .browserOptions      = new BrowserOptions (this);
-		this .browserProperties   = new BrowserProperties (this);
-		this .renderingProperties = new RenderingProperties (this);
-		this .notification        = new Notification (this);
-		this .browserTimings      = new BrowserTimings (this);
-		this .contextMenu         = new ContextMenu (this);
-		this .dataStorage         = new DataStorage ("X3DBrowser(" + this .number + ").");
-		this .mobile              = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
+		this .privateScene = new Scene (this); // Scene for default nodes.
+
+		this .browserOptions      = new BrowserOptions      (this .getPrivateScene ());
+		this .browserProperties   = new BrowserProperties   (this .getPrivateScene ());
+		this .renderingProperties = new RenderingProperties (this .getPrivateScene ());
+		this .notification        = new Notification        (this .getPrivateScene ());
+		this .browserTimings      = new BrowserTimings      (this .getPrivateScene ());
+		this .contextMenu         = new ContextMenu         (this .getPrivateScene ());
+
+		this .dataStorage = new DataStorage ("X3DBrowser(" + this .number + ").");
+		this .mobile      = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
 	}
 
 	X3DCoreContext .prototype =
 	{
 		initialize: function ()
 		{
+			// Scene for default nodes.
+
+			this .privateScene .setPrivate (true);
+			this .privateScene .setLive (true);
+			this .privateScene .setup ();
+
+			// Setup browser nodes.
+
 			this .browserOptions      .setup ()
 			this .browserProperties   .setup ()
 			this .renderingProperties .setup ();
@@ -256,6 +269,10 @@ function (Fields,
 				if (url .length)
 					this .loadURL (url, parameter);
 			}
+		},
+		getPrivateScene: function ()
+		{
+			return this .privateScene;
 		},
 	};
 
