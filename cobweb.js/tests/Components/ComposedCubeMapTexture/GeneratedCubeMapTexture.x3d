@@ -7,7 +7,7 @@
     <meta name='creator' content='holger'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ComposedCubeMapTexture/GeneratedCubeMapTexture.x3d'/>
-    <meta name='modified' content='Fri, 28 Oct 2016 13:50:30 GMT'/>
+    <meta name='modified' content='Mon, 31 Oct 2016 09:06:29 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -117,25 +117,6 @@
           <MetadataSet DEF='previous_1' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'/>
-          <MetadataSet DEF='children_1' containerField='value'
-              name='children'
-              reference='http://titania.create3000.de'>
-            <Transform DEF='Cone' containerField='value'
-                translation='0 2 0'
-                rotation='-0.426397279804747 0.426397026723331 -0.797728610102844 1.79488179706456'
-                scaleOrientation='0.296973872810686 0.631186421179508 -0.716526496779029 1.16136963204177'>
-              <Shape>
-                <Appearance>
-                  <Material DEF='Rococo24'
-                      ambientIntensity='0.226102'
-                      diffuseColor='0.28636 0.554905 0.904409'
-                      specularColor='0.0955906 0.0955906 0.0955906'
-                      shininess='0.078125'/>
-                </Appearance>
-                <Cone/>
-              </Shape>
-            </Transform>
-          </MetadataSet>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -188,7 +169,21 @@
         </IndexedFaceSet>
       </Shape>
     </Transform>
-    <Transform USE='Cone'/>
+    <Transform DEF='Cone'
+        translation='0 2 0'
+        rotation='-0.426397279804747 0.426397026723331 -0.797728610102844 1.79488179706456'
+        scaleOrientation='0.296973872810686 0.631186421179508 -0.716526496779029 1.16136963204177'>
+      <Shape>
+        <Appearance>
+          <Material DEF='Rococo24'
+              ambientIntensity='0.226102'
+              diffuseColor='0.28636 0.554905 0.904409'
+              specularColor='0.0955906 0.0955906 0.0955906'
+              shininess='0.078125'/>
+        </Appearance>
+        <Cone/>
+      </Shape>
+    </Transform>
     <Transform DEF='Pyramid'
         translation='-4 5 0'
         rotation='0.999999999993254 3.67320512848233e-06 8.65503063146158e-19 0.785398163397448'>
@@ -290,7 +285,7 @@ function initialize ()
         </IndexedFaceSet>
       </Shape>
     </Transform>
-    <PointLight DEF='_1'
+    <PointLight
         location='0 5 0'/>
     <DirectionalLight
         intensity='0.466321'

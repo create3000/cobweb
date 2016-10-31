@@ -1264,6 +1264,9 @@
     <None Include="tests\HTML\cycle\JoinUs.x3d" />
     <None Include="tests\HTML\cycle\ToBeOrToHave.x3d" />
     <None Include="tests\HTML\cycle\cycle.xhtml" />
+    <None Include="tests\HTML\cycle\DarkSideOfTheMoon.png" />
+    <None Include="tests\HTML\cycle\JoinUs.png" />
+    <None Include="tests\HTML\cycle\ToBeOrToHave.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

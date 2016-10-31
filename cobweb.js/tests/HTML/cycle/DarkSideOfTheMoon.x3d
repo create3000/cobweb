@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/HTML/cycle/DarkSideOfTheMoon.x3d'/>
-    <meta name='modified' content='Sun, 30 Oct 2016 15:04:02 GMT'/>
+    <meta name='modified' content='Mon, 31 Oct 2016 09:32:11 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -60,6 +60,12 @@
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <NavigationInfo DEF='_1' containerField='value'
+                type='"NONE"'/>
+          </MetadataSet>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -78,7 +84,7 @@
               reference='http://titania.create3000.de'
               value='10'/>
         </MetadataSet>
-        <TimeSensor DEF='_1'
+        <TimeSensor DEF='_2'
             cycleInterval='2.1'
             loop='true'
             startTime='1477839841.07123'
@@ -145,10 +151,10 @@
         </PositionInterpolator>
       </Group>
       <Transform DEF='Box'
-          translation='-3 0.371334 0'>
+          translation='-3 -6 0'>
         <Shape>
           <Appearance>
-            <Material DEF='_2'
+            <Material DEF='_3'
                 emissiveColor='1 1 1'/>
           </Appearance>
           <IndexedLineSet
@@ -159,10 +165,10 @@
         </Shape>
       </Transform>
       <Transform DEF='Pyramid'
-          translation='0 6.1061 0'>
+          translation='0 -5.19551 0'>
         <Shape>
           <Appearance>
-            <Material USE='_2'/>
+            <Material USE='_3'/>
           </Appearance>
           <IndexedLineSet
               colorIndex='0, 1, 1, 0, 0, -1, 1, 2, 0, -1, 1, 2, -1, 0, 2, -1'
@@ -175,7 +181,7 @@
         </Shape>
       </Transform>
       <Transform DEF='Sphere'
-          translation='3 6.22569 0'>
+          translation='3 0.0866793 0'>
         <Shape>
           <Appearance>
             <Material
@@ -189,11 +195,12 @@
         </Shape>
       </Transform>
     </Transform>
-    <ROUTE fromNode='_1' fromField='fraction_changed' toNode='BoxTranslationInterpolator' toField='set_fraction'/>
+    <NavigationInfo USE='_1'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='BoxTranslationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='BoxTranslationInterpolator' fromField='value_changed' toNode='Box' toField='set_translation'/>
-    <ROUTE fromNode='_1' fromField='fraction_changed' toNode='PyramidTranslationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='PyramidTranslationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='PyramidTranslationInterpolator' fromField='value_changed' toNode='Pyramid' toField='set_translation'/>
-    <ROUTE fromNode='_1' fromField='fraction_changed' toNode='SphereTranslationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='SphereTranslationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='SphereTranslationInterpolator' fromField='value_changed' toNode='Sphere' toField='set_translation'/>
   </Scene>
 </X3D>

@@ -30367,6 +30367,7 @@ function (Fields,
 
 	function getContext (canvas)
 	{
+throw 1;
 		var gl = canvas .getContext ("webgl") ||
 		         canvas .getContext ("experimental-webgl");
 
