@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/HTML/cycle/ToBeOrToHave.x3d'/>
-    <meta name='modified' content='Mon, 31 Oct 2016 09:32:34 GMT'/>
+    <meta name='modified' content='Mon, 31 Oct 2016 10:13:01 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -44,7 +44,7 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='7.22073888778687, 8.02451038360596, 12.6316118240356'/>
+              value='6.3988242149353, 7.10391855239868, 11.1972017288208'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
@@ -69,7 +69,8 @@
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
-    <Transform DEF='_2'>
+    <Transform DEF='_2'
+        rotation='0 1 0 3.1877823389962'>
       <Transform
           translation='0.0365768 -0.0318119 -0.010197'
           rotation='0.577351072149345 0.577351140977614 0.577348594438273 4.18878758942372'
@@ -156,7 +157,7 @@
       </Transform>
     </Transform>
     <Viewpoint DEF='Earth'
-        position='7.22074 8.02451 12.6316'
+        position='6.39882 7.10392 11.1972'
         orientation='-0.686497042658236 0.703794348626754 0.182743878864765 0.723202567288051'
         centerOfRotation='0.0209152 -0.0397073 0.0664421'/>
     <NavigationInfo USE='_1'/>

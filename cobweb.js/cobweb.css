@@ -85,7 +85,7 @@ X3DCanvas .cobweb-notification span {
 	background: url(images/icon.bw.png) no-repeat 0px center;
 }
 
-X3DCanvas .cobweb-browser-timing {
+X3DCanvas .cobweb-browser-timings {
 	display: none;
 	position: absolute;
 	bottom: -4px;
@@ -107,13 +107,13 @@ X3DCanvas .cobweb-browser-timing {
 	pointer-events: none;
 }
 
-X3DCanvas .cobweb-browser-timing table,
-X3DCanvas .cobweb-browser-timing thead,
-X3DCanvas .cobweb-browser-timing tbody,
-X3DCanvas .cobweb-browser-timing tfoot,
-X3DCanvas .cobweb-browser-timing tr,
-X3DCanvas .cobweb-browser-timing th,
-X3DCanvas .cobweb-browser-timing td {
+X3DCanvas .cobweb-browser-timings table,
+X3DCanvas .cobweb-browser-timings thead,
+X3DCanvas .cobweb-browser-timings tbody,
+X3DCanvas .cobweb-browser-timings tfoot,
+X3DCanvas .cobweb-browser-timings tr,
+X3DCanvas .cobweb-browser-timings th,
+X3DCanvas .cobweb-browser-timings td {
 	outline: 0;
 	margin: 0;
 	border: 0;
@@ -126,42 +126,42 @@ X3DCanvas .cobweb-browser-timing td {
 	text-align: left;
 }
 
-X3DCanvas .cobweb-browser-timing table {
+X3DCanvas .cobweb-browser-timings table {
 	background: url(images/Time.png) no-repeat;
 }
 
-X3DCanvas .cobweb-browser-timing tr,
-X3DCanvas .cobweb-browser-timing th,
-X3DCanvas .cobweb-browser-timing td {
+X3DCanvas .cobweb-browser-timings tr,
+X3DCanvas .cobweb-browser-timings th,
+X3DCanvas .cobweb-browser-timings td {
 	border-collapse: separate;
 }
 
-X3DCanvas .cobweb-browser-timing thead th {
+X3DCanvas .cobweb-browser-timings thead th {
 	padding-left: 20px;
 	padding-bottom: 5px;
 }
 
-X3DCanvas .cobweb-browser-timing thead th {
+X3DCanvas .cobweb-browser-timings thead th {
 	font-weight: bold;
 }
 
-X3DCanvas .cobweb-browser-timing td:first-child {
+X3DCanvas .cobweb-browser-timings td:first-child {
 	padding-right: 10px;
 }
 
-X3DCanvas .cobweb-browser-timing tr.cobweb-more td {
+X3DCanvas .cobweb-browser-timings tr.cobweb-more td {
 	padding-bottom: 5px;
 }
 
-X3DCanvas .cobweb-browser-timing td {
+X3DCanvas .cobweb-browser-timings td {
 	padding-bottom: 2px;
 }
 
-X3DCanvas .cobweb-browser-timing tfoot td {
+X3DCanvas .cobweb-browser-timings tfoot td {
 	padding-top: 4px;
 }
 
-X3DCanvas .cobweb-browser-timing button {
+X3DCanvas .cobweb-browser-timings button {
 	border: 0;
 	padding: 2px;
 	background: rgba(0,0,0,0.38196601);
@@ -174,7 +174,7 @@ X3DCanvas .cobweb-browser-timing button {
 	cursor: default;
 }
 
-X3DCanvas .cobweb-browser-timing button:hover {
+X3DCanvas .cobweb-browser-timings button:hover {
 	cursor: pointer;
 }
 
