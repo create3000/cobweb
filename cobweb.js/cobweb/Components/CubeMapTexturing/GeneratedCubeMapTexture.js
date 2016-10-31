@@ -85,6 +85,8 @@ function ($,
 {
 "use strict";
 
+
+
 	// Rotations to negated normals of the texture cube.
 
 	var rotations = [
@@ -165,7 +167,7 @@ function ($,
 				gl .bindTexture (this .getTarget (), this .getTexture ());
 	
 				for (var i = 0; i < 6; ++ i)
-					gl .texImage2D  (this .getTargets () [i], 0, gl .RGBA, size, size, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+					gl .texImage2D (this .getTargets () [i], 0, gl .RGBA, size, size, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
 
 				// Properties
 

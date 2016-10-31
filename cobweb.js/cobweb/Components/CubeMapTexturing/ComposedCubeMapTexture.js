@@ -203,7 +203,7 @@ function ($,
 			var gl = this .getBrowser () .getContext ();
 
 			gl .bindTexture (this .getTarget (), this .getTexture ());
-			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
+			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, false);
 
 			if (this .isComplete ())
 			{

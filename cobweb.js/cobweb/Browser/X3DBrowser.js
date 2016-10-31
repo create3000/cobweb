@@ -263,13 +263,14 @@ function ($,
 			this .loadCount_ .removeInterest (this, "set_loadCount__");
 
 			this .prepareEvents () .addInterest (this, "bind");
+			this .addBrowserEvent ();
 		},
 		bind: function ()
 		{
 			this .prepareEvents () .removeInterest (this, "bind");
 
 			this .getWorld () .bind ();
-			this .setBrowserLoading (false);	
+			this .setBrowserLoading (false);
 		},
 		createVrmlFromString: function (vrmlSyntax)
 		{

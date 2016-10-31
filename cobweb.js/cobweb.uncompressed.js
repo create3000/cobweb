@@ -78457,7 +78457,7 @@ function ($,
 			var gl = this .getBrowser () .getContext ();
 
 			gl .bindTexture (this .getTarget (), this .getTexture ());
-			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
+			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, false);
 
 			if (this .isComplete ())
 			{
@@ -82581,6 +82581,8 @@ function ($,
 {
 
 
+
+
 	// Rotations to negated normals of the texture cube.
 
 	var rotations = [
@@ -82661,7 +82663,7 @@ function ($,
 				gl .bindTexture (this .getTarget (), this .getTexture ());
 	
 				for (var i = 0; i < 6; ++ i)
-					gl .texImage2D  (this .getTargets () [i], 0, gl .RGBA, size, size, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+					gl .texImage2D (this .getTargets () [i], 0, gl .RGBA, size, size, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
 
 				// Properties
 
@@ -104627,13 +104629,14 @@ function ($,
 			this .loadCount_ .removeInterest (this, "set_loadCount__");
 
 			this .prepareEvents () .addInterest (this, "bind");
+			this .addBrowserEvent ();
 		},
 		bind: function ()
 		{
 			this .prepareEvents () .removeInterest (this, "bind");
 
 			this .getWorld () .bind ();
-			this .setBrowserLoading (false);	
+			this .setBrowserLoading (false);
 		},
 		createVrmlFromString: function (vrmlSyntax)
 		{
