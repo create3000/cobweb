@@ -72,6 +72,8 @@ function ($,
 {
 "use strict";
 
+	var parameter = new Fields .MFString ();
+
 	function Inline (executionContext)
 	{
 		X3DChildNode     .call (this, executionContext);
@@ -168,7 +170,7 @@ function ($,
 
 				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_));
+				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_, parameter));
 			}
 			catch (error)
 			{
@@ -183,7 +185,7 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-			new Loader (this) .createX3DFromURL (this .url_, this .setInternalSceneAsync .bind (this));
+			new Loader (this) .createX3DFromURL (this .url_, parameter, this .setInternalSceneAsync .bind (this));
 		},
 		requestUnload: function ()
 		{

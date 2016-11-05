@@ -323,7 +323,7 @@ function ($,
 
 			this .addLoadCount (loader);
 
-			loader .createX3DFromURL (url,
+			loader .createX3DFromURL (url, parameter,
 			function (scene)
 			{
 				this .removeLoadCount (loader);
@@ -357,7 +357,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				scene        = new Loader (this .getWorld ()) .createX3DFromURL (url);
+				scene        = new Loader (this .getWorld ()) .createX3DFromURL (url, parameter);
 
 			if (! external)
 			{
@@ -374,19 +374,6 @@ function ($,
 		},
 		loadURL: function (url, parameter)
 		{
-			var target;
-
-			for (var i = 0, length = parameter .length; i < length; ++ i)
-			{
-				var pair = parameter [i] .split ("=");
-
-				if (pair .length !== 2)
-					continue;
-
-				if (pair [0] === "target")
-					target = pair [1];
-			}
-
 			// Cancel any loading.
 
 			this .loadCount_       .removeInterest (this, "set_loadCount__");
@@ -402,7 +389,7 @@ function ($,
 
 			this .loader = new Loader (this .getWorld ());
 
-			this .loader .createX3DFromURL (url,
+			this .loader .createX3DFromURL (url, parameter,
 			function (scene)
 			{
 				if (scene)
@@ -421,7 +408,7 @@ function ($,
 				this .setBrowserLoading (false);
 			}
 			.bind (this),
-			function (url)
+			function (url, target)
 			{
 				if (target)
 					window .open (url, target);

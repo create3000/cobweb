@@ -1267,6 +1267,7 @@
     <None Include="tests\HTML\cycle\DarkSideOfTheMoon.png" />
     <None Include="tests\HTML\cycle\JoinUs.png" />
     <None Include="tests\HTML\cycle\ToBeOrToHave.png" />
+    <None Include="tests\HTML\Events.xhtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
