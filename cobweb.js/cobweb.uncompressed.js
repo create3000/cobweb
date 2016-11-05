@@ -26994,6 +26994,8 @@ function ($,
 {
 
 
+	var parameter = new Fields .MFString ();
+
 	function X3DExternProtoDeclaration (executionContext)
 	{
 		X3DProtoDeclarationNode .call (this, executionContext);
@@ -27061,7 +27063,7 @@ function ($,
 
 			var Loader = require ("cobweb/InputOutput/Loader");
 
-			new Loader (this) .createX3DFromURL (this .url_, this .setInternalSceneAsync .bind (this));
+			new Loader (this) .createX3DFromURL (this .url_, parameter, this .setInternalSceneAsync .bind (this));
 		},
 		setInternalSceneAsync: function (value)
 		{
@@ -38474,6 +38476,7 @@ function (VERSION)
 define ('cobweb/InputOutput/Loader',[
 	"jquery",
 	"cobweb/Base/X3DObject",
+	"cobweb/Fields",
 	"cobweb/Browser/Networking/urls",
 	"cobweb/Parser/Parser",
 	"cobweb/Parser/XMLParser",
@@ -38484,6 +38487,7 @@ define ('cobweb/InputOutput/Loader',[
 ],
 function ($,
           X3DObject,
+          Fields,
           urls,
           Parser,
           XMLParser,
@@ -38506,6 +38510,8 @@ function ($,
 		"text/html":             true,
 		"application/xhtml+xml": true,
 	};
+
+	var parameter = new Fields .MFString ();
 
 	function Loader (node, external)
 	{
@@ -38612,13 +38618,13 @@ function ($,
 					console .info ("Done loading scene " + this .URL);
 			}
 		},
-		createX3DFromURL: function (url, callback, bindViewpoint, foreign)
+		createX3DFromURL: function (url, parameter, callback, bindViewpoint, foreign)
 		{
 			this .bindViewpoint = bindViewpoint;
 			this .foreign       = foreign;
 
 			if (callback)
-				return this .loadDocument (url, this .createX3DFromURLAsync .bind (this, callback));
+				return this .loadDocument (url, parameter, this .createX3DFromURLAsync .bind (this, callback));
 
 			return this .createX3DFromURLSync (url);
 		},
@@ -38681,19 +38687,20 @@ function ($,
 		{
 			this .script = true;
 
-			this .loadDocument (url, callback);
+			this .loadDocument (url, parameter, callback);
 		},
-		loadDocument: function (url, callback)
+		loadDocument: function (url, parameter, callback)
 		{
-			this .url      = url .copy ();
-			this .callback = callback;
+			this .url       = url .copy ();
+			this .parameter = parameter .copy ();
+			this .callback  = callback;
 
 			if (url .length === 0)
 				return this .loadDocumentError (new Error ("No URL given."));
 
-			this .loadDocumentAsync (this .url .shift ());
+			this .loadDocumentAsync (this .url .shift (), this .parameter .shift () || "");
 		},
-		loadDocumentAsync: function (URL)
+		loadDocumentAsync: function (URL, parameter)
 		{
 			if (URL .length == 0)
 			{
@@ -38770,6 +38777,25 @@ function ($,
 
 			this .URL = this .transform (URL);
 
+			// Handle target
+
+			var
+				target        = "",
+				parameterPair = parameter .split ("=");
+
+			if (parameterPair .length === 2)
+			{
+				if (parameterPair [0] === "target")
+				{
+					target = parameterPair [1];
+				}
+			}
+
+			if (target .length && target !== "_self")
+				return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""), target);
+
+			// Load URL async
+
 			$.ajax ({
 				url: this .URL,
 				dataType: "binary",
@@ -38785,7 +38811,7 @@ function ($,
 						//console .log (this .getContentType (xhr));
 
 						if (foreign [this .getContentType (xhr)])
-							return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""));
+							return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""), target);
 					}
 
 					this .fileReader .onload = this .readAsText .bind (this, blob);
@@ -38831,7 +38857,7 @@ function ($,
 			// Try to load next URL.
 
 			if (this .url .length)
-				this .loadDocumentAsync (this .url .shift ());
+				this .loadDocumentAsync (this .url .shift (), this .parameter .shift () || "");
 
 			else
 				this .callback (null);
@@ -38958,6 +38984,8 @@ function ($,
 {
 
 
+	var parameter = new Fields .MFString ();
+
 	var shaderTypes =
 	{
 		VERTEX:          "VERTEX_SHADER",
@@ -39040,7 +39068,7 @@ function ($,
 			
 			this .valid = false;
 
-			new Loader (this) .loadDocument (this .url_,
+			new Loader (this) .loadDocument (this .url_, parameter,
 			function (data, URL)
 			{
 				if (data === null)
@@ -73060,30 +73088,30 @@ function ($,
 			X3DGroupingNode .prototype .initialize .call (this);
 			X3DUrlObject    .prototype .initialize .call (this);
 
-			this .touchSensorNode .touchTime_ .addInterest (this, "requestAsyncLoad");
 			this .description_ .addFieldInterest (this .touchSensorNode .description_);
 
 			this .touchSensorNode .description_ = this .description_;
 			this .touchSensorNode .setup ();
+
+			// Modify set_active__ to get immediate response to user action (click event).
+
+			var
+				anchor       = this,
+				set_active__ = this .touchSensorNode .set_active__;
+
+			this .touchSensorNode .set_active__ = function (active, hit)
+			{
+				set_active__ .call (this, active, hit);
+
+				if (this .isOver_ .getValue () && ! active)
+					anchor .requestAsyncLoad ();
+			};
 		},
 		requestAsyncLoad: function ()
 		{
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE, false);
 
-			var target;
-
-			for (var i = 0, length = this .parameter_ .length; i < length; ++ i)
-			{
-				var pair = this .parameter_ [i] .split ("=");
-
-				if (pair .length !== 2)
-					continue;
-
-				if (pair [0] === "target")
-					target = pair [1];
-			}
-
-			new Loader (this) .createX3DFromURL (this .url_, /*this .parameter_,*/
+			new Loader (this) .createX3DFromURL (this .url_, this .parameter_,
 			function (scene)
 			{
 				if (scene)
@@ -73107,7 +73135,7 @@ function ($,
 				this .setLoadState (X3DConstants .COMPLETE_STATE, false);
 			}
 			.bind (this),
-			function (url)
+			function (url, target)
 			{
 				if (target)
 					window .open (url, target);
@@ -83487,6 +83515,8 @@ function ($,
 {
 
 
+	var parameter = new Fields .MFString ();
+
 	function Inline (executionContext)
 	{
 		X3DChildNode     .call (this, executionContext);
@@ -83583,7 +83613,7 @@ function ($,
 
 				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_));
+				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_, parameter));
 			}
 			catch (error)
 			{
@@ -83598,7 +83628,7 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-			new Loader (this) .createX3DFromURL (this .url_, this .setInternalSceneAsync .bind (this));
+			new Loader (this) .createX3DFromURL (this .url_, parameter, this .setInternalSceneAsync .bind (this));
 		},
 		requestUnload: function ()
 		{
@@ -104689,7 +104719,7 @@ function ($,
 
 			this .addLoadCount (loader);
 
-			loader .createX3DFromURL (url,
+			loader .createX3DFromURL (url, parameter,
 			function (scene)
 			{
 				this .removeLoadCount (loader);
@@ -104723,7 +104753,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				scene        = new Loader (this .getWorld ()) .createX3DFromURL (url);
+				scene        = new Loader (this .getWorld ()) .createX3DFromURL (url, parameter);
 
 			if (! external)
 			{
@@ -104740,19 +104770,6 @@ function ($,
 		},
 		loadURL: function (url, parameter)
 		{
-			var target;
-
-			for (var i = 0, length = parameter .length; i < length; ++ i)
-			{
-				var pair = parameter [i] .split ("=");
-
-				if (pair .length !== 2)
-					continue;
-
-				if (pair [0] === "target")
-					target = pair [1];
-			}
-
 			// Cancel any loading.
 
 			this .loadCount_       .removeInterest (this, "set_loadCount__");
@@ -104768,7 +104785,7 @@ function ($,
 
 			this .loader = new Loader (this .getWorld ());
 
-			this .loader .createX3DFromURL (url,
+			this .loader .createX3DFromURL (url, parameter,
 			function (scene)
 			{
 				if (scene)
@@ -104787,7 +104804,7 @@ function ($,
 				this .setBrowserLoading (false);
 			}
 			.bind (this),
-			function (url)
+			function (url, target)
 			{
 				if (target)
 					window .open (url, target);
