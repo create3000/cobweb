@@ -38692,15 +38692,31 @@ function ($,
 		loadDocument: function (url, parameter, callback)
 		{
 			this .url       = url .copy ();
-			this .parameter = parameter .copy ();
 			this .callback  = callback;
 
 			if (url .length === 0)
 				return this .loadDocumentError (new Error ("No URL given."));
 
-			this .loadDocumentAsync (this .url .shift (), this .parameter .shift () || "");
+			this .target = this .getTarget (parameter);
+
+			this .loadDocumentAsync (this .url .shift ());
 		},
-		loadDocumentAsync: function (URL, parameter)
+		getTarget: function (parameter)
+		{
+			for (var i = 0, length = parameter .length; i < length; ++ i)
+			{
+				var pair = parameter [i] .split ("=");
+
+				if (pair .length !== 2)
+					continue;
+
+				if (pair [0] === "target")
+					return pair [1];
+			}
+
+			return "";
+		},
+		loadDocumentAsync: function (URL)
 		{
 			if (URL .length == 0)
 			{
@@ -38779,20 +38795,8 @@ function ($,
 
 			// Handle target
 
-			var
-				target        = "",
-				parameterPair = parameter .split ("=");
-
-			if (parameterPair .length === 2)
-			{
-				if (parameterPair [0] === "target")
-				{
-					target = parameterPair [1];
-				}
-			}
-
-			if (target .length && target !== "_self")
-				return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""), target);
+			if (this .target .length && this .target !== "_self")
+				return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""), this .target);
 
 			// Load URL async
 
@@ -38811,7 +38815,7 @@ function ($,
 						//console .log (this .getContentType (xhr));
 
 						if (foreign [this .getContentType (xhr)])
-							return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""), target);
+							return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""), this .target);
 					}
 
 					this .fileReader .onload = this .readAsText .bind (this, blob);
@@ -38857,7 +38861,7 @@ function ($,
 			// Try to load next URL.
 
 			if (this .url .length)
-				this .loadDocumentAsync (this .url .shift (), this .parameter .shift () || "");
+				this .loadDocumentAsync (this .url .shift ());
 
 			else
 				this .callback (null);
