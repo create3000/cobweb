@@ -161,18 +161,18 @@ function (Fields,
 		{
 			return this .viewport_;
 		},
-		createShader: function (executionContext, name, vs, fs)
+		createShader: function (browser, name, vs, fs)
 		{
-			var vertexShader = new ShaderPart (executionContext);
+			var vertexShader = new ShaderPart (browser .getPrivateScene ());
 			vertexShader .url_ .push (vs);
 			vertexShader .setup ();
 
-			var fragmentShader = new ShaderPart (executionContext);
+			var fragmentShader = new ShaderPart (browser .getPrivateScene ());
 			fragmentShader .type_ = "FRAGMENT";
 			fragmentShader .url_ .push (fs);
 			fragmentShader .setup ();
 	
-			var shader = new ComposedShader (executionContext);
+			var shader = new ComposedShader (browser .getPrivateScene ());
 			shader .setName (name);
 			shader .language_ = "GLSL";
 			shader .parts_ .push (vertexShader);

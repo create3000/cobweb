@@ -63,6 +63,7 @@ define ([
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Utility/MatrixStack",
 	"standard/Math/Algorithm",
 	"standard/Utility/ObjectCache",
 ],
@@ -81,6 +82,7 @@ function ($,
           Vector4,
           Rotation4,
           Matrix4,
+          MatrixStack,
           Algorithm,
           ObjectCache)
 {
@@ -103,7 +105,7 @@ function ($,
 
 	var PointLights = ObjectCache (PointLightContainer);
 	
-	function PointLightContainer (browser, lightNode, groupNode, modelViewMatrix)
+	function PointLightContainer ()
 	{
 		var
 			nearValue        = 0.125,
@@ -113,10 +115,10 @@ function ($,
 		this .location             = new Vector3 (0, 0, 0);
 		this .direction            = new Vector3 (0, 0, 0);
 		this .shadowBuffer         = null;
-		this .viewVolume           = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
+		this .viewVolume           = new ViewVolume ();
 		this .viewport             = new Vector4 (0, 0, 0, 0);
 		this .projectionMatrix     = projectionMatrix;
-		this .modelViewMatrix      = new Matrix4 ();
+		this .modelViewMatrix      = new MatrixStack (Matrix4);
 		this .transformationMatrix = new Matrix4 ();
 		this .invLightSpaceMatrix  = new Matrix4 ();
 		this .shadowMatrix         = new Matrix4 ();
@@ -124,13 +126,15 @@ function ($,
 		this .rotation             = new Rotation4 ();
 		this .rotationMatrix       = new Matrix4 ();
 		this .textureUnit          = 0;
-	
-		this .set (browser, lightNode, groupNode, modelViewMatrix);
 	}
 
 	PointLightContainer .prototype =
 	{
 		constructor: PointLightContainer,
+		getModelViewMatrix: function ()
+		{
+			return this .modelViewMatrix;
+		},
 	   set: function (browser, lightNode, groupNode, modelViewMatrix)
 	   {
 			var
@@ -141,7 +145,7 @@ function ($,
 			this .lightNode = lightNode;
 			this .groupNode = groupNode;
 
-			this .modelViewMatrix .assign (modelViewMatrix);
+			this .modelViewMatrix .pushMatrix (modelViewMatrix);
 
 			// Get shadow buffer from browser.
 
@@ -179,8 +183,8 @@ function ($,
 
 				var
 					lightNode            = this .lightNode,
-					cameraSpaceMatrix    = renderObject .getViewpoint () .getCameraSpaceMatrix (),
-					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
+					cameraSpaceMatrix    = renderObject .getCameraSpaceMatrix () .get (),
+					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix .get ()) .multRight (cameraSpaceMatrix),
 					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
 
 				invLightSpaceMatrix .translate (lightNode .getLocation ());
@@ -222,14 +226,19 @@ function ($,
 	
 				if (! lightNode .getGlobal ())
 					invLightSpaceMatrix .multLeft (transformationMatrix .inverse ());
-
-				this .shadowMatrix .assign (cameraSpaceMatrix) .multRight (invLightSpaceMatrix);
 			}
 			catch (error)
 			{
 				// Catch error from matrix inverse.
 				console .log (error);
 			}
+		},
+		setGlobalVariables: function (renderObject)
+		{
+			this .modelViewMatrix .get () .multVecMatrix (this .location .assign (this .lightNode .location_ .getValue ()));
+
+			this .shadowMatrix .assign (renderObject .getCameraSpaceMatrix () .get ()) .multRight (this .invLightSpaceMatrix);
+			this .shadowMatrixArray .set (this .shadowMatrix);
 		},
 		setShaderUniforms: function (gl, shaderObject, i)
 		{
@@ -241,7 +250,7 @@ function ($,
 				lightNode   = this .lightNode,
 				color       = lightNode .getColor (),
 				attenuation = lightNode .getAttenuation (),
-				location    = this .modelViewMatrix .multVecMatrix (this .location  .assign (lightNode .location_  .getValue ())),
+				location    = this .location,
 				shadowColor = lightNode .getShadowColor ();
 
 			gl .uniform1i (shaderObject .x3d_LightType [i],             2);
@@ -254,8 +263,6 @@ function ($,
 
 			if (this .textureUnit)
 			{
-				this .shadowMatrixArray .set (this .shadowMatrix);
-
 				gl .uniform1f        (shaderObject .x3d_ShadowIntensity [i],     lightNode .getShadowIntensity ());
 				gl .uniform1f        (shaderObject .x3d_ShadowDiffusion [i],     lightNode .getShadowDiffusion ());
 				gl .uniform3f        (shaderObject .x3d_ShadowColor [i],         shadowColor .r, shadowColor .g, shadowColor .b);
@@ -273,6 +280,7 @@ function ($,
 				this .browser .getCombinedTextureUnits () .push (this .textureUnit);
 
 			this .browser .pushShadowBuffer (this .shadowBuffer);
+			this .modelViewMatrix .clear ();
 
 			this .browser      = null;
 			this .lightNode    = null;

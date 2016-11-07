@@ -88,9 +88,20 @@ function ($,
 	X3DScene .prototype = $.extend (Object .create (X3DExecutionContext .prototype),
 	{
 		constructor: X3DScene,
+		isMasterContext: function ()
+		{
+			return this === this .getExecutionContext ();
+		},
 		isRootContext: function ()
 		{
 			return true;
+		},
+		getScene: function ()
+		{
+			if (this .isMasterContext ())
+				return this;
+
+			return this .getExecutionContext () .getScene ();
 		},
 		updateUnit: function (category, name, conversionFactor)
 		{

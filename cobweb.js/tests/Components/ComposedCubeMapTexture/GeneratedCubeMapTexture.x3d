@@ -5,9 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Sun, 18 Sep 2016 14:43:01 GMT'/>
     <meta name='creator' content='holger'/>
-    <meta name='generator' content='Titania V2.0.0, http://titania.create3000.de'/>
+    <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ComposedCubeMapTexture/GeneratedCubeMapTexture.x3d'/>
-    <meta name='modified' content='Thu, 22 Sep 2016 12:42:53 GMT'/>
+    <meta name='modified' content='Mon, 31 Oct 2016 09:06:29 GMT'/>
   </head>
   <Scene>
     <WorldInfo
@@ -69,7 +69,7 @@
           <MetadataBoolean DEF='enabled_1' containerField='value'
               name='enabled'
               reference='http://titania.create3000.de'
-              value='true'/>
+              value='false'/>
           <MetadataFloat DEF='scale' containerField='value'
               name='scale'
               reference='http://titania.create3000.de'
@@ -101,15 +101,15 @@
           <MetadataDouble DEF='position_1' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='6.04104051553517, 8.61971014855869, 2.07860788782392'/>
+              value='-4.04934406280518, 2.51448726654053, -4.47583103179932'/>
           <MetadataDouble DEF='orientation_1' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.414716691621526, -0.898787258036881, -0.142096905247938, 4.98402318008064'/>
+              value='-0.0684467319102771, 0.982413982747315, -0.17371761969749, 3.88023490021279'/>
           <MetadataDouble DEF='centerOfRotation_1' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='0, 5, 0'/>
+              value='0.136093601584435, 4.75450658798218, 0.0109284846112132'/>
         </MetadataSet>
         <MetadataSet DEF='Selection_1' containerField='value'
             name='Selection'
@@ -117,12 +117,6 @@
           <MetadataSet DEF='previous_1' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'/>
-          <MetadataSet DEF='children_1' containerField='value'
-              name='children'
-              reference='http://titania.create3000.de'>
-            <PointLight DEF='_1' containerField='value'
-                location='0 5 0'/>
-          </MetadataSet>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -138,9 +132,9 @@
         skyColor='0.2 0.2 0.2'/>
     <Viewpoint
         description='Home'
-        position='-11.1769 4.30377 2.86063'
-        orientation='0.0397507340809531 -0.998800456347203 -0.0285924385221893 1.32833775689261'
-        centerOfRotation='0.100791 4.5 0.0633195'/>
+        position='-4.04934 2.51449 -4.47583'
+        orientation='-0.0684467319102771 0.982413982747315 -0.17371761969749 3.88023490021279'
+        centerOfRotation='0.136094 4.75451 0.0109285'/>
     <Transform DEF='Box'
         translation='0.100791 -0.5 0.0633195'
         scale='13.9742 0.5 13.9367'>
@@ -178,7 +172,7 @@
     <Transform DEF='Cone'
         translation='0 2 0'
         rotation='-0.426397279804747 0.426397026723331 -0.797728610102844 1.79488179706456'
-        scaleOrientation='-7.90049773372062e-07 -1.90734866957269e-06 0.999999999997869 3.92699089802335'>
+        scaleOrientation='0.296973872810686 0.631186421179508 -0.716526496779029 1.16136963204177'>
       <Shape>
         <Appearance>
           <Material DEF='Rococo24'
@@ -226,7 +220,7 @@
         <Appearance>
           <Material DEF='Rococo9'
               ambientIntensity='0.187004'
-              diffuseColor='0.748016 0.395395 0.306368'
+              diffuseColor='0.748016 0.306368 0.490216'
               specularColor='0.30303 0.30303 0.30303'
               shininess='0.69697'/>
         </Appearance>
@@ -291,6 +285,12 @@ function initialize ()
         </IndexedFaceSet>
       </Shape>
     </Transform>
-    <PointLight USE='_1'/>
+    <PointLight
+        location='0 5 0'/>
+    <DirectionalLight
+        intensity='0.466321'
+        direction='0 -1 0'
+        shadowIntensity='1'/>
+    <NavigationInfo/>
   </Scene>
 </X3D>

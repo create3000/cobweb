@@ -241,9 +241,9 @@ function ($,
 		set_headlight__: function ()
 		{
 			if (this .headlight_ .getValue ())
-				this .enable = enable;
-			else
 				delete this .enable;
+			else
+				this .enable = Function .prototype;
 		},
 		bindToLayer: function (layer)
 		{
@@ -317,17 +317,13 @@ function ($,
 		},
 		enable: function (type, renderObject)
 		{
+			renderObject .getGlobalLights () .push (renderObject .getBrowser () .getHeadlight ());
 		},
 		traverse: function (type, renderObject)
 		{
 			renderObject .getLayer () .getNavigationInfos () .push (this);
 		}
 	});
-
-	function enable (type, renderObject)
-	{
-		renderObject .getGlobalLights () .push (renderObject .getBrowser () .getHeadlight ());
-	}
 
 	return NavigationInfo;
 });

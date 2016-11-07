@@ -73,7 +73,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 		normal = new Vector3 (0, 0, 0),
 		vin    = new Vector4 (0, 0, 0, 0);
 
-	function ViewVolume (projectionMatrix, viewport, scissor)
+	function ViewVolume ()
 	{
 		this .viewport = new Vector4 (0, 0, 0, 0);
 		this .scissor  = new Vector4 (0, 0, 0, 0);
@@ -86,8 +86,6 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 			new Plane3 (Vector3 .Zero, Vector3 .Zero),  // bottom
 			new Plane3 (Vector3 .Zero, Vector3 .Zero),  // back
 		];
-	   
-	   this .set (projectionMatrix, viewport, scissor);
 	}
 
 	ViewVolume .prototype =

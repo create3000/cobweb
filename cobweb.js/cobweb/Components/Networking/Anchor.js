@@ -114,30 +114,30 @@ function ($,
 			X3DGroupingNode .prototype .initialize .call (this);
 			X3DUrlObject    .prototype .initialize .call (this);
 
-			this .touchSensorNode .touchTime_ .addInterest (this, "requestAsyncLoad");
 			this .description_ .addFieldInterest (this .touchSensorNode .description_);
 
 			this .touchSensorNode .description_ = this .description_;
 			this .touchSensorNode .setup ();
+
+			// Modify set_active__ to get immediate response to user action (click event).
+
+			var
+				anchor       = this,
+				set_active__ = this .touchSensorNode .set_active__;
+
+			this .touchSensorNode .set_active__ = function (active, hit)
+			{
+				set_active__ .call (this, active, hit);
+
+				if (this .isOver_ .getValue () && ! active)
+					anchor .requestAsyncLoad ();
+			};
 		},
 		requestAsyncLoad: function ()
 		{
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE, false);
 
-			var target;
-
-			for (var i = 0, length = this .parameter_ .length; i < length; ++ i)
-			{
-				var pair = this .parameter_ [i] .split ("=");
-
-				if (pair .length !== 2)
-					continue;
-
-				if (pair [0] === "target")
-					target = pair [1];
-			}
-
-			new Loader (this) .createX3DFromURL (this .url_, /*this .parameter_,*/
+			new Loader (this) .createX3DFromURL (this .url_, this .parameter_,
 			function (scene)
 			{
 				if (scene)
@@ -161,7 +161,7 @@ function ($,
 				this .setLoadState (X3DConstants .COMPLETE_STATE, false);
 			}
 			.bind (this),
-			function (url)
+			function (url, target)
 			{
 				if (target)
 					window .open (url, target);

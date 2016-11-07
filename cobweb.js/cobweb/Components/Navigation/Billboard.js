@@ -172,7 +172,6 @@ function ($,
 				{
 					case TraverseType .CAMERA:
 					case TraverseType .DEPTH:
-					case TraverseType .DRAW:
 						// No clone support for shadow, generated cube map texture, and bbox
 						modelViewMatrix .multLeft (this .matrix);
 						break;

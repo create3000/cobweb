@@ -70,13 +70,18 @@ function (Fields,
 {
 "use strict";
 	
-	function getHeadLight (executionContext)
+	function getHeadLight (browser)
 	{
-		var light = new DirectionalLight (executionContext);
+		var light = new DirectionalLight (browser .getPrivateScene ());
+
 		light .setup ();
-		var headlight = light .getLights () .pop (executionContext .getBrowser (), light, null, Matrix4 .Identity);
-		headlight .dispose = function () { };
-		return headlight;
+
+		var headlightContainer = light .getLights () .pop ();
+
+		headlightContainer .set (browser, light, null, Matrix4 .Identity);
+		headlightContainer .dispose = function () { };
+
+		return headlightContainer;
 	};
 
 	function X3DNavigationContext ()
@@ -100,11 +105,11 @@ function (Fields,
 			this .initialized () .addInterest (this, "set_world__");
 			this .shutdown ()    .addInterest (this, "remove_world__");
 
-			this .headlight = getHeadLight (this);
+			this .headlightContainer = getHeadLight (this);
 		},
 		getHeadlight: function ()
 		{
-			return this .headlight;
+			return this .headlightContainer;
 		},
 		getActiveLayer: function ()
 		{

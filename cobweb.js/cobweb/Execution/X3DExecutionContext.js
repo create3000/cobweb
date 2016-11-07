@@ -84,8 +84,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("rootNodes", new Fields .MFNode (),
-                             "loadCount", new Fields .SFInt32 ());
+		this .addChildObjects ("rootNodes", new Fields .MFNode ());
 
 		this .specificationVersion = "3.3";
 		this .encoding             = "SCRIPTED";
@@ -93,6 +92,7 @@ function ($,
 		this .components           = new ComponentInfoArray (this .getBrowser ());
 		this .url                  = new URI (window .location);
 		this .uninitializedNodes   = [ ];
+		this .uninitializedNodes2  = [ ];
 		this .namedNodes           = { };
 		this .importedNodes        = { };
 		this .protos               = new ProtoDeclarationArray ();
@@ -110,12 +110,22 @@ function ($,
 
 			// Setup nodes
 
-			var uninitializedNodes = this .uninitializedNodes;
+			while (this .uninitializedNodes .length)
+			{
+				var uninitializedNodes = this .uninitializedNodes;
 
-			for (var i = 0, length = uninitializedNodes .length; i < length; ++ i)
-				uninitializedNodes [i] .setup ();
+				this .uninitializedNodes  = this .uninitializedNodes2;
+				this .uninitializedNodes2 = uninitializedNodes;
+	
+				for (var i = 0, length = uninitializedNodes .length; i < length; ++ i)
+					uninitializedNodes [i] .setup ();
 
-			uninitializedNodes .length = 0;
+				uninitializedNodes .length = 0;
+			}
+		},
+		isMasterContext: function ()
+		{
+			return false;
 		},
 		isRootContext: function ()
 		{
@@ -436,14 +446,6 @@ function ($,
 				else
 					throw new Error ("Viewpoint named '" + name + "' not found.");
 			}
-		},
-		addLoadCount: function (node)
-		{
-			this .loadCount_ = this .loadCount_ .getValue () + 1;
-		},
-		removeLoadCount: function (node)
-		{
-			this .loadCount_ = this .loadCount_ .getValue () - 1;
 		},
 	});
 

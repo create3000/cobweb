@@ -66,6 +66,8 @@ function ($,
 {
 "use strict";
 
+	var parameter = new Fields .MFString ();
+
 	function X3DExternProtoDeclaration (executionContext)
 	{
 		X3DProtoDeclarationNode .call (this, executionContext);
@@ -127,17 +129,17 @@ function ($,
 				return;
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
-			this .getScene () .addLoadCount (this);
+			this .getScene () .addInitLoadCount (this);
 			
 			// Don't create scene cache, as of possible default nodes and complete scenes.
 
 			var Loader = require ("cobweb/InputOutput/Loader");
 
-			new Loader (this) .createX3DFromURL (this .url_, this .setInternalSceneAsync .bind (this));
+			new Loader (this) .createX3DFromURL (this .url_, parameter, this .setInternalSceneAsync .bind (this));
 		},
 		setInternalSceneAsync: function (value)
 		{
-			this .getScene () .removeLoadCount (this);
+			this .getScene () .removeInitLoadCount (this);
 		
 			if (value)
 				this .setInternalScene (value);

@@ -124,6 +124,18 @@ function (ViewVolume,
 		{
 			return this .depthTexture;
 		},
+		readPixels: function ()
+		{
+			var
+				gl     = this .browser .getContext (),
+				array  = this .array,
+				width  = this .width,
+				height = this .height;
+
+			gl .readPixels (0, 0, width, height, gl .RGBA, gl .UNSIGNED_BYTE, array);
+
+			return array;
+		},
 		getDepth: function (projectionMatrix, viewport)
 		{
 			try

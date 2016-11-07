@@ -69,21 +69,15 @@ function ($,
 	{
 		constructor: X3DUrlObject,
 		initialize: function ()
-		{
-		},
+		{ },
 		setLoadState: function (value, notify)
 		{
-			if (this .hasOwnProperty ("loadId"))
-			{
-				this .getBrowser () .removeLoadCount (this .loadId);
-				
-				delete this .loadId;
-			}
+			this .loadState_ = value;
+
+			this .getScene () .removeLoadCount (this);
 
 			if (notify !== false && value === X3DConstants .IN_PROGRESS_STATE)
-				this .loadId = this .getBrowser () .addLoadCount (this);
-
-			this .loadState_ = value;
+				this .getScene () .addLoadCount (this);
 		},
 		checkLoadState: function ()
 		{

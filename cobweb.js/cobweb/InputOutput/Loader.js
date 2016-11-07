@@ -50,6 +50,7 @@
 define ([
 	"jquery",
 	"cobweb/Base/X3DObject",
+	"cobweb/Fields",
 	"cobweb/Browser/Networking/urls",
 	"cobweb/Parser/Parser",
 	"cobweb/Parser/XMLParser",
@@ -60,6 +61,7 @@ define ([
 ],
 function ($,
           X3DObject,
+          Fields,
           urls,
           Parser,
           XMLParser,
@@ -82,6 +84,8 @@ function ($,
 		"text/html":             true,
 		"application/xhtml+xml": true,
 	};
+
+	var parameter = new Fields .MFString ();
 
 	function Loader (node, external)
 	{
@@ -170,15 +174,15 @@ function ($,
 		},
 		setScene: function (scene, success)
 		{
-			scene .loadCount_ .addInterest (this, "set_loadCount__", scene, success);
-			scene .loadCount_ .addEvent ();
+			scene .initLoadCount_ .addInterest (this, "set_initLoadCount__", scene, success);
+			scene .initLoadCount_ .addEvent ();
 		},
-		set_loadCount__: function (field, scene, success)
+		set_initLoadCount__: function (field, scene, success)
 		{
 			if (field .getValue ())
 				return;
 
-			scene .loadCount_ .removeInterest (this, "set_loadCount__");
+			scene .initLoadCount_ .removeInterest (this, "set_initLoadCount__");
 
 			success (scene);
 
@@ -188,13 +192,13 @@ function ($,
 					console .info ("Done loading scene " + this .URL);
 			}
 		},
-		createX3DFromURL: function (url, callback, bindViewpoint, foreign)
+		createX3DFromURL: function (url, parameter, callback, bindViewpoint, foreign)
 		{
 			this .bindViewpoint = bindViewpoint;
 			this .foreign       = foreign;
 
 			if (callback)
-				return this .loadDocument (url, this .createX3DFromURLAsync .bind (this, callback));
+				return this .loadDocument (url, parameter, this .createX3DFromURLAsync .bind (this, callback));
 
 			return this .createX3DFromURLSync (url);
 		},
@@ -257,17 +261,34 @@ function ($,
 		{
 			this .script = true;
 
-			this .loadDocument (url, callback);
+			this .loadDocument (url, parameter, callback);
 		},
-		loadDocument: function (url, callback)
+		loadDocument: function (url, parameter, callback)
 		{
-			this .url      = url .copy ();
-			this .callback = callback;
+			this .url       = url .copy ();
+			this .callback  = callback;
 
 			if (url .length === 0)
 				return this .loadDocumentError (new Error ("No URL given."));
 
+			this .target = this .getTarget (parameter);
+
 			this .loadDocumentAsync (this .url .shift ());
+		},
+		getTarget: function (parameter)
+		{
+			for (var i = 0, length = parameter .length; i < length; ++ i)
+			{
+				var pair = parameter [i] .split ("=");
+
+				if (pair .length !== 2)
+					continue;
+
+				if (pair [0] === "target")
+					return pair [1];
+			}
+
+			return "";
 		},
 		loadDocumentAsync: function (URL)
 		{
@@ -346,6 +367,13 @@ function ($,
 
 			this .URL = this .transform (URL);
 
+			// Handle target
+
+			if (this .target .length && this .target !== "_self")
+				return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""), this .target);
+
+			// Load URL async
+
 			$.ajax ({
 				url: this .URL,
 				dataType: "binary",
@@ -361,7 +389,7 @@ function ($,
 						//console .log (this .getContentType (xhr));
 
 						if (foreign [this .getContentType (xhr)])
-							return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""));
+							return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""), this .target);
 					}
 
 					this .fileReader .onload = this .readAsText .bind (this, blob);

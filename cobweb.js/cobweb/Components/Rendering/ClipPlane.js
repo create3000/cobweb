@@ -74,11 +74,9 @@ function ($,
 
 	var ClipPlanes = ObjectCache (ClipPlaneContainer);
 
-	function ClipPlaneContainer (clipPlane, modelViewMatrix)
+	function ClipPlaneContainer ()
 	{
 		this .plane = new Plane3 (Vector3 .Zero, Vector3 .Zero);
-
-		this .set (clipPlane, modelViewMatrix);
 	}
 
 	ClipPlaneContainer .prototype =
@@ -169,7 +167,13 @@ function ($,
 		push: function (renderObject)
 		{
 			if (this .enabled)
-				renderObject .getClipPlanes () .push (ClipPlanes .pop (this, renderObject .getModelViewMatrix () .get ()));
+			{
+				var clipPlaneContainer = ClipPlanes .pop ();
+
+				clipPlaneContainer .set (this, renderObject .getModelViewMatrix () .get ());
+
+				renderObject .getClipPlanes () .push (clipPlaneContainer);
+			}
 		},
 		pop: function (renderObject)
 		{

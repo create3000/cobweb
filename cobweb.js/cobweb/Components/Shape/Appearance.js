@@ -177,14 +177,7 @@ function ($,
 			if (this .textureNode)
 				this .textureNode .transparent_ .addInterest (this, "set_transparent__");
 
-			if (X3DCast (X3DConstants .GeneratedCubeMapTexture, this .texture_))
-			{
-				delete this .traverse;
-			}
-			else
-			{
-				this .traverse = Function .prototype;
-			}
+			this .generatedCubeMapTexture = X3DCast (X3DConstants .GeneratedCubeMapTexture, this .texture_);
 
 			this .set_transparent__ ();
 		},
@@ -254,7 +247,11 @@ function ($,
 		},
 		traverse: function (type, renderObject)
 		{
-			this .textureNode .traverse (type, renderObject);
+			if (this .generatedCubeMapTexture)
+				this .generatedCubeMapTexture .traverse (type, renderObject);
+
+			if (this .shaderNode)
+				this .shaderNode .traverse (type, renderObject);
 		},
 		display: function (context)
 		{

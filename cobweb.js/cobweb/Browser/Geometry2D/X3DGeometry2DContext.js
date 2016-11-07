@@ -67,7 +67,7 @@ function (Arc2DOptions,
 		if (this [name])
 			return this [name];
 
-		this [name] = new Type (this);
+		this [name] = new Type (this .getPrivateScene ());
 		this [name] .setup ();
 
 		return this [name];
@@ -78,8 +78,7 @@ function (Arc2DOptions,
 	X3DGeometry2DContext .prototype =
 	{
 		initialize: function ()
-		{
-		},
+		{ },
 		getArc2DOptions: function ()
 		{
 			return getOptionNode .call (this, "arc2DOptions", Arc2DOptions);

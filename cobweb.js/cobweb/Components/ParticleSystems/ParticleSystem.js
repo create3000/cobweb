@@ -707,7 +707,7 @@ function ($,
 				{
 					var
 						now          = performance .now () / 1000,
-						newParticles = Math .ceil ((now - this .creationTime) * this .maxParticles / this .particleLifetime);
+						newParticles = Math .max (0, Math .ceil ((now - this .creationTime) * this .maxParticles / this .particleLifetime));
 	
 					if (newParticles)
 						this .creationTime = now;
@@ -1217,7 +1217,7 @@ function ($,
 			}
 			else
 			{
-				if (this .numParticles === 0)
+				if (this .numParticles <= 0)
 					return;
 
 				var gl = context .renderer .getBrowser () .getContext ();
@@ -1260,7 +1260,7 @@ function ($,
 					if (shaderNode === browser .getDefaultShader ())
 						shaderNode = this .shaderNode;
 		
-					if (this .numParticles === 0)
+					if (this .numParticles <= 0)
 						return;
 	
 					// Setup shader.
@@ -1312,7 +1312,7 @@ function ($,
 						gl .frontFace (positiveScale ? gl .CCW : gl .CW);
 						gl .enable (gl .CULL_FACE);
 						gl .cullFace (gl .BACK);
-			
+
 						gl .drawArrays (this .shaderNode .primitiveMode, 0, this .numParticles * this .vertexCount);
 					}
 		

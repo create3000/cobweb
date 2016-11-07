@@ -1259,6 +1259,15 @@
     <None Include="tests\HTML\X3DCanvasSetUrlAttribute.html" />
     <None Include="tests\HTML\Box.x3d" />
     <None Include="tests\HTML\README" />
+    <None Include="cobweb\Rendering\DependentRenderer.js" />
+    <None Include="tests\HTML\cycle\DarkSideOfTheMoon.x3d" />
+    <None Include="tests\HTML\cycle\JoinUs.x3d" />
+    <None Include="tests\HTML\cycle\ToBeOrToHave.x3d" />
+    <None Include="tests\HTML\cycle\cycle.xhtml" />
+    <None Include="tests\HTML\cycle\DarkSideOfTheMoon.png" />
+    <None Include="tests\HTML\cycle\JoinUs.png" />
+    <None Include="tests\HTML\cycle\ToBeOrToHave.png" />
+    <None Include="tests\HTML\Events.xhtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1329,5 +1338,6 @@
     <Folder Include="cobweb\Browser\ParticleSystems\" />
     <Folder Include="cobweb\Browser\Shaders\Bits\" />
     <Folder Include="tests\HTML\" />
+    <Folder Include="tests\HTML\cycle\" />
   </ItemGroup>
 </Project>

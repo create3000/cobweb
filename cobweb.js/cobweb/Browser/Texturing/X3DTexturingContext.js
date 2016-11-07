@@ -63,9 +63,9 @@ function (TextureProperties,
 		this .textureUnits             = [ ];
 		this .combinedTextureUnits     = [ ];
 		this .textureStages            = 1;
-		this .defaultTextureProperties = new TextureProperties (this);
-		this .defaultTextureTransform  = new TextureTransform (this);
-		this .defaultTextureCoordinate = new TextureCoordinate (this);
+		this .defaultTextureProperties = new TextureProperties (this .getPrivateScene ());
+		this .defaultTextureTransform  = new TextureTransform (this .getPrivateScene ());
+		this .defaultTextureCoordinate = new TextureCoordinate (this .getPrivateScene ());
 	}
 
 	X3DTexturingContext .prototype =

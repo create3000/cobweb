@@ -267,30 +267,36 @@ function ($,
 		},
 		traverse: function (type, renderObject)
 		{
-			this .getProjectionMatrix () .pushMatrix (this .getViewpoint () .getProjectionMatrix (this));
+			renderObject = renderObject || this;
+
+			var viewpoint = this .getViewpoint ();
+
+			this .getCameraSpaceMatrix        () .pushMatrix (viewpoint .getCameraSpaceMatrix ());
+			this .getInverseCameraSpaceMatrix () .pushMatrix (viewpoint .getInverseCameraSpaceMatrix ());
+			this .getProjectionMatrix         () .pushMatrix (viewpoint .getProjectionMatrix (this));
 
 			switch (type)
 			{
 				case TraverseType .POINTER:
-					this .pointer (type);
+					this .pointer (type, renderObject);
 					break;
 				case TraverseType .CAMERA:
-					this .camera (type);
+					this .camera (type, renderObject);
 					break;
 				case TraverseType .COLLISION:
-					this .collision (type);
+					this .collision (type, renderObject);
 					break;
 				case TraverseType .DEPTH:
-					this .display (type);
-					break;
 				case TraverseType .DISPLAY:
-					this .display (type);
+					this .display (type, renderObject);
 					break;
 			}
 
-			this .getProjectionMatrix () .pop ();
+			this .getProjectionMatrix         () .pop ();
+			this .getInverseCameraSpaceMatrix () .pop ();
+			this .getCameraSpaceMatrix        () .pop ();
 		},
-		pointer: function (type)
+		pointer: function (type, renderObject)
 		{
 			if (this .isPickable_ .getValue ())
 			{
@@ -310,22 +316,22 @@ function ($,
 				}
 
 				browser .setHitRay (this .getProjectionMatrix () .get (), viewport);
-				this .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+				this .getModelViewMatrix () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 
-				this .currentViewport .push (this);
-				this .groupNode .traverse (type, this);
-				this .currentViewport .pop (this);
+				this .currentViewport .push (renderObject);
+				this .groupNode .traverse (type, renderObject);
+				this .currentViewport .pop (renderObject);
 
 				this .getModelViewMatrix () .pop ()
 			}
 		},
-		camera: function (type)
+		camera: function (type, renderObject)
 		{
 			this .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
 	
-			this .currentViewport .push (this);
-			this .groupNode .traverse (type, this);
-			this .currentViewport .pop (this);
+			this .currentViewport .push (renderObject);
+			this .groupNode .traverse (type, renderObject);
+			this .currentViewport .pop (renderObject);
 
 			this .navigationInfos .update ();
 			this .backgrounds     .update ();
@@ -336,7 +342,7 @@ function ($,
 
 			this .getModelViewMatrix () .pop ()
 		},
-		collision: function (type)
+		collision: function (type, renderObject)
 		{
 			this .collisionTime = 0;
 
@@ -349,25 +355,25 @@ function ($,
 			Camera .ortho (-size, size, -size, size, -size, size, projectionMatrix);
 
 			this .getProjectionMatrix () .pushMatrix (projectionMatrix);
-			this .getModelViewMatrix  () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+			this .getModelViewMatrix  () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 	
 			// Render
-			this .currentViewport .push (this);
-			this .render (type, this .groupNode);
-			this .currentViewport .pop (this);
+			this .currentViewport .push (renderObject);
+			renderObject .render (type, this .groupNode);
+			this .currentViewport .pop (renderObject);
 
 			this .getModelViewMatrix  () .pop ()
 			this .getProjectionMatrix () .pop ()
 		},
-		display: function (type)
+		display: function (type, renderObject)
 		{
-			this .getNavigationInfo () .enable (type, this);
+			this .getNavigationInfo () .enable (type, renderObject);
 
-			this .getModelViewMatrix () .pushMatrix (this .getViewpoint () .getInverseCameraSpaceMatrix ());
+			this .getModelViewMatrix () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 
-			this .currentViewport .push (this);
-			this .render (type, this .groupNode);
-			this .currentViewport .pop (this);
+			this .currentViewport .push (renderObject);
+			renderObject .render (type, this .groupNode);
+			this .currentViewport .pop (renderObject);
 
 			this .getModelViewMatrix () .pop ()
 		},

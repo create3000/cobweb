@@ -155,12 +155,12 @@ function ($,
 				return;
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
-			this .getScene () .addLoadCount (this);
+			this .getScene () .addInitLoadCount (this);
 
 			new Loader (this) .loadScript (this .url_,
 			function (data)
 			{
-				this .getScene () .removeLoadCount (this);
+				this .getScene () .removeInitLoadCount (this);
 
 				if (data === null)
 				{

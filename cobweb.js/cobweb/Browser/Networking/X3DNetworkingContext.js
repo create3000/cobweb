@@ -64,8 +64,6 @@ function (Fields,
 {
 "use strict";
 	
-	var loadCountId = 0;
-
 	function getBaseURI (element)
 	{
 		var baseURI = element .baseURI;
@@ -83,12 +81,11 @@ function (Fields,
 
 		this .addChildObjects ("loadCount", new Fields .SFInt32 ());
 
-		this .loadSensor     = new LoadSensor (this);
+		this .loadSensor     = new LoadSensor (this .getPrivateScene ());
 		this .loadingTotal   = 0;
 		this .loadingObjects = { };
 		this .location       = getBaseURI (this .getElement () [0]);
-		this .defaultScene   = this .createScene ();
-		this .privateScene   = this .createScene ();
+		this .defaultScene   = this .createScene (); // Inline node's empty scene.
 		this .browserLoading = false;
 	}
 
@@ -98,12 +95,11 @@ function (Fields,
 		{
 			this .loadSensor .setup ();
 
-			this .defaultScene .setup ();
-			this .defaultScene .setLive (true);
+			// Inline node's empty scene.
 
-			this .privateScene .setPrivate (true);
-			this .privateScene .setup ();
-			this .privateScene .setLive (true);
+			this .defaultScene .setPrivate (true);
+			this .defaultScene .setLive (true);
+			this .defaultScene .setup ();
 		},
 		getProviderUrl: function ()
 		{
@@ -124,10 +120,6 @@ function (Fields,
 		getDefaultScene: function ()
 		{
 			return this .defaultScene;
-		},
-		getPrivateScene: function ()
-		{
-			return this .privateScene;
 		},
 		getLoadSensor: function ()
 		{
@@ -151,21 +143,24 @@ function (Fields,
 		},
 		addLoadCount: function (object)
 		{
-		   var id = loadCountId ++;
+		   var id = object .getId ();
+
+			if (this .loadingObjects .hasOwnProperty (id))
+				return;
 
 			++ this .loadingTotal;
-		   this .loadingObjects [id] = true;
+			this .loadingObjects [id] = object;
 			
 			this .setLoadCount (this .loadCount_ = this .loadCount_ .getValue () + 1);
 			this .setCursor ("DEFAULT");
-
-			return id;
 		},
-		removeLoadCount: function (id)
+		removeLoadCount: function (object)
 		{
-		   if (! this .loadingObjects .hasOwnProperty (id))
-		      return;
-		   
+         var id = object .getId ();
+
+			if (! this .loadingObjects .hasOwnProperty (id))
+				return;
+
 			delete this .loadingObjects [id];
 
 			this .setLoadCount (this .loadCount_ = this .loadCount_ .getValue () - 1);

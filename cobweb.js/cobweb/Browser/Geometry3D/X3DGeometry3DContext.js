@@ -65,7 +65,7 @@ function (BoxOptions,
 		if (this [name])
 			return this [name];
 
-		this [name] = new Type (this);
+		this [name] = new Type (this .getPrivateScene ());
 		this [name] .setup ();
 
 		return this [name];
@@ -76,8 +76,7 @@ function (BoxOptions,
 	X3DGeometry3DContext .prototype =
 	{
 		initialize: function ()
-		{
-		},
+		{ },
 		getBoxOptions: function ()
 		{
 			return getOptionNode .call (this, "boxOptions", BoxOptions);

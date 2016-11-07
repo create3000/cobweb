@@ -48,77 +48,98 @@
 
 
 define ([
-	"jquery",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Rendering/X3DRenderObject",
+	"cobweb/Bits/TraverseType",
 ],
-function ($)
+function (X3DBaseNode,
+          X3DRenderObject,
+          TraverseType)
 {
 "use strict";
 
-	function MatrixStack (Type)
+	function DependentRenderer (executionContext)
 	{
-		return $.extend ([ new Type () ],
-		{
-			top: 0,
-			set: function (matrix)
-			{
-				this [this .top] .assign (matrix);
-			},
-			get: function (matrix)
-			{
-				return this [this .top];
-			},
-			push: function ()
-			{
-				var top = ++ this .top;
-			
-				if (top < this .length)
-					this [top] .assign (this [top - 1]);
-				else
-					this [top] = this [top - 1] .copy ();
-			},
-			pushMatrix: function (matrix)
-			{
-				var top = ++ this .top;
+		X3DBaseNode     .call (this, executionContext);
+		X3DRenderObject .call (this, executionContext);
 
-				if (top < this .length)
-					this [top] .assign (matrix);
-				else
-					this [top] = matrix .copy ();
-			},
-			pop: function ()
-			{
-				-- this .top;
-			},
-			clear: function ()
-			{
-				this .top = 0;
-			},
-			size: function ()
-			{
-				return this .top + 1;
-			},
-			identity: function ()
-			{
-				this [this .top] .identity ();
-			},
-			multLeft: function (matrix)
-			{
-				this [this .top] .multLeft (matrix);
-			},
-			translate: function (vector)
-			{
-				this [this .top] .translate (vector);
-			},
-			rotate: function (rotation)
-			{
-				this [this .top] .rotate (rotation);
-			},
-			scale: function (vector)
-			{
-				this [this .top] .scale (vector);
-			},
-		});
+		this .renderObject = null;
 	}
 
-	return MatrixStack;
+	DependentRenderer .prototype = $.extend (Object .create (X3DBaseNode .prototype),
+		X3DRenderObject .prototype,
+	{
+		constructor: DependentRenderer,
+		initialize: function ()
+		{
+			X3DRenderObject .prototype .initialize .call (this);
+		},
+		isIndependent: function ()
+		{
+			return false;
+		},
+		setRenderer: function (value)
+		{
+			this .renderObject = value;
+		},
+		getBrowser: function ()
+		{
+			return this .renderObject .getBrowser ();
+		},
+		getLayer: function ()
+		{
+			return this .renderObject .getLayer ();
+		},
+		getBackground: function ()
+		{
+			return this .renderObject .getBackground ();
+		},
+		getFog: function ()
+		{
+			return this .renderObject .getFog ();
+		},
+		getNavigationInfo: function ()
+		{
+			return this .renderObject .getNavigationInfo ();
+		},
+		getViewpoint: function ()
+		{
+			return this .renderObject .getViewpoint ();
+		},
+		getLightContainer: function ()
+		{
+			return this .renderObject .getLights () [this .lightIndex ++];
+		},
+		render: function (type, group)
+		{
+			switch (type)
+			{
+				case TraverseType .COLLISION:
+				{
+					X3DRenderObject .prototype .render .call (this, type, group);
+					break;
+				}
+				case TraverseType .DEPTH:
+				{
+					X3DRenderObject .prototype .render .call (this, type, group);
+					break;
+				}
+				case TraverseType .DISPLAY:
+				{
+					this .lightIndex = 0;
+
+					X3DRenderObject .prototype .render .call (this, type, group);
+
+					var lights = this .renderObject .getLights ();
+
+					for (var i = 0, length = lights .length; i < length; ++ i)
+						lights [i] .getModelViewMatrix () .pop ();
+
+					break;
+				}
+			}
+		},
+	});
+
+	return DependentRenderer;
 });

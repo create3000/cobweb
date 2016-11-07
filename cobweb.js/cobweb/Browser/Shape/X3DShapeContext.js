@@ -56,7 +56,7 @@ function (Appearance)
 
 	function X3DShapeContext ()
 	{
-		this .defaultAppearance = new Appearance (this);
+		this .defaultAppearance = new Appearance (this .getPrivateScene ());
 	}
 
 	X3DShapeContext .prototype =

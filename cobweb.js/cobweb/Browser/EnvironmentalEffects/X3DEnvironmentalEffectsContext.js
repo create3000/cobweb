@@ -64,7 +64,7 @@ function (ComposedShader,
 	
 	function X3DEnvironmentalEffectsContext ()
 	{
-		this .backgroundTextureProperties = new TextureProperties (this);
+		this .backgroundTextureProperties = new TextureProperties (this .getPrivateScene ());
 	}
 
 	X3DEnvironmentalEffectsContext .prototype =

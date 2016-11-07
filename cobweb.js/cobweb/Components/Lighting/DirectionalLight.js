@@ -63,6 +63,7 @@ define ([
 	"standard/Math/Numbers/Vector4",
 	"standard/Math/Numbers/Rotation4",
 	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Utility/MatrixStack",
 	"standard/Utility/ObjectCache",
 ],
 function ($,
@@ -80,34 +81,38 @@ function ($,
           Vector4,
           Rotation4,
           Matrix4,
+          MatrixStack,
           ObjectCache)
 {
 "use strict";
 
 	var DirectionalLights = ObjectCache (DirectionalLightContainer);
 	
-	function DirectionalLightContainer (browser, lightNode, groupNode, modelViewMatrix)
+	function DirectionalLightContainer ()
 	{
-		this .direction            = new Vector3 (0, 0, 0);
-		this .shadowBuffer         = null;
-		this .bbox                 = new Box3 ();
-		this .viewVolume           = new ViewVolume (Matrix4 .Identity, Vector4 .Zero, Vector4 .Zero);
-		this .viewport             = new Vector4 (0, 0, 0, 0);
-		this .projectionMatrix     = new Matrix4 ();
-		this .modelViewMatrix      = new Matrix4 ();
-		this .transformationMatrix = new Matrix4 ();
-		this .invLightSpaceMatrix  = new Matrix4 ();
-		this .shadowMatrix         = new Matrix4 ();
-		this .shadowMatrixArray    = new Float32Array (16);
-		this .rotation             = new Rotation4 ();
-		this .textureUnit          = 0;
-	
-		this .set (browser, lightNode, groupNode, modelViewMatrix);
+		this .direction                     = new Vector3 (0, 0, 0);
+		this .shadowBuffer                  = null;
+		this .bbox                          = new Box3 ();
+		this .viewVolume                    = new ViewVolume ();
+		this .viewport                      = new Vector4 (0, 0, 0, 0);
+		this .projectionMatrix              = new Matrix4 ();
+		this .modelViewMatrix               = new MatrixStack (Matrix4);
+		this .transformationMatrix          = new Matrix4 ();
+		this .invLightSpaceMatrix           = new Matrix4 ();
+		this .invLightSpaceProjectionMatrix = new Matrix4 ();
+		this .shadowMatrix                  = new Matrix4 ();
+		this .shadowMatrixArray             = new Float32Array (16);
+		this .rotation                      = new Rotation4 ();
+		this .textureUnit                   = 0;
 	}
 
 	DirectionalLightContainer .prototype =
 	{
 		constructor: DirectionalLightContainer,
+		getModelViewMatrix: function ()
+		{
+			return this .modelViewMatrix;
+		},
 		set: function (browser, lightNode, groupNode, modelViewMatrix)
 		{
 			var
@@ -118,7 +123,7 @@ function ($,
 			this .lightNode = lightNode;
 			this .groupNode = groupNode;
 
-			this .modelViewMatrix .assign (modelViewMatrix);
+			this .modelViewMatrix .pushMatrix (modelViewMatrix);
 
 			// Get shadow buffer from browser.
 
@@ -156,8 +161,8 @@ function ($,
 
 				var
 					lightNode            = this .lightNode,
-					cameraSpaceMatrix    = renderObject .getViewpoint () .getCameraSpaceMatrix (),
-					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix) .multRight (cameraSpaceMatrix),
+					cameraSpaceMatrix    = renderObject .getCameraSpaceMatrix () .get (),
+					transformationMatrix = this .transformationMatrix .assign (this .modelViewMatrix .get ()) .multRight (cameraSpaceMatrix),
 					invLightSpaceMatrix  = this .invLightSpaceMatrix  .assign (lightNode .getGlobal () ? transformationMatrix : Matrix4 .Identity);
 
 				invLightSpaceMatrix .rotate (this .rotation .setFromToVec (Vector3 .zAxis, this .direction .assign (lightNode .getDirection ()) .negate ()));
@@ -188,7 +193,7 @@ function ($,
 				if (! lightNode .getGlobal ())
 					invLightSpaceMatrix .multLeft (transformationMatrix .inverse ());
 
-				this .shadowMatrix .assign (cameraSpaceMatrix) .multRight (invLightSpaceMatrix) .multRight (projectionMatrix) .multRight (lightNode .getBiasMatrix ());
+				this .invLightSpaceProjectionMatrix .assign (invLightSpaceMatrix) .multRight (projectionMatrix) .multRight (lightNode .getBiasMatrix ());
 			}
 			catch (error)
 			{
@@ -196,12 +201,19 @@ function ($,
 				console .log (error);
 			}
 		},
+		setGlobalVariables: function (renderObject)
+		{
+			this .modelViewMatrix .get () .multDirMatrix (this .direction .assign (this .lightNode .getDirection ())) .normalize ();
+
+			this .shadowMatrix .assign (renderObject .getCameraSpaceMatrix () .get ()) .multRight (this .invLightSpaceProjectionMatrix);
+			this .shadowMatrixArray .set (this .shadowMatrix);
+		},
 		setShaderUniforms: function (gl, shaderObject, i)
 		{
 			var
 				lightNode   = this .lightNode,
 				color       = lightNode .getColor (),
-				direction   = this .modelViewMatrix .multDirMatrix (this .direction .assign (lightNode .getDirection ())) .normalize (),
+				direction   = this .direction,
 				shadowColor = lightNode .getShadowColor ();
 
 			gl .uniform1i (shaderObject .x3d_LightType [i],             1);
@@ -212,8 +224,6 @@ function ($,
 
 			if (this .textureUnit)
 			{
-				this .shadowMatrixArray .set (this .shadowMatrix);
-
 				gl .uniform1f        (shaderObject .x3d_ShadowIntensity [i],     lightNode .getShadowIntensity ());
 				gl .uniform1f        (shaderObject .x3d_ShadowDiffusion [i],     lightNode .getShadowDiffusion ());
 				gl .uniform3f        (shaderObject .x3d_ShadowColor [i],         shadowColor .r, shadowColor .g, shadowColor .b);
@@ -231,6 +241,7 @@ function ($,
 				this .browser .getCombinedTextureUnits () .push (this .textureUnit);
 
 			this .browser .pushShadowBuffer (this .shadowBuffer);
+			this .modelViewMatrix .clear ();
 
 			this .browser      = null;
 			this .lightNode    = null;

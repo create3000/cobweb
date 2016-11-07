@@ -48,9 +48,11 @@
 
 
 define ([
+	"cobweb/Fields",
 	"cobweb/Execution/X3DScene",
 ],
-function (X3DScene)
+function (Fields,
+          X3DScene)
 {
 "use strict";
 
@@ -59,6 +61,11 @@ function (X3DScene)
 		this ._browser = browser;
 
 		X3DScene .call (this, this);
+
+		this .addChildObjects ("initLoadCount", new Fields .SFInt32 (),  // Pre load count, must be zero before the scene can be passed to the requester.
+                             "loadCount",     new Fields .SFInt32 ()); // Load count of all X3DUrlObjects.
+
+		this .loadingObjects = { };
 	}
 
 	Scene .prototype = $.extend (Object .create (X3DScene .prototype),
@@ -67,6 +74,76 @@ function (X3DScene)
 		getTypeName: function ()
 		{
 			return "Scene";
+		},
+		setExecutionContext: function (value)
+		{
+			if (! this .isMasterContext ())
+			{
+				var
+					scene          = this .getScene (),
+					loadingObjects = this .loadingObjects;
+
+				for (var id in loadingObjects)
+					scene .removeLoadCount (loadingObjects [id]);
+			}
+
+			X3DScene .prototype .setExecutionContext .call (this, value);
+
+			if (! this .isMasterContext ())
+			{
+				var
+					scene          = this .getScene (),
+					loadingObjects = this .loadingObjects;
+
+				for (var id in loadingObjects)
+					scene .addLoadCount (loadingObjects [id]);
+			}
+		},
+		addInitLoadCount: function (node)
+		{
+			this .initLoadCount_ = this .initLoadCount_ .getValue () + 1;
+		},
+		removeInitLoadCount: function (node)
+		{
+			this .initLoadCount_ = this .initLoadCount_ .getValue () - 1;
+		},
+		addLoadCount: function (node)
+		{
+			var id = node .getId ();
+
+			if (this .loadingObjects .hasOwnProperty (id))
+				return;
+
+			this .loadingObjects [id] = node;
+
+			this .loadCount_ = this .loadCount_ .getValue () + 1;
+
+			if (this === this .getBrowser () .getExecutionContext ())
+				this .getBrowser () .addLoadCount (node);
+
+			if (! this .isMasterContext ())
+				this .getScene () .addLoadCount (node);
+		},
+		removeLoadCount: function (node)
+		{
+			var id = node .getId ();
+
+			if (! this .loadingObjects .hasOwnProperty (id))
+				return;
+
+			delete this .loadingObjects [id];
+
+			this .loadCount_ = this .loadCount_ .getValue () - 1;
+
+			if (this === this .getBrowser () .getExecutionContext ())
+				this .getBrowser () .removeLoadCount (node);
+
+			if (! this .isMasterContext ())
+				this .getScene () .removeLoadCount (node);
+		},
+		getLoadingObjects: function ()
+		{
+			return this .loadingObjects;
 		},
 	});
 

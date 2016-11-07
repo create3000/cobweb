@@ -72,6 +72,8 @@ function ($,
 {
 "use strict";
 
+	var parameter = new Fields .MFString ();
+
 	function Inline (executionContext)
 	{
 		X3DChildNode     .call (this, executionContext);
@@ -133,7 +135,7 @@ function ($,
 		},
 		set_live__: function ()
 		{
-			if (this .checkLoadState () == X3DConstants .COMPLETE_STATE)
+			if (! this .getPrivate ())
 			{
 				this .scene .setLive (this .isLive () .getValue ());
 			}
@@ -168,7 +170,7 @@ function ($,
 
 				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_));
+				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_, parameter));
 			}
 			catch (error)
 			{
@@ -183,7 +185,7 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-			new Loader (this) .createX3DFromURL (this .url_, this .setInternalSceneAsync .bind (this));
+			new Loader (this) .createX3DFromURL (this .url_, parameter, this .setInternalSceneAsync .bind (this));
 		},
 		requestUnload: function ()
 		{
@@ -214,10 +216,10 @@ function ($,
 			// Set new scene.
 
 			this .scene = scene;
+			this .scene .setExecutionContext (this .getExecutionContext ());
 			this .scene .setPrivate (this .getExecutionContext () .getPrivate ());
 			this .scene .setup ();
 
-			//this .scene .setExecutionContext (this .getExecutionContext ());
 			this .scene .rootNodes .addInterest (this .group .children_, "setValue");
 			this .group .children_ = this .scene .rootNodes;
 

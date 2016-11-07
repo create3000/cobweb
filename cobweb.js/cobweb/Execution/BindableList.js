@@ -99,7 +99,7 @@ function ($, X3DBaseNode)
 		},
 		getBound: function ()
 		{
-			for (var i = 1; i < this .array .length; ++ i)
+			for (var i = 1, length = this .array .length; i < length; ++ i)
 			{
 				var node = this .array [i];
 
@@ -107,7 +107,7 @@ function ($, X3DBaseNode)
 					return node;
 			}
 
-			if (this .array .length > 1)
+			if (length > 1)
 				return this .array [1];
 
 			return this .array [0];
