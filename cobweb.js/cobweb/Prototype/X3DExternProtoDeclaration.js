@@ -66,8 +66,6 @@ function ($,
 {
 "use strict";
 
-	var parameter = new Fields .MFString ();
-
 	function X3DExternProtoDeclaration (executionContext)
 	{
 		X3DProtoDeclarationNode .call (this, executionContext);
@@ -135,7 +133,7 @@ function ($,
 
 			var Loader = require ("cobweb/InputOutput/Loader");
 
-			new Loader (this) .createX3DFromURL (this .url_, parameter, this .setInternalSceneAsync .bind (this));
+			new Loader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
 		},
 		setInternalSceneAsync: function (value)
 		{

@@ -85,7 +85,7 @@ function ($,
 		"application/xhtml+xml": true,
 	};
 
-	var parameter = new Fields .MFString ();
+	var defaultParameter = new Fields .MFString ();
 
 	function Loader (node, external)
 	{
@@ -261,7 +261,7 @@ function ($,
 		{
 			this .script = true;
 
-			this .loadDocument (url, parameter, callback);
+			this .loadDocument (url, null, callback);
 		},
 		loadDocument: function (url, parameter, callback)
 		{
@@ -271,7 +271,7 @@ function ($,
 			if (url .length === 0)
 				return this .loadDocumentError (new Error ("No URL given."));
 
-			this .target = this .getTarget (parameter);
+			this .target = this .getTarget (parameter || defaultParameter);
 
 			this .loadDocumentAsync (this .url .shift ());
 		},
@@ -355,6 +355,9 @@ function ($,
 					else
 						data = unescape (data);
 
+					if (this .target .length && this .target !== "_self" && this .foreign)
+						return this .foreign (this .URL .toString (), this .target);
+
 					this .callback (data);
 					return;
 				}
@@ -369,7 +372,7 @@ function ($,
 
 			// Handle target
 
-			if (this .target .length && this .target !== "_self")
+			if (this .target .length && this .target !== "_self" && this .foreign)
 				return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""), this .target);
 
 			// Load URL async

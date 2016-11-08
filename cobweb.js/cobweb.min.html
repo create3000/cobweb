@@ -132,8 +132,8 @@ X3D (function (X3DCanvases)
 		{ name: 'BIC Info',              url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/info.x3d",                 "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/info.wrl" ] },
 		{ name: 'Smashing Boxes',        url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Boxes/boxes.x3d" ] },
 		{ name: 'Capone',                url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Capone/index.wrl" ] },
-		{ name: 'Lost Cathedral',        url: [ "https://rawgit.com/create3000/Library/master/Examples/Cathedral/stage/index.x3d",    "https://rawgit.com/create3000/Library/master/Examples/Cathedral/stage/index.wrl" ] },
-		{ name: 'Chomp!',                url: [ "https://rawgit.com/create3000/Library/master/Examples/Chomp/chomp.x3d",              "https://cdn.rawgit.com/create3000/Library/master/Examples/Chomp/chomp.wrl" ] },
+		{ name: 'Lost Cathedral',        url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Cathedral/stage/index.x3d",    "https://cdn.rawgit.com/create3000/Library/master/Examples/Cathedral/stage/index.wrl" ] },
+		{ name: 'Chomp!',                url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Chomp/chomp.x3d",              "https://cdn.rawgit.com/create3000/Library/master/Examples/Chomp/chomp.wrl" ] },
 		{ name: 'Anatomy',               url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Compel/anatomy/anatomy.wrl" ] },
 		{ name: 'Jungle',                url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Compel/jungle/jungle.wrl" ] },
 		{ name: 'Huey Huey',             url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Compel/huey.wrl" ] },
@@ -182,7 +182,7 @@ X3D (function (X3DCanvases)
 
 		{ name: 'CADGeometry' },
 		{ name: 'CADGeometry',                 url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADGeometry.wrl" ] },
-		{ name: 'CADLayer',                    url: [ "https://rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADLayer.wrl" ] },
+		{ name: 'CADLayer',                    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADLayer.wrl" ] },
 		{ name: 'Setco',                       url: [ "tests/Components/CADGeometry/setco.x3d" ] },
 		
 		{ name: 'Core' },
@@ -201,12 +201,12 @@ X3D (function (X3DCanvases)
 		{ name: 'EnvironmentalEffects' },
 		{ name: 'LocalFog',          url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/EnvironmentalEffects/LocalFog.wrl" ] },
 		{ name: 'TextureBackground', url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/EnvironmentalEffects/TextureBackground.wrl" ] },
+		{ name: 'ImageBackground',   url: [ "tests/Components/EnvironmentalEffects/ImageBackground.x3d" ] },
 
 		{ name: 'EnvironmentalSensor' },
 		{ name: 'VisibilitySensor',        url: [ "tests/Components/EnvironmentalSensor/VisibilitySensor.x3d" ] },
 	   { name: 'ProximitySensor',         url: [ "tests/Components/EnvironmentalSensor/ProximitySensor.x3d" ] },
 	   { name: 'TransformSensor',         url: [ "tests/Components/EnvironmentalSensor/TransformSensor.x3d" ] },
-		{ name: 'ImageBackground',         url: [ "tests/Components/EnvironmentalEffects/ImageBackground.x3d" ] },
 
 		{ name: 'EventUtilities' },
 		{ name: 'BooleanFilter',     url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/EventUtilities/BooleanFilter.wrl" ] },
@@ -399,21 +399,22 @@ X3D (function (X3DCanvases)
 		{ name: 'Far Away',             url: [ "tests/Components/Text/scrolling-text.x3d" ] },
 
 		{ name: 'Texturing' },
-		{ name: 'Ubuntu',                  url: [ "tests/Components/Texturing/ubuntu.x3d" ] },
-		{ name: 'ColorMaterial',           url: [ "tests/Components/Texturing/ColorMaterial.x3d" ] },
-		{ name: 'MovieTexture',            url: [ "tests/Components/Texturing/MovieTexture.x3d" ] },
+		{ name: 'Ubuntu',          url: [ "tests/Components/Texturing/ubuntu.x3d" ] },
+		{ name: 'ColorMaterial',   url: [ "tests/Components/Texturing/ColorMaterial.x3d" ] },
+		{ name: 'MovieTexture',    url: [ "tests/Components/Texturing/MovieTexture.x3d" ] },
+		{ name: 'ColorManagement', url: [ "tests/Components/Texturing/ColorManagement.x3d" ] },
 	]; 
 
 	for (var i = 0, length = pages .length; i < length; ++ i)
 		pages [i] .mobile = true;
 
 	var
-		Browser   = X3D .getBrowser (X3DCanvases),
+		Browser   = X3D .getBrowser (X3DCanvases), // Get first browser.
 		bookmarks = new Bookmarks (Browser, $(".bookmarks"), pages);
 
 	bookmarks .setSplit (true);
 	bookmarks .setup ();
-	bookmarks .restore ();
+	bookmarks .restore ("tests/Components/Layout/info.x3d");
 
 	$(".version") .text (Browser .name + " V" + Browser .version);
 },

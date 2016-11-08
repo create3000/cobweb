@@ -132,36 +132,46 @@ function ($,
 		},
 		setTexture: function (width, height, transparent, data, flipY)
 		{
-			this .transparent_ = transparent;
-			this .width        = width;
-			this .height       = height;
-			this .flipY        = flipY;
-			this .data         = data;
-
-			var gl = this .getBrowser () .getContext ();
-
-			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
-			gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
-			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
-			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
-
-			this .updateTextureProperties ();
-			this .addNodeEvent ();
+			try
+			{
+				this .transparent_ = transparent;
+				this .width        = width;
+				this .height       = height;
+				this .flipY        = flipY;
+				this .data         = data;
+	
+				var gl = this .getBrowser () .getContext ();
+	
+				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
+				gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
+				gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
+				gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
+	
+				this .updateTextureProperties ();
+				this .addNodeEvent ();
+			}
+			catch (error)
+			{ }
 		},
 		updateTexture: function (data, flipY)
 		{
-			this .data = data;
-
-			var gl = this .getBrowser () .getContext ();
-
-			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
-			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
-			gl .texSubImage2D (gl .TEXTURE_2D, 0, 0, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
-
-			if (this .texturePropertiesNode .generateMipMaps_ .getValue ())
-				gl .generateMipmap (gl .TEXTURE_2D);
-
-			this .addNodeEvent ();
+			try
+			{
+				this .data = data;
+	
+				var gl = this .getBrowser () .getContext ();
+	
+				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
+				gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
+				gl .texSubImage2D (gl .TEXTURE_2D, 0, 0, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
+	
+				if (this .texturePropertiesNode .generateMipMaps_ .getValue ())
+					gl .generateMipmap (gl .TEXTURE_2D);
+	
+				this .addNodeEvent ();
+			}
+			catch (error)
+			{ }
 		},
 		updateTextureProperties: function ()
 		{

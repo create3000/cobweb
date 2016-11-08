@@ -1268,6 +1268,8 @@
     <None Include="tests\HTML\cycle\JoinUs.png" />
     <None Include="tests\HTML\cycle\ToBeOrToHave.png" />
     <None Include="tests\HTML\Events.xhtml" />
+    <None Include="tests\Components\images\farbmanagement_test.jpg" />
+    <None Include="tests\Components\Texturing\ColorManagement.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

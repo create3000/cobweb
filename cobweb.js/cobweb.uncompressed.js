@@ -26994,8 +26994,6 @@ function ($,
 {
 
 
-	var parameter = new Fields .MFString ();
-
 	function X3DExternProtoDeclaration (executionContext)
 	{
 		X3DProtoDeclarationNode .call (this, executionContext);
@@ -27063,7 +27061,7 @@ function ($,
 
 			var Loader = require ("cobweb/InputOutput/Loader");
 
-			new Loader (this) .createX3DFromURL (this .url_, parameter, this .setInternalSceneAsync .bind (this));
+			new Loader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
 		},
 		setInternalSceneAsync: function (value)
 		{
@@ -38511,7 +38509,7 @@ function ($,
 		"application/xhtml+xml": true,
 	};
 
-	var parameter = new Fields .MFString ();
+	var defaultParameter = new Fields .MFString ();
 
 	function Loader (node, external)
 	{
@@ -38687,7 +38685,7 @@ function ($,
 		{
 			this .script = true;
 
-			this .loadDocument (url, parameter, callback);
+			this .loadDocument (url, null, callback);
 		},
 		loadDocument: function (url, parameter, callback)
 		{
@@ -38697,7 +38695,7 @@ function ($,
 			if (url .length === 0)
 				return this .loadDocumentError (new Error ("No URL given."));
 
-			this .target = this .getTarget (parameter);
+			this .target = this .getTarget (parameter || defaultParameter);
 
 			this .loadDocumentAsync (this .url .shift ());
 		},
@@ -38781,6 +38779,9 @@ function ($,
 					else
 						data = unescape (data);
 
+					if (this .target .length && this .target !== "_self" && this .foreign)
+						return this .foreign (this .URL .toString (), this .target);
+
 					this .callback (data);
 					return;
 				}
@@ -38795,7 +38796,7 @@ function ($,
 
 			// Handle target
 
-			if (this .target .length && this .target !== "_self")
+			if (this .target .length && this .target !== "_self" && this .foreign)
 				return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""), this .target);
 
 			// Load URL async
@@ -38988,8 +38989,6 @@ function ($,
 {
 
 
-	var parameter = new Fields .MFString ();
-
 	var shaderTypes =
 	{
 		VERTEX:          "VERTEX_SHADER",
@@ -39072,7 +39071,7 @@ function ($,
 			
 			this .valid = false;
 
-			new Loader (this) .loadDocument (this .url_, parameter,
+			new Loader (this) .loadDocument (this .url_, null,
 			function (data, URL)
 			{
 				if (data === null)
@@ -48207,7 +48206,7 @@ function ($,
 	{
 		initialize: function ()
 		{
-			this .getCanvas () .attr ("tabindex", 8803068);
+			this .getCanvas () .attr ("tabindex", 0);
 			this .setCursor ("DEFAULT");
 
 			this .pointingDevice .setup ();
@@ -55703,6 +55702,7 @@ function ($,
 		this .invLightSpaceProjectionMatrix = new Matrix4 ();
 		this .shadowMatrix                  = new Matrix4 ();
 		this .shadowMatrixArray             = new Float32Array (16);
+		this .invGroupMatrix                = new Matrix4 ();
 		this .rotation                      = new Rotation4 ();
 		this .textureUnit                   = 0;
 	}
@@ -55774,14 +55774,15 @@ function ($,
 					lightBBox        = groupBBox .multRight (invLightSpaceMatrix),                              // Group bbox from the perspective of the light.
 					shadowMapSize    = lightNode .getShadowMapSize (),
 					viewport         = this .viewport .set (0, 0, shadowMapSize, shadowMapSize),
-					projectionMatrix = Camera .orthoBox (lightBBox, this .projectionMatrix);
+					projectionMatrix = Camera .orthoBox (lightBBox, this .projectionMatrix),
+					invGroupMatrix   = this .invGroupMatrix .assign (this .groupNode .getMatrix ()) .inverse ();
 
 				this .shadowBuffer .bind ();
 
 				renderObject .getViewVolumes      () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
 				renderObject .getProjectionMatrix () .pushMatrix (projectionMatrix);
 				renderObject .getModelViewMatrix  () .pushMatrix (invLightSpaceMatrix);
-				renderObject .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
+				renderObject .getModelViewMatrix  () .multLeft (invGroupMatrix);
 
 				renderObject .render (TraverseType .DEPTH, this .groupNode);
 
@@ -70002,36 +70003,46 @@ function ($,
 		},
 		setTexture: function (width, height, transparent, data, flipY)
 		{
-			this .transparent_ = transparent;
-			this .width        = width;
-			this .height       = height;
-			this .flipY        = flipY;
-			this .data         = data;
-
-			var gl = this .getBrowser () .getContext ();
-
-			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
-			gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
-			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
-			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
-
-			this .updateTextureProperties ();
-			this .addNodeEvent ();
+			try
+			{
+				this .transparent_ = transparent;
+				this .width        = width;
+				this .height       = height;
+				this .flipY        = flipY;
+				this .data         = data;
+	
+				var gl = this .getBrowser () .getContext ();
+	
+				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
+				gl .pixelStorei (gl .UNPACK_ALIGNMENT, 1);
+				gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
+				gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, width, height, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
+	
+				this .updateTextureProperties ();
+				this .addNodeEvent ();
+			}
+			catch (error)
+			{ }
 		},
 		updateTexture: function (data, flipY)
 		{
-			this .data = data;
-
-			var gl = this .getBrowser () .getContext ();
-
-			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
-			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
-			gl .texSubImage2D (gl .TEXTURE_2D, 0, 0, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
-
-			if (this .texturePropertiesNode .generateMipMaps_ .getValue ())
-				gl .generateMipmap (gl .TEXTURE_2D);
-
-			this .addNodeEvent ();
+			try
+			{
+				this .data = data;
+	
+				var gl = this .getBrowser () .getContext ();
+	
+				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, flipY);
+				gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
+				gl .texSubImage2D (gl .TEXTURE_2D, 0, 0, 0, gl .RGBA, gl .UNSIGNED_BYTE, data);
+	
+				if (this .texturePropertiesNode .generateMipMaps_ .getValue ())
+					gl .generateMipmap (gl .TEXTURE_2D);
+	
+				this .addNodeEvent ();
+			}
+			catch (error)
+			{ }
 		},
 		updateTextureProperties: function ()
 		{
@@ -82726,98 +82737,97 @@ function ($,
 		},
 		renderTexture: function (renderObject, group)
 		{
-			try
+			this .renderer .setRenderer (renderObject);
+
+			var
+				renderer           = this .renderer,
+				browser            = renderObject .getBrowser (),
+				layer              = renderObject .getLayer (),
+				gl                 = browser .getContext (),
+				background         = renderer .getBackground (),
+				navigationInfo     = renderer .getNavigationInfo (),
+				viewpoint          = renderer .getViewpoint (),
+				headlightContainer = browser .getHeadlight (),
+				headlight          = navigationInfo .headlight_ .getValue (),
+				nearValue          = navigationInfo .getNearValue (),
+				farValue           = navigationInfo .getFarValue (viewpoint),
+				projectionMatrix   = Camera .perspective (Algorithm .radians (90.0), nearValue, farValue, 1, 1, this .projectionMatrix),
+				transparent        = background .isTransparent ();
+
+			if (transparent !== this .transparent_ .getValue ())
+				this .transparent_ = transparent;
+
+			this .frameBuffer .bind ();
+
+			renderer .getViewVolumes      () .push (this .viewVolume .set (projectionMatrix, this .viewport, this .viewport));
+			renderer .getProjectionMatrix () .pushMatrix (projectionMatrix);
+
+			gl .bindTexture (this .getTarget (), this .getTexture ());
+			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, false);
+
+			for (var i = 0; i < 6; ++ i)
 			{
-				this .renderer .setRenderer (renderObject);
+				gl .clear (gl .COLOR_BUFFER_BIT); // Always clear, X3DBackground could be transparent!
 
-				var
-					renderer           = this .renderer,
-					browser            = renderObject .getBrowser (),
-					layer              = renderObject .getLayer (),
-					gl                 = browser .getContext (),
-					background         = renderer .getBackground (),
-					navigationInfo     = renderer .getNavigationInfo (),
-					viewpoint          = renderer .getViewpoint (),
-					headlightContainer = browser .getHeadlight (),
-					headlight          = navigationInfo .headlight_ .getValue (),
-					nearValue          = navigationInfo .getNearValue (),
-					farValue           = navigationInfo .getFarValue (viewpoint),
-					projectionMatrix   = Camera .perspective (Algorithm .radians (90.0), nearValue, farValue, 1, 1, this .projectionMatrix),
-					transparent        = background .isTransparent ();
+				// Setup inverse texture space matrix.
 
-				if (transparent !== this .transparent_ .getValue ())
-					this .transparent_ = transparent;
+				renderer .getCameraSpaceMatrix () .pushMatrix (this .transformationMatrix);
+				renderer .getCameraSpaceMatrix () .rotate (rotations [i]);
+				renderer .getCameraSpaceMatrix () .scale (scales [i]);
 
-				this .frameBuffer .bind ();
-
-				renderer .getViewVolumes      () .push (this .viewVolume .set (projectionMatrix, this .viewport, this .viewport));
-				renderer .getProjectionMatrix () .pushMatrix (projectionMatrix);
-
-				gl .bindTexture (this .getTarget (), this .getTexture ());
-				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, false);
-
-				for (var i = 0; i < 6; ++ i)
+				try
 				{
-					gl .clear (gl .COLOR_BUFFER_BIT); // Always clear, X3DBackground could be transparent!
-
-					// Setup inverse texture space matrix.
-
-					renderer .getCameraSpaceMatrix        () .pushMatrix (this .transformationMatrix);
-					renderer .getCameraSpaceMatrix        () .rotate (rotations [i]);
-					renderer .getCameraSpaceMatrix        () .scale (scales [i]);
 					renderer .getInverseCameraSpaceMatrix () .pushMatrix (invCameraSpaceMatrix .assign (renderer .getCameraSpaceMatrix () .get ()) .inverse ());
+				}
+				catch (error)
+				{
+					console .log (error);
 
-					renderer .getModelViewMatrix () .pushMatrix (invCameraSpaceMatrix);
-
-					// Setup headlight if enabled.
-
-					if (headlight)
-					{
-						headlightContainer .getModelViewMatrix () .pushMatrix (invCameraSpaceMatrix);
-						headlightContainer .getModelViewMatrix () .multLeft (viewpoint .getCameraSpaceMatrix ());
-					}
-
-					// Render layer's children.
-
-					layer .traverse (TraverseType .DISPLAY, renderer);
-
-					// Pop matrices.
-
-					if (headlight)
-						headlightContainer .getModelViewMatrix () .pop ();
-
-					renderer .getModelViewMatrix          () .pop ();
-					renderer .getCameraSpaceMatrix        () .pop ();
-					renderer .getInverseCameraSpaceMatrix () .pop ();
-
-					// Transfer image.
-
-					var
-						data   = this .frameBuffer .readPixels (),
-						width  = this .frameBuffer .getWidth (),
-						height = this .frameBuffer .getHeight ();
-
-					gl .texImage2D (this .getTargets () [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
+					renderer .getInverseCameraSpaceMatrix () .pushMatrix (Matrix4 .Identity);
 				}
 
-				this .set_textureQuality__ ();
+				renderer .getModelViewMatrix () .pushMatrix (invCameraSpaceMatrix);
 
-				renderer .getProjectionMatrix () .pop ();
-				renderer .getViewVolumes      () .pop ();
+				// Setup headlight if enabled.
 
-				this .frameBuffer .unbind ();
+				if (headlight)
+				{
+					headlightContainer .getModelViewMatrix () .pushMatrix (invCameraSpaceMatrix);
+					headlightContainer .getModelViewMatrix () .multLeft (viewpoint .getCameraSpaceMatrix ());
+				}
 
-				//this .setLoadState (X3DConstants .COMPLETE_STATE);
+				// Render layer's children.
 
-				if (this .update_ .getValue () === "NEXT_FRAME_ONLY")
-				   this .update_ = "NONE";
+				layer .traverse (TraverseType .DISPLAY, renderer);
+
+				// Pop matrices.
+
+				if (headlight)
+					headlightContainer .getModelViewMatrix () .pop ();
+
+				renderer .getModelViewMatrix          () .pop ();
+				renderer .getCameraSpaceMatrix        () .pop ();
+				renderer .getInverseCameraSpaceMatrix () .pop ();
+
+				// Transfer image.
+
+				var
+					data   = this .frameBuffer .readPixels (),
+					width  = this .frameBuffer .getWidth (),
+					height = this .frameBuffer .getHeight ();
+
+				gl .texImage2D (this .getTargets () [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
 			}
-			catch (error)
-			{
-				console .log (error);
 
-				//this .setLoadState (X3DConstants .FAILED_STATE);
-			}
+			this .set_textureQuality__ ();
+
+			renderer .getProjectionMatrix () .pop ();
+			renderer .getViewVolumes      () .pop ();
+
+			this .frameBuffer .unbind ();
+
+			if (this .update_ .getValue () === "NEXT_FRAME_ONLY")
+				this .update_ = "NONE";
 		},
 	});
 
@@ -83519,8 +83529,6 @@ function ($,
 {
 
 
-	var parameter = new Fields .MFString ();
-
 	function Inline (executionContext)
 	{
 		X3DChildNode     .call (this, executionContext);
@@ -83617,7 +83625,7 @@ function ($,
 
 				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_, parameter));
+				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_, null));
 			}
 			catch (error)
 			{
@@ -83632,7 +83640,7 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-			new Loader (this) .createX3DFromURL (this .url_, parameter, this .setInternalSceneAsync .bind (this));
+			new Loader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
 		},
 		requestUnload: function ()
 		{
@@ -93036,7 +93044,7 @@ function ($,
 
 					this .convert (data, comp, array);
 				}
-				else if (Math .max (width, height) < this .getBrowser () .getMinTextureSize () && !  this .textureProperties_ .getValue ())
+				else if (Math .max (width, height) < this .getBrowser () .getMinTextureSize () && ! this .textureProperties_ .getValue ())
 				{
 					data = new Uint8Array (width * height * 4);
 
@@ -93533,6 +93541,7 @@ function ($,
 		this .invLightSpaceMatrix  = new Matrix4 ();
 		this .shadowMatrix         = new Matrix4 ();
 		this .shadowMatrixArray    = new Float32Array (16);
+		this .invGroupMatrix       = new Matrix4 ();
 		this .rotation             = new Rotation4 ();
 		this .rotationMatrix       = new Matrix4 ();
 		this .textureUnit          = 0;
@@ -93603,7 +93612,8 @@ function ($,
 				var
 					shadowMapSize1_2 = lightNode .getShadowMapSize () / 2,
 					shadowMapSize1_3 = lightNode .getShadowMapSize () / 3,
-					projectionMatrix = this .projectionMatrix;
+					projectionMatrix = this .projectionMatrix,
+					invGroupMatrix   = this .invGroupMatrix .assign (this .groupNode .getMatrix ()) .inverse ();
 
 				this .shadowBuffer .bind ();
 				renderObject .getProjectionMatrix () .pushMatrix (this .projectionMatrix);
@@ -93620,7 +93630,7 @@ function ($,
 
 						renderObject .getModelViewMatrix  () .pushMatrix (this .rotationMatrix .setRotation (rotation));
 						renderObject .getModelViewMatrix  () .multLeft (invLightSpaceMatrix);
-						renderObject .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
+						renderObject .getModelViewMatrix  () .multLeft (invGroupMatrix);
 		
 						renderObject .render (TraverseType .DEPTH, this .groupNode);
 		
@@ -99227,6 +99237,7 @@ function ($,
 		this .invLightSpaceProjectionMatrix = new Matrix4 ();
 		this .shadowMatrix                  = new Matrix4 ();
 		this .shadowMatrixArray             = new Float32Array (16);
+		this .invGroupMatrix                = new Matrix4 ();
 		this .rotation                      = new Rotation4 ();
 		this .lightBBoxMin                  = new Vector3 (0, 0, 0);
 		this .lightBBoxMax                  = new Vector3 (0, 0, 0);
@@ -99303,7 +99314,8 @@ function ($,
 					lightBBoxExtents = lightBBox .getExtents (this .lightBBoxMin, this .lightBBoxMax),
 					farValue         = Math .min (lightNode .getRadius (), -this .lightBBoxMin .z),
 					viewport         = this .viewport .set (0, 0, shadowMapSize, shadowMapSize),
-					projectionMatrix = Camera .perspective (lightNode .getCutOffAngle () * 2, 0.125, farValue, shadowMapSize, shadowMapSize, this .projectionMatrix);
+					projectionMatrix = Camera .perspective (lightNode .getCutOffAngle () * 2, 0.125, farValue, shadowMapSize, shadowMapSize, this .projectionMatrix),
+					invGroupMatrix   = this .invGroupMatrix .assign (this .groupNode .getMatrix ()) .inverse ();
 
 				this .renderShadow = farValue > 0;
 
@@ -99312,7 +99324,7 @@ function ($,
 				renderObject .getViewVolumes      () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
 				renderObject .getProjectionMatrix () .pushMatrix (projectionMatrix);
 				renderObject .getModelViewMatrix  () .pushMatrix (invLightSpaceMatrix);
-				renderObject .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
+				renderObject .getModelViewMatrix  () .multLeft (invGroupMatrix);
 
 				renderObject .render (TraverseType .DEPTH, this .groupNode);
 
@@ -104723,7 +104735,7 @@ function ($,
 
 			this .addLoadCount (loader);
 
-			loader .createX3DFromURL (url, parameter,
+			loader .createX3DFromURL (url, null,
 			function (scene)
 			{
 				this .removeLoadCount (loader);
@@ -104757,7 +104769,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				scene        = new Loader (this .getWorld ()) .createX3DFromURL (url, parameter);
+				scene        = new Loader (this .getWorld ()) .createX3DFromURL (url, null);
 
 			if (! external)
 			{

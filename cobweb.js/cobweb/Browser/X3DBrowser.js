@@ -80,8 +80,6 @@ function ($,
 {
 "use strict";
 
-	var parameter = new Fields .MFString ();
-
 	function X3DBrowser (element)
 	{
 		X3DBrowserContext .call (this, element);
@@ -325,7 +323,7 @@ function ($,
 
 			this .addLoadCount (loader);
 
-			loader .createX3DFromURL (url, parameter,
+			loader .createX3DFromURL (url, null,
 			function (scene)
 			{
 				this .removeLoadCount (loader);
@@ -359,7 +357,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				scene        = new Loader (this .getWorld ()) .createX3DFromURL (url, parameter);
+				scene        = new Loader (this .getWorld ()) .createX3DFromURL (url, null);
 
 			if (! external)
 			{
