@@ -198,98 +198,97 @@ function ($,
 		},
 		renderTexture: function (renderObject, group)
 		{
-			try
+			this .renderer .setRenderer (renderObject);
+
+			var
+				renderer           = this .renderer,
+				browser            = renderObject .getBrowser (),
+				layer              = renderObject .getLayer (),
+				gl                 = browser .getContext (),
+				background         = renderer .getBackground (),
+				navigationInfo     = renderer .getNavigationInfo (),
+				viewpoint          = renderer .getViewpoint (),
+				headlightContainer = browser .getHeadlight (),
+				headlight          = navigationInfo .headlight_ .getValue (),
+				nearValue          = navigationInfo .getNearValue (),
+				farValue           = navigationInfo .getFarValue (viewpoint),
+				projectionMatrix   = Camera .perspective (Algorithm .radians (90.0), nearValue, farValue, 1, 1, this .projectionMatrix),
+				transparent        = background .isTransparent ();
+
+			if (transparent !== this .transparent_ .getValue ())
+				this .transparent_ = transparent;
+
+			this .frameBuffer .bind ();
+
+			renderer .getViewVolumes      () .push (this .viewVolume .set (projectionMatrix, this .viewport, this .viewport));
+			renderer .getProjectionMatrix () .pushMatrix (projectionMatrix);
+
+			gl .bindTexture (this .getTarget (), this .getTexture ());
+			gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, false);
+
+			for (var i = 0; i < 6; ++ i)
 			{
-				this .renderer .setRenderer (renderObject);
+				gl .clear (gl .COLOR_BUFFER_BIT); // Always clear, X3DBackground could be transparent!
 
-				var
-					renderer           = this .renderer,
-					browser            = renderObject .getBrowser (),
-					layer              = renderObject .getLayer (),
-					gl                 = browser .getContext (),
-					background         = renderer .getBackground (),
-					navigationInfo     = renderer .getNavigationInfo (),
-					viewpoint          = renderer .getViewpoint (),
-					headlightContainer = browser .getHeadlight (),
-					headlight          = navigationInfo .headlight_ .getValue (),
-					nearValue          = navigationInfo .getNearValue (),
-					farValue           = navigationInfo .getFarValue (viewpoint),
-					projectionMatrix   = Camera .perspective (Algorithm .radians (90.0), nearValue, farValue, 1, 1, this .projectionMatrix),
-					transparent        = background .isTransparent ();
+				// Setup inverse texture space matrix.
 
-				if (transparent !== this .transparent_ .getValue ())
-					this .transparent_ = transparent;
+				renderer .getCameraSpaceMatrix () .pushMatrix (this .transformationMatrix);
+				renderer .getCameraSpaceMatrix () .rotate (rotations [i]);
+				renderer .getCameraSpaceMatrix () .scale (scales [i]);
 
-				this .frameBuffer .bind ();
-
-				renderer .getViewVolumes      () .push (this .viewVolume .set (projectionMatrix, this .viewport, this .viewport));
-				renderer .getProjectionMatrix () .pushMatrix (projectionMatrix);
-
-				gl .bindTexture (this .getTarget (), this .getTexture ());
-				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, false);
-
-				for (var i = 0; i < 6; ++ i)
+				try
 				{
-					gl .clear (gl .COLOR_BUFFER_BIT); // Always clear, X3DBackground could be transparent!
-
-					// Setup inverse texture space matrix.
-
-					renderer .getCameraSpaceMatrix        () .pushMatrix (this .transformationMatrix);
-					renderer .getCameraSpaceMatrix        () .rotate (rotations [i]);
-					renderer .getCameraSpaceMatrix        () .scale (scales [i]);
 					renderer .getInverseCameraSpaceMatrix () .pushMatrix (invCameraSpaceMatrix .assign (renderer .getCameraSpaceMatrix () .get ()) .inverse ());
+				}
+				catch (error)
+				{
+					console .log (error);
 
-					renderer .getModelViewMatrix () .pushMatrix (invCameraSpaceMatrix);
-
-					// Setup headlight if enabled.
-
-					if (headlight)
-					{
-						headlightContainer .getModelViewMatrix () .pushMatrix (invCameraSpaceMatrix);
-						headlightContainer .getModelViewMatrix () .multLeft (viewpoint .getCameraSpaceMatrix ());
-					}
-
-					// Render layer's children.
-
-					layer .traverse (TraverseType .DISPLAY, renderer);
-
-					// Pop matrices.
-
-					if (headlight)
-						headlightContainer .getModelViewMatrix () .pop ();
-
-					renderer .getModelViewMatrix          () .pop ();
-					renderer .getCameraSpaceMatrix        () .pop ();
-					renderer .getInverseCameraSpaceMatrix () .pop ();
-
-					// Transfer image.
-
-					var
-						data   = this .frameBuffer .readPixels (),
-						width  = this .frameBuffer .getWidth (),
-						height = this .frameBuffer .getHeight ();
-
-					gl .texImage2D (this .getTargets () [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
+					renderer .getInverseCameraSpaceMatrix () .pushMatrix (Matrix4 .Identity);
 				}
 
-				this .set_textureQuality__ ();
+				renderer .getModelViewMatrix () .pushMatrix (invCameraSpaceMatrix);
 
-				renderer .getProjectionMatrix () .pop ();
-				renderer .getViewVolumes      () .pop ();
+				// Setup headlight if enabled.
 
-				this .frameBuffer .unbind ();
+				if (headlight)
+				{
+					headlightContainer .getModelViewMatrix () .pushMatrix (invCameraSpaceMatrix);
+					headlightContainer .getModelViewMatrix () .multLeft (viewpoint .getCameraSpaceMatrix ());
+				}
 
-				//this .setLoadState (X3DConstants .COMPLETE_STATE);
+				// Render layer's children.
 
-				if (this .update_ .getValue () === "NEXT_FRAME_ONLY")
-				   this .update_ = "NONE";
+				layer .traverse (TraverseType .DISPLAY, renderer);
+
+				// Pop matrices.
+
+				if (headlight)
+					headlightContainer .getModelViewMatrix () .pop ();
+
+				renderer .getModelViewMatrix          () .pop ();
+				renderer .getCameraSpaceMatrix        () .pop ();
+				renderer .getInverseCameraSpaceMatrix () .pop ();
+
+				// Transfer image.
+
+				var
+					data   = this .frameBuffer .readPixels (),
+					width  = this .frameBuffer .getWidth (),
+					height = this .frameBuffer .getHeight ();
+
+				gl .texImage2D (this .getTargets () [i], 0, gl .RGBA, width, height, false, gl .RGBA, gl .UNSIGNED_BYTE, data);
 			}
-			catch (error)
-			{
-				console .log (error);
 
-				//this .setLoadState (X3DConstants .FAILED_STATE);
-			}
+			this .set_textureQuality__ ();
+
+			renderer .getProjectionMatrix () .pop ();
+			renderer .getViewVolumes      () .pop ();
+
+			this .frameBuffer .unbind ();
+
+			if (this .update_ .getValue () === "NEXT_FRAME_ONLY")
+				this .update_ = "NONE";
 		},
 	});
 
