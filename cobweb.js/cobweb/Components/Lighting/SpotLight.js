@@ -106,6 +106,7 @@ function ($,
 		this .invLightSpaceProjectionMatrix = new Matrix4 ();
 		this .shadowMatrix                  = new Matrix4 ();
 		this .shadowMatrixArray             = new Float32Array (16);
+		this .invGroupMatrix                = new Matrix4 ();
 		this .rotation                      = new Rotation4 ();
 		this .lightBBoxMin                  = new Vector3 (0, 0, 0);
 		this .lightBBoxMax                  = new Vector3 (0, 0, 0);
@@ -182,7 +183,8 @@ function ($,
 					lightBBoxExtents = lightBBox .getExtents (this .lightBBoxMin, this .lightBBoxMax),
 					farValue         = Math .min (lightNode .getRadius (), -this .lightBBoxMin .z),
 					viewport         = this .viewport .set (0, 0, shadowMapSize, shadowMapSize),
-					projectionMatrix = Camera .perspective (lightNode .getCutOffAngle () * 2, 0.125, farValue, shadowMapSize, shadowMapSize, this .projectionMatrix);
+					projectionMatrix = Camera .perspective (lightNode .getCutOffAngle () * 2, 0.125, farValue, shadowMapSize, shadowMapSize, this .projectionMatrix),
+					invGroupMatrix   = this .invGroupMatrix .assign (this .groupNode .getMatrix ()) .inverse ();
 
 				this .renderShadow = farValue > 0;
 
@@ -191,7 +193,7 @@ function ($,
 				renderObject .getViewVolumes      () .push (this .viewVolume .set (projectionMatrix, viewport, viewport));
 				renderObject .getProjectionMatrix () .pushMatrix (projectionMatrix);
 				renderObject .getModelViewMatrix  () .pushMatrix (invLightSpaceMatrix);
-				renderObject .getModelViewMatrix  () .multLeft (Matrix4 .inverse (this .groupNode .getMatrix ()));
+				renderObject .getModelViewMatrix  () .multLeft (invGroupMatrix);
 
 				renderObject .render (TraverseType .DEPTH, this .groupNode);
 

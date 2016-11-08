@@ -191,7 +191,7 @@ function ($,
 
 					this .convert (data, comp, array);
 				}
-				else if (Math .max (width, height) < this .getBrowser () .getMinTextureSize () && !  this .textureProperties_ .getValue ())
+				else if (Math .max (width, height) < this .getBrowser () .getMinTextureSize () && ! this .textureProperties_ .getValue ())
 				{
 					data = new Uint8Array (width * height * 4);
 

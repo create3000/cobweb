@@ -133,8 +133,8 @@ X3D (function (X3DCanvases)
 		{ name: 'BIC Info',              url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/info.x3d",                 "https://cdn.rawgit.com/create3000/Library/master/Examples/BIC/info.wrl" ] },
 		{ name: 'Smashing Boxes',        url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Boxes/boxes.x3d" ] },
 		{ name: 'Capone',                url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Capone/index.wrl" ] },
-		{ name: 'Lost Cathedral',        url: [ "https://rawgit.com/create3000/Library/master/Examples/Cathedral/stage/index.x3d",    "https://rawgit.com/create3000/Library/master/Examples/Cathedral/stage/index.wrl" ] },
-		{ name: 'Chomp!',                url: [ "https://rawgit.com/create3000/Library/master/Examples/Chomp/chomp.x3d",              "https://cdn.rawgit.com/create3000/Library/master/Examples/Chomp/chomp.wrl" ] },
+		{ name: 'Lost Cathedral',        url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Cathedral/stage/index.x3d",    "https://cdn.rawgit.com/create3000/Library/master/Examples/Cathedral/stage/index.wrl" ] },
+		{ name: 'Chomp!',                url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Chomp/chomp.x3d",              "https://cdn.rawgit.com/create3000/Library/master/Examples/Chomp/chomp.wrl" ] },
 		{ name: 'Anatomy',               url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Compel/anatomy/anatomy.wrl" ] },
 		{ name: 'Jungle',                url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Compel/jungle/jungle.wrl" ] },
 		{ name: 'Huey Huey',             url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Compel/huey.wrl" ] },
@@ -183,7 +183,7 @@ X3D (function (X3DCanvases)
 
 		{ name: 'CADGeometry' },
 		{ name: 'CADGeometry',                 url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADGeometry.wrl" ] },
-		{ name: 'CADLayer',                    url: [ "https://rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADLayer.wrl" ] },
+		{ name: 'CADLayer',                    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADLayer.wrl" ] },
 		{ name: 'Setco',                       url: [ "tests/Components/CADGeometry/setco.x3d" ] },
 		
 		{ name: 'Core' },
@@ -409,12 +409,12 @@ X3D (function (X3DCanvases)
 		pages [i] .mobile = true;
 
 	var
-		Browser   = X3D .getBrowser (X3DCanvases),
+		Browser   = X3D .getBrowser (X3DCanvases), // Get first browser.
 		bookmarks = new Bookmarks (Browser, $(".bookmarks"), pages);
 
 	bookmarks .setSplit (true);
 	bookmarks .setup ();
-	bookmarks .restore ();
+	bookmarks .restore ("tests/Components/Layout/info.x3d");
 
 	$(".version") .text (Browser .name + " V" + Browser .version);
 },

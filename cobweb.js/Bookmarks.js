@@ -106,9 +106,14 @@ var Bookmarks = (function ()
 
 			this .next (0);
 		},
-		restore: function ()
+		restore: function (first)
 		{
-			this .loadURL (this .browser .getDataStorage () ["Bookmarks.url"]);
+			var url = this .browser .getDataStorage () ["Bookmarks.url"];
+
+			if (url)
+				this .loadURL (url);
+			else
+				this .loadURL (first);
 		},
 		setSplit (value)
 		{
