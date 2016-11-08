@@ -80,6 +80,8 @@ function ($,
 {
 "use strict";
 
+	var parameter = new Fields .MFString ();
+
 	function X3DBrowser (element)
 	{
 		X3DBrowserContext .call (this, element);
