@@ -98,7 +98,7 @@ function ($,
 	{
 		initialize: function ()
 		{
-			this .getCanvas () .attr ("tabindex", 8803068);
+			this .getCanvas () .attr ("tabindex", 0);
 			this .setCursor ("DEFAULT");
 
 			this .pointingDevice .setup ();
