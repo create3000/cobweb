@@ -192,7 +192,7 @@ function ($,
 					canvas = this .canvas [0],
 					cx     = canvas .getContext ("2d");
 
-				// Scale image.
+				// Scale image if needed and flip vertically.
 
 				if (! Algorithm .isPowerOfTwo (width) || ! Algorithm .isPowerOfTwo (height))
 				{
@@ -202,14 +202,22 @@ function ($,
 					canvas .width  = width;
 					canvas .height = height;
 
+					cx .save ();
+					cx .translate (0, height);
+					cx .scale (1, -1);
 					cx .drawImage (image, 0, 0, image .width, image .height, 0, 0, width, height);
+					cx .restore ();
 				}
 				else
 				{
 					canvas .width  = width;
 					canvas .height = height;
 
+					cx .save ();
+					cx .translate (0, height);
+					cx .scale (1, -1);
 					cx .drawImage (image, 0, 0);
+					cx .restore ();
 				}
 
 				// Determine image alpha.
@@ -229,7 +237,7 @@ function ($,
 
 				setTimeout (function ()
 				{
-					this .setTexture (width, height, ! opaque, new Uint8Array (data), true);
+					this .setTexture (width, height, ! opaque, new Uint8Array (data), false);
 					this .setLoadState (X3DConstants .COMPLETE_STATE);
 				}
 				.bind (this), 16);

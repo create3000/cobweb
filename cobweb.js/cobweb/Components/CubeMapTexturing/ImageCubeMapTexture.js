@@ -56,6 +56,11 @@ define ("cobweb/Components/CubeMapTexturing/ImageCubeMapTexture",
 	"cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode",
 	"cobweb/Components/Networking/X3DUrlObject",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Networking/urls",
+	"standard/Networking/URI",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Algorithm",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -63,9 +68,25 @@ function ($,
           FieldDefinitionArray,
           X3DEnvironmentTextureNode, 
           X3DUrlObject, 
-          X3DConstants)
+          X3DConstants,
+          urls,
+          URI,
+          Vector2,
+          Algorithm,
+          DEBUG)
 {
 "use strict";
+
+   var defaultData = new Uint8Array ([ 255, 255, 255, 255 ]);
+
+	var offsets = [
+		new Vector2 (1, 1), // Front
+		new Vector2 (3, 1), // Back
+		new Vector2 (0, 1), // Left
+		new Vector2 (2, 1), // Right
+		new Vector2 (1, 0), // Bottom, must be exchanged with top
+		new Vector2 (1, 2), // Top, must be exchanged with bottom
+	];
 
 	function ImageCubeMapTexture (executionContext)
 	{
@@ -73,6 +94,8 @@ function ($,
 		X3DUrlObject .call (this, executionContext);
 
 		this .addType (X3DConstants .ImageCubeMapTexture);
+
+		this .urlStack = new Fields .MFString ();
 	}
 
 	ImageCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),
@@ -95,6 +118,176 @@ function ($,
 		getContainerField: function ()
 		{
 			return "texture";
+		},
+		initialize: function ()
+		{
+			X3DEnvironmentTextureNode .prototype .initialize .call (this);
+			X3DUrlObject              .prototype .initialize .call (this);
+
+			// Upload default data.
+
+			var gl = this .getBrowser () .getContext ();
+
+			gl .bindTexture (this .getTarget (), this .getTexture ());
+
+			for (var i = 0; i < 6; ++ i)
+				gl .texImage2D  (this .getTargets () [i], 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+
+			// Initialize.
+
+			this .url_ .addInterest (this, "set_url__");
+
+			this .canvas = $("<canvas></canvas>");
+
+			this .image = $("<img></img>");
+			this .image .load (this .setImage .bind (this));
+			this .image .error (this .setError .bind (this));
+			this .image .bind ("abort", this .setError .bind (this));
+
+			this .image [0] .crossOrigin = "Anonymous";
+
+			this .requestAsyncLoad ();
+		},
+		set_url__: function ()
+		{
+			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
+
+			this .requestAsyncLoad ();
+		},
+		requestAsyncLoad: function ()
+		{
+			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+				return;
+
+			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+
+			this .urlStack .setValue (this .url_);
+			this .loadNext ();
+		},
+		loadNext: function ()
+		{
+			if (this .urlStack .length === 0)
+			{
+				this .clear ();
+				this .setLoadState (X3DConstants .FAILED_STATE);
+				return;
+			}
+
+			// Get URL.
+
+			this .URL = new URI (this .urlStack .shift ());
+			this .URL = this .getExecutionContext () .getURL () .transform (this .URL);
+			// In Firefox we don't need getRelativePath if file scheme, do we in Chrome???
+
+			this .image .attr ("src", this .URL);
+		},
+		setError: function ()
+		{
+			var URL = this .URL .toString ();
+
+			if (! (this .URL .isLocal () || this .URL .host === "localhost"))
+			{
+				if (! URL .match (urls .fallbackExpression))
+					this .urlStack .unshift (urls .fallbackUrl + URL);
+			}
+
+			if (this .URL .scheme !== "data")
+				console .warn ("Error loading image:", this .URL .toString ());
+
+			this .loadNext ();
+		},
+		setImage: function ()
+		{
+			if (DEBUG)
+			{
+				 if (this .URL .scheme !== "data")
+			   	console .info ("Done loading image cube map texture:", this .URL .toString ());
+			}
+
+			try
+			{
+				var
+				   image     = this .image [0],
+					width     = image .width,
+					height    = image .height,
+					width1_4  = Math .floor (width / 4),
+					height1_3 = Math .floor (height / 3);
+
+				var
+					canvas = this .canvas [0],
+					cx     = canvas .getContext ("2d");
+
+				// Scale image.
+
+				if (! Algorithm .isPowerOfTwo (width1_4) || ! Algorithm .isPowerOfTwo (height1_3) || width1_4 * 4 !== width || height1_3 * 3 !== height)
+				{
+					width  = Algorithm .nextPowerOfTwo (width1_4)  * 4;
+					height = Algorithm .nextPowerOfTwo (height1_3) * 3;
+
+					canvas .width  = width;
+					canvas .height = height;
+
+					cx .drawImage (image, 0, 0, image .width, image .height, 0, 0, width, height);
+				}
+				else
+				{
+					canvas .width  = width;
+					canvas .height = height;
+
+					cx .drawImage (image, 0, 0);
+				}
+
+				// Extract images.
+
+				var
+					gl     = this .getBrowser () .getContext (),
+					opaque = true;
+
+				gl .bindTexture (this .getTarget (), this .getTexture ());
+				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, false);
+
+				for (var i = 0; i < 6; ++ i)
+				{
+					var data = cx .getImageData (offsets [i] .x * width1_4, offsets [i] .y * height1_3, width1_4, height1_3) .data;
+	
+					// Determine image alpha.
+	
+					if (opaque)
+					{
+						for (var a = 3; a < data .length; a += 4)
+						{
+							if (data [a] !== 255)
+							{
+								opaque = false;
+								break;
+							}
+						}
+					}
+
+					// Transfer image.
+	
+					gl .texImage2D (this .getTargets () [i], 0, gl .RGBA, width1_4, height1_3, false, gl .RGBA, gl .UNSIGNED_BYTE, new Uint8Array (data));
+				}
+
+				this .set_textureQuality__ ();
+
+				// Update transparent field.
+
+				var transparent = ! opaque;
+
+				if (transparent !== this .transparent_ .getValue ())
+					this .transparent_ = transparent;
+
+				// Update load state.
+
+				this .setLoadState (X3DConstants .COMPLETE_STATE);
+			}
+			catch (error)
+			{
+				// Catch security error from cross origin requests.
+				console .log (error .message);
+				this .setError ();
+			}
 		},
 	});
 
