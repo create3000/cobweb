@@ -221,8 +221,10 @@ function ($,
 
 				if (! Algorithm .isPowerOfTwo (width1_4) || ! Algorithm .isPowerOfTwo (height1_3) || width1_4 * 4 !== width || height1_3 * 3 !== height)
 				{
-					width  = Algorithm .nextPowerOfTwo (width1_4)  * 4;
-					height = Algorithm .nextPowerOfTwo (height1_3) * 3;
+					width1_4  = Algorithm .nextPowerOfTwo (width1_4);
+					height1_3 = Algorithm .nextPowerOfTwo (height1_3);
+					width     = width1_4  * 4;
+					height    = height1_3 * 3;
 
 					canvas .width  = width;
 					canvas .height = height;
