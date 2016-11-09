@@ -82473,6 +82473,7 @@ function (X3DBaseNode,
 		constructor: DependentRenderer,
 		initialize: function ()
 		{
+			X3DBaseNode     .prototype .initialize .call (this);
 			X3DRenderObject .prototype .initialize .call (this);
 		},
 		isIndependent: function ()
@@ -82733,6 +82734,9 @@ function ($,
 			if (type !== TraverseType .DISPLAY)
 				return;
 		
+			if (this .update_ .getValue () === "NONE")
+				return;
+
 			if (! this .frameBuffer)
 				return;
 		

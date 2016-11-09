@@ -186,6 +186,9 @@ function ($,
 			if (type !== TraverseType .DISPLAY)
 				return;
 		
+			if (this .update_ .getValue () === "NONE")
+				return;
+
 			if (! this .frameBuffer)
 				return;
 		
