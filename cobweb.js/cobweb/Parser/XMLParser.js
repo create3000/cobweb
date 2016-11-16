@@ -582,7 +582,7 @@ function ($,
 				var
 					name      = attribute .name,
 					value     = attribute .value,
-					field     = node .getField (name),
+					field     = node .getField (this .attrToRealCase (name)),
 					fieldType = this .fieldTypes [field .getType ()];
 
 				this .parser .setInput (value);
@@ -925,6 +925,12 @@ function ($,
 				return false;
 
 			return true;
+		},
+		attrToRealCase: function (name)
+		{
+			return name === name .toLowerCase() ?
+				X3DConstants .attributeLowerCaseToRealCase [name] :
+				name ;
 		},
 	};
 
