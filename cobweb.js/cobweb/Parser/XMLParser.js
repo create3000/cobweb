@@ -930,9 +930,10 @@ function ($,
 		},
 		attributeToCamelCase: function (name)
 		{
-			return name === name .toLowerCase() ?
-				HTMLSupport .attributeLowerCaseToCamelCase [name] :
-				name ;
+			if (name !== name .toLowerCase())
+				return name ;
+			
+			return HTMLSupport .attributeLowerCaseToCamelCase [name] ;
 		},
 	};
 
