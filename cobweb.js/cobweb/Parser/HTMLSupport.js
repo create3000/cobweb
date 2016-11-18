@@ -36,7 +36,7 @@ define (function ()
 {
 "use strict";
 
-	var AttributeHTMLSupport =
+	var HTMLSupport =
     	{
 		attributeLowerCaseToCamelCase:
 		{
@@ -631,9 +631,9 @@ define (function ()
 		}
 	};
 
-	Object .preventExtensions (AttributeHTMLSupport);
-	Object .freeze (AttributeHTMLSupport);
-	Object .seal (AttributeHTMLSupport);
+	Object .preventExtensions (HTMLSupport);
+	Object .freeze (HTMLSupport);
+	Object .seal (HTMLSupport);
 
-	return AttributeHTMLSupport;
+	return HTMLSupport;
 });
