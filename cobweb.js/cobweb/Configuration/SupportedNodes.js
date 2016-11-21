@@ -725,8 +725,11 @@ function (Anchor,
 	function createInstance (executionContext) { return new this (executionContext); }
 
 	for (var name in supportedNodes)
+	{
 		supportedNodes [name] .createInstance = createInstance .bind (supportedNodes [name]);
-
+		supportedNodes [name.toUpperCase()] = supportedNodes [name]; 
+		supportedNodes [name.toUpperCase()] .createInstance = createInstance .bind (supportedNodes [name]);
+	}
 	return supportedNodes;
 });
 
