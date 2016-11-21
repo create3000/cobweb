@@ -192,6 +192,9 @@ function ($,
 			if (! this .frameBuffer)
 				return;
 		
+			//if (renderObject .getBrowser () !== this .getBrowser ())
+			//	return; // Could be interesting for four-side-view
+
 			if (! renderObject .isIndependent ())
 				return;
 

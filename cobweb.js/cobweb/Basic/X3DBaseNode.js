@@ -394,9 +394,12 @@ function ($,
 			{
 				this ._fields ["set_" + name]     = field;
 				this ._fields [name + "_changed"] = field;
+				this ._fields ["set_" + name.toLowerCase()]     = field; // html5
+				this ._fields [name.toLowerCase() + "_changed"] = field;
 			}
 
 			this ._fields [name] = field;
+			this ._fields [name.toLowerCase()] = field; // html5
 
 			if (userDefined)
 			{
@@ -405,8 +408,17 @@ function ($,
 			}
 
 			this ._predefinedFields [name] = field;
+			this ._predefinedFields [name.toLowerCase()] = field; //html5
 
 			Object .defineProperty (this, name + "_",
+			{
+				get: function () { return field; },
+				set: function (value) { return field .setValue (value); },
+				enumerable: true,
+				configurable: true, // false : non deleteable
+			});
+			
+			Object .defineProperty (this, name.toLowerCase() + "_", //html5; not necessary?
 			{
 				get: function () { return field; },
 				set: function (value) { return field .setValue (value); },

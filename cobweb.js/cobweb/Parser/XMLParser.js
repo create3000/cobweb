@@ -149,6 +149,7 @@ function ($,
 					this .X3D (xml);
 					break;
 				case "Scene":
+				case "SCENE":
 					this .Scene (xml);
 					break;
 				default:
@@ -178,9 +179,11 @@ function ($,
 				switch (element .nodeName)
 				{
 					case "head":
+					case "HEAD":
 						this .head (element);
 						continue;
 					case "Scene":
+					case "SCENE":
 						this .Scene (element);
 						continue;
 				}
@@ -212,12 +215,15 @@ function ($,
 				switch (element .nodeName)
 				{
 					case "component":
+					case "COMPONENT":
 						this .component (element);
 						continue;
 					case "unit":
+					case "UNIT":
 						this .unit (element);
 						continue;
 					case "meta":
+					case "META":
 						this .meta (element);
 						continue;
 				}
@@ -251,7 +257,7 @@ function ($,
 			var
 				category         = element .getAttribute ("category"),
 				name             = element .getAttribute ("name"),
-				conversionFactor = element .getAttribute ("conversionFactor");
+				conversionFactor = element .getAttribute ("conversionFactor"); //works for html5 as well
 
 			if (category == null)
 				return console .warn ("XML Parser Error: Bad unit statement: Expected category attribute.");
@@ -297,14 +303,17 @@ function ($,
 					return;
 				
 				case "ExternProtoDeclare":
+				case "EXTERNPROTODECLARE":
 					this .ExternProtoDeclare (child);
 					return;
 
 				case "ProtoDeclare":
+				case "PROTODECLARE":
 					this .ProtoDeclare (child);
 					return;
 
 				case "ProtoInstance":
+				case "PROTOINSTANCE":
 					this .ProtoInstance (child);
 					return;
 
@@ -404,23 +413,28 @@ function ($,
 					return;
 
 				case "field":
+				case "FIELD":
 					this .field (child);
 					return;
 
 				case "fieldValue":
+				case "FIELDVALUE":
 					if (protoInstance)
 						this .fieldValue (child);
 					return;
 						
 				case "ExternProtoDeclare":
+				case "EXTERNPROTODECLARE":
 					this .ExternProtoDeclare (child);
 					return;
 
 				case "ProtoDeclare":
+				case "PROTODECLARE":
 					this .ProtoDeclare (child);
 					return;
 
 				case "ProtoInstance":
+				case "PROTOINSTANCE":
 					this .ProtoInstance (child);
 					return;
 
