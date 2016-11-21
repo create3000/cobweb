@@ -37,7 +37,7 @@ define (function ()
 "use strict";
 
 	var HTMLSupport =
-    	{
+	{
 		attributeLowerCaseToCamelCase:
 		{
 			"accesstype" : "accessType",
@@ -627,7 +627,7 @@ define (function ()
 			"xspacing" : "xSpacing",
 			"yscale" : "yScale",
 			"zdimension" : "zDimension",
-			"zspacing" : "zSpacing"
+			"zspacing" : "zSpacing",
 		}
 	};
 
