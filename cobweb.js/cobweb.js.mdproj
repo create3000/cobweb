@@ -1272,6 +1272,8 @@
     <None Include="tests\Components\Texturing\ColorManagement.x3d" />
     <None Include="tests\Components\images\skybox_texture.jpg" />
     <None Include="tests\Components\ComposedCubeMapTexture\ImageCubeMapTexture.x3d" />
+    <None Include="tests\Components\RigidBodyPhysics\Hierarchy.x3d" />
+    <None Include="cobweb\Parser\HTMLSupport.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
