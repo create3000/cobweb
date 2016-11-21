@@ -53,6 +53,7 @@ define ([
 	"cobweb/Basic/X3DArrayField",
 	"cobweb/Fields",
 	"cobweb/Parser/Parser",
+	"cobweb/Parser/HTMLSupport",
 	"cobweb/Prototype/X3DExternProtoDeclaration",
 	"cobweb/Prototype/X3DProtoDeclaration",
 	"cobweb/Bits/X3DConstants",
@@ -62,6 +63,7 @@ function ($,
           X3DArrayField,
           Fields,
           Parser,
+	  HTMLSupport,   
           X3DExternProtoDeclaration,
           X3DProtoDeclaration,
           X3DConstants)
@@ -344,7 +346,7 @@ function ($,
 				var node = this .getExecutionContext () .createNode (element .nodeName, false);
 
 				//AP: attach node to DOM element for access from DOM.
-            element .x3d = node;
+				element .x3d = node;
 
 				this .DEF (element, node);
 				this .addNode (element, node);
@@ -582,7 +584,7 @@ function ($,
 				var
 					name      = attribute .name,
 					value     = attribute .value,
-					field     = node .getField (name),
+					field     = node .getField (this .attributeToCamelCase (name)),
 					fieldType = this .fieldTypes [field .getType ()];
 
 				this .parser .setInput (value);
@@ -925,6 +927,13 @@ function ($,
 				return false;
 
 			return true;
+		},
+		attributeToCamelCase: function (name)
+		{
+			if (name !== name .toLowerCase())
+				return name ;
+			
+			return HTMLSupport .attributeLowerCaseToCamelCase [name] ;
 		},
 	};
 
