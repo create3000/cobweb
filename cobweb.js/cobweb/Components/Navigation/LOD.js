@@ -194,7 +194,7 @@ function ($,
 						else if (level < currentLevel)
 							level = currentLevel - 1;
 					}
-	
+
 					if (level !== currentLevel)
 					{
 						this .level_changed_ = level;

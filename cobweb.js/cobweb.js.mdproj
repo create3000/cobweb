@@ -1274,6 +1274,15 @@
     <None Include="tests\Components\ComposedCubeMapTexture\ImageCubeMapTexture.x3d" />
     <None Include="tests\Components\RigidBodyPhysics\Hierarchy.x3d" />
     <None Include="cobweb\Parser\HTMLSupport.js" />
+    <None Include="tests\Components\Rendering\DRracer\AnchorToBrowser.x3d" />
+    <None Include="tests\Components\Rendering\DRracer\index.html" />
+    <None Include="tests\Components\Rendering\DRracer\index.html%3FC=D%3BO=A" />
+    <None Include="tests\Components\Rendering\DRracer\index.html%3FC=M%3BO=A" />
+    <None Include="tests\Components\Rendering\DRracer\index.html%3FC=N%3BO=D" />
+    <None Include="tests\Components\Rendering\DRracer\index.html%3FC=S%3BO=A" />
+    <None Include="tests\Components\Rendering\DRracer\shadow1.png" />
+    <None Include="tests\Components\Rendering\DRracer\t85.wrl" />
+    <None Include="tests\Components\Rendering\DRracer\t85cobweb.html" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

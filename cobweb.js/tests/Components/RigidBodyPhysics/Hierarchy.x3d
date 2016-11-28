@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/RigidBodyPhysics/Hierarchy.x3d'/>
-    <meta name='modified' content='Mon, 21 Nov 2016 09:44:03 GMT'/>
+    <meta name='modified' content='Wed, 23 Nov 2016 10:40:44 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -94,11 +94,13 @@
         <CollisionSpace containerField='collidables'/>
       </CollisionCollection>
       <RigidBody
-          enabled='false'>
+          enabled='false'
+          position='-3 0 0'>
         <CollidableShape USE='_1' containerField='geometry'/>
       </RigidBody>
       <RigidBody
-          enabled='false'>
+          enabled='false'
+          position='1 0 0'>
         <CollidableOffset USE='_2' containerField='geometry'/>
       </RigidBody>
     </RigidBodyCollection>

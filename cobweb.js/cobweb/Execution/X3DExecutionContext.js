@@ -62,6 +62,7 @@ define ("cobweb/Execution/X3DExecutionContext", [
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 	"standard/Networking/URI",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -76,7 +77,8 @@ function ($,
           X3DRoute,
           X3DCast,
           X3DConstants,
-          URI)
+          URI,
+          Algorithm)
 {
 "use strict";
 
@@ -207,7 +209,7 @@ function ($,
 				throw new Error ("Couldn't update named node: node must be of type SFNode.");
 
 			name = String (name);
-			node = new Fields .SFNode (node .valueOf ());
+			node = new Fields .SFNode (node instanceof Fields .SFNode ? node .getValue () : node);
 
 			if (! node .getValue ())
 				throw new Error ("Couldn't update named node: node IS NULL.");
@@ -241,6 +243,34 @@ function ($,
 				throw new Error ("Named node '" + name + "' not found.");
 
 			return node;
+		},
+		getUniqueName: function (name)
+		{
+			var _TrailingNumbers = /(_\d+$)/;
+
+			name = name .replace (_TrailingNumbers, "");
+
+			var
+				newName = name,
+				i       = 64;
+
+			for (; i;)
+			{
+				if (this .namedNodes [newName] || newName .length === 0)
+				{
+					var
+						min = i,
+						max = i <<= 1;
+		
+					newName  = name;
+					newName += '_';
+					newName += Math .round (Algorithm .random (min, max));
+				}
+				else
+					break;
+			}
+		
+			return newName;
 		},
 		addImportedNode: function (inlineNode, exportedName, importedName)
 		{

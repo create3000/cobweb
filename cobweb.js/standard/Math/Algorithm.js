@@ -66,6 +66,10 @@ define (function ()
 		{
 			return value * (180 / Math .PI);
 		},
+		random: function (min, max)
+		{
+			return min + Math .random () * (max - min);
+		},
 		clamp: function (value, min, max)
 		{
 			return value < min ? min : (value > max ? max : value);
