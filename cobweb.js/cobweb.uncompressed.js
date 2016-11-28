@@ -11230,6 +11230,10 @@ define ('standard/Math/Algorithm',[],function ()
 		{
 			return value * (180 / Math .PI);
 		},
+		random: function (min, max)
+		{
+			return min + Math .random () * (max - min);
+		},
 		clamp: function (value, min, max)
 		{
 			return value < min ? min : (value > max ? max : value);
@@ -25346,6 +25350,7 @@ define ("cobweb/Execution/X3DExecutionContext", [
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 	"standard/Networking/URI",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -25360,7 +25365,8 @@ function ($,
           X3DRoute,
           X3DCast,
           X3DConstants,
-          URI)
+          URI,
+          Algorithm)
 {
 
 
@@ -25491,7 +25497,7 @@ function ($,
 				throw new Error ("Couldn't update named node: node must be of type SFNode.");
 
 			name = String (name);
-			node = new Fields .SFNode (node .valueOf ());
+			node = new Fields .SFNode (node instanceof Fields .SFNode ? node .getValue () : node);
 
 			if (! node .getValue ())
 				throw new Error ("Couldn't update named node: node IS NULL.");
@@ -25525,6 +25531,34 @@ function ($,
 				throw new Error ("Named node '" + name + "' not found.");
 
 			return node;
+		},
+		getUniqueName: function (name)
+		{
+			var _TrailingNumbers = /(_\d+$)/;
+
+			name = name .replace (_TrailingNumbers, "");
+
+			var
+				newName = name,
+				i       = 64;
+
+			for (; i;)
+			{
+				if (this .namedNodes [newName] || newName .length === 0)
+				{
+					var
+						min = i,
+						max = i <<= 1;
+		
+					newName  = name;
+					newName += '_';
+					newName += Math .round (Algorithm .random (min, max));
+				}
+				else
+					break;
+			}
+		
+			return newName;
 		},
 		addImportedNode: function (inlineNode, exportedName, importedName)
 		{
@@ -27443,21 +27477,6 @@ function ($,
 		Break: /\r?\n/g,
 	};
 
-	// +scriptBodyElement assignments
-	function parseY (parser)
-	{
-		this .lastIndex = parser .lastIndex;
-		parser .result  = this .exec (parser .input);
-
-		if (parser .result)
-		{
-			parser .lastIndex = this .lastIndex;
-			return true;
-		}
-
-		return false;
-	}
-
 	function parse (parser)
 	{
 		this .lastIndex = 0;
@@ -27471,6 +27490,91 @@ function ($,
 
 		return false;
 	}
+
+
+/*
+	// VRML lexical elements
+	var Grammar =
+	{
+		// General
+		Whitespaces: new RegExp ('^([\\x20\\n,\\t\\r]+)', 'y'),
+		Comment:     new RegExp ('^#(.*?)(?=[\\n\\r])',   'y'),
+
+		// Header
+		Header:	    new RegExp ("^#(VRML|X3D) V(.*?) (utf8)(?: (.*?))?[\\n\\r]", 'y'),
+
+		// Keywords
+		AS:          new RegExp ('^AS',          'y'),
+		COMPONENT:   new RegExp ('^COMPONENT',   'y'),
+		DEF:         new RegExp ('^DEF',         'y'),
+		EXPORT:      new RegExp ('^EXPORT',      'y'),
+		EXTERNPROTO: new RegExp ('^EXTERNPROTO', 'y'),
+		FALSE:       new RegExp ('^FALSE',       'y'),
+		false:       new RegExp ('^false',       'y'),
+		IMPORT:      new RegExp ('^IMPORT',      'y'),
+		IS:          new RegExp ('^IS',          'y'),
+		META:        new RegExp ('^META',        'y'),
+		NULL:        new RegExp ('^NULL',        'y'),
+		TRUE:        new RegExp ('^TRUE',        'y'),
+		true:        new RegExp ('^true',        'y'),
+		PROFILE:     new RegExp ('^PROFILE',     'y'),
+		PROTO:       new RegExp ('^PROTO',       'y'),
+		ROUTE:       new RegExp ('^ROUTE',       'y'),
+		TO:          new RegExp ('^TO',          'y'),
+		UNIT:        new RegExp ('^UNIT',        'y'),
+		USE:         new RegExp ('^USE',         'y'),
+
+		// Terminal symbols
+		OpenBrace:    new RegExp ('^\\{', 'y'),
+		CloseBrace:   new RegExp ('^\\}', 'y'),
+		OpenBracket:  new RegExp ('^\\[', 'y'),
+		CloseBracket: new RegExp ('^\\]', 'y'),
+		Period:       new RegExp ('^\\.', 'y'),
+		Colon:        new RegExp ('^\\:', 'y'),
+
+		Id: new RegExp ('^([^\\x30-\\x39\\x00-\\x20\\x22\\x23\\x27\\x2b\\x2c\\x2d\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f]{1}[^\\x00-\\x20\\x22\\x23\\x27\\x2c\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f]*)', 'y'),
+		ComponentNameId: new RegExp ('^([^\\x30-\\x39\\x00-\\x20\\x22\\x23\\x27\\x2b\\x2c\\x2d\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f\\x3a]{1}[^\\x00-\\x20\\x22\\x23\\x27\\x2c\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f\\x3a]*)', 'y'),
+
+		initializeOnly: new RegExp ('^initializeOnly', 'y'),
+		inputOnly:      new RegExp ('^inputOnly',      'y'),
+		outputOnly:     new RegExp ('^outputOnly',     'y'),
+		inputOutput:    new RegExp ('^inputOutput',    'y'),
+
+		field:        new RegExp ('^field', 'y'),
+		eventIn:      new RegExp ('^eventIn', 'y'),
+		eventOut:     new RegExp ('^eventOut', 'y'),
+		exposedField: new RegExp ('^exposedField', 'y'),
+
+		FieldType: new RegExp ('^(MFBool|MFColorRGBA|MFColor|MFDouble|MFFloat|MFImage|MFInt32|MFMatrix3d|MFMatrix3f|MFMatrix4d|MFMatrix4f|MFNode|MFRotation|MFString|MFTime|MFVec2d|MFVec2f|MFVec3d|MFVec3f|MFVec4d|MFVec4f|SFBool|SFColorRGBA|SFColor|SFDouble|SFFloat|SFImage|SFInt32|SFMatrix3d|SFMatrix3f|SFMatrix4d|SFMatrix4f|SFNode|SFRotation|SFString|SFTime|SFVec2d|SFVec2f|SFVec3d|SFVec3f|SFVec4d|SFVec4f)', 'y'),
+
+		// Values
+		int32:  new RegExp ('^((?:0[xX][\\da-fA-F]+)|(?:[+-]?\\d+))', 'y'),
+		double: new RegExp ('^([+-]?(?:(?:(?:\\d*\\.\\d+)|(?:\\d+(?:\\.)?))(?:[eE][+-]?\\d+)?))', 'y'),
+		string: new RegExp ('^"((?:[^\\\\"]|\\\\\\\\|\\\\\\")*)"', 'y'),
+		
+		Inf:         new RegExp ('^[+]?inf',  'yi'),
+		NegativeInf: new RegExp ('^-inf',     'yi'),
+		NaN:         new RegExp ('^[+-]?nan', 'yi'),
+
+		// Misc
+		Break: new RegExp ('\\r?\\n', 'g'),
+	};
+
+	function parse (parser)
+	{
+		this .lastIndex = parser .lastIndex;
+
+		parser .result = this .exec (parser .input);
+
+		if (parser .result)
+		{
+			parser .lastIndex = this .lastIndex;
+			return true;
+		}
+
+		return false;
+	}
+*/
 
 	for (var key in Grammar)
 		Grammar [key] .parse = parse;
@@ -27993,18 +28097,18 @@ function ($,
 			{
 				if (this .nodeNameId ())
 					return this .node (this .result [1]);
-		
+
 				throw new Error ("No name given after DEF.");
 			}
-		
+
 			if (Grammar .USE .parse (this))
 			{
 				if (this .nodeNameId ())
-					return this .getExecutionContext () .getNamedNode (this .result [1]);
-		
+					return this .getExecutionContext () .getNamedNode (this .result [1]) .getValue ();
+
 				throw new Error ("No name given after USE.");
 			}
-		
+
 			if (Grammar .NULL .parse (this))
 				return null;
 
@@ -28548,7 +28652,25 @@ function ($,
 				}
 		
 				if (nodeNameId .length)
+				{
+					try
+					{
+						var namedNode = this .getExecutionContext () .getNamedNode (nodeNameId);
+
+						try
+						{
+							this .getExecutionContext () .updateNamedNode (this .getExecutionContext () .getUniqueName (nodeNameId), namedNode);
+						}
+						catch (error)
+						{
+							console .log (error);
+						}
+					}
+					catch (error)
+					{ }
+
 					this .getExecutionContext () .updateNamedNode (nodeNameId, baseNode);
+				}
 		
 				this .comments ();
 		
@@ -88330,7 +88452,7 @@ function ($,
 						else if (level < currentLevel)
 							level = currentLevel - 1;
 					}
-	
+
 					if (level !== currentLevel)
 					{
 						this .level_changed_ = level;
