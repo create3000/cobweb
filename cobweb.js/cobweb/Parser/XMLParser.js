@@ -464,7 +464,18 @@ function ($,
 				var name = element .getAttribute ("DEF");
 
 				if (name)
+				{
+					try
+					{
+						var namedNode = this .getExecutionContext () .getNamedNode (name);
+
+						this .getExecutionContext () .updateNamedNode (this .getExecutionContext () .getUniqueName (name), namedNode);
+					}
+					catch (error)
+					{ }
+
 					this .getExecutionContext () .updateNamedNode (name, node);
+				}
 			}
 			catch (error)
 			{

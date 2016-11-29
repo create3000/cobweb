@@ -1328,14 +1328,7 @@ function ($,
 					{
 						var namedNode = this .getExecutionContext () .getNamedNode (nodeNameId);
 
-						try
-						{
-							this .getExecutionContext () .updateNamedNode (this .getExecutionContext () .getUniqueName (nodeNameId), namedNode);
-						}
-						catch (error)
-						{
-							console .log (error);
-						}
+						this .getExecutionContext () .updateNamedNode (this .getExecutionContext () .getUniqueName (nodeNameId), namedNode);
 					}
 					catch (error)
 					{ }

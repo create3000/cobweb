@@ -28657,14 +28657,7 @@ function ($,
 					{
 						var namedNode = this .getExecutionContext () .getNamedNode (nodeNameId);
 
-						try
-						{
-							this .getExecutionContext () .updateNamedNode (this .getExecutionContext () .getUniqueName (nodeNameId), namedNode);
-						}
-						catch (error)
-						{
-							console .log (error);
-						}
+						this .getExecutionContext () .updateNamedNode (this .getExecutionContext () .getUniqueName (nodeNameId), namedNode);
 					}
 					catch (error)
 					{ }
@@ -35435,7 +35428,18 @@ function ($,
 				var name = element .getAttribute ("DEF");
 
 				if (name)
+				{
+					try
+					{
+						var namedNode = this .getExecutionContext () .getNamedNode (name);
+
+						this .getExecutionContext () .updateNamedNode (this .getExecutionContext () .getUniqueName (name), namedNode);
+					}
+					catch (error)
+					{ }
+
 					this .getExecutionContext () .updateNamedNode (name, node);
+				}
 			}
 			catch (error)
 			{
