@@ -558,6 +558,9 @@ function ($,
 		{
 			return this .getTypeName () + " { }";
 		},
+		toXMLString: function ()
+		{
+		},
 		dispose: function ()
 		{
 			// TODO: remove named node if any. (do this in NamedNode)

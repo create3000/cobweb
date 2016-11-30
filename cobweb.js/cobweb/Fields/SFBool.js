@@ -92,6 +92,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return this .getValue () ? "TRUE" : "FALSE";
 		},
+		toXMLString: function ()
+		{
+			return this .getValue () ? "true" : "false";
+		},
 	});
 
 	return SFBool;

@@ -67,6 +67,7 @@ define ([
 	"cobweb/Fields/SFVec4",
 	"cobweb/Basic/X3DArrayField",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           SFBool,
@@ -86,7 +87,8 @@ function ($,
           SFVec3,
           SFVec4,
           X3DArrayField,
-          X3DConstants)
+          X3DConstants,
+          Generator)
 {
 "use strict";
 
@@ -178,6 +180,48 @@ function ($,
 			X3DArrayField .prototype .removeChild .call (this, value);
 
 			value .removeClones (this ._cloneCount);
+		},
+		toXMLString: function ()
+		{
+			var length = this .length;
+
+			if (length)
+			{
+				var
+					value  = this .getValue (),
+					string = "";
+
+				//Generator .EnterScope ();
+
+				for (var i = 0, n = length - 1; i < n; ++ i)
+				{
+					var node = value [i] .getValue ();
+
+					if (node)
+					{
+						string += node .toXMLString () + "\n";
+					}
+					else
+					{
+						string += Generator .Indent ();
+						string += "<!-- NULL -->\n";
+					}
+				}
+		
+				var node = value [n] .getValue ();
+
+				if (node)
+				{
+					string += node .toXMLString ();
+				}
+				else
+				{
+					string += Generator .Indent ();
+					string += "<!-- NULL -->";
+				}
+
+				//Generator .LeaveScope ();
+			}
 		},
 	});
 	

@@ -88,6 +88,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return String (this .getValue ());
 		},
+		toXMLString: function ()
+		{
+			return String (this .getValue ());
+		},
 	});
 
 	return SFFloat;

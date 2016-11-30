@@ -58,7 +58,8 @@ function ($, X3DField, X3DConstants)
 
 	var
 		unescape = /\\([\\"])/g,
-		escape   = /([\\"])/g;
+		escape   = /([\\"])/g,
+		div      = $('<div>');
 
 	function SFString (value)
 	{
@@ -103,6 +104,10 @@ function ($, X3DField, X3DConstants)
 		toString: function ()
 		{
 			return '"'+ SFString .escape (this .getValue ()) + '"';
+		},
+		toXMLString: function ()
+		{
+			return div .text (this .getValue ()) .html ();
 		},
 	});
 

@@ -135,6 +135,10 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 		{
 			return this .getValue () .toString ();
 		},
+		toString: function ()
+		{
+			return this .getValue () .toString ();
+		},
 	});
 
 		var x = {

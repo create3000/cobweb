@@ -131,6 +131,10 @@ function ($, X3DField)
 			{
 				return this .getValue () .toString ();
 			},
+			toString: function ()
+			{
+				return this .getValue () .toString ();
+			},
 		});
 	};
 });

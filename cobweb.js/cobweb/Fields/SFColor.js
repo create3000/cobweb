@@ -111,6 +111,10 @@ function ($, Color3, X3DField, X3DConstants)
 		{
 			return this .getValue () .toString ();
 		},
+		toXMLString: function ()
+		{
+			return this .getValue () .toString ();
+		},
 	});
 
 	var r = {

@@ -190,12 +190,16 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		{
 		   var
 				string = this .width + " " + this .height + " " + this .comp,
-				array  = this .array;
+				array  = this .array .getValue ();
 
 			for (var i = 0, length = this .width * this .height; i < length; ++ i)
-				string += " " + array [i];
+				string += " 0x" + array [i] .toString (16);
 
 			return string;
+		},
+		toXMLString: function ()
+		{
+			return this .toString ();
 		},
 	});
 

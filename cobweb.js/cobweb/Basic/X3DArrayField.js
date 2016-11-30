@@ -53,7 +53,10 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"cobweb/InputOutput/Generator",
 ],
-function ($, X3DField, X3DConstants, Generator)
+function ($,
+          X3DField,
+          X3DConstants, 
+          Generator)
 {
 "use strict";
 
@@ -407,6 +410,7 @@ function ($, X3DField, X3DConstants, Generator)
 					string += Generator .Indent ();
 					string += array [length] .toString ();
 					string += "\n";
+
 					Generator .DecIndent ();
 					string += Generator .Indent ();
 					string += "]";
@@ -415,6 +419,24 @@ function ($, X3DField, X3DConstants, Generator)
 			}
 
 			return string;
+		},
+		toXMLString: function ()
+		{
+			var length = this .length;
+
+			if (length)
+			{
+				var
+					value  = this .getValue (),
+					string = "";
+
+				for (var i = 0, n = length - 1; i < n; ++ i)
+					string += value [i] .toXMLString () + ", ";
+
+				string += value [n] .toXMLString ();
+
+				return string;
+			}
 		},
 		dispose: function ()
 		{

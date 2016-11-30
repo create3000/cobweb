@@ -84,9 +84,13 @@ function ($, X3DField, X3DConstants)
 			X3DField .prototype .set .call (this, ~~value);
 		},
 		valueOf: X3DField .prototype .getValue,
-		toString: function ()
+		toString: function (base)
 		{
-			return String (this .getValue ());
+			return this .getValue () .toString (base);
+		},
+		toXMLString: function (base)
+		{
+			return this .getValue () .toString (base);
 		},
 	});
 

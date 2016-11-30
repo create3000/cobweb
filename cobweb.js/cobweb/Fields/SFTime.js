@@ -88,6 +88,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return String (this .getValue ());
 		},
+		toString: function ()
+		{
+			return String (this .getValue ());
+		},
 	});
 
 	return SFTime;
