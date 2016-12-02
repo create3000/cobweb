@@ -10682,7 +10682,10 @@ define ('cobweb/Basic/X3DArrayField',[
 	"cobweb/Bits/X3DConstants",
 	"cobweb/InputOutput/Generator",
 ],
-function ($, X3DField, X3DConstants, Generator)
+function ($,
+          X3DField,
+          X3DConstants, 
+          Generator)
 {
 
 
@@ -11036,6 +11039,7 @@ function ($, X3DField, X3DConstants, Generator)
 					string += Generator .Indent ();
 					string += array [length] .toString ();
 					string += "\n";
+
 					Generator .DecIndent ();
 					string += Generator .Indent ();
 					string += "]";
@@ -11044,6 +11048,24 @@ function ($, X3DField, X3DConstants, Generator)
 			}
 
 			return string;
+		},
+		toXMLString: function ()
+		{
+			var length = this .length;
+
+			if (length)
+			{
+				var
+					value  = this .getValue (),
+					string = "";
+
+				for (var i = 0, n = length - 1; i < n; ++ i)
+					string += value [i] .toXMLString () + ", ";
+
+				string += value [n] .toXMLString ();
+
+				return string;
+			}
 		},
 		dispose: function ()
 		{
@@ -11157,6 +11179,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return this .getValue () ? "TRUE" : "FALSE";
 		},
+		toXMLString: function ()
+		{
+			return this .getValue () ? "true" : "false";
+		},
 	});
 
 	return SFBool;
@@ -11229,6 +11255,10 @@ define ('standard/Math/Algorithm',[],function ()
 		degrees: function (value)
 		{
 			return value * (180 / Math .PI);
+		},
+		random: function (min, max)
+		{
+			return min + Math .random () * (max - min);
 		},
 		clamp: function (value, min, max)
 		{
@@ -11784,6 +11814,10 @@ function ($, Color3, X3DField, X3DConstants)
 		{
 			return this .getValue () .toString ();
 		},
+		toXMLString: function ()
+		{
+			return this .getValue () .toString ();
+		},
 	});
 
 	var r = {
@@ -12117,6 +12151,7 @@ function ($, X3DField, SFColor, X3DConstants, Color4)
 		getHSV: SFColor .getHSV,
 		setHSV: SFColor .setHSV,
 		toString: SFColor .toString,
+		toXMLString: SFColor .toXMLString,
 	});
 
 	var r = {
@@ -12283,6 +12318,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return String (this .getValue ());
 		},
+		toXMLString: function ()
+		{
+			return String (this .getValue ());
+		},
 	});
 
 	return SFDouble;
@@ -12378,6 +12417,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return String (this .getValue ());
 		},
+		toXMLString: function ()
+		{
+			return String (this .getValue ());
+		},
 	});
 
 	return SFFloat;
@@ -12469,9 +12512,13 @@ function ($, X3DField, X3DConstants)
 			X3DField .prototype .set .call (this, ~~value);
 		},
 		valueOf: X3DField .prototype .getValue,
-		toString: function ()
+		toString: function (base)
 		{
-			return String (this .getValue ());
+			return this .getValue () .toString (base);
+		},
+		toXMLString: function (base)
+		{
+			return this .getValue () .toString (base);
 		},
 	});
 
@@ -12611,6 +12658,10 @@ function ($, X3DField)
 			{
 				return this .getValue () .toString ();
 			},
+			toString: function ()
+			{
+				return this .getValue () .toString ();
+			},
 		});
 	};
 });
@@ -12664,7 +12715,7 @@ function ($, X3DField)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFVecPrototypeTemplate',[
+define ([
 	"jquery",
 	"cobweb/Basic/X3DField",
 ],
@@ -12719,6 +12770,10 @@ function ($, X3DField)
 			length: function ()
 			{
 				return this .getValue () .abs ();
+			},
+			toString: function ()
+			{
+				return this .getValue () .toString ();
 			},
 			toString: function ()
 			{
@@ -17981,7 +18036,7 @@ function ($, X3DField, X3DConstants)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFRotation',[
+define ([
 	"jquery",
 	"cobweb/Fields/SFVec3",
 	"cobweb/Basic/X3DField",
@@ -18064,6 +18119,10 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 		slerp: function (rotation, t)
 		{
 			return new SFRotation (Rotation4 .slerp (this .getValue (), rotation .getValue (), t));
+		},
+		toString: function ()
+		{
+			return this .getValue () .toString ();
 		},
 		toString: function ()
 		{
@@ -18205,7 +18264,8 @@ function ($, X3DField, X3DConstants)
 
 	var
 		unescape = /\\([\\"])/g,
-		escape   = /([\\"])/g;
+		escape   = /([\\"])/g,
+		div      = $('<div>');
 
 	function SFString (value)
 	{
@@ -18250,6 +18310,10 @@ function ($, X3DField, X3DConstants)
 		toString: function ()
 		{
 			return '"'+ SFString .escape (this .getValue ()) + '"';
+		},
+		toXMLString: function ()
+		{
+			return div .text (this .getValue ()) .html ();
 		},
 	});
 
@@ -18315,7 +18379,7 @@ function ($, X3DField, X3DConstants)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFTime',[
+define ([
 	"jquery",
 	"cobweb/Basic/X3DField",
 	"cobweb/Bits/X3DConstants",
@@ -18352,6 +18416,10 @@ function ($, X3DField, X3DConstants)
 			X3DField .prototype .set .call (this, +value);
 		},
 		valueOf: X3DField .prototype .getValue,
+		toString: function ()
+		{
+			return String (this .getValue ());
+		},
 		toString: function ()
 		{
 			return String (this .getValue ());
@@ -18599,6 +18667,7 @@ define ('cobweb/Fields/ArrayFields',[
 	"cobweb/Fields/SFVec4",
 	"cobweb/Basic/X3DArrayField",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           SFBool,
@@ -18618,7 +18687,8 @@ function ($,
           SFVec3,
           SFVec4,
           X3DArrayField,
-          X3DConstants)
+          X3DConstants,
+          Generator)
 {
 
 
@@ -18710,6 +18780,48 @@ function ($,
 			X3DArrayField .prototype .removeChild .call (this, value);
 
 			value .removeClones (this ._cloneCount);
+		},
+		toXMLString: function ()
+		{
+			var length = this .length;
+
+			if (length)
+			{
+				var
+					value  = this .getValue (),
+					string = "";
+
+				//Generator .EnterScope ();
+
+				for (var i = 0, n = length - 1; i < n; ++ i)
+				{
+					var node = value [i] .getValue ();
+
+					if (node)
+					{
+						string += node .toXMLString () + "\n";
+					}
+					else
+					{
+						string += Generator .Indent ();
+						string += "<!-- NULL -->\n";
+					}
+				}
+		
+				var node = value [n] .getValue ();
+
+				if (node)
+				{
+					string += node .toXMLString ();
+				}
+				else
+				{
+					string += Generator .Indent ();
+					string += "<!-- NULL -->";
+				}
+
+				//Generator .LeaveScope ();
+			}
 		},
 	});
 	
@@ -18963,12 +19075,16 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		{
 		   var
 				string = this .width + " " + this .height + " " + this .comp,
-				array  = this .array;
+				array  = this .array .getValue ();
 
 			for (var i = 0, length = this .width * this .height; i < length; ++ i)
-				string += " " + array [i];
+				string += " 0x" + array [i] .toString (16);
 
 			return string;
+		},
+		toXMLString: function ()
+		{
+			return this .toString ();
 		},
 	});
 
@@ -19216,7 +19332,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "2.4";
+	return "2.5";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -19903,6 +20019,9 @@ function ($,
 		toString: function ()
 		{
 			return this .getTypeName () + " { }";
+		},
+		toXMLString: function ()
+		{
 		},
 		dispose: function ()
 		{
@@ -25346,6 +25465,7 @@ define ("cobweb/Execution/X3DExecutionContext", [
 	"cobweb/Bits/X3DCast",
 	"cobweb/Bits/X3DConstants",
 	"standard/Networking/URI",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -25360,7 +25480,8 @@ function ($,
           X3DRoute,
           X3DCast,
           X3DConstants,
-          URI)
+          URI,
+          Algorithm)
 {
 
 
@@ -25491,7 +25612,7 @@ function ($,
 				throw new Error ("Couldn't update named node: node must be of type SFNode.");
 
 			name = String (name);
-			node = new Fields .SFNode (node .valueOf ());
+			node = new Fields .SFNode (node instanceof Fields .SFNode ? node .getValue () : node);
 
 			if (! node .getValue ())
 				throw new Error ("Couldn't update named node: node IS NULL.");
@@ -25525,6 +25646,34 @@ function ($,
 				throw new Error ("Named node '" + name + "' not found.");
 
 			return node;
+		},
+		getUniqueName: function (name)
+		{
+			var _TrailingNumbers = /(_\d+$)/;
+
+			name = name .replace (_TrailingNumbers, "");
+
+			var
+				newName = name,
+				i       = 64;
+
+			for (; i;)
+			{
+				if (this .namedNodes [newName] || newName .length === 0)
+				{
+					var
+						min = i,
+						max = i <<= 1;
+		
+					newName  = name;
+					newName += '_';
+					newName += Math .round (Algorithm .random (min, max));
+				}
+				else
+					break;
+			}
+		
+			return newName;
 		},
 		addImportedNode: function (inlineNode, exportedName, importedName)
 		{
@@ -27443,21 +27592,6 @@ function ($,
 		Break: /\r?\n/g,
 	};
 
-	// +scriptBodyElement assignments
-	function parseY (parser)
-	{
-		this .lastIndex = parser .lastIndex;
-		parser .result  = this .exec (parser .input);
-
-		if (parser .result)
-		{
-			parser .lastIndex = this .lastIndex;
-			return true;
-		}
-
-		return false;
-	}
-
 	function parse (parser)
 	{
 		this .lastIndex = 0;
@@ -27471,6 +27605,91 @@ function ($,
 
 		return false;
 	}
+
+
+/*
+	// VRML lexical elements
+	var Grammar =
+	{
+		// General
+		Whitespaces: new RegExp ('^([\\x20\\n,\\t\\r]+)', 'y'),
+		Comment:     new RegExp ('^#(.*?)(?=[\\n\\r])',   'y'),
+
+		// Header
+		Header:	    new RegExp ("^#(VRML|X3D) V(.*?) (utf8)(?: (.*?))?[\\n\\r]", 'y'),
+
+		// Keywords
+		AS:          new RegExp ('^AS',          'y'),
+		COMPONENT:   new RegExp ('^COMPONENT',   'y'),
+		DEF:         new RegExp ('^DEF',         'y'),
+		EXPORT:      new RegExp ('^EXPORT',      'y'),
+		EXTERNPROTO: new RegExp ('^EXTERNPROTO', 'y'),
+		FALSE:       new RegExp ('^FALSE',       'y'),
+		false:       new RegExp ('^false',       'y'),
+		IMPORT:      new RegExp ('^IMPORT',      'y'),
+		IS:          new RegExp ('^IS',          'y'),
+		META:        new RegExp ('^META',        'y'),
+		NULL:        new RegExp ('^NULL',        'y'),
+		TRUE:        new RegExp ('^TRUE',        'y'),
+		true:        new RegExp ('^true',        'y'),
+		PROFILE:     new RegExp ('^PROFILE',     'y'),
+		PROTO:       new RegExp ('^PROTO',       'y'),
+		ROUTE:       new RegExp ('^ROUTE',       'y'),
+		TO:          new RegExp ('^TO',          'y'),
+		UNIT:        new RegExp ('^UNIT',        'y'),
+		USE:         new RegExp ('^USE',         'y'),
+
+		// Terminal symbols
+		OpenBrace:    new RegExp ('^\\{', 'y'),
+		CloseBrace:   new RegExp ('^\\}', 'y'),
+		OpenBracket:  new RegExp ('^\\[', 'y'),
+		CloseBracket: new RegExp ('^\\]', 'y'),
+		Period:       new RegExp ('^\\.', 'y'),
+		Colon:        new RegExp ('^\\:', 'y'),
+
+		Id: new RegExp ('^([^\\x30-\\x39\\x00-\\x20\\x22\\x23\\x27\\x2b\\x2c\\x2d\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f]{1}[^\\x00-\\x20\\x22\\x23\\x27\\x2c\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f]*)', 'y'),
+		ComponentNameId: new RegExp ('^([^\\x30-\\x39\\x00-\\x20\\x22\\x23\\x27\\x2b\\x2c\\x2d\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f\\x3a]{1}[^\\x00-\\x20\\x22\\x23\\x27\\x2c\\x2e\\x5b\\x5c\\x5d\\x7b\\x7d\\x7f\\x3a]*)', 'y'),
+
+		initializeOnly: new RegExp ('^initializeOnly', 'y'),
+		inputOnly:      new RegExp ('^inputOnly',      'y'),
+		outputOnly:     new RegExp ('^outputOnly',     'y'),
+		inputOutput:    new RegExp ('^inputOutput',    'y'),
+
+		field:        new RegExp ('^field', 'y'),
+		eventIn:      new RegExp ('^eventIn', 'y'),
+		eventOut:     new RegExp ('^eventOut', 'y'),
+		exposedField: new RegExp ('^exposedField', 'y'),
+
+		FieldType: new RegExp ('^(MFBool|MFColorRGBA|MFColor|MFDouble|MFFloat|MFImage|MFInt32|MFMatrix3d|MFMatrix3f|MFMatrix4d|MFMatrix4f|MFNode|MFRotation|MFString|MFTime|MFVec2d|MFVec2f|MFVec3d|MFVec3f|MFVec4d|MFVec4f|SFBool|SFColorRGBA|SFColor|SFDouble|SFFloat|SFImage|SFInt32|SFMatrix3d|SFMatrix3f|SFMatrix4d|SFMatrix4f|SFNode|SFRotation|SFString|SFTime|SFVec2d|SFVec2f|SFVec3d|SFVec3f|SFVec4d|SFVec4f)', 'y'),
+
+		// Values
+		int32:  new RegExp ('^((?:0[xX][\\da-fA-F]+)|(?:[+-]?\\d+))', 'y'),
+		double: new RegExp ('^([+-]?(?:(?:(?:\\d*\\.\\d+)|(?:\\d+(?:\\.)?))(?:[eE][+-]?\\d+)?))', 'y'),
+		string: new RegExp ('^"((?:[^\\\\"]|\\\\\\\\|\\\\\\")*)"', 'y'),
+		
+		Inf:         new RegExp ('^[+]?inf',  'yi'),
+		NegativeInf: new RegExp ('^-inf',     'yi'),
+		NaN:         new RegExp ('^[+-]?nan', 'yi'),
+
+		// Misc
+		Break: new RegExp ('\\r?\\n', 'g'),
+	};
+
+	function parse (parser)
+	{
+		this .lastIndex = parser .lastIndex;
+
+		parser .result = this .exec (parser .input);
+
+		if (parser .result)
+		{
+			parser .lastIndex = this .lastIndex;
+			return true;
+		}
+
+		return false;
+	}
+*/
 
 	for (var key in Grammar)
 		Grammar [key] .parse = parse;
@@ -27993,18 +28212,18 @@ function ($,
 			{
 				if (this .nodeNameId ())
 					return this .node (this .result [1]);
-		
+
 				throw new Error ("No name given after DEF.");
 			}
-		
+
 			if (Grammar .USE .parse (this))
 			{
 				if (this .nodeNameId ())
-					return this .getExecutionContext () .getNamedNode (this .result [1]);
-		
+					return this .getExecutionContext () .getNamedNode (this .result [1]) .getValue ();
+
 				throw new Error ("No name given after USE.");
 			}
-		
+
 			if (Grammar .NULL .parse (this))
 				return null;
 
@@ -28548,7 +28767,18 @@ function ($,
 				}
 		
 				if (nodeNameId .length)
+				{
+					try
+					{
+						var namedNode = this .getExecutionContext () .getNamedNode (nodeNameId);
+
+						this .getExecutionContext () .updateNamedNode (this .getExecutionContext () .getUniqueName (nodeNameId), namedNode);
+					}
+					catch (error)
+					{ }
+
 					this .getExecutionContext () .updateNamedNode (nodeNameId, baseNode);
+				}
 		
 				this .comments ();
 		
@@ -34212,6 +34442,646 @@ function (Line3,
  *
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
+ * This file is part of the Cobweb Project.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains "non-military use only" components.
+ *
+ * Copyright 2016 Andreas Plesch.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
+define ('cobweb/Parser/HTMLSupport',[],function ()
+{
+
+
+	var HTMLSupport =
+	{
+		attributeLowerCaseToCamelCase:
+		{
+			"accesstype" : "accessType",
+			"actionkeypress" : "actionKeyPress",
+			"actionkeyrelease" : "actionKeyRelease",
+			"activate" : "activate",
+			"activelayer" : "activeLayer",
+			"additionalinterface" : "additionalInterface",
+			"address" : "address",
+			"align" : "align",
+			"alpha" : "alpha",
+			"altkey" : "altKey",
+			"ambientintensity" : "ambientIntensity",
+			"anchorpoint" : "anchorPoint",
+			"angle" : "angle",
+			"anglerate" : "angleRate",
+			"angulardampingfactor" : "angularDampingFactor",
+			"angularvelocity" : "angularVelocity",
+			"anisotropicdegree" : "anisotropicDegree",
+			"antennalocation" : "antennaLocation",
+			"antennapatternlength" : "antennaPatternLength",
+			"antennapatterntype" : "antennaPatternType",
+			"appinfo" : "appinfo",
+			"applicationid" : "applicationID",
+			"applied" : "applied",
+			"appliedparameters" : "appliedParameters",
+			"articulationparameterarray" : "articulationParameterArray",
+			"articulationparameterchangeindicatorarray" : "articulationParameterChangeIndicatorArray",
+			"articulationparametercount" : "articulationParameterCount",
+			"articulationparameterdesignatorarray" : "articulationParameterDesignatorArray",
+			"articulationparameteridpartattachedtoarray" : "articulationParameterIdPartAttachedToArray",
+			"articulationparametertypearray" : "articulationParameterTypeArray",
+			"articulationparametervalue0_changed" : "articulationParameterValue0_changed",
+			"articulationparametervalue1_changed" : "articulationParameterValue1_changed",
+			"articulationparametervalue2_changed" : "articulationParameterValue2_changed",
+			"articulationparametervalue3_changed" : "articulationParameterValue3_changed",
+			"articulationparametervalue4_changed" : "articulationParameterValue4_changed",
+			"articulationparametervalue5_changed" : "articulationParameterValue5_changed",
+			"articulationparametervalue6_changed" : "articulationParameterValue6_changed",
+			"articulationparametervalue7_changed" : "articulationParameterValue7_changed",
+			"as" : "AS",
+			"attenuation" : "attenuation",
+			"autocalc" : "autoCalc",
+			"autodamp" : "autoDamp",
+			"autodisable" : "autoDisable",
+			"autooffset" : "autoOffset",
+			"avatarsize" : "avatarSize",
+			"axis" : "axis",
+			"axis1" : "axis1",
+			"axis1angle" : "axis1Angle",
+			"axis1torque" : "axis1Torque",
+			"axis2" : "axis2",
+			"axis2angle" : "axis2Angle",
+			"axis2torque" : "axis2Torque",
+			"axis3angle" : "axis3Angle",
+			"axis3torque" : "axis3Torque",
+			"axisofrotation" : "axisOfRotation",
+			"axisrotation" : "axisRotation",
+			"backambientintensity" : "backAmbientIntensity",
+			"backdiffusecolor" : "backDiffuseColor",
+			"backemissivecolor" : "backEmissiveColor",
+			"backshininess" : "backShininess",
+			"backspecularcolor" : "backSpecularColor",
+			"backtransparency" : "backTransparency",
+			"backurl" : "backUrl",
+			"bboxcenter" : "bboxCenter",
+			"bboxsize" : "bboxSize",
+			"beamwidth" : "beamWidth",
+			"begincap" : "beginCap",
+			"bindtime" : "bindTime",
+			"body1anchorpoint" : "body1AnchorPoint",
+			"body1axis" : "body1Axis",
+			"body2anchorpoint" : "body2AnchorPoint",
+			"body2axis" : "body2Axis",
+			"bordercolor" : "borderColor",
+			"borderwidth" : "borderWidth",
+			"bottom" : "bottom",
+			"bottomradius" : "bottomRadius",
+			"bottomurl" : "bottomUrl",
+			"bounce" : "bounce",
+			"boundarymoder" : "boundaryModeR",
+			"boundarymodes" : "boundaryModeS",
+			"boundarymodet" : "boundaryModeT",
+			"boundaryopacity" : "boundaryOpacity",
+			"category" : "category",
+			"ccw" : "ccw",
+			"center" : "center",
+			"centerofmass" : "centerOfMass",
+			"centerofrotation" : "centerOfRotation",
+			"centerofrotation_changed" : "centerOfRotation_changed",
+			"child1url" : "child1Url",
+			"child2url" : "child2Url",
+			"child3url" : "child3Url",
+			"child4url" : "child4Url",
+			"class" : "class",
+			"clipboundary" : "clipBoundary",
+			"closed" : "closed",
+			"closuretype" : "closureType",
+			"collidetime" : "collideTime",
+			"collisiontype" : "collisionType",
+			"color" : "color",
+			"colorindex" : "colorIndex",
+			"colorkey" : "colorKey",
+			"colorpervertex" : "colorPerVertex",
+			"colorsteps" : "colorSteps",
+			"constantforcemix" : "constantForceMix",
+			"contactnormal" : "contactNormal",
+			"contactsurfacethickness" : "contactSurfaceThickness",
+			"containerfield" : "containerField",
+			"content" : "content",
+			"contourstepsize" : "contourStepSize",
+			"controlkey" : "controlKey",
+			"controlpoint" : "controlPoint",
+			"conversionfactor" : "conversionFactor",
+			"convex" : "convex",
+			"coolcolor" : "coolColor",
+			"coordindex" : "coordIndex",
+			"country" : "country",
+			"creaseangle" : "creaseAngle",
+			"createparticles" : "createParticles",
+			"crosssection" : "crossSection",
+			"cryptokeyid" : "cryptoKeyID",
+			"cryptosystem" : "cryptoSystem",
+			"cutoffangle" : "cutOffAngle",
+			"cycleinterval" : "cycleInterval",
+			"cycletime" : "cycleTime",
+			"data" : "data",
+			"datalength" : "dataLength",
+			"deadreckoning" : "deadReckoning",
+			"def" : "DEF",
+			"deletionallowed" : "deletionAllowed",
+			"depth" : "depth",
+			"description" : "description",
+			"desiredangularvelocity1" : "desiredAngularVelocity1",
+			"desiredangularvelocity2" : "desiredAngularVelocity2",
+			"detonatetime" : "detonateTime",
+			"detonationlocation" : "detonationLocation",
+			"detonationrelativelocation" : "detonationRelativeLocation",
+			"detonationresult" : "detonationResult",
+			"diffusecolor" : "diffuseColor",
+			"dimensions" : "dimensions",
+			"dir" : "dir",
+			"direction" : "direction",
+			"directoutput" : "directOutput",
+			"disableangularspeed" : "disableAngularSpeed",
+			"disablelinearspeed" : "disableLinearSpeed",
+			"disabletime" : "disableTime",
+			"diskangle" : "diskAngle",
+			"displacements" : "displacements",
+			"displayed" : "displayed",
+			"documentation" : "documentation",
+			"domain" : "domain",
+			"duration" : "duration",
+			"duration_changed" : "duration_changed",
+			"easeineaseout" : "easeInEaseOut",
+			"edgecolor" : "edgeColor",
+			"elapsedtime" : "elapsedTime",
+			"emissivecolor" : "emissiveColor",
+			"enabled" : "enabled",
+			"enabledaxes" : "enabledAxes",
+			"encodingscheme" : "encodingScheme",
+			"endangle" : "endAngle",
+			"endcap" : "endCap",
+			"enteredtext" : "enteredText",
+			"entertime" : "enterTime",
+			"entitycategory" : "entityCategory",
+			"entitycountry" : "entityCountry",
+			"entitydomain" : "entityDomain",
+			"entityextra" : "entityExtra",
+			"entityid" : "entityID",
+			"entitykind" : "entityKind",
+			"entityspecific" : "entitySpecific",
+			"entitysubcategory" : "entitySubcategory",
+			"errorcorrection" : "errorCorrection",
+			"eventapplicationid" : "eventApplicationID",
+			"evententityid" : "eventEntityID",
+			"eventnumber" : "eventNumber",
+			"eventsiteid" : "eventSiteID",
+			"exittime" : "exitTime",
+			"extra" : "extra",
+			"family" : "family",
+			"fancount" : "fanCount",
+			"fieldofview" : "fieldOfView",
+			"filled" : "filled",
+			"finaltext" : "finalText",
+			"finiterotationaxis" : "finiteRotationAxis",
+			"fired1" : "fired1",
+			"fired2" : "fired2",
+			"firedtime" : "firedTime",
+			"firemissionindex" : "fireMissionIndex",
+			"firingrange" : "firingRange",
+			"firingrate" : "firingRate",
+			"fixed" : "fixed",
+			"fogtype" : "fogType",
+			"force" : "force",
+			"forceid" : "forceID",
+			"forceoutput" : "forceOutput",
+			"forces" : "forces",
+			"forcetransitions" : "forceTransitions",
+			"fraction_changed" : "fraction_changed",
+			"frequency" : "frequency",
+			"frictioncoefficients" : "frictionCoefficients",
+			"frictiondirection" : "frictionDirection",
+			"fromfield" : "fromField",
+			"fromnode" : "fromNode",
+			"fronturl" : "frontUrl",
+			"function" : "function",
+			"fuse" : "fuse",
+			"generatemipmaps" : "generateMipMaps",
+			"geocenter" : "geoCenter",
+			"geocoord_changed" : "geoCoord_changed",
+			"geocoords" : "geoCoords",
+			"geogridorigin" : "geoGridOrigin",
+			"geometrytype" : "geometryType",
+			"geosystem" : "geoSystem",
+			"geovalue_changed" : "geovalue_changed",
+			"global" : "global",
+			"gradientthreshold" : "gradientThreshold",
+			"gravity" : "gravity",
+			"groundangle" : "groundAngle",
+			"groundcolor" : "groundColor",
+			"gustiness" : "gustiness",
+			"hatchcolor" : "hatchColor",
+			"hatched" : "hatched",
+			"hatchstyle" : "hatchStyle",
+			"headlight" : "headlight",
+			"height" : "height",
+			"hinge1angle" : "hinge1Angle",
+			"hinge1anglerate" : "hinge1AngleRate",
+			"hinge2angle" : "hinge2Angle",
+			"hinge2anglerate" : "hinge2AngleRate",
+			"hitgeocoord_changed" : "hitGeoCoord_changed",
+			"hitnormal_changed" : "hitNormal_changed",
+			"hitpoint_changed" : "hitPoint_changed",
+			"hittexcoord_changed" : "hitTexCoord_changed",
+			"horizontal" : "horizontal",
+			"http-equiv" : "http-equiv",
+			"image" : "image",
+			"importeddef" : "importedDEF",
+			"index" : "index",
+			"inertia" : "inertia",
+			"info" : "info",
+			"initialdestination" : "initialDestination",
+			"initialvalue" : "initialValue",
+			"inlinedef" : "inlineDEF",
+			"innerradius" : "innerRadius",
+			"inputfalse" : "inputFalse",
+			"inputnegate" : "inputNegate",
+			"inputsource" : "inputSource",
+			"inputtrue" : "inputTrue",
+			"integerkey" : "integerKey",
+			"intensity" : "intensity",
+			"intensitythreshold" : "intensityThreshold",
+			"internal" : "internal",
+			"intersectiontype" : "intersectionType",
+			"isactive" : "isActive",
+			"isbound" : "isBound",
+			"iscollided" : "isCollided",
+			"isdetonated" : "isDetonated",
+			"isloaded" : "isLoaded",
+			"isnetworkreader" : "isNetworkReader",
+			"isnetworkwriter" : "isNetworkWriter",
+			"isover" : "isOver",
+			"ispaused" : "isPaused",
+			"ispickable" : "isPickable",
+			"isrtpheaderheard" : "isRtpHeaderHeard",
+			"isselected" : "isSelected",
+			"isstandalone" : "isStandAlone",
+			"isvalid" : "isValid",
+			"iterations" : "iterations",
+			"jump" : "jump",
+			"justify" : "justify",
+			"key" : "key",
+			"keypress" : "keyPress",
+			"keyrelease" : "keyRelease",
+			"keyvalue" : "keyValue",
+			"keyvelocity" : "keyVelocity",
+			"kind" : "kind",
+			"knot" : "knot",
+			"lang" : "lang",
+			"language" : "language",
+			"lefttoright" : "leftToRight",
+			"lefturl" : "leftUrl",
+			"length" : "length",
+			"lengthofmodulationparameters" : "lengthOfModulationParameters",
+			"level" : "level",
+			"level_changed" : "level_changed",
+			"lifetimevariation" : "lifetimeVariation",
+			"lighting" : "lighting",
+			"limitorientation" : "limitOrientation",
+			"linearacceleration" : "linearAcceleration",
+			"lineardampingfactor" : "linearDampingFactor",
+			"linearvelocity" : "linearVelocity",
+			"linebounds" : "lineBounds",
+			"linesegments" : "lineSegments",
+			"linetype" : "linetype",
+			"linewidthscalefactor" : "linewidthScaleFactor",
+			"llimit" : "llimit",
+			"load" : "load",
+			"loadtime" : "loadTime",
+			"localdef" : "localDEF",
+			"location" : "location",
+			"loop" : "loop",
+			"magnificationfilter" : "magnificationFilter",
+			"marking" : "marking",
+			"mass" : "mass",
+			"matrix" : "matrix",
+			"maxangle" : "maxAngle",
+			"maxangle1" : "maxAngle1",
+			"maxback" : "maxBack",
+			"maxcorrectionspeed" : "maxCorrectionSpeed",
+			"maxextent" : "maxExtent",
+			"maxfront" : "maxFront",
+			"maxparticles" : "maxParticles",
+			"maxposition" : "maxPosition",
+			"maxseparation" : "maxSeparation",
+			"maxtorque1" : "maxTorque1",
+			"maxtorque2" : "maxTorque2",
+			"minangle" : "minAngle",
+			"minangle1" : "minAngle1",
+			"minback" : "minBack",
+			"minbouncespeed" : "minBounceSpeed",
+			"minfront" : "minFront",
+			"minificationfilter" : "minificationFilter",
+			"minposition" : "minPosition",
+			"minseparation" : "minSeparation",
+			"mode" : "mode",
+			"modifiedfraction_changed" : "modifiedFraction_changed",
+			"modulationtypedetail" : "modulationTypeDetail",
+			"modulationtypemajor" : "modulationTypeMajor",
+			"modulationtypespreadspectrum" : "modulationTypeSpreadSpectrum",
+			"modulationtypesystem" : "modulationTypeSystem",
+			"momentsofinertia" : "momentsOfInertia",
+			"motor1angle" : "motor1Angle",
+			"motor1anglerate" : "motor1AngleRate",
+			"motor1axis" : "motor1Axis",
+			"motor2angle" : "motor2Angle",
+			"motor2anglerate" : "motor2AngleRate",
+			"motor2axis" : "motor2Axis",
+			"motor3angle" : "motor3Angle",
+			"motor3anglerate" : "motor3AngleRate",
+			"motor3axis" : "motor3Axis",
+			"multicastrelayhost" : "multicastRelayHost",
+			"multicastrelayport" : "multicastRelayPort",
+			"munitionapplicationid" : "munitionApplicationID",
+			"munitionendpoint" : "munitionEndPoint",
+			"munitionentityid" : "munitionEntityID",
+			"munitionquantity" : "munitionQuantity",
+			"munitionsiteid" : "munitionSiteID",
+			"munitionstartpoint" : "munitionStartPoint",
+			"mustevaluate" : "mustEvaluate",
+			"name" : "name",
+			"networkmode" : "networkMode",
+			"next" : "next",
+			"nodefield" : "nodeField",
+			"normal_changed" : "normal_changed",
+			"normalindex" : "normalIndex",
+			"normalizevelocity" : "normalizeVelocity",
+			"normalpervertex" : "normalPerVertex",
+			"numcomponents" : "numComponents",
+			"objecttype" : "objectType",
+			"offset" : "offset",
+			"offsetunits" : "offsetUnits",
+			"on" : "on",
+			"opacityfactor" : "opacityFactor",
+			"order" : "order",
+			"orientation" : "orientation",
+			"orientation_changed" : "orientation_changed",
+			"origin" : "origin",
+			"orthogonalcolor" : "orthogonalColor",
+			"outerradius" : "outerRadius",
+			"parallelcolor" : "parallelColor",
+			"parameter" : "parameter",
+			"particlelifetime" : "particleLifetime",
+			"particlesize" : "particleSize",
+			"pausetime" : "pauseTime",
+			"phasefunction" : "phaseFunction",
+			"pickable" : "pickable",
+			"pickednormal" : "pickedNormal",
+			"pickedpoint" : "pickedPoint",
+			"pickedtexturecoordinate" : "pickedTextureCoordinate",
+			"pitch" : "pitch",
+			"plane" : "plane",
+			"point" : "point",
+			"pointsize" : "pointSize",
+			"port" : "port",
+			"position" : "position",
+			"position_changed" : "position_changed",
+			"power" : "power",
+			"preferaccuracy" : "preferAccuracy",
+			"previous" : "previous",
+			"priority" : "priority",
+			"profile" : "profile",
+			"progress" : "progress",
+			"protofield" : "protoField",
+			"radioentitytypecategory" : "radioEntityTypeCategory",
+			"radioentitytypecountry" : "radioEntityTypeCountry",
+			"radioentitytypedomain" : "radioEntityTypeDomain",
+			"radioentitytypekind" : "radioEntityTypeKind",
+			"radioentitytypenomenclature" : "radioEntityTypeNomenclature",
+			"radioentitytypenomenclatureversion" : "radioEntityTypeNomenclatureVersion",
+			"radioid" : "radioID",
+			"radius" : "radius",
+			"range" : "range",
+			"readinterval" : "readInterval",
+			"receivedpower" : "receivedPower",
+			"receiverstate" : "receiverState",
+			"reference" : "reference",
+			"relativeantennalocation" : "relativeAntennaLocation",
+			"repeatr" : "repeatR",
+			"repeats" : "repeatS",
+			"repeatt" : "repeatT",
+			"resumetime" : "resumeTime",
+			"retainedopacity" : "retainedOpacity",
+			"retainuseroffsets" : "retainUserOffsets",
+			"righturl" : "rightUrl",
+			"rooturl" : "rootUrl",
+			"rotateyup" : "rotateYUp",
+			"rotation" : "rotation",
+			"rotation_changed" : "rotation_changed",
+			"rtpheaderexpected" : "rtpHeaderExpected",
+			"samplerate" : "sampleRate",
+			"samples" : "samples",
+			"scale" : "scale",
+			"scalemode" : "scaleMode",
+			"scaleorientation" : "scaleOrientation",
+			"scheme" : "scheme",
+			"segmentenabled" : "segmentEnabled",
+			"separatebackcolor" : "separateBackColor",
+			"separation" : "separation",
+			"separationrate" : "separationRate",
+			"set_articulationparametervalue0" : "set_articulationParameterValue0",
+			"set_articulationparametervalue1" : "set_articulationParameterValue1",
+			"set_articulationparametervalue2" : "set_articulationParameterValue2",
+			"set_articulationparametervalue3" : "set_articulationParameterValue3",
+			"set_articulationparametervalue4" : "set_articulationParameterValue4",
+			"set_articulationparametervalue5" : "set_articulationParameterValue5",
+			"set_articulationparametervalue6" : "set_articulationParameterValue6",
+			"set_articulationparametervalue7" : "set_articulationParameterValue7",
+			"set_bind" : "set_bind",
+			"set_boolean" : "set_boolean",
+			"set_colorindex" : "set_colorIndex",
+			"set_coordindex" : "set_coordIndex",
+			"set_crosssection" : "set_crossSection",
+			"set_destination" : "set_destination",
+			"set_fraction" : "set_fraction",
+			"set_height" : "set_height",
+			"set_index" : "set_index",
+			"set_normalindex" : "set_normalIndex",
+			"set_orientation" : "set_orientation",
+			"set_scale" : "set_scale",
+			"set_spine" : "set_spine",
+			"set_texcoordindex" : "set_texCoordIndex",
+			"set_triggertime" : "set_triggerTime",
+			"set_value" : "set_value",
+			"shadows" : "shadows",
+			"shiftkey" : "shiftKey",
+			"shininess" : "shininess",
+			"side" : "side",
+			"silhouetteboundaryopacity" : "silhouetteBoundaryOpacity",
+			"silhouetteretainedopacity" : "silhouetteRetainedOpacity",
+			"silhouettesharpness" : "silhouetteSharpness",
+			"siteid" : "siteID",
+			"size" : "size",
+			"sizeunits" : "sizeUnits",
+			"skincoordindex" : "skinCoordIndex",
+			"skincoordweight" : "skinCoordWeight",
+			"skyangle" : "skyAngle",
+			"skycolor" : "skyColor",
+			"sliderforce" : "sliderForce",
+			"slipcoefficients" : "slipCoefficients",
+			"slipfactors" : "slipFactors",
+			"softnessconstantforcemix" : "softnessConstantForceMix",
+			"softnesserrorcorrection" : "softnessErrorCorrection",
+			"solid" : "solid",
+			"sortorder" : "sortOrder",
+			"source" : "source",
+			"spacing" : "spacing",
+			"spatialize" : "spatialize",
+			"specific" : "specific",
+			"specularcolor" : "specularColor",
+			"speed" : "speed",
+			"speedfactor" : "speedFactor",
+			"spine" : "spine",
+			"startangle" : "startAngle",
+			"starttime" : "startTime",
+			"stiffness" : "stiffness",
+			"stop1bounce" : "stop1Bounce",
+			"stop1constantforcemix" : "stop1ConstantForceMix",
+			"stop1errorcorrection" : "stop1ErrorCorrection",
+			"stop2bounce" : "stop2Bounce",
+			"stop2errorcorrection" : "stop2ErrorCorrection",
+			"stop3bounce" : "stop3Bounce",
+			"stop3errorcorrection" : "stop3ErrorCorrection",
+			"stopbounce" : "stopBounce",
+			"stoperrorcorrection" : "stopErrorCorrection",
+			"stoptime" : "stopTime",
+			"string" : "string",
+			"stripcount" : "stripCount",
+			"style" : "style",
+			"subcategory" : "subcategory",
+			"summary" : "summary",
+			"surfacearea" : "surfaceArea",
+			"surfacespeed" : "surfaceSpeed",
+			"surfacetolerance" : "surfaceTolerance",
+			"surfacevalues" : "surfaceValues",
+			"suspensionerrorcorrection" : "suspensionErrorCorrection",
+			"suspensionforce" : "suspensionForce",
+			"tau" : "tau",
+			"tdltype" : "tdlType",
+			"tessellation" : "tessellation",
+			"tessellationscale" : "tessellationScale",
+			"texcoordindex" : "texCoordIndex",
+			"texcoordkey" : "texCoordKey",
+			"textbounds" : "textBounds",
+			"texturecompression" : "textureCompression",
+			"texturepriority" : "texturePriority",
+			"time" : "time",
+			"timeout" : "timeOut",
+			"timestamp" : "timestamp",
+			"title" : "title",
+			"tofield" : "toField",
+			"toggle" : "toggle",
+			"tolerance" : "tolerance",
+			"tonode" : "toNode",
+			"top" : "top",
+			"toptobottom" : "topToBottom",
+			"topurl" : "topUrl",
+			"torques" : "torques",
+			"touchtime" : "touchTime",
+			"trackpoint_changed" : "trackPoint_changed",
+			"transitioncomplete" : "transitionComplete",
+			"transitiontime" : "transitionTime",
+			"transitiontype" : "transitionType",
+			"translation" : "translation",
+			"translation_changed" : "translation_changed",
+			"transmitfrequencybandwidth" : "transmitFrequencyBandwidth",
+			"transmitstate" : "transmitState",
+			"transmitterapplicationid" : "transmitterApplicationID",
+			"transmitterentityid" : "transmitterEntityID",
+			"transmitterradioid" : "transmitterRadioID",
+			"transmittersiteid" : "transmitterSiteID",
+			"transparency" : "transparency",
+			"triggertime" : "triggerTime",
+			"triggertrue" : "triggerTrue",
+			"triggervalue" : "triggerValue",
+			"turbulence" : "turbulence",
+			"type" : "type",
+			"uclosed" : "uClosed",
+			"udimension" : "uDimension",
+			"uknot" : "uKnot",
+			"ulimit" : "ulimit",
+			"uorder" : "uOrder",
+			"update" : "update",
+			"url" : "url",
+			"use" : "USE",
+			"usefiniterotation" : "useFiniteRotation",
+			"usegeometry" : "useGeometry",
+			"useglobalgravity" : "useGlobalGravity",
+			"utessellation" : "uTessellation",
+			"value" : "value",
+			"value_changed" : "value_changed",
+			"variation" : "variation",
+			"vclosed" : "vClosed",
+			"vdimension" : "vDimension",
+			"vector" : "vector",
+			"version" : "version",
+			"vertexcount" : "vertexCount",
+			"vertices" : "vertices",
+			"visibilitylimit" : "visibilityLimit",
+			"visibilityrange" : "visibilityRange",
+			"visible" : "visible",
+			"vknot" : "vKnot",
+			"vorder" : "vOrder",
+			"vtessellation" : "vTessellation",
+			"warhead" : "warhead",
+			"warmcolor" : "warmColor",
+			"weight" : "weight",
+			"weightconstant1" : "weightConstant1",
+			"weightconstant2" : "weightConstant2",
+			"weightfunction1" : "weightFunction1",
+			"weightfunction2" : "weightFunction2",
+			"whichchoice" : "whichChoice",
+			"whichgeometry" : "whichGeometry",
+			"writeinterval" : "writeInterval",
+			"xdimension" : "xDimension",
+			"xspacing" : "xSpacing",
+			"yscale" : "yScale",
+			"zdimension" : "zDimension",
+			"zspacing" : "zSpacing",
+		}
+	};
+
+	Object .preventExtensions (HTMLSupport);
+	Object .freeze (HTMLSupport);
+	Object .seal (HTMLSupport);
+
+	return HTMLSupport;
+});
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
  * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
  *
  * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
@@ -34262,6 +35132,7 @@ define ('cobweb/Parser/XMLParser',[
 	"cobweb/Basic/X3DArrayField",
 	"cobweb/Fields",
 	"cobweb/Parser/Parser",
+	"cobweb/Parser/HTMLSupport",
 	"cobweb/Prototype/X3DExternProtoDeclaration",
 	"cobweb/Prototype/X3DProtoDeclaration",
 	"cobweb/Bits/X3DConstants",
@@ -34271,6 +35142,7 @@ function ($,
           X3DArrayField,
           Fields,
           Parser,
+	  HTMLSupport,   
           X3DExternProtoDeclaration,
           X3DProtoDeclaration,
           X3DConstants)
@@ -34358,6 +35230,7 @@ function ($,
 					this .X3D (xml);
 					break;
 				case "Scene":
+				case "SCENE":
 					this .Scene (xml);
 					break;
 				default:
@@ -34387,9 +35260,11 @@ function ($,
 				switch (element .nodeName)
 				{
 					case "head":
+					case "HEAD":
 						this .head (element);
 						continue;
 					case "Scene":
+					case "SCENE":
 						this .Scene (element);
 						continue;
 				}
@@ -34421,12 +35296,15 @@ function ($,
 				switch (element .nodeName)
 				{
 					case "component":
+					case "COMPONENT":
 						this .component (element);
 						continue;
 					case "unit":
+					case "UNIT":
 						this .unit (element);
 						continue;
 					case "meta":
+					case "META":
 						this .meta (element);
 						continue;
 				}
@@ -34460,7 +35338,7 @@ function ($,
 			var
 				category         = element .getAttribute ("category"),
 				name             = element .getAttribute ("name"),
-				conversionFactor = element .getAttribute ("conversionFactor");
+				conversionFactor = element .getAttribute ("conversionFactor"); //works for html5 as well
 
 			if (category == null)
 				return console .warn ("XML Parser Error: Bad unit statement: Expected category attribute.");
@@ -34506,14 +35384,17 @@ function ($,
 					return;
 				
 				case "ExternProtoDeclare":
+				case "EXTERNPROTODECLARE":
 					this .ExternProtoDeclare (child);
 					return;
 
 				case "ProtoDeclare":
+				case "PROTODECLARE":
 					this .ProtoDeclare (child);
 					return;
 
 				case "ProtoInstance":
+				case "PROTOINSTANCE":
 					this .ProtoInstance (child);
 					return;
 
@@ -34544,7 +35425,7 @@ function ($,
 				var node = this .getExecutionContext () .createNode (element .nodeName, false);
 
 				//AP: attach node to DOM element for access from DOM.
-            element .x3d = node;
+				element .x3d = node;
 
 				this .DEF (element, node);
 				this .addNode (element, node);
@@ -34613,23 +35494,28 @@ function ($,
 					return;
 
 				case "field":
+				case "FIELD":
 					this .field (child);
 					return;
 
 				case "fieldValue":
+				case "FIELDVALUE":
 					if (protoInstance)
 						this .fieldValue (child);
 					return;
 						
 				case "ExternProtoDeclare":
+				case "EXTERNPROTODECLARE":
 					this .ExternProtoDeclare (child);
 					return;
 
 				case "ProtoDeclare":
+				case "PROTODECLARE":
 					this .ProtoDeclare (child);
 					return;
 
 				case "ProtoInstance":
+				case "PROTOINSTANCE":
 					this .ProtoInstance (child);
 					return;
 
@@ -34657,7 +35543,18 @@ function ($,
 				var name = element .getAttribute ("DEF");
 
 				if (name)
+				{
+					try
+					{
+						var namedNode = this .getExecutionContext () .getNamedNode (name);
+
+						this .getExecutionContext () .updateNamedNode (this .getExecutionContext () .getUniqueName (name), namedNode);
+					}
+					catch (error)
+					{ }
+
 					this .getExecutionContext () .updateNamedNode (name, node);
+				}
 			}
 			catch (error)
 			{
@@ -34777,7 +35674,7 @@ function ($,
 				var
 					name      = attribute .name,
 					value     = attribute .value,
-					field     = node .getField (name),
+					field     = node .getField (this .attributeToCamelCase (name)),
 					fieldType = this .fieldTypes [field .getType ()];
 
 				this .parser .setInput (value);
@@ -35120,6 +36017,13 @@ function ($,
 				return false;
 
 			return true;
+		},
+		attributeToCamelCase: function (name)
+		{
+			if (name !== name .toLowerCase())
+				return name ;
+			
+			return HTMLSupport .attributeLowerCaseToCamelCase [name] ;
 		},
 	};
 
@@ -70300,7 +71204,7 @@ function ($,
 					canvas = this .canvas [0],
 					cx     = canvas .getContext ("2d");
 
-				// Scale image.
+				// Scale image if needed and flip vertically.
 
 				if (! Algorithm .isPowerOfTwo (width) || ! Algorithm .isPowerOfTwo (height))
 				{
@@ -70310,14 +71214,22 @@ function ($,
 					canvas .width  = width;
 					canvas .height = height;
 
+					cx .save ();
+					cx .translate (0, height);
+					cx .scale (1, -1);
 					cx .drawImage (image, 0, 0, image .width, image .height, 0, 0, width, height);
+					cx .restore ();
 				}
 				else
 				{
 					canvas .width  = width;
 					canvas .height = height;
 
+					cx .save ();
+					cx .translate (0, height);
+					cx .scale (1, -1);
 					cx .drawImage (image, 0, 0);
+					cx .restore ();
 				}
 
 				// Determine image alpha.
@@ -70337,7 +71249,7 @@ function ($,
 
 				setTimeout (function ()
 				{
-					this .setTexture (width, height, ! opaque, new Uint8Array (data), true);
+					this .setTexture (width, height, ! opaque, new Uint8Array (data), false);
 					this .setLoadState (X3DConstants .COMPLETE_STATE);
 				}
 				.bind (this), 16);
@@ -82465,6 +83377,7 @@ function (X3DBaseNode,
 		constructor: DependentRenderer,
 		initialize: function ()
 		{
+			X3DBaseNode     .prototype .initialize .call (this);
 			X3DRenderObject .prototype .initialize .call (this);
 		},
 		isIndependent: function ()
@@ -82725,9 +83638,15 @@ function ($,
 			if (type !== TraverseType .DISPLAY)
 				return;
 		
+			if (this .update_ .getValue () === "NONE")
+				return;
+
 			if (! this .frameBuffer)
 				return;
 		
+			//if (renderObject .getBrowser () !== this .getBrowser ())
+			//	return; // Could be interesting for four-side-view
+
 			if (! renderObject .isIndependent ())
 				return;
 
@@ -85593,6 +86512,306 @@ function ($,
  ******************************************************************************/
 
 
+define ("cobweb/Components/CubeMapTexturing/ImageCubeMapTexture",
+[
+	"jquery",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Networking/urls",
+	"standard/Networking/URI",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Algorithm",
+	"cobweb/DEBUG",
+],
+function ($,
+          Fields,
+          X3DFieldDefinition,
+          FieldDefinitionArray,
+          X3DEnvironmentTextureNode, 
+          X3DUrlObject, 
+          X3DConstants,
+          urls,
+          URI,
+          Vector2,
+          Algorithm,
+          DEBUG)
+{
+
+
+   var defaultData = new Uint8Array ([ 255, 255, 255, 255 ]);
+
+	var offsets = [
+		new Vector2 (1, 1), // Front
+		new Vector2 (3, 1), // Back
+		new Vector2 (0, 1), // Left
+		new Vector2 (2, 1), // Right
+		new Vector2 (1, 0), // Bottom, must be exchanged with top
+		new Vector2 (1, 2), // Top, must be exchanged with bottom
+	];
+
+	function ImageCubeMapTexture (executionContext)
+	{
+		X3DEnvironmentTextureNode .call (this, executionContext);
+		X3DUrlObject .call (this, executionContext);
+
+		this .addType (X3DConstants .ImageCubeMapTexture);
+
+		this .urlStack = new Fields .MFString ();
+	}
+
+	ImageCubeMapTexture .prototype = $.extend (Object .create (X3DEnvironmentTextureNode .prototype),
+		X3DUrlObject .prototype,
+	{
+		constructor: ImageCubeMapTexture,
+		fieldDefinitions: new FieldDefinitionArray ([
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",          new Fields .SFNode ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "url",               new Fields .MFString ()),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "textureProperties", new Fields .SFNode ()),
+		]),
+		getTypeName: function ()
+		{
+			return "ImageCubeMapTexture";
+		},
+		getComponentName: function ()
+		{
+			return "CubeMapTexturing";
+		},
+		getContainerField: function ()
+		{
+			return "texture";
+		},
+		initialize: function ()
+		{
+			X3DEnvironmentTextureNode .prototype .initialize .call (this);
+			X3DUrlObject              .prototype .initialize .call (this);
+
+			// Upload default data.
+
+			var gl = this .getBrowser () .getContext ();
+
+			gl .bindTexture (this .getTarget (), this .getTexture ());
+
+			for (var i = 0; i < 6; ++ i)
+				gl .texImage2D  (this .getTargets () [i], 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
+
+			// Initialize.
+
+			this .url_ .addInterest (this, "set_url__");
+
+			this .canvas = $("<canvas></canvas>");
+
+			this .image = $("<img></img>");
+			this .image .load (this .setImage .bind (this));
+			this .image .error (this .setError .bind (this));
+			this .image .bind ("abort", this .setError .bind (this));
+
+			this .image [0] .crossOrigin = "Anonymous";
+
+			this .requestAsyncLoad ();
+		},
+		set_url__: function ()
+		{
+			this .setLoadState (X3DConstants .NOT_STARTED_STATE);
+
+			this .requestAsyncLoad ();
+		},
+		requestAsyncLoad: function ()
+		{
+			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+				return;
+
+			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
+
+			this .urlStack .setValue (this .url_);
+			this .loadNext ();
+		},
+		loadNext: function ()
+		{
+			if (this .urlStack .length === 0)
+			{
+				this .clear ();
+				this .setLoadState (X3DConstants .FAILED_STATE);
+				return;
+			}
+
+			// Get URL.
+
+			this .URL = new URI (this .urlStack .shift ());
+			this .URL = this .getExecutionContext () .getURL () .transform (this .URL);
+			// In Firefox we don't need getRelativePath if file scheme, do we in Chrome???
+
+			this .image .attr ("src", this .URL);
+		},
+		setError: function ()
+		{
+			var URL = this .URL .toString ();
+
+			if (! (this .URL .isLocal () || this .URL .host === "localhost"))
+			{
+				if (! URL .match (urls .fallbackExpression))
+					this .urlStack .unshift (urls .fallbackUrl + URL);
+			}
+
+			if (this .URL .scheme !== "data")
+				console .warn ("Error loading image:", this .URL .toString ());
+
+			this .loadNext ();
+		},
+		setImage: function ()
+		{
+			if (DEBUG)
+			{
+				 if (this .URL .scheme !== "data")
+			   	console .info ("Done loading image cube map texture:", this .URL .toString ());
+			}
+
+			try
+			{
+				var
+				   image     = this .image [0],
+					width     = image .width,
+					height    = image .height,
+					width1_4  = Math .floor (width / 4),
+					height1_3 = Math .floor (height / 3);
+
+				var
+					canvas = this .canvas [0],
+					cx     = canvas .getContext ("2d");
+
+				// Scale image.
+
+				if (! Algorithm .isPowerOfTwo (width1_4) || ! Algorithm .isPowerOfTwo (height1_3) || width1_4 * 4 !== width || height1_3 * 3 !== height)
+				{
+					width1_4  = Algorithm .nextPowerOfTwo (width1_4);
+					height1_3 = Algorithm .nextPowerOfTwo (height1_3);
+					width     = width1_4  * 4;
+					height    = height1_3 * 3;
+
+					canvas .width  = width;
+					canvas .height = height;
+
+					cx .drawImage (image, 0, 0, image .width, image .height, 0, 0, width, height);
+				}
+				else
+				{
+					canvas .width  = width;
+					canvas .height = height;
+
+					cx .drawImage (image, 0, 0);
+				}
+
+				// Extract images.
+
+				var
+					gl     = this .getBrowser () .getContext (),
+					opaque = true;
+
+				gl .bindTexture (this .getTarget (), this .getTexture ());
+				gl .pixelStorei (gl .UNPACK_FLIP_Y_WEBGL, false);
+
+				for (var i = 0; i < 6; ++ i)
+				{
+					var data = cx .getImageData (offsets [i] .x * width1_4, offsets [i] .y * height1_3, width1_4, height1_3) .data;
+	
+					// Determine image alpha.
+	
+					if (opaque)
+					{
+						for (var a = 3; a < data .length; a += 4)
+						{
+							if (data [a] !== 255)
+							{
+								opaque = false;
+								break;
+							}
+						}
+					}
+
+					// Transfer image.
+	
+					gl .texImage2D (this .getTargets () [i], 0, gl .RGBA, width1_4, height1_3, false, gl .RGBA, gl .UNSIGNED_BYTE, new Uint8Array (data));
+				}
+
+				this .set_textureQuality__ ();
+
+				// Update transparent field.
+
+				var transparent = ! opaque;
+
+				if (transparent !== this .transparent_ .getValue ())
+					this .transparent_ = transparent;
+
+				// Update load state.
+
+				this .setLoadState (X3DConstants .COMPLETE_STATE);
+			}
+			catch (error)
+			{
+				// Catch security error from cross origin requests.
+				console .log (error .message);
+				this .setError ();
+			}
+		},
+	});
+
+	return ImageCubeMapTexture;
+});
+
+
+
+/* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
+ *******************************************************************************
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.
+ *
+ * All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * The copyright notice above does not evidence any actual of intended
+ * publication of such source code, and is an unpublished work by create3000.
+ * This material contains CONFIDENTIAL INFORMATION that is the property of
+ * create3000.
+ *
+ * No permission is granted to copy, distribute, or create derivative works from
+ * the contents of this software, in whole or in part, without the prior written
+ * permission of create3000.
+ *
+ * NON-MILITARY USE ONLY
+ *
+ * All create3000 software are effectively free software with a non-military use
+ * restriction. It is free. Well commented source is provided. You may reuse the
+ * source in any way you please with the exception anything that uses it must be
+ * marked to indicate is contains 'non-military use only' components.
+ *
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.
+ *
+ * This file is part of the Cobweb Project.
+ *
+ * Cobweb is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License version 3 only, as published by the
+ * Free Software Foundation.
+ *
+ * Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more
+ * details (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version 3
+ * along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a
+ * copy of the GPLv3 License.
+ *
+ * For Silvio, Joy and Adi.
+ *
+ ******************************************************************************/
+
+
 define ('cobweb/Components/Rendering/IndexedLineSet',[
 	"jquery",
 	"cobweb/Fields",
@@ -87352,7 +88571,7 @@ function ($,
 						else if (level < currentLevel)
 							level = currentLevel - 1;
 					}
-	
+
 					if (level !== currentLevel)
 					{
 						this .level_changed_ = level;
@@ -103808,7 +105027,7 @@ define ('cobweb/Configuration/SupportedNodes',[
 	//"cobweb/Components/H-Anim/HAnimJoint",
 	//"cobweb/Components/H-Anim/HAnimSegment",
 	//"cobweb/Components/H-Anim/HAnimSite",
-	//"cobweb/Components/CubeMapTexturing/ImageCubeMapTexture",
+	"cobweb/Components/CubeMapTexturing/ImageCubeMapTexture",
 	"cobweb/Components/Texturing/ImageTexture", // VRML
 	//"cobweb/Components/Texturing3D/ImageTexture3D",
 	"cobweb/Components/Geometry3D/IndexedFaceSet", // VRML
@@ -104030,7 +105249,7 @@ function (Anchor,
           //HAnimJoint,
           //HAnimSegment,
           //HAnimSite,
-          //ImageCubeMapTexture,
+          ImageCubeMapTexture,
           ImageTexture,
           //ImageTexture3D,
           IndexedFaceSet,
@@ -104259,7 +105478,7 @@ function (Anchor,
 		//HAnimJoint:                   HAnimJoint,
 		//HAnimSegment:                 HAnimSegment,
 		//HAnimSite:                    HAnimSite,
-		//ImageCubeMapTexture:          ImageCubeMapTexture,
+		ImageCubeMapTexture:          ImageCubeMapTexture,
 		ImageTexture:                 ImageTexture,
 		//ImageTexture3D:               ImageTexture3D,
 		IndexedFaceSet:               IndexedFaceSet,
@@ -104404,8 +105623,11 @@ function (Anchor,
 	function createInstance (executionContext) { return new this (executionContext); }
 
 	for (var name in supportedNodes)
+	{
 		supportedNodes [name] .createInstance = createInstance .bind (supportedNodes [name]);
-
+		supportedNodes [name.toUpperCase()] = supportedNodes [name]; 
+		supportedNodes [name.toUpperCase()] .createInstance = createInstance .bind (supportedNodes [name]);
+	}
 	return supportedNodes;
 });
 
