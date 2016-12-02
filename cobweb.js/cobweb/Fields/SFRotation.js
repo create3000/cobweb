@@ -47,7 +47,7 @@
  ******************************************************************************/
 
 
-define ([
+define ("cobweb/Fields/SFRotation", [
 	"jquery",
 	"cobweb/Fields/SFVec3",
 	"cobweb/Basic/X3DField",

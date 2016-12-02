@@ -12715,7 +12715,7 @@ function ($, X3DField)
  ******************************************************************************/
 
 
-define ([
+define ("cobweb/Fields/SFVecPrototypeTemplate", [
 	"jquery",
 	"cobweb/Basic/X3DField",
 ],
@@ -18036,7 +18036,7 @@ function ($, X3DField, X3DConstants)
  ******************************************************************************/
 
 
-define ([
+define ("cobweb/Fields/SFRotation", [
 	"jquery",
 	"cobweb/Fields/SFVec3",
 	"cobweb/Basic/X3DField",
@@ -18379,7 +18379,7 @@ function ($, X3DField, X3DConstants)
  ******************************************************************************/
 
 
-define ([
+define ("cobweb/Fields/SFTime", [
 	"jquery",
 	"cobweb/Basic/X3DField",
 	"cobweb/Bits/X3DConstants",

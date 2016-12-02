@@ -47,7 +47,7 @@
  ******************************************************************************/
 
 
-define ([
+define ("cobweb/Fields/SFTime", [
 	"jquery",
 	"cobweb/Basic/X3DField",
 	"cobweb/Bits/X3DConstants",
