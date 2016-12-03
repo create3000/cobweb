@@ -420,22 +420,21 @@ function ($,
 
 			return string;
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
 			var length = this .length;
 
 			if (length)
 			{
-				var
-					value  = this .getValue (),
-					string = "";
+				var value = this .getValue ();
 
 				for (var i = 0, n = length - 1; i < n; ++ i)
-					string += value [i] .toXMLString () + ", ";
+				{
+					value [i] .toXMLStream (stream);
+					stream .string += ", ";
+				}
 
-				string += value [n] .toXMLString ();
-
-				return string;
+				value [n] .toXMLStream (stream);
 			}
 		},
 		dispose: function ()

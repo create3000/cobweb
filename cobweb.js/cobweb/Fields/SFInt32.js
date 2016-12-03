@@ -88,7 +88,7 @@ function ($, X3DField, X3DConstants)
 		{
 			return this .getValue () .toString (base);
 		},
-		toXMLStream: function ()
+		toXMLStream: function (stream)
 		{
 			stream .string += this .getValue () .toString ();
 		},

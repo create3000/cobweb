@@ -91,12 +91,12 @@ function ($, X3DField, SFColor, X3DConstants, Color4)
 		{
 			return X3DConstants .SFColorRGBA;
 		},
-		equals: SFColor .equals,
-		set: SFColor .set,
-		getHSV: SFColor .getHSV,
-		setHSV: SFColor .setHSV,
-		toString: SFColor .toString,
-		toXMLStream: SFColor .toXMLStream,
+		equals: SFColor .prototype .equals,
+		set: SFColor .prototype .set,
+		getHSV: SFColor .prototype .getHSV,
+		setHSV: SFColor .prototype .setHSV,
+		toString: SFColor .prototype .toString,
+		toXMLStream: SFColor .prototype .toXMLStream,
 	});
 
 	var r = {

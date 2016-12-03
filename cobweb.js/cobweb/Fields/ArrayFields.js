@@ -181,15 +181,13 @@ function ($,
 
 			value .removeClones (this ._cloneCount);
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
 			var length = this .length;
 
 			if (length)
 			{
-				var
-					value  = this .getValue (),
-					string = "";
+				var value = this .getValue ();
 
 				Generator .EnterScope ();
 
@@ -199,25 +197,26 @@ function ($,
 
 					if (node)
 					{
-						string += node .toXMLString () + "\n";
+						node .toXMLStream (stream);
+						stream .string += "\n";
 					}
 					else
 					{
-						string += Generator .Indent ();
-						string += "<!-- NULL -->\n";
+						stream .string += Generator .Indent ();
+						stream .string += "<!-- NULL -->\n";
 					}
 				}
-		
+
 				var node = value [n] .getValue ();
 
 				if (node)
 				{
-					string += node .toXMLString ();
+					node .toXMLStream (stream);
 				}
 				else
 				{
-					string += Generator .Indent ();
-					string += "<!-- NULL -->";
+					stream .string += Generator .Indent ();
+					stream .string += "<!-- NULL -->";
 				}
 
 				Generator .LeaveScope ();
