@@ -558,7 +558,7 @@ function ($,
 		{
 			return this .getTypeName () + " { }";
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
 		},
 		dispose: function ()

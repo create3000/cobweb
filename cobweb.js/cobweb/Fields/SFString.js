@@ -114,9 +114,9 @@ function ($, X3DField, X3DConstants)
 		{
 			return '"'+ SFString .escape (this .getValue ()) + '"';
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
-			return htmlEscape (this .getValue ());
+			stream .string += htmlEscape (this .getValue ());
 		},
 	});
 

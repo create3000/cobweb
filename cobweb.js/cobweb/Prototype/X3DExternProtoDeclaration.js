@@ -182,6 +182,9 @@ function ($,
 			this .deferred .resolve ();
 			this .deferred = $.Deferred ();
 		},
+		toXMLStream: function (stream)
+		{
+		},
 	});
 
 	Object .defineProperty (X3DExternProtoDeclaration .prototype, "name",

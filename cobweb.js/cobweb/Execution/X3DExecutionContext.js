@@ -477,6 +477,9 @@ function ($,
 					throw new Error ("Viewpoint named '" + name + "' not found.");
 			}
 		},
+		toXMLStream: function (stream)
+		{
+		},
 	});
 
 	Object .defineProperty (X3DExecutionContext .prototype, "worldURL",

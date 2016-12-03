@@ -187,6 +187,9 @@ function ($,
 		{
 			this .getRootNodes () .setValue (value);
 		},
+		toXMLStream: function (stream)
+		{
+		},
 	});
 
 	return X3DScene;

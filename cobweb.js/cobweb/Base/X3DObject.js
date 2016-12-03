@@ -122,6 +122,14 @@ function ()
 			for (var key in interests)
 				interests [key] ();
 		},
+		toXMLString: function ()
+		{
+			var stream = { string: "" };
+
+			this .toXMLStream (stream);
+
+			return stream .string;
+		},
 		dispose: function () { },
 	};
 

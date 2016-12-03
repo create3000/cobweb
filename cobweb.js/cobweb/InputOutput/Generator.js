@@ -70,5 +70,13 @@ function ($)
 		{
 			this .indent = this .indent .substr (0, this .indent .length - this .indentChar .length);
 		},
+		EnterScope: function ()
+		{
+
+		},
+		LeaveScope: function ()
+		{
+
+		},
 	};
 });

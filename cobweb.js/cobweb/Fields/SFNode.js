@@ -221,12 +221,14 @@ function ($, X3DField, X3DConstants)
 		toVRMLString: function ()
 		{
 			var node = this .getValue ();
+
 			return node ? node .toVRMLString () : "NULL";
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
 			var node = this .getValue ();
-			return node ? node .toXMLString () : "<!-- NULL -->";
+
+			stream .string += node ? node .toXMLString () : "<!-- NULL -->";
 		},
 		dispose: function ()
 		{

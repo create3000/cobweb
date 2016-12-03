@@ -77,6 +77,9 @@ function ($,
 		{
 			return new Fields .SFNode (this .localNode);
 		},
+		toXMLStream: function (stream)
+		{
+		},
 	});
 
 	return ExportedNode;

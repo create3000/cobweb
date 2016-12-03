@@ -113,6 +113,9 @@ function ($,
 		{
 			return this .loadState_ .getValue ();
 		},
+		toXMLStream: function (stream)
+		{
+		},
 	});
 
 	Object .defineProperty (X3DProtoDeclaration .prototype, "name",

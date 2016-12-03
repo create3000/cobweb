@@ -111,9 +111,9 @@ function ($, Color3, X3DField, X3DConstants)
 		{
 			return this .getValue () .toString ();
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
-			return this .getValue () .toString ();
+			stream .string += this .getValue () .toString ();
 		},
 	});
 

@@ -116,6 +116,9 @@ function ($,
 		{
 			return Object .prototype .toString (this);
 		},
+		toXMLStream: function (stream)
+		{
+		},
 		dispose: function ()
 		{
 			this .disconnect ();

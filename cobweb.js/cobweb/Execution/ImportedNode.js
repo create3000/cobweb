@@ -194,6 +194,9 @@ function ($,
 				}
 			}
 		},
+		toXMLStream: function (stream)
+		{
+		},
 		dispose: function ()
 		{
 			this .inlineNode .loadState_ .removeInterest (this, "set_loadState__");

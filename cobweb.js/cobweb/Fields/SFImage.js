@@ -197,9 +197,9 @@ function ($, X3DField, ArrayFields, X3DConstants)
 
 			return string;
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
-			return this .toString ();
+			stream .string += this .toString ();
 		},
 	});
 

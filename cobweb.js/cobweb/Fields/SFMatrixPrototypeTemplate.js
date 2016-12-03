@@ -131,9 +131,9 @@ function ($, X3DField)
 			{
 				return this .getValue () .toString ();
 			},
-			toString: function ()
+			toXMLStream: function (stream)
 			{
-				return this .getValue () .toString ();
+				stream .string += this .getValue () .toString ();
 			},
 		});
 	};

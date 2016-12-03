@@ -191,7 +191,7 @@ function ($,
 					value  = this .getValue (),
 					string = "";
 
-				//Generator .EnterScope ();
+				Generator .EnterScope ();
 
 				for (var i = 0, n = length - 1; i < n; ++ i)
 				{
@@ -220,7 +220,7 @@ function ($,
 					string += "<!-- NULL -->";
 				}
 
-				//Generator .LeaveScope ();
+				Generator .LeaveScope ();
 			}
 		},
 	});
