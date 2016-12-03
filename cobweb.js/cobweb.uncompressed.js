@@ -17868,7 +17868,14 @@ function ($, X3DField, X3DConstants)
 	{
 	   if (this instanceof SFNode)
 	   {
-			X3DField .call (this, value ? value : null);
+			if (value)
+			{
+				value .addParent (this);
+
+				X3DField .call (this, value);
+			}
+			else
+				X3DField .call (this, null);
 
 			return new Proxy (this, handler);
 		}
@@ -18264,8 +18271,17 @@ function ($, X3DField, X3DConstants)
 
 	var
 		unescape = /\\([\\"])/g,
-		escape   = /([\\"])/g,
-		div      = $('<div>');
+		escape   = /([\\"])/g;
+
+	function htmlEscape (string)
+	{
+		return string
+			.replace (/&/g, '&amp;')
+			.replace (/"/g, '&quot;')
+			.replace (/'/g, '&#39;')
+			.replace (/</g, '&lt;')
+			.replace (/>/g, '&gt;');
+	}
 
 	function SFString (value)
 	{
@@ -18313,7 +18329,7 @@ function ($, X3DField, X3DConstants)
 		},
 		toXMLString: function ()
 		{
-			return div .text (this .getValue ()) .html ();
+			return htmlEscape (this .getValue ());
 		},
 	});
 
@@ -19332,7 +19348,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "2.5";
+	return "2.6a";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-

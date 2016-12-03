@@ -112,7 +112,14 @@ function ($, X3DField, X3DConstants)
 	{
 	   if (this instanceof SFNode)
 	   {
-			X3DField .call (this, value ? value : null);
+			if (value)
+			{
+				value .addParent (this);
+
+				X3DField .call (this, value);
+			}
+			else
+				X3DField .call (this, null);
 
 			return new Proxy (this, handler);
 		}

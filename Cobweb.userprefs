@@ -1,10 +1,14 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/Layering/X3DLayerNode.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Fields/SFString.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/CubeMapTexturing/GeneratedCubeMapTexture.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Layering/X3DLayerNode.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="422" Column="1" />
+      <File FileName="cobweb.js/cobweb/InputOutput/Generator.js" Line="57" Column="1" />
+      <File FileName="cobweb.js/cobweb/Basic/X3DBaseNode.js" Line="562" Column="4" />
+      <File FileName="cobweb.js/cobweb/Components/Shaders/ComposedShader.js" Line="193" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Shaders/Shader.js" Line="109" Column="37" />
+      <File FileName="cobweb.js/cobweb/Browser/Shaders/Phong.fs" Line="109" Column="1" />
+      <File FileName="cobweb.js/cobweb/Fields/SFString.js" Line="72" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

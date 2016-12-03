@@ -1284,6 +1284,7 @@
     <None Include="tests\Components\Rendering\DRracer\t85.wrl" />
     <None Include="tests\Components\Rendering\DRracer\t85cobweb.html" />
     <None Include="tests\Components\Rendering\DRracer\t85.x3d" />
+    <None Include="tests\Components\Rendering\DRracer\townsite_withHud_cobweb.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

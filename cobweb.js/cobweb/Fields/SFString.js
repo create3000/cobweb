@@ -58,8 +58,17 @@ function ($, X3DField, X3DConstants)
 
 	var
 		unescape = /\\([\\"])/g,
-		escape   = /([\\"])/g,
-		div      = $('<div>');
+		escape   = /([\\"])/g;
+
+	function htmlEscape (string)
+	{
+		return string
+			.replace (/&/g, '&amp;')
+			.replace (/"/g, '&quot;')
+			.replace (/'/g, '&#39;')
+			.replace (/</g, '&lt;')
+			.replace (/>/g, '&gt;');
+	}
 
 	function SFString (value)
 	{
@@ -107,7 +116,7 @@ function ($, X3DField, X3DConstants)
 		},
 		toXMLString: function ()
 		{
-			return div .text (this .getValue ()) .html ();
+			return htmlEscape (this .getValue ());
 		},
 	});
 
