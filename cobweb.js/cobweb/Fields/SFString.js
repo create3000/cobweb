@@ -51,24 +51,18 @@ define ([
 	"jquery",
 	"cobweb/Basic/X3DField",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
-function ($, X3DField, X3DConstants)
+function ($,
+          X3DField,
+          X3DConstants,
+          Generator)
 {
 "use strict";
 
 	var
 		unescape = /\\([\\"])/g,
 		escape   = /([\\"])/g;
-
-	function htmlEscape (string)
-	{
-		return string
-			.replace (/&/g, '&amp;')
-			.replace (/"/g, '&quot;')
-			.replace (/'/g, '&#39;')
-			.replace (/</g, '&lt;')
-			.replace (/>/g, '&gt;');
-	}
 
 	function SFString (value)
 	{
@@ -116,7 +110,7 @@ function ($, X3DField, X3DConstants)
 		},
 		toXMLStream: function (stream)
 		{
-			stream .string += htmlEscape (this .getValue ());
+			stream .string += Generator .XMLEncode (this .getValue ());
 		},
 	});
 

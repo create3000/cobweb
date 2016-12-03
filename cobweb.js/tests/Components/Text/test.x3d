@@ -71,7 +71,7 @@
           <Material/>
         </Appearance>
         <Text
-            string='"Hello Wörld!", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "ÄÖÜäöüß", "0123456789", "^°!\"§$%&amp;/()=?+*~\\&apos;#-_.:,;", "ÁÓÚáóú", "′¹²³¼½¬{[]}\\\\@ł€¶ŧ←↓→øþſðđŋħł|»«¢„“”µ·…–", "flfiff"'
+            string='"Hello Wörld!\\", "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "ÄÖÜäöüß", "0123456789", "^°!\"§$%&amp;/()=?+*~\\&apos;#-_.:,;", "ÁÓÚáóú", "′¹²³¼½¬{[]}\\\\@ł€¶ŧ←↓→øþſðđŋħł|»«¢„“”µ·…–", "flfiff"'
             solid='true'>
           <FontStyle
               family='"I Love Ubuntu", "G/Gogo/GogoFi--e.otf", "CHOPS___.TTF"'
