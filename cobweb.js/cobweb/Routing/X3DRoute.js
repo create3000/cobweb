@@ -69,7 +69,12 @@ function ($,
 		this ._destinationField = destinationField;
 
 		//if (! (this .getExecutionContext () instanceof X3DProtoDeclaration))
+		{
 			sourceField .addFieldInterest (destinationField);
+
+			sourceField      .addOutputRoute (this);
+			destinationField .addInputRoute (this);
+		}
 	}
 
 	X3DRoute .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -105,6 +110,9 @@ function ($,
 		disconnect: function ()
 		{
 			this ._sourceField .removeFieldInterest (this ._destinationField);
+
+			this ._sourceField      .removeOutputRoute (this);
+			this ._destinationField .removeInputRoute (this);
 
 			if (this .sourceNode_ .getValue ())
 				this .sourceNode_ .removeInterest (this, "set_node");

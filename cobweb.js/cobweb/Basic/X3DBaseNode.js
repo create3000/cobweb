@@ -55,6 +55,7 @@ define ([
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Fields",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           X3DEventObject,
@@ -62,7 +63,8 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           Fields,
-          X3DConstants)
+          X3DConstants,
+          Generator)
 {
 "use strict";
 
@@ -486,6 +488,39 @@ function ($,
 		{
 			return this ._predefinedFields;
 		},
+		getChangedFields: function ()
+		{
+			var
+				changedFields    = [ ],
+				predefinedFields = this .getPredefinedFields ();
+		
+			for (var name in predefinedFields)
+			{
+				var field = predefinedFields [name];
+
+				if ($.isEmptyObject (field .getReferences ()))
+				{
+					if (! field .isInitializable ())
+						continue;
+
+					if (this .isDefaultValue (field))
+						continue;
+				}
+
+				changedFields .push (field);
+			}
+
+			return changedFields;
+		},
+		isDefaultValue: function (field)
+		{
+			var fieldDefinition = this .getFieldDefinitions () .get (field .getName ());
+
+			if (fieldDefinition)
+				return fieldDefinition .value .equals (field);
+
+			return ! field .getSet ();
+		},
 		getFields: function ()
 		{
 			return this ._fields;
@@ -504,8 +539,8 @@ function ($,
 			{
 				var field = this .getField (fieldDefinitions [i] .name);
 
-				//if (field .getInputRoutes () .empty () and field .getOutputRoutes () .empty ())
-				//	continue;
+				if ($.isEmptyObject (field .getInputRoutes ()) && $.isEmptyObject (field .getOutputRoutes ()))
+					continue;
 
 				return true;
 			}
@@ -560,6 +595,353 @@ function ($,
 		},
 		toXMLStream: function (stream)
 		{
+//			if (Generator::IsSharedNode (this))
+//			{
+//				ostream
+//					<< Generator::Indent
+//					<< "<!-- NULL -->";
+//		
+//				return;
+//			}
+
+			Generator .EnterScope ();
+
+			var name = Generator .Name (this);
+
+			if (name .length)
+			{
+				if (Generator .ExistsNode (this))
+				{
+					stream .string += Generator .Indent ();
+					stream .string += "<";
+					stream .string += this .getTypeName ();
+					stream .string += " ";
+					stream .string += "USE='";
+					stream .string += Generator .XMLEncode (name);
+					stream .string += "'";
+
+					var containerField = Generator .ContainerField ();
+
+					if (containerField)
+					{
+						if (containerField .getName () !== this .getContainerField ())
+						{
+							stream .string += " ";
+							stream .string += "containerField='";
+							stream .string += Generator .XMLEncode (containerField .getName ());
+							stream .string += "'";
+						}
+					}
+
+					stream .string += "/>";
+
+					Generator .LeaveScope ();
+					return;
+				}
+			}
+		
+			stream .string += Generator .Indent ();
+			stream .string += "<";
+			stream .string += this .getTypeName ();
+
+			if (name .length)
+			{
+				Generator .AddNode (this);
+
+				stream .string += " ";
+				stream .string += "DEF='";
+				stream .string += Generator .XMLEncode (name);
+				stream .string += "'";
+			}
+
+			var containerField = Generator .ContainerField ();
+
+			if (containerField)
+			{
+				if (containerField .getName () !== this .getContainerField ())
+				{
+					stream .string += " ";
+					stream .string += "containerField='";
+					stream .string += Generator .XMLEncode (containerField .getName ());
+					stream .string += "'";
+				}
+			}
+
+			var
+				fields            = this .getChangedFields (),
+				userDefinedFields = this .getUserDefinedFields ();
+
+			var
+				references = [ ],
+				childNodes = [ ];
+
+			var cdata = this .getCDATA ();
+
+			if (cdata && cdata .length === 0)
+				cdata = null;
+
+			Generator .IncIndent ();
+			Generator .IncIndent ();
+
+			for (var i = 0, length = fields .length; i < length; ++ i)
+			{
+				var field = fields [i];
+
+				// If the field is a inputOutput and we have as reference only inputOnly or outputOnly we must output the value
+				// for this field.
+
+				var mustOutputValue = false;
+
+				if (Generator .ExecutionContext () && ! Generator .IsSharedNode (this))
+				{
+					if (field .getAccessType () === X3DConstants .inputOutput && ! $.isEmptyObject (field .getReferences ()))
+					{
+						var
+							initializableReference = false,
+							references             = field .getReferences ();
+		
+						for (var id in references)
+						{
+							var reference = references [id];
+
+							initializableReference |= reference .isInitializable ();
+						}
+
+						if (! initializableReference)
+							mustOutputValue = ! this .isDefaultValue (field);
+					}
+				}
+
+				// If we have no execution context we are not in a proto and must not generate IS references the same is true
+				// if the node is a shared node as the node does not belong to the execution context.
+
+				if (($.isEmptyObject (field .getReferences ()) || ! Generator .ExecutionContext () || Generator .IsSharedNode (this)) || mustOutputValue)
+				{
+					if (mustOutputValue)
+						references .push (field);
+
+					if (field .isInitializable ())
+					{
+						switch (field .getType ())
+						{
+							case X3DConstants .SFNode:
+							case X3DConstants .MFNode:
+							{
+								childNodes .push (field);
+								break;
+							}
+							default:
+							{
+								if (field === cdata)
+									break;
+
+								stream .string += "\n";
+								stream .string += Generator .Indent ();
+								stream .string += field .getName ();
+								stream .string += "='";
+
+								field .toXMLStream (stream);
+
+								stream .string += "'";			
+								break;
+							}
+						}
+					}
+				}
+				else
+				{
+					references .push (field);
+				}
+			}
+
+			Generator .DecIndent ();
+			Generator .DecIndent ();
+	
+			if ((! this .hasUserDefinedFields () || userDefinedFields .length === 0) && references .length === 0 && childNodes .length === 0 && ! cdata)
+			{
+				stream .string += "/>";
+			}
+			else
+			{
+				stream .string += ">\n";
+
+				Generator .IncIndent ();
+
+				if (this .hasUserDefinedFields ())
+				{
+					for (var i = 0, length = userDefinedFields .length; i < length; ++ i)
+					{
+						var field = userDefinedFields [i];
+
+						stream .string += Generator .Indent ();
+						stream .string += "<field";
+						stream .string += " ";
+						stream .string += "accessType='";
+						stream .string += Generator .AccessType (field .getAccessType ());
+						stream .string += "'";
+						stream .string += " ";
+						stream .string += "type='";
+						stream .string += field .getTypeName ();
+						stream .string += "'";
+						stream .string += " ";
+						stream .string += "name='";
+						stream .string += Generator .XMLEncode (field .getName ());
+						stream .string += "'";
+
+						// If the field is a inputOutput and we have as reference only inputOnly or outputOnly we must output the value
+						// for this field.
+
+						var mustOutputValue = false;
+
+						if (field .getAccessType () === X3DConstants .inputOutput && ! $.isEmptyObject (field .getReferences ()))
+						{
+							var
+								initializableReference = false,
+								references             = field .getReferences ();
+			
+							for (var id in references)
+							{
+								var reference = references [id];
+	
+								initializableReference |= reference .isInitializable ();
+							}
+
+							if (! initializableReference)
+								mustOutputValue = ! field .isDefaultValue ();
+						}
+
+						if (($.isEmptyObject (field .getReferences ()) || ! Generator .ExecutionContext ()) || mustOutputValue)
+						{
+							if (mustOutputValue && Generator .ExecutionContext ())
+								references .push (field);
+		
+							if (! field .isInitializable () || field .isDefaultValue ())
+							{
+								stream .string += "/>\n";
+							}
+							else
+							{
+								// Output value
+
+								switch (field .getType ())
+								{
+									case X3DConstants .SFNode:
+									case X3DConstants .MFNode:
+									{
+										Generator .PushContainerField (nullptr);
+
+										stream .string += "/>\n";
+
+										Generator .IncIndent ();
+
+										field .toXMLStream (stream);
+
+										stream .string += "\n";
+
+										Generator .DecIndent ();
+
+										stream .string += Generator .Indent ();
+										stream .string += "</field>\n";
+
+										Generator .PopContainerField ();
+										break;
+									}
+									default:
+									{
+										stream .string += " ";
+										stream .string += "value='";
+
+										field .toXMLStream (stream);
+
+										stream .string += "'";
+										stream .string += "/>\n";
+										break;
+									}
+								}
+							}
+						}
+						else
+						{
+							if (Generator .ExecutionContext ())
+								references .push (field);
+
+							stream .string += "/>\n";
+						}
+					}
+				}
+		
+				if (references .length)
+				{
+					stream .string += Generator .Indent ();
+					stream .string += "<IS>";
+					stream .string += "\n";
+
+					Generator .IncIndent ();
+		
+					for (var i = 0, length = reference .length; i < length; ++ i)
+					{
+						var
+							field       = reference [i],
+							protoFields = field .getReferences ()
+
+						for (var id in protoFields)
+						{
+							var protoField = protoFields [id];
+
+							stream .string += Generator .Indent ();
+							stream .string += "<connect";
+							stream .string += " ";
+							stream .string += "nodeField='";
+							stream .string += Generator .XMLEncode (field .getName ());
+							stream .string += "'";
+							stream .string += " ";
+							stream .string += "protoField='";
+							stream .string += Generator .XMLEncode (protoField .getName ());
+							stream .string += "'";
+							stream .string += "/>\n";
+						}
+					}
+
+					Generator .DecIndent ();
+
+					stream .string += Generator .Indent ();
+					stream .string += "</IS>\n";
+				}
+
+				for (var i = 0, length = childNodes .length; i < length; ++ i)
+				{
+					var field = childNodes [i];
+
+					Generator .PushContainerField (field);
+
+					field .toXMLStream (stream);
+
+					stream .string += "\n";
+
+					Generator .PopContainerField ();
+				}
+
+				if (cdata)
+				{
+					for (var i = 0, length = cdata .length; i < length; ++ i)
+					{
+						var value = cdata [i];
+
+						stream .string += "<![CDATA[";
+						stream .string += Generator .escapeCDATA (value);
+						stream .string += "\n";
+					}
+				}
+
+				Generator .DecIndent ();
+
+				stream .string += Generator .Indent ();
+				stream .string += "</";
+				stream .string += this .getTypeName ();
+				stream .string += ">";
+			}
+
+			Generator .LeaveScope ();
 		},
 		dispose: function ()
 		{

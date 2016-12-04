@@ -178,6 +178,10 @@ function ($,
 			this .set (value instanceof X3DArrayField ? value .getValue () : value);
 			this .addEvent ();
 		},
+		isDefaultValue: function ()
+		{
+			return this .length === 0;
+		},
 		set: function (value)
 		{
 			this .resize (value .length, undefined, true);

@@ -237,6 +237,36 @@ function ($,
 		{
 			return this ._fieldCallbacks;
 		},
+		addOutputRoute: function (route)
+		{
+			if (! this .hasOwnProperty ("_outputRoutes"))
+				this ._outputRoutes = { };
+
+			this ._outputRoutes [route .getId ()] = route;
+		},
+		removeOutputRoute: function (route)
+		{
+			delete this ._outputRoutes [route .getId ()];
+		},
+		getOutputRoutes: function ()
+		{
+			return this ._outputRoutes;
+		},
+		addInputRoute: function (route)
+		{
+			if (! this .hasOwnProperty ("_inputRoutes"))
+				this ._inputRoutes = { };
+
+			this ._inputRoutes [route .getId ()] = route;
+		},
+		removeInputRoute: function (route)
+		{
+			delete this ._inputRoutes [route .getId ()];
+		},
+		getInputRoutes: function ()
+		{
+			return this ._inputRoutes;
+		},
 		processEvent: function (event)
 		{
 			if (event .sources [this .getId ()])

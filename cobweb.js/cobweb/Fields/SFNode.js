@@ -156,6 +156,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return this .getValue () === node .getValue ();
 		},
+		isDefaultValue: function ()
+		{
+			return this .getValue () === null;
+		},
 		set: function (value)
 		{
 			var current = this .getValue ();

@@ -94,6 +94,13 @@ function ($, Color3, X3DField, X3DConstants)
 		{
 			return this .getValue () .equals (color .getValue ());
 		},
+		isDefaultValue: function ()
+		{
+			return (
+				this .getValue () .r === 0 &&
+				this .getValue () .g === 0 &&
+				this .getValue () .b === 0);
+		},
 		set: function (value)
 		{
 			this .getValue () .assign (value);

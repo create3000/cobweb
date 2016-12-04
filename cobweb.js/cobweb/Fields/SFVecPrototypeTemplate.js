@@ -67,6 +67,10 @@ function ($, X3DField)
 			{
 				return this .getValue () .equals (vector .getValue ());
 			},
+			isDefaultValue: function (vector)
+			{
+				return this .getValue () .equals (Type .Zero);
+			},
 			set: function (value)
 			{
 				this .getValue () .assign (value);

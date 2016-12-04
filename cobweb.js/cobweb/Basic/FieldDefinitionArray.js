@@ -72,6 +72,10 @@ function ($)
 	function FieldDefinitionArray (value)
 	{
 		this .array = value;
+		this .index = { };
+
+		for (var i = 0, length = value .length; i < length; ++ i)
+			this .index [value [i] .name] = value [i];
 
 		return new Proxy (this, handler);
 	}
@@ -79,6 +83,10 @@ function ($)
 	$.extend (FieldDefinitionArray .prototype,
 	{
 		constructor: FieldDefinitionArray,
+		get: function (key)
+		{
+			return this .index [key];
+		},
 		getValue: function ()
 		{
 			return this .array;

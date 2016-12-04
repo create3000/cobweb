@@ -99,6 +99,10 @@ function ($,
 		{
 			return X3DConstants .SFString;
 		},
+		isDefaultValue: function ()
+		{
+			return this .getValue () === "";
+		},
 		set: function (value)
 		{
 			X3DField .prototype .set .call (this, String (value));

@@ -174,6 +174,13 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		{
 			return this .getValue () .equals (image .getValue ());
 		},
+		isDefaultValue: function ()
+		{
+			return (
+				this .width  === 0 &&
+				this .height === 0 &&
+				this .comp   === 0);
+		},
 		set: function (image)
 		{
 			this .getValue () .assign (image);

@@ -94,6 +94,10 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 		{
 			return this .getValue () .equals (rotation .getValue ());
 		},
+		isDefaultValue: function ()
+		{
+			return this .getValue () .equals (Rotation4 .Identity);
+		},
 		getTypeName: function ()
 		{
 			return "SFRotation";

@@ -58,6 +58,14 @@ function ($)
 	return {
 		indent: "",
 		indentChar: "  ",
+		executionContexts: [ ],
+		nodes: { },
+		names: { },
+		namesByNode: { },
+		importedNames: { },
+		level: 0,
+		newName: 0,
+		containerFields: [ ],
 		Indent: function ()
 		{
 			return this .indent;
@@ -70,13 +78,178 @@ function ($)
 		{
 			this .indent = this .indent .substr (0, this .indent .length - this .indentChar .length);
 		},
+		ExecutionContext: function ()
+		{
+			if (this .executionContexts .length)
+				return this .executionContexts [this .executionContexts .length - 1];
+
+			return null;
+		},
 		EnterScope: function ()
 		{
-
+			if (this .level === 0)
+				this .newName = 0;
+		
+			++ this .level;
 		},
 		LeaveScope: function ()
 		{
+			-- this .level;
+		
+			if (this .level === 0)
+			{
+				this .nodes         = { };
+				this .names         = { };
+				this .namesByNode   = { };
+				this .importedNames = { };
+			}
+		},
+		IsSharedNode: function (baseNode)
+		{
+			return false;
+		},
+		AddNode: function (baseNode)
+		{
+			this .nodes [baseNode .getId ()] = true;
+		},
+		ExistsNode: function (baseNode)
+		{
+			return this .nodes [baseNode .getId ()] !== undefined;
+		},
+		Name: function (baseNode)
+		{
+			// Is the node already in index
 
+			var name = this .namesByNode [baseNode .getId ()];
+
+			if (name !== undefined)
+				return name;
+
+			// The node has no name
+
+			if (baseNode .getName () .length === 0)
+			{
+				if (this .NeedsName (baseNode))
+				{
+					var name = this .UniqueName ();
+		
+					this .names [name]                     = baseNode;
+					this .namesByNode [baseNode .getId ()] = name;
+
+					return name;
+				}
+		
+				// The node doesn't need a name
+
+				return baseNode .getName ();
+			}
+		
+			// The node has a name
+		 	
+			var _TrailingNumbers = /(_\d+$)/;
+
+			var name      = baseNode .getName ();
+			var hasNumber = name .match (_TrailingNumbers) !== null;
+		
+			name = name .replace (_TrailingNumbers, "");
+		
+			if (name .length === 0)
+			{
+				if (this .NeedsName (baseNode))
+					name = this .UniqueName ();
+
+				else
+					return "";
+			}
+			else
+			{
+				var
+					i       = 0,
+					newName = hasNumber ? name + '_' + (++ i) : name;
+
+				while (this .names [newName] !== undefined)
+				{
+					newName = name + '_' + (++ i);
+				}
+
+				name = newName;
+			}
+
+			this .names [name]                     = baseNode;
+			this .namesByNode [baseNode .getId ()] = name;
+
+			return name;
+		},
+		NeedsName: function (baseNode)
+		{
+			if (baseNode .getCloneCount () > 1)
+				return true;
+		
+			if (baseNode .hasRoutes ())
+				return true;
+		
+//			try
+//			{
+//				var index = exportedNodesIndex .at (baseNode -> getExecutionContext ());
+//		
+//				if (index .count (baseNode -> getId ()))
+//					return true;
+//			}
+//			catch (...)
+//			{ }
+//		
+//			try
+//			{
+//				var index = importedNodesIndex .at (baseNode -> getExecutionContext ());
+//		
+//				if (index .count (baseNode -> getId ()))
+//					return true;
+//			}
+//			catch (...)
+//			{ }
+		
+			return false;
+		},
+		UniqueName: function ()
+		{
+			for (; ;)
+			{
+				var name = '_' + (++ this .newName);
+		
+				if (this .names [name] !== undefined)
+					continue;
+
+				return name;
+			}
+		},
+		PushContainerField: function (field)
+		{
+			this .containerFields .push (field);
+		},
+		PopContainerField: function ()
+		{
+			this .containerFields .pop ();
+		},
+		ContainerField: function ()
+		{
+			if (this .containerFields .length)
+				return this .containerFields [this .containerFields .length - 1];
+
+			return null;
+		},
+		AccessType: function (accessType)
+		{
+			switch (accessType)
+			{
+				case X3DConstants .initializeOnly:
+					return "initializeOnly";
+				case X3DConstants .inputOnly:
+					return "inputOnly";
+				case X3DConstants .outputOnly:
+					return "outputOnly";
+				case X3DConstants .inputOutput:
+					return "inputOutput";
+			}
 		},
 		XMLEncode: function (string)
 		{
@@ -91,6 +264,10 @@ function ($)
 				.replace (/>/g, "&gt;")
 				.replace (/'/g, "&apos;")
 				.replace (/"/g, "\\\"");
+		},
+		escapeCDATA: function (string)
+		{
+			return string;
 		},
 	};
 });

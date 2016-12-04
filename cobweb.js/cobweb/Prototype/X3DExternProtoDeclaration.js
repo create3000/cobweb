@@ -111,9 +111,23 @@ function ($,
 				this .scene .setLive (this .isLive () .getValue ());
 			}
 		},
-		setProtoDeclaration: function (value)
+		setProtoDeclaration: function (proto)
 		{
-			this .proto = value;
+			this .proto = proto;
+
+			var
+				fieldDefinitions      = this .getFieldDefinitions (),
+				protoFieldDefinitions = proto .getFieldDefinitions ();
+
+			for (var i = 0, length = protoFieldDefinitions .length; i < length; ++ i)
+			{
+				var
+					protoFieldDefinition = protoFieldDefinitions [i],
+					fieldDefinition      = fieldDefinitions [protoFieldDefinition .name];
+
+				if (fieldDefinition)
+					fieldDefinition .value .assign (protoFieldDefinition .value);
+			}
 		},
 		getProtoDeclaration: function ()
 		{

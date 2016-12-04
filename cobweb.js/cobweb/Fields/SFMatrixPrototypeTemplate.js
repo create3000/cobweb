@@ -67,6 +67,10 @@ function ($, X3DField)
 			{
 				return this .getValue () .equals (matrix .getValue ());
 			},
+			isDefaultValue: function ()
+			{
+				return this .getValue () .equals (Matrix .Identity);
+			},
 			set: function (value)
 			{
 				this .getValue () .assign (value);
