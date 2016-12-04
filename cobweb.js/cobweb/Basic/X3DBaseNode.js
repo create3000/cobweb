@@ -769,9 +769,9 @@ function ($,
 
 				if (this .hasUserDefinedFields ())
 				{
-					for (var i = 0, length = userDefinedFields .length; i < length; ++ i)
+					for (var name in userDefinedFields)
 					{
-						var field = userDefinedFields [i];
+						var field = userDefinedFields [name];
 
 						stream .string += Generator .Indent ();
 						stream .string += "<field";
@@ -828,9 +828,9 @@ function ($,
 									case X3DConstants .SFNode:
 									case X3DConstants .MFNode:
 									{
-										Generator .PushContainerField (nullptr);
+										Generator .PushContainerField (null);
 
-										stream .string += "/>\n";
+										stream .string += ">\n";
 
 										Generator .IncIndent ();
 
@@ -929,7 +929,7 @@ function ($,
 
 						stream .string += "<![CDATA[";
 						stream .string += Generator .escapeCDATA (value);
-						stream .string += "\n";
+						stream .string += "]]>\n";
 					}
 				}
 

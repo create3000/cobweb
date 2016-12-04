@@ -50,8 +50,10 @@
 
 define ([
 	"jquery",
+	"cobweb/Bits/X3DConstants",
 ],
-function ($)
+function ($,
+          X3DConstants)
 {
 "use strict";
 
@@ -267,7 +269,7 @@ function ($)
 		},
 		escapeCDATA: function (string)
 		{
-			return string;
+			return string .replace (/\]\]\>/g, "\\]\\]\\>");
 		},
 	};
 });

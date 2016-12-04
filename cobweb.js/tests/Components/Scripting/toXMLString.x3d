@@ -58,7 +58,7 @@
                 </Transform>
               </field>
               <field accessType='initializeOnly' type='MFNode' name='children'>
-                <Transform DEF='Box_1' translation='3 4 5'>
+                <Transform DEF='Box_2' translation='3 4 5' scale='2 2 2'>
                   <Shape>
                     <Appearance>
                       <Material/>
@@ -78,6 +78,8 @@ function initialize ()
 	
 	print (child .toXMLString ());
 	print (children .toXMLString ());
+
+	print (Browser .currentScene .getNamedNode ("CustomStript") .toXMLString ());
 }
 ]]> 
             </Script>
