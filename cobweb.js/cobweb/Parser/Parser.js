@@ -2917,7 +2917,7 @@ function ($,
 				array = field .getValue (),
 				value = new Fields .SFVec4f ();
 
-			while (this .sfvec4Value (value))
+			while (this .sfvec4fValue (value))
 			{
 				value .addParent (field);
 				array .push (value);
