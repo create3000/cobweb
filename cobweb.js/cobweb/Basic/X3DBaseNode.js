@@ -595,14 +595,12 @@ function ($,
 		},
 		toXMLStream: function (stream)
 		{
-//			if (Generator::IsSharedNode (this))
-//			{
-//				ostream
-//					<< Generator::Indent
-//					<< "<!-- NULL -->";
-//		
-//				return;
-//			}
+			if (Generator .IsSharedNode (this))
+			{
+				stream .string += Generator .Indent ();
+				stream .string += "<!-- NULL -->";		
+				return;
+			}
 
 			Generator .EnterScope ();
 
@@ -702,9 +700,7 @@ function ($,
 		
 						for (var id in references)
 						{
-							var reference = references [id];
-
-							initializableReference |= reference .isInitializable ();
+							initializableReference |= references [id] .isInitializable ();
 						}
 
 						if (! initializableReference)
@@ -801,9 +797,7 @@ function ($,
 			
 							for (var id in references)
 							{
-								var reference = references [id];
-	
-								initializableReference |= reference .isInitializable ();
+								initializableReference |= references [id] .isInitializable ();
 							}
 
 							if (! initializableReference)

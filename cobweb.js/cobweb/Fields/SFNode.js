@@ -182,15 +182,39 @@ function ($, X3DField, X3DConstants)
 		},
 		getNodeTypeName: function ()
 		{
-			return this .getValue () .getTypeName ();
+			var value = this .getValue ();
+
+			if (value)
+				return value .getTypeName ();
+
+			throw new Error ("SFNode.getNodeTypeName: node is null.");
 		},
 		getNodeName: function ()
 		{
-			return this .getValue () .getName ();
+			var value = this .getValue ();
+
+			if (value)
+				return value .getName ();
+
+			throw new Error ("SFNode.getNodeName: node is null.");
+		},
+		getNodeType: function ()
+		{
+			var value = this .getValue ();
+
+			if (value)
+				return value .getType () .slice ();
+
+			throw new Error ("SFNode.getNodeType: node is null.");
 		},
 		getFieldDefinitions: function ()
 		{
-			return this .getValue () .getFieldDefinitions ();
+			var value = this .getValue ();
+
+			if (value)
+				return value .getFieldDefinitions ();
+
+			throw new Error ("SFNode.getFieldDefinitions: node is null.");
 		},
 		addClones: function (count)
 		{
