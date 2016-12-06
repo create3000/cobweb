@@ -235,6 +235,18 @@ function ($,
 				return name;
 			}
 		},
+		LocalName: function (baseNode)
+		{
+			var importedName = this .importedNames [baseNode .getId ()];
+
+			if (importedName !== undefined)
+				return importedName;
+
+			if (this .ExistsNode (baseNode))
+				return this .Name (baseNode);
+
+			throw new Error ("Couldn't get local name for node '" + baseNode .getTypeName () + "'.");
+		},
 		PushContainerField: function (field)
 		{
 			this .containerFields .push (field);
