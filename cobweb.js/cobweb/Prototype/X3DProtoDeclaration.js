@@ -55,6 +55,7 @@ define ([
 	"cobweb/Execution/X3DExecutionContext",
 	"cobweb/Prototype/X3DProtoDeclarationNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -62,7 +63,8 @@ function ($,
           FieldDefinitionArray,
           X3DExecutionContext,
           X3DProtoDeclarationNode, 
-          X3DConstants)
+          X3DConstants,
+          Generator)
 {
 "use strict";
 
@@ -115,6 +117,127 @@ function ($,
 		},
 		toXMLStream: function (stream)
 		{
+			stream .string += Generator .Indent ();
+			stream .string += "<ProtoDeclare";
+			stream .string += " ";
+			stream .string += "name='";
+			stream .string += Generator .XMLEncode (this .getName ());
+			stream .string += "'";
+			stream .string += ">";
+			stream .string += "\n";
+		
+			// <ProtoInterface>
+
+			Generator .EnterScope ();
+		
+			var userDefinedFields = this .getUserDefinedFields ();
+
+			if (! $.isEmptyObject (userDefinedFields))
+			{
+				Generator .IncIndent ();
+
+				stream .string += Generator .Indent ();
+				stream .string += "<ProtoInterface>\n";
+
+				Generator .IncIndent ();
+
+				for (var name in userDefinedFields)
+				{
+					var field = userDefinedFields [name];
+
+					stream .string += Generator .Indent ();
+					stream .string += "<field";
+					stream .string += " ";
+					stream .string += "accessType='";
+					stream .string += Generator .AccessType (field .getAccessType ());
+					stream .string += "'";
+					stream .string += " ";
+					stream .string += "type='";
+					stream .string += field .getTypeName ();
+					stream .string += "'";
+					stream .string += " ";
+					stream .string += "name='";
+					stream .string += Generator .XMLEncode (field .getName ());
+					stream .string += "'";
+
+					if (field .isDefaultValue ())
+					{
+						stream .string += "/>\n";
+					}
+					else
+					{
+						switch (field .getType ())
+						{
+							case X3DConstants .SFNode:
+							case X3DConstants .MFNode:
+							{
+								Generator .PushContainerField (null);
+		
+								stream .string += ">\n";
+
+								Generator .IncIndent ();
+
+								field .toXMLStream (stream);
+
+								stream .string += "\n";
+
+								Generator .DecIndent ();
+
+								stream .string += Generator .Indent ();
+								stream .string += "</field>\n";
+
+								Generator .PopContainerField ();
+								break;
+							}
+							default:
+							{
+								stream .string += " ";
+								stream .string += "value='";
+
+								field .toXMLStream (stream);
+
+								stream .string += "'";
+								stream .string += "/>\n";
+								break;
+							}
+						}
+					}
+				}
+		
+				Generator .DecIndent ();
+
+				stream .string += Generator .Indent ();
+				stream .string += "</ProtoInterface>\n";
+
+				Generator .DecIndent ();
+			}
+		
+			Generator .LeaveScope ();
+		
+			// </ProtoInterface>
+
+			// <ProtoBody>
+		
+			Generator .IncIndent ();
+
+			stream .string += Generator .Indent ();
+			stream .string += "<ProtoBody>\n";
+
+			Generator .IncIndent ();
+
+			X3DExecutionContext .prototype .toXMLStream .call (this, stream);
+
+			Generator .DecIndent ();
+
+			stream .string += Generator .Indent ();
+			stream .string += "</ProtoBody>\n";
+
+			Generator .DecIndent ();
+		
+			// </ProtoBody>
+
+			stream .string += Generator .Indent ();
+			stream .string += "</ProtoDeclare>";
 		},
 	});
 

@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Scripting/toXMLString.x3d'/>
-    <meta name='modified' content='Tue, 06 Dec 2016 08:56:02 GMT'/>
+    <meta name='modified' content='Tue, 06 Dec 2016 09:35:37 GMT'/>
   </head>
   <Scene>
     <ProtoDeclare name='Prototype'>
@@ -18,6 +18,18 @@
         <field accessType='initializeOnly' type='MFNode' name='children'/>
       </ProtoInterface>
       <ProtoBody>
+        <Transform>
+          <IS>
+            <connect nodeField='translation' protoField='translation'/>
+            <connect nodeField='children' protoField='children'/>
+          </IS>
+        </Transform>
+        <TimeSensor>
+          <IS>
+            <connect nodeField='enabled' protoField='enabled'/>
+            <connect nodeField='cycleTime' protoField='cycleTime'/>
+          </IS>
+        </TimeSensor>
       </ProtoBody>
     </ProtoDeclare>
     <WorldInfo
