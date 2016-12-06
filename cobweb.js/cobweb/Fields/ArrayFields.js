@@ -187,9 +187,9 @@ function ($,
 
 			if (length)
 			{
-				var value = this .getValue ();
-
 				Generator .EnterScope ();
+
+				var value = this .getValue ();
 
 				for (var i = 0, n = length - 1; i < n; ++ i)
 				{

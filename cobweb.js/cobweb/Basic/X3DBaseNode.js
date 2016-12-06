@@ -400,6 +400,9 @@ function ($,
 
 			this ._fields [name] = field;
 
+			if (! this .getPrivate ())
+				field .addClones (1);
+
 			if (userDefined)
 			{
 				this ._userDefinedFields [name] = field;
@@ -415,9 +418,6 @@ function ($,
 				enumerable: true,
 				configurable: true, // false : non deleteable
 			});
-
-			if (! this .getPrivate ())
-				field .addClones (1);
 		},
 		removeField: function (name)
 		{

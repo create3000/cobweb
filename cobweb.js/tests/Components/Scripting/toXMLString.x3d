@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Scripting/toXMLString.x3d'/>
-    <meta name='modified' content='Mon, 05 Dec 2016 16:08:10 GMT'/>
+    <meta name='modified' content='Tue, 06 Dec 2016 08:13:10 GMT'/>
   </head>
   <Scene>
     <ProtoDeclare name='Prototype'>
@@ -15,6 +15,7 @@
         <field accessType='inputOutput' type='SFBool' name='enabled'/>
         <field accessType='inputOutput' type='SFVec3f' name='translation'/>
         <field accessType='outputOnly' type='SFTime' name='cycleTime'/>
+        <field accessType='initializeOnly' type='MFNode' name='children'/>
       </ProtoInterface>
       <ProtoBody>
       </ProtoBody>
@@ -57,66 +58,7 @@
           <MetadataSet DEF='children' containerField='value'
               name='children'
               reference='http://titania.create3000.de'>
-            <Script DEF='FieldsScript' containerField='value'>
-              <field accessType='initializeOnly' type='SFBool' name='SFBoolValue' value='true'/>
-              <field accessType='initializeOnly' type='SFColor' name='SFColorValue' value='0.1 0.2 0.3'/>
-              <field accessType='initializeOnly' type='SFColorRGBA' name='SFColorRGBAValue' value='0.1 0.2 0.3 0.4'/>
-              <field accessType='initializeOnly' type='SFDouble' name='SFDoubleValue' value='2.34567890123457'/>
-              <field accessType='initializeOnly' type='SFFloat' name='SFFloatValue' value='1.23457'/>
-              <field accessType='initializeOnly' type='SFImage' name='SFImageValue' value='2 2 4 0x4d2 0x929 0xd80 0x11d7'/>
-              <field accessType='initializeOnly' type='SFInt32' name='SFInt32Value' value='32'/>
-              <field accessType='initializeOnly' type='SFMatrix3d' name='SFMatrix3dValue' value='1 2 3 4 1 2 3 4 1'/>
-              <field accessType='initializeOnly' type='SFMatrix3f' name='SFMatrix3fValue' value='1 2 3 4 1 2 3 4 1'/>
-              <field accessType='initializeOnly' type='SFMatrix4d' name='SFMatrix4dValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
-              <field accessType='initializeOnly' type='SFMatrix4f' name='SFMatrix4fValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
-              <field accessType='initializeOnly' type='SFNode' name='SFNodeValue'>
-                <ProtoInstance name='Prototype'>
-                  <fieldValue name='enabled' value='true'/>
-                  <fieldValue name='translation' value='1 2 3'/>
-                </ProtoInstance>
-              </field>
-              <field accessType='initializeOnly' type='SFRotation' name='SFRotationValue' value='0.267261241912424 0.534522483824849 0.801783725737273 4'/>
-              <field accessType='initializeOnly' type='SFString' name='SFStringValue' value='Hello Wörld!&#xA;&amp;&#35;\"-&apos;&lt;&gt;&#xA;äöü'/>
-              <field accessType='initializeOnly' type='SFTime' name='SFTimeValue' value='123.456789012346'/>
-              <field accessType='initializeOnly' type='SFVec2d' name='SFVec2dValue' value='1 2'/>
-              <field accessType='initializeOnly' type='SFVec2f' name='SFVec2fValue' value='1 2'/>
-              <field accessType='initializeOnly' type='SFVec3d' name='SFVec3dValue' value='1 2 3'/>
-              <field accessType='initializeOnly' type='SFVec3f' name='SFVec3fValue' value='1 2 3'/>
-              <field accessType='initializeOnly' type='SFVec4d' name='SFVec4dValue' value='1 2 3 4'/>
-              <field accessType='initializeOnly' type='SFVec4f' name='SFVec4fValue' value='1 2 3 4'/>
-              <field accessType='initializeOnly' type='MFBool' name='MFBoolValue' value='true, false'/>
-              <field accessType='initializeOnly' type='MFColor' name='MFColorValue' value='0.1 0.2 0.3, 0.2 0.3 0.4'/>
-              <field accessType='initializeOnly' type='MFColorRGBA' name='MFColorRGBAValue' value='0.1 0.2 0.3 0.4, 0.2 0.3 0.4 0.5'/>
-              <field accessType='initializeOnly' type='MFDouble' name='MFDoubleValue' value='1.2345678901234, 2.345678901234'/>
-              <field accessType='initializeOnly' type='MFFloat' name='MFFloatValue' value='1.23457, 2.34568'/>
-              <field accessType='initializeOnly' type='MFImage' name='MFImageValue' value='2 2 4 0x4d2 0x929 0xd80 0x11d7, 2 4 4 0x4d2 0x929 0xd80 0x11d7 0x4d2 0x929 0xd80 0x11d7'/>
-              <field accessType='initializeOnly' type='MFInt32' name='MFInt32Value' value='2, 3'/>
-              <field accessType='initializeOnly' type='MFMatrix3d' name='MFMatrix3dValue' value='1 2 3 4 1 2 3 4 1, 1 2 3 4 1 2 3 4 1'/>
-              <field accessType='initializeOnly' type='MFMatrix3f' name='MFMatrix3fValue' value='1 2 3 4 1 2 3 4 1, 1 2 3 4 1 2 3 4 1'/>
-              <field accessType='initializeOnly' type='MFMatrix4d' name='MFMatrix4dValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1, 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
-              <field accessType='initializeOnly' type='MFMatrix4f' name='MFMatrix4fValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1, 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
-              <field accessType='initializeOnly' type='MFNode' name='MFNodeValue'/>
-              <field accessType='initializeOnly' type='MFRotation' name='MFRotationValue' value='0.267261241912424 0.534522483824849 0.801783725737273 4, 0.267261241912424 0.534522483824849 0.801783725737273 4'/>
-              <field accessType='initializeOnly' type='MFString' name='MFStringValue' value='"ABCDEF", "abcdef"'/>
-              <field accessType='initializeOnly' type='MFTime' name='MFTimeValue' value='1.2345678901234, 2.345678901234'/>
-              <field accessType='initializeOnly' type='MFVec2d' name='MFVec2dValue' value='1 2, 1 2'/>
-              <field accessType='initializeOnly' type='MFVec2f' name='MFVec2fValue' value='1 2, 1 2'/>
-              <field accessType='initializeOnly' type='MFVec3d' name='MFVec3dValue' value='1 2 3, 1 2 3'/>
-              <field accessType='initializeOnly' type='MFVec3f' name='MFVec3fValue' value='1 2 3, 1 2 3'/>
-              <field accessType='initializeOnly' type='MFVec4d' name='MFVec4dValue' value='1 2 3 4, 1 2 3 4'/>
-              <field accessType='initializeOnly' type='MFVec4f' name='MFVec4fValue' value='1 2 3 4, 1 2 3 4'/>
-<![CDATA[ecmascript:
-
-function initialize ()
-{
-	print ("Fields");
-
-	var script = Browser .currentScene .getNamedNode ("FieldsScript");
-
-	print (script .toXMLString ());
-}
-]]>
-            </Script>
+            <TimeSensor DEF='_1' containerField='value'/>
           </MetadataSet>
         </MetadataSet>
       </MetadataSet>
@@ -164,7 +106,77 @@ function initialize ()
 }
 ]]>
     </Script>
-    <Script USE='FieldsScript'/>
+    <Script DEF='FieldsScript'>
+      <field accessType='initializeOnly' type='SFBool' name='SFBoolValue' value='true'/>
+      <field accessType='initializeOnly' type='SFColor' name='SFColorValue' value='0.1 0.2 0.3'/>
+      <field accessType='initializeOnly' type='SFColorRGBA' name='SFColorRGBAValue' value='0.1 0.2 0.3 0.4'/>
+      <field accessType='initializeOnly' type='SFDouble' name='SFDoubleValue' value='2.34567890123457'/>
+      <field accessType='initializeOnly' type='SFFloat' name='SFFloatValue' value='1.23457'/>
+      <field accessType='initializeOnly' type='SFImage' name='SFImageValue' value='2 2 4 0x4d2 0x929 0xd80 0x11d7'/>
+      <field accessType='initializeOnly' type='SFInt32' name='SFInt32Value' value='32'/>
+      <field accessType='initializeOnly' type='SFMatrix3d' name='SFMatrix3dValue' value='1 2 3 4 1 2 3 4 1'/>
+      <field accessType='initializeOnly' type='SFMatrix3f' name='SFMatrix3fValue' value='1 2 3 4 1 2 3 4 1'/>
+      <field accessType='initializeOnly' type='SFMatrix4d' name='SFMatrix4dValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
+      <field accessType='initializeOnly' type='SFMatrix4f' name='SFMatrix4fValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
+      <field accessType='initializeOnly' type='SFNode' name='SFNodeValue'>
+        <ProtoInstance name='Prototype' DEF='_2'>
+          <fieldValue name='enabled' value='true'/>
+          <fieldValue name='translation' value='1 2 3'/>
+          <fieldValue name='children'>
+            <PixelTexture DEF='_3'/>
+            <Collision>
+              <TimeSensor containerField='proxy'/>
+            </Collision>
+            <PixelTexture USE='_3'/>
+          </fieldValue>
+        </ProtoInstance>
+      </field>
+      <field accessType='initializeOnly' type='SFRotation' name='SFRotationValue' value='0.267261241912424 0.534522483824849 0.801783725737273 4'/>
+      <field accessType='initializeOnly' type='SFString' name='SFStringValue' value='Hello Wörld!&#xA;&amp;&#35;\"-&apos;&lt;&gt;&#xA;äöü'/>
+      <field accessType='initializeOnly' type='SFTime' name='SFTimeValue' value='123.456789012346'/>
+      <field accessType='initializeOnly' type='SFVec2d' name='SFVec2dValue' value='1 2'/>
+      <field accessType='initializeOnly' type='SFVec2f' name='SFVec2fValue' value='1 2'/>
+      <field accessType='initializeOnly' type='SFVec3d' name='SFVec3dValue' value='1 2 3'/>
+      <field accessType='initializeOnly' type='SFVec3f' name='SFVec3fValue' value='1 2 3'/>
+      <field accessType='initializeOnly' type='SFVec4d' name='SFVec4dValue' value='1 2 3 4'/>
+      <field accessType='initializeOnly' type='SFVec4f' name='SFVec4fValue' value='1 2 3 4'/>
+      <field accessType='initializeOnly' type='MFBool' name='MFBoolValue' value='true, false'/>
+      <field accessType='initializeOnly' type='MFColor' name='MFColorValue' value='0.1 0.2 0.3, 0.2 0.3 0.4'/>
+      <field accessType='initializeOnly' type='MFColorRGBA' name='MFColorRGBAValue' value='0.1 0.2 0.3 0.4, 0.2 0.3 0.4 0.5'/>
+      <field accessType='initializeOnly' type='MFDouble' name='MFDoubleValue' value='1.2345678901234, 2.345678901234'/>
+      <field accessType='initializeOnly' type='MFFloat' name='MFFloatValue' value='1.23457, 2.34568'/>
+      <field accessType='initializeOnly' type='MFImage' name='MFImageValue' value='2 2 4 0x4d2 0x929 0xd80 0x11d7, 2 4 4 0x4d2 0x929 0xd80 0x11d7 0x4d2 0x929 0xd80 0x11d7'/>
+      <field accessType='initializeOnly' type='MFInt32' name='MFInt32Value' value='2, 3'/>
+      <field accessType='initializeOnly' type='MFMatrix3d' name='MFMatrix3dValue' value='1 2 3 4 1 2 3 4 1, 1 2 3 4 1 2 3 4 1'/>
+      <field accessType='initializeOnly' type='MFMatrix3f' name='MFMatrix3fValue' value='1 2 3 4 1 2 3 4 1, 1 2 3 4 1 2 3 4 1'/>
+      <field accessType='initializeOnly' type='MFMatrix4d' name='MFMatrix4dValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1, 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
+      <field accessType='initializeOnly' type='MFMatrix4f' name='MFMatrix4fValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1, 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
+      <field accessType='initializeOnly' type='MFNode' name='MFNodeValue'>
+        <ProtoInstance name='Prototype' USE='_2'/>
+        <TimeSensor USE='_1'/>
+        <TimeSensor USE='_1'/>
+      </field>
+      <field accessType='initializeOnly' type='MFRotation' name='MFRotationValue' value='0.267261241912424 0.534522483824849 0.801783725737273 4, 0.267261241912424 0.534522483824849 0.801783725737273 4'/>
+      <field accessType='initializeOnly' type='MFString' name='MFStringValue' value='"ABCDEF", "abcdef"'/>
+      <field accessType='initializeOnly' type='MFTime' name='MFTimeValue' value='1.2345678901234, 2.345678901234'/>
+      <field accessType='initializeOnly' type='MFVec2d' name='MFVec2dValue' value='1 2, 1 2'/>
+      <field accessType='initializeOnly' type='MFVec2f' name='MFVec2fValue' value='1 2, 1 2'/>
+      <field accessType='initializeOnly' type='MFVec3d' name='MFVec3dValue' value='1 2 3, 1 2 3'/>
+      <field accessType='initializeOnly' type='MFVec3f' name='MFVec3fValue' value='1 2 3, 1 2 3'/>
+      <field accessType='initializeOnly' type='MFVec4d' name='MFVec4dValue' value='1 2 3 4, 1 2 3 4'/>
+      <field accessType='initializeOnly' type='MFVec4f' name='MFVec4fValue' value='1 2 3 4, 1 2 3 4'/>
+<![CDATA[ecmascript:
+
+function initialize ()
+{
+	print ("Fields");
+
+	var script = Browser .currentScene .getNamedNode ("FieldsScript");
+
+	print (script .toXMLString ());
+}
+]]>
+    </Script>
     <ROUTE fromNode='Box_1' fromField='translation_changed' toNode='Box_1' toField='set_scale'/>
   </Scene>
 </X3D>

@@ -244,6 +244,7 @@ function ($, X3DField, X3DConstants)
 		toString: function ()
 		{
 			var node = this .getValue ();
+
 			return node ? node .toString () : "NULL";
 		},
 		toVRMLString: function ()
@@ -261,6 +262,7 @@ function ($, X3DField, X3DConstants)
 		dispose: function ()
 		{
 			this .set (null);
+
 			X3DField .prototype .dispose .call (this);
 		},
 	});
