@@ -80,6 +80,14 @@ function ($,
 		{
 			this .indent = this .indent .substr (0, this .indent .length - this .indentChar .length);
 		},
+		PushExecutionContext: function (executionContext)
+		{
+			this .executionContexts .push (executionContext);
+		},
+		PopExecutionContext: function ()
+		{
+			this .executionContexts .pop ();
+		},
 		ExecutionContext: function ()
 		{
 			if (this .executionContexts .length)
@@ -105,6 +113,9 @@ function ($,
 				this .namesByNode   = { };
 				this .importedNames = { };
 			}
+		},
+		ImportedNodes: function (importedNodes)
+		{
 		},
 		IsSharedNode: function (baseNode)
 		{

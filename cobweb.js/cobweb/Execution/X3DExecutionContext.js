@@ -63,6 +63,7 @@ define ("cobweb/Execution/X3DExecutionContext", [
 	"cobweb/Bits/X3DConstants",
 	"standard/Networking/URI",
 	"standard/Math/Algorithm",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -78,7 +79,8 @@ function ($,
           X3DCast,
           X3DConstants,
           URI,
-          Algorithm)
+          Algorithm,
+          Generator)
 {
 "use strict";
 
@@ -323,6 +325,10 @@ function ($,
 
 			throw new Error ("Imported node '" + importedName + "' not found.");
 		},
+		getImportedNodes: function ()
+		{
+			return this .importedNodes;
+		},
 		getLocalNode: function (name)
 		{
 			try
@@ -350,6 +356,22 @@ function ($,
 		getRootNodes: function ()
 		{
 			return this .rootNodes_;
+		},
+		getProtoDeclaration: function (name)
+		{
+			return this .protos .get (name);
+		},
+		getProtoDeclarations: function ()
+		{
+			return this .protos;
+		},
+		getExternProtoDeclaration: function (name)
+		{
+			return this .externprotos .get (name);
+		},
+		getExternProtoDeclarations: function ()
+		{
+			return this .externprotos;
 		},
 		addRoute: function (sourceNode, sourceField, destinationNode, destinationField)
 		{
@@ -452,6 +474,10 @@ function ($,
 
 			return this .routeIndex [id];
 		},
+		getRoutes: function ()
+		{
+			return this .routes;
+		},
 		changeViewpoint: function (name)
 		{
 			try
@@ -479,6 +505,77 @@ function ($,
 		},
 		toXMLStream: function (stream)
 		{
+			Generator .PushExecutionContext (this);
+			Generator. EnterScope ();
+			Generator .ImportedNodes (this .getImportedNodes ());
+
+			// Output extern protos
+
+			var externprotos = this .getExternProtoDeclarations ();
+
+			for (var i = 0, length = externprotos .length; i < length; ++ i)
+			{
+				externprotos [i] .toXMLStream (stream);
+
+				stream .string += "\n";
+			}
+
+			// Output protos
+
+			var protos = this .getProtoDeclarations ();
+
+			for (var i = 0, length = protos .length; i < length; ++ i)
+			{
+				protos [i] .toXMLStream (stream);
+
+				stream .string += "\n";
+			}
+		
+			// Output root nodes
+
+			var rootNodes = this .getRootNodes ();
+
+			if (rootNodes .length)
+			{
+				rootNodes .toXMLStream (stream);
+
+				stream .string += "\n";
+			}
+		
+			// Output imported nodes
+
+			var importedNodes = this .getImportedNodes ();
+
+			for (var importedName in importedNodes)
+			{
+				try
+				{
+					importedNodes [importedName] .toXMLStream (stream);
+
+					stream .string += "\n";
+				}
+				catch (error)
+				{ }
+			}
+		
+			// Output routes
+
+			var routes = this .getRoutes ();
+
+			for (var i = 0, length = routes .length; i < length; ++ i)
+			{
+				try
+				{
+					routes [i] .toXMLStream (stream);
+	
+					stream .string += "\n";
+				}
+				catch (error)
+				{ }
+			}
+
+			Generator .LeaveScope ();
+			Generator .PopExecutionContext ();
 		},
 	});
 

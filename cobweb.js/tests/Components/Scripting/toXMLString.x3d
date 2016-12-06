@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Scripting/toXMLString.x3d'/>
-    <meta name='modified' content='Tue, 06 Dec 2016 08:13:10 GMT'/>
+    <meta name='modified' content='Tue, 06 Dec 2016 08:56:02 GMT'/>
   </head>
   <Scene>
     <ProtoDeclare name='Prototype'>
@@ -58,37 +58,32 @@
           <MetadataSet DEF='children' containerField='value'
               name='children'
               reference='http://titania.create3000.de'>
-            <TimeSensor DEF='_1' containerField='value'/>
-          </MetadataSet>
-        </MetadataSet>
-      </MetadataSet>
-    </WorldInfo>
-    <Script DEF='CustomStript'>
-      <field accessType='inputOutput' type='SFVec3f' name='translation' value='3 4 5'/>
-      <field accessType='initializeOnly' type='SFNode' name='child'>
-        <Transform DEF='Box'>
-          <Shape>
-            <Appearance>
-              <Material/>
-            </Appearance>
-            <Box/>
-          </Shape>
-        </Transform>
-      </field>
-      <field accessType='initializeOnly' type='MFNode' name='children'>
-        <Transform DEF='Box_1'
-            translation='3 4 5'
-            scale='2 2 2'>
-          <Shape>
-            <Appearance>
-              <Material/>
-            </Appearance>
-            <Box/>
-          </Shape>
-        </Transform>
-        <Viewpoint/>
-      </field>
-      <field accessType='initializeOnly' type='MFVec3f' name='point' value='1 2 3, 4 5 6'/>
+            <Script DEF='CustomStript' containerField='value'>
+              <field accessType='inputOutput' type='SFVec3f' name='translation' value='3 4 5'/>
+              <field accessType='initializeOnly' type='SFNode' name='child'>
+                <Transform DEF='Box'>
+                  <Shape>
+                    <Appearance>
+                      <Material/>
+                    </Appearance>
+                    <Box/>
+                  </Shape>
+                </Transform>
+              </field>
+              <field accessType='initializeOnly' type='MFNode' name='children'>
+                <Transform DEF='Box_1'
+                    translation='3 4 5'
+                    scale='2 2 2'>
+                  <Shape>
+                    <Appearance>
+                      <Material/>
+                    </Appearance>
+                    <Box/>
+                  </Shape>
+                </Transform>
+                <Viewpoint/>
+              </field>
+              <field accessType='initializeOnly' type='MFVec3f' name='point' value='1 2 3, 4 5 6'/>
 <![CDATA[javascript:
 
 function initialize ()
@@ -102,10 +97,19 @@ function initialize ()
 	print (child .toXMLString ());
 	print (children .toXMLString ());
 
+	print ("toXMLString Script");
 	print (Browser .currentScene .getNamedNode ("CustomStript") .toXMLString ());
+
+	print ("toXMLString Scene");
+	print (Browser .currentScene .toXMLString ());
 }
 ]]>
-    </Script>
+            </Script>
+          </MetadataSet>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <Script USE='CustomStript'/>
     <Script DEF='FieldsScript'>
       <field accessType='initializeOnly' type='SFBool' name='SFBoolValue' value='true'/>
       <field accessType='initializeOnly' type='SFColor' name='SFColorValue' value='0.1 0.2 0.3'/>
@@ -119,15 +123,16 @@ function initialize ()
       <field accessType='initializeOnly' type='SFMatrix4d' name='SFMatrix4dValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='SFMatrix4f' name='SFMatrix4fValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='SFNode' name='SFNodeValue'>
-        <ProtoInstance name='Prototype' DEF='_2'>
+        <ProtoInstance name='Prototype' DEF='_1'>
           <fieldValue name='enabled' value='true'/>
           <fieldValue name='translation' value='1 2 3'/>
           <fieldValue name='children'>
-            <PixelTexture DEF='_3'/>
+            <PixelTexture DEF='_2'/>
             <Collision>
-              <TimeSensor containerField='proxy'/>
+              <TimeSensor DEF='_3' containerField='proxy'/>
+              <TimeSensor USE='_3'/>
             </Collision>
-            <PixelTexture USE='_3'/>
+            <PixelTexture USE='_2'/>
           </fieldValue>
         </ProtoInstance>
       </field>
@@ -152,9 +157,9 @@ function initialize ()
       <field accessType='initializeOnly' type='MFMatrix4d' name='MFMatrix4dValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1, 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='MFMatrix4f' name='MFMatrix4fValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1, 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='MFNode' name='MFNodeValue'>
-        <ProtoInstance name='Prototype' USE='_2'/>
-        <TimeSensor USE='_1'/>
-        <TimeSensor USE='_1'/>
+        <ProtoInstance name='Prototype' USE='_1'/>
+        <TimeSensor DEF='_4'/>
+        <TimeSensor USE='_4'/>
       </field>
       <field accessType='initializeOnly' type='MFRotation' name='MFRotationValue' value='0.267261241912424 0.534522483824849 0.801783725737273 4, 0.267261241912424 0.534522483824849 0.801783725737273 4'/>
       <field accessType='initializeOnly' type='MFString' name='MFStringValue' value='"ABCDEF", "abcdef"'/>

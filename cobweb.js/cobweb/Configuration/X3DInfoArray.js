@@ -100,6 +100,10 @@ function ($)
 		{
 			return this .index [key];
 		},
+		getValue: function ()
+		{
+			return this .array;
+		},
 	});
 
 	return X3DInfoArray;

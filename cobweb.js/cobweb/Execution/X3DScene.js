@@ -162,6 +162,10 @@ function ($,
 
 			throw new Error ("Exported node '" + exportedName + "' not found.");
 		},
+		getExportedNodes: function ()
+		{
+			return this .exportedNodes;
+		},
 		addRootNode: function (node)
 		{
 			if (! (node instanceof Fields .SFNode || node === null))
@@ -189,6 +193,7 @@ function ($,
 		},
 		toXMLStream: function (stream)
 		{
+			X3DExecutionContext .prototype .toXMLStream .call (this, stream);
 		},
 	});
 
