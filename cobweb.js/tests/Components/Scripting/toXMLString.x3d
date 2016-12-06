@@ -7,9 +7,17 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Scripting/toXMLString.x3d'/>
-    <meta name='modified' content='Tue, 06 Dec 2016 09:35:37 GMT'/>
+    <meta name='modified' content='Tue, 06 Dec 2016 10:09:21 GMT'/>
   </head>
   <Scene>
+    <ExternProtoDeclare name='BooleanSwitch' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Grouping/BooleanSwitch.x3d", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Grouping/BooleanSwitch.x3d", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Grouping/BooleanSwitch.x3d", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Grouping/BooleanSwitch.x3d"'>
+      <field accessType='inputOutput' type='SFBool' name='whichChoice'/>
+      <field accessType='initializeOnly' type='SFVec3f' name='bboxSize'/>
+      <field accessType='initializeOnly' type='SFVec3f' name='bboxCenter'/>
+      <field accessType='inputOnly' type='MFNode' name='addChildren'/>
+      <field accessType='inputOnly' type='MFNode' name='removeChildren'/>
+      <field accessType='inputOutput' type='MFNode' name='children'/>
+    </ExternProtoDeclare>
     <ProtoDeclare name='Prototype'>
       <ProtoInterface>
         <field accessType='inputOutput' type='SFBool' name='enabled'/>
@@ -70,32 +78,37 @@
           <MetadataSet DEF='children' containerField='value'
               name='children'
               reference='http://titania.create3000.de'>
-            <Script DEF='CustomStript' containerField='value'>
-              <field accessType='inputOutput' type='SFVec3f' name='translation' value='3 4 5'/>
-              <field accessType='initializeOnly' type='SFNode' name='child'>
-                <Transform DEF='Box'>
-                  <Shape>
-                    <Appearance>
-                      <Material/>
-                    </Appearance>
-                    <Box/>
-                  </Shape>
-                </Transform>
-              </field>
-              <field accessType='initializeOnly' type='MFNode' name='children'>
-                <Transform DEF='Box_1'
-                    translation='3 4 5'
-                    scale='2 2 2'>
-                  <Shape>
-                    <Appearance>
-                      <Material/>
-                    </Appearance>
-                    <Box/>
-                  </Shape>
-                </Transform>
-                <Viewpoint/>
-              </field>
-              <field accessType='initializeOnly' type='MFVec3f' name='point' value='1 2 3, 4 5 6'/>
+            <ProtoInstance name='BooleanSwitch' DEF='_1' containerField='value'/>
+          </MetadataSet>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <Script DEF='CustomStript'>
+      <field accessType='inputOutput' type='SFVec3f' name='translation' value='3 4 5'/>
+      <field accessType='initializeOnly' type='SFNode' name='child'>
+        <Transform DEF='Box'>
+          <Shape>
+            <Appearance>
+              <Material/>
+            </Appearance>
+            <Box/>
+          </Shape>
+        </Transform>
+      </field>
+      <field accessType='initializeOnly' type='MFNode' name='children'>
+        <Transform DEF='Box_1'
+            translation='3 4 5'
+            scale='2 2 2'>
+          <Shape>
+            <Appearance>
+              <Material/>
+            </Appearance>
+            <Box/>
+          </Shape>
+        </Transform>
+        <Viewpoint/>
+      </field>
+      <field accessType='initializeOnly' type='MFVec3f' name='point' value='1 2 3, 4 5 6'/>
 <![CDATA[javascript:
 
 function initialize ()
@@ -116,12 +129,7 @@ function initialize ()
 	print (Browser .currentScene .toXMLString ());
 }
 ]]>
-            </Script>
-          </MetadataSet>
-        </MetadataSet>
-      </MetadataSet>
-    </WorldInfo>
-    <Script USE='CustomStript'/>
+    </Script>
     <Script DEF='FieldsScript'>
       <field accessType='initializeOnly' type='SFBool' name='SFBoolValue' value='true'/>
       <field accessType='initializeOnly' type='SFColor' name='SFColorValue' value='0.1 0.2 0.3'/>
@@ -135,16 +143,16 @@ function initialize ()
       <field accessType='initializeOnly' type='SFMatrix4d' name='SFMatrix4dValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='SFMatrix4f' name='SFMatrix4fValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='SFNode' name='SFNodeValue'>
-        <ProtoInstance name='Prototype' DEF='_1'>
+        <ProtoInstance name='Prototype' DEF='_2'>
           <fieldValue name='enabled' value='true'/>
           <fieldValue name='translation' value='1 2 3'/>
           <fieldValue name='children'>
-            <PixelTexture DEF='_2'/>
+            <PixelTexture DEF='_3'/>
             <Collision>
-              <TimeSensor DEF='_3' containerField='proxy'/>
-              <TimeSensor USE='_3'/>
+              <TimeSensor DEF='_4' containerField='proxy'/>
+              <TimeSensor USE='_4'/>
             </Collision>
-            <PixelTexture USE='_2'/>
+            <PixelTexture USE='_3'/>
           </fieldValue>
         </ProtoInstance>
       </field>
@@ -169,9 +177,9 @@ function initialize ()
       <field accessType='initializeOnly' type='MFMatrix4d' name='MFMatrix4dValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1, 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='MFMatrix4f' name='MFMatrix4fValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1, 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='MFNode' name='MFNodeValue'>
-        <ProtoInstance name='Prototype' USE='_1'/>
-        <TimeSensor DEF='_4'/>
-        <TimeSensor USE='_4'/>
+        <ProtoInstance name='Prototype' USE='_2'/>
+        <TimeSensor DEF='_5'/>
+        <TimeSensor USE='_5'/>
       </field>
       <field accessType='initializeOnly' type='MFRotation' name='MFRotationValue' value='0.267261241912424 0.534522483824849 0.801783725737273 4, 0.267261241912424 0.534522483824849 0.801783725737273 4'/>
       <field accessType='initializeOnly' type='MFString' name='MFStringValue' value='"ABCDEF", "abcdef"'/>
@@ -194,6 +202,7 @@ function initialize ()
 }
 ]]>
     </Script>
+    <ProtoInstance name='BooleanSwitch' USE='_1'/>
     <ROUTE fromNode='Box_1' fromField='translation_changed' toNode='Box_1' toField='set_scale'/>
   </Scene>
 </X3D>
