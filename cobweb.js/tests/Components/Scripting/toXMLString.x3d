@@ -2,7 +2,7 @@
 <!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
 <X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
   <head>
-    <component name='Navigation' level='1'/>";
+    <component name='Navigation' level='1'/>
     <unit category='angle' name='degree' conversionFactor='0.0174532925199432958'/>
     <unit category='mass' name='gram' conversionFactor='0.001'/>
     <meta name='comment' content='World of Titania'/>
@@ -10,7 +10,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Scripting/toXMLString.x3d'/>
-    <meta name='modified' content='Wed, 07 Dec 2016 09:54:32 GMT'/>
+    <meta name='modified' content='Wed, 07 Dec 2016 11:46:40 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='BooleanSwitch' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Grouping/BooleanSwitch.x3d", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Grouping/BooleanSwitch.x3d", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Grouping/BooleanSwitch.x3d", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Grouping/BooleanSwitch.x3d"'>
@@ -130,6 +130,8 @@ function initialize ()
 
 	print ("toXMLString Scene");
 	print (Browser .currentScene .toXMLString ());
+
+	print ($.parseXML (Browser .currentScene .toXMLString ()));
 }
 ]]>
     </Script>
@@ -151,16 +153,16 @@ function initialize ()
           <fieldValue name='translation' value='1 2 3'/>
           <fieldValue name='children'>
             <PixelTexture DEF='_3'/>
-            <Collision>
-              <TimeSensor DEF='_4' containerField='proxy'/>
-              <TimeSensor USE='_4'/>
+            <Collision DEF='_4'>
+              <TimeSensor DEF='_5' containerField='proxy'/>
+              <TimeSensor USE='_5'/>
             </Collision>
             <PixelTexture USE='_3'/>
           </fieldValue>
         </ProtoInstance>
       </field>
       <field accessType='initializeOnly' type='SFRotation' name='SFRotationValue' value='0.267261241912424 0.534522483824849 0.801783725737273 4'/>
-      <field accessType='initializeOnly' type='SFString' name='SFStringValue' value='Hello Wörld!&#xA;&amp;&#35;\"-&apos;&lt;&gt;&#xA;äöü'/>
+      <field accessType='initializeOnly' type='SFString' name='SFStringValue' value='Hello Wörld!&#xA;&amp;&#35;&quot;-&apos;&lt;&gt;&#92;&#xA;äöü'/>
       <field accessType='initializeOnly' type='SFTime' name='SFTimeValue' value='123.456789012346'/>
       <field accessType='initializeOnly' type='SFVec2d' name='SFVec2dValue' value='1 2'/>
       <field accessType='initializeOnly' type='SFVec2f' name='SFVec2fValue' value='1 2'/>
@@ -181,8 +183,8 @@ function initialize ()
       <field accessType='initializeOnly' type='MFMatrix4f' name='MFMatrix4fValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1, 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='MFNode' name='MFNodeValue'>
         <ProtoInstance name='Prototype' USE='_2'/>
-        <TimeSensor DEF='_5'/>
-        <TimeSensor USE='_5'/>
+        <TimeSensor DEF='_6'/>
+        <TimeSensor USE='_6'/>
       </field>
       <field accessType='initializeOnly' type='MFRotation' name='MFRotationValue' value='0.267261241912424 0.534522483824849 0.801783725737273 4, 0.267261241912424 0.534522483824849 0.801783725737273 4'/>
       <field accessType='initializeOnly' type='MFString' name='MFStringValue' value='"ABCDEF", "abcdef"'/>
@@ -202,14 +204,16 @@ function initialize ()
 	var script = Browser .currentScene .getNamedNode ("FieldsScript");
 
 	print (script .toXMLString ());
+
+	print (SFStringValue [15]);
 }
 ]]>
     </Script>
     <ProtoInstance name='BooleanSwitch'/>
-    <Inline DEF='_6'
+    <Inline DEF='_7'
         url='"../Core/EXPORT.x3d"'/>
-    <IMPORT inlineDEF='_6' exportedDEF='Export'/>
-    <IMPORT inlineDEF='_6' exportedDEF='ExportAs' AS='ImportAs'/>
+    <IMPORT inlineDEF='_7' exportedDEF='Export'/>
+    <IMPORT inlineDEF='_7' exportedDEF='ExportAs' AS='ImportAs'/>
     <ROUTE fromNode='Box' fromField='translation_changed' toNode='Box' toField='set_scale'/>
     <ROUTE fromNode='Box' fromField='translation_changed' toNode='_1' toField='set_position'/>
     <ROUTE fromNode='Export' fromField='translation_changed' toNode='ImportAs' toField='set_translation'/>

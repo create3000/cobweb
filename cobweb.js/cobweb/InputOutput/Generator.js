@@ -318,16 +318,16 @@ function ($,
 		XMLEncode: function (string)
 		{
 			return string
-				.replace (/\\/g, "\\\\")
 				.replace (/&/g, "&amp;")
 				.replace (/#/g, "&#35;")
+				.replace (/\\/g, "&#92;")
 				.replace (/\t/g, "&#x9;")
 				.replace (/\n/g, "&#xA;")
 				.replace (/\r/g, "&#xD;")
 				.replace (/</g, "&lt;")
 				.replace (/>/g, "&gt;")
 				.replace (/'/g, "&apos;")
-				.replace (/"/g, "\\\"");
+				.replace (/"/g, "&quot;");
 		},
 		escapeCDATA: function (string)
 		{
