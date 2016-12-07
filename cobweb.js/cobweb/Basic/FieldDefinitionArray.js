@@ -83,6 +83,11 @@ function ($)
 	$.extend (FieldDefinitionArray .prototype,
 	{
 		constructor: FieldDefinitionArray,
+		add: function (fieldDefinition)
+		{
+			this .array .push (fieldDefinition);
+			this .index [fieldDefinition .name] = fieldDefinition;
+		},
 		get: function (key)
 		{
 			return this .index [key];

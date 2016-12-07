@@ -476,7 +476,7 @@ function ($,
 			field .setName (name);
 			field .setAccessType (accessType);
 
-			this .fieldDefinitions .getValue () .push (new X3DFieldDefinition (accessType, name, field));
+			this .fieldDefinitions .add (new X3DFieldDefinition (accessType, name, field));
 
 			this .setField (name, field, true);
 		},

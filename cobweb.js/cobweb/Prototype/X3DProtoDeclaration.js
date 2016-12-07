@@ -103,6 +103,10 @@ function ($,
 
 			this .loadState_ = X3DConstants .COMPLETE_STATE;
 		},
+		hasUserDefinedFields: function ()
+		{
+			return true;
+		},
 		getURL: function ()
 		{
 			return this .getExecutionContext () .getURL ();

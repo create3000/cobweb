@@ -113,6 +113,10 @@ function ($,
 				this .scene .setLive (this .isLive () .getValue ());
 			}
 		},
+		hasUserDefinedFields: function ()
+		{
+			return true;
+		},
 		setProtoDeclaration: function (proto)
 		{
 			this .proto = proto;
@@ -125,10 +129,10 @@ function ($,
 			{
 				var
 					protoFieldDefinition = protoFieldDefinitions [i],
-					fieldDefinition      = fieldDefinitions [protoFieldDefinition .name];
+					fieldDefinition      = fieldDefinitions .get (protoFieldDefinition .name);
 
 				if (fieldDefinition)
-					fieldDefinition .value .assign (protoFieldDefinition .value);
+					fieldDefinition .value .setValue (protoFieldDefinition .value);
 			}
 		},
 		getProtoDeclaration: function ()
