@@ -10918,16 +10918,16 @@ function ($,
 		XMLEncode: function (string)
 		{
 			return string
-				.replace (/\\/g, "\\\\")
 				.replace (/&/g, "&amp;")
 				.replace (/#/g, "&#35;")
+				.replace (/\\/g, "&#92;")
 				.replace (/\t/g, "&#x9;")
 				.replace (/\n/g, "&#xA;")
 				.replace (/\r/g, "&#xD;")
 				.replace (/</g, "&lt;")
 				.replace (/>/g, "&gt;")
 				.replace (/'/g, "&apos;")
-				.replace (/"/g, "\\\"");
+				.replace (/"/g, "&quot;");
 		},
 		escapeCDATA: function (string)
 		{
@@ -19256,6 +19256,49 @@ function ($,
 		return MFField;
 	}
 
+	function MFString (value)
+	{
+		if (this instanceof MFString)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFString .prototype), arguments);
+	}
+
+	MFString .prototype = $.extend (Object .create (X3DArrayField .prototype),
+	{
+		constructor: MFString,
+		_valueType: SFString,
+		getTypeName: function ()
+		{
+			return "MFString";
+		},
+		getType: function ()
+		{
+			return X3DConstants .MFString;
+		},
+		toXMLStream: function (stream)
+		{
+			var length = this .length;
+
+			if (length)
+			{
+				var value = this .getValue ();
+
+				for (var i = 0, n = length - 1; i < n; ++ i)
+				{
+					stream .string += "\"";
+					value [i] .toXMLStream (stream);
+					stream .string += "\"";
+					stream .string += ", ";
+				}
+
+				stream .string += "\"";
+				value [n] .toXMLStream (stream);
+				stream .string += "\"";
+			}
+		},
+	});
+
 	var ArrayFields =
 	{
 		MFBool:      MFFieldTemplate ("MFBool",      X3DConstants .MFBool,      SFBool),
@@ -19271,7 +19314,7 @@ function ($,
 		MFMatrix4f:  MFFieldTemplate ("MFMatrix4f",  X3DConstants .MFMatrix4f,  SFMatrix4f),
 		MFNode:      MFNode,
 		MFRotation:  MFFieldTemplate ("MFRotation",  X3DConstants .MFRotation,  SFRotation),
-		MFString:    MFFieldTemplate ("MFString",    X3DConstants .MFString,    SFString),
+		MFString:    MFString,
 		MFTime:      MFFieldTemplate ("MFTime",      X3DConstants .MFTime,      SFTime),
 		MFVec2d:     MFFieldTemplate ("MFVec2d",     X3DConstants .MFVec2d,     SFVec2d),
 		MFVec2f:     MFFieldTemplate ("MFVec2f",     X3DConstants .MFVec2f,     SFVec2f),
