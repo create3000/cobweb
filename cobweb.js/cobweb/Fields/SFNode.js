@@ -257,7 +257,7 @@ function ($, X3DField, X3DConstants)
 		{
 			var node = this .getValue ();
 
-			stream .string += node ? node .toXMLString () : "<!-- NULL -->";
+			stream .string += node ? node .toXMLString () : "NULL";
 		},
 		dispose: function ()
 		{
