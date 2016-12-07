@@ -9459,6 +9459,11 @@ function ($)
 	$.extend (FieldDefinitionArray .prototype,
 	{
 		constructor: FieldDefinitionArray,
+		add: function (fieldDefinition)
+		{
+			this .array .push (fieldDefinition);
+			this .index [fieldDefinition .name] = fieldDefinition;
+		},
 		get: function (key)
 		{
 			return this .index [key];
@@ -20392,7 +20397,7 @@ function ($,
 			field .setName (name);
 			field .setAccessType (accessType);
 
-			this .fieldDefinitions .getValue () .push (new X3DFieldDefinition (accessType, name, field));
+			this .fieldDefinitions .add (new X3DFieldDefinition (accessType, name, field));
 
 			this .setField (name, field, true);
 		},
@@ -28743,6 +28748,10 @@ function ($,
 				this .scene .setLive (this .isLive () .getValue ());
 			}
 		},
+		hasUserDefinedFields: function ()
+		{
+			return true;
+		},
 		setProtoDeclaration: function (proto)
 		{
 			this .proto = proto;
@@ -28755,10 +28764,10 @@ function ($,
 			{
 				var
 					protoFieldDefinition = protoFieldDefinitions [i],
-					fieldDefinition      = fieldDefinitions [protoFieldDefinition .name];
+					fieldDefinition      = fieldDefinitions .get (protoFieldDefinition .name);
 
 				if (fieldDefinition)
-					fieldDefinition .value .assign (protoFieldDefinition .value);
+					fieldDefinition .value .setValue (protoFieldDefinition .value);
 			}
 		},
 		getProtoDeclaration: function ()
@@ -29019,6 +29028,10 @@ function ($,
 			X3DProtoDeclarationNode .prototype .initialize .call (this);
 
 			this .loadState_ = X3DConstants .COMPLETE_STATE;
+		},
+		hasUserDefinedFields: function ()
+		{
+			return true;
 		},
 		getURL: function ()
 		{
