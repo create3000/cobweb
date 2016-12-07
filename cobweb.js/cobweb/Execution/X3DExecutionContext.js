@@ -337,19 +337,12 @@ function ($,
 			}
 			catch (error)
 			{
-				try
-				{
-					var importedNode = this .importedNodes [name];
+				var importedNode = this .importedNodes [name];
 
-					if (importedNode)
-						return new Fields .SFNode (importedNode);
+				if (importedNode)
+					return new Fields .SFNode (importedNode);
 
-					throw true;
-				}
-				catch (error)
-				{
-					throw new Error ("Unknown named or imported node '" + name + "'.");
-				}
+				throw new Error ("Unknown named or imported node '" + name + "'.");
 			}
 		},
 		setRootNodes: function () { },
@@ -399,7 +392,7 @@ function ($,
 				{
 					if (sourceNode instanceof ImportedNode)
 						sourceNode .addRoute (sourceNode, sourceField, destinationNode, destinationField);
-	
+
 					if (destinationNode instanceof ImportedNode)
 						destinationNode .addRoute (sourceNode, sourceField, destinationNode, destinationField);
 
@@ -548,13 +541,13 @@ function ($,
 
 			for (var importedName in importedNodes)
 			{
-				try
+				//try
 				{
 					importedNodes [importedName] .toXMLStream (stream);
 
 					stream .string += "\n";
 				}
-				catch (error)
+				//catch (error)
 				{ }
 			}
 		

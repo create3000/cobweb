@@ -60,11 +60,14 @@ function ($,
 	return {
 		indent: "",
 		indentChar: "  ",
-		executionContexts: [ ],
+		executionContextStack: [ null ],
+		importedNodesIndex: { },
+		exportedNodesIndex: { },
 		nodes: { },
 		names: { },
 		namesByNode: { },
 		importedNames: { },
+		routeNodes: { },
 		level: 0,
 		newName: 0,
 		containerFields: [ ],
@@ -82,18 +85,24 @@ function ($,
 		},
 		PushExecutionContext: function (executionContext)
 		{
-			this .executionContexts .push (executionContext);
+			this .executionContextStack .push (executionContext);
+
+			this .importedNodesIndex [executionContext .getId ()] = { };
+			this .exportedNodesIndex [executionContext .getId ()] = { };
 		},
 		PopExecutionContext: function ()
 		{
-			this .executionContexts .pop ();
+			this .executionContextStack .pop ();
+
+			if (this .ExecutionContext ())
+				return;
+
+			this .importedNodesIndex = { };
+			this .exportedNodesIndex = { };
 		},
 		ExecutionContext: function ()
 		{
-			if (this .executionContexts .length)
-				return this .executionContexts [this .executionContexts .length - 1];
-
-			return null;
+			return this .executionContextStack [this .executionContextStack .length - 1];
 		},
 		EnterScope: function ()
 		{
@@ -112,10 +121,37 @@ function ($,
 				this .names         = { };
 				this .namesByNode   = { };
 				this .importedNames = { };
+				this .importedNodes = { };
 			}
 		},
 		ImportedNodes: function (importedNodes)
 		{
+			var index = this .importedNodesIndex [this .ExecutionContext () .getId ()];
+
+			for (var importedName in importedNodes)
+			{
+				try
+				{
+					index [importedNodes [importedName] .getInlineNode () .getId ()] = true;
+				}
+				catch (error)
+				{ }
+			}
+		},
+		AddImportedNode: function (exportedNode, importedName)
+		{
+			this .importedNames [exportedNode .getId ()] = importedName;
+		},
+		AddRouteNode: function (routeNode)
+		{
+			this .routeNodes [routeNode .getId ()] = true;
+		},
+		ExistsRouteNode: function (routeNode)
+		{
+			if (this .routeNodes [routeNode .getId ()])
+				return true;
+	
+			return false;
 		},
 		IsSharedNode: function (baseNode)
 		{
@@ -124,6 +160,8 @@ function ($,
 		AddNode: function (baseNode)
 		{
 			this .nodes [baseNode .getId ()] = true;
+
+			this .AddRouteNode (baseNode);
 		},
 		ExistsNode: function (baseNode)
 		{
@@ -197,30 +235,28 @@ function ($,
 		{
 			if (baseNode .getCloneCount () > 1)
 				return true;
-		
+
 			if (baseNode .hasRoutes ())
 				return true;
-		
-//			try
-//			{
-//				var index = exportedNodesIndex .at (baseNode -> getExecutionContext ());
-//		
-//				if (index .count (baseNode -> getId ()))
-//					return true;
-//			}
-//			catch (...)
-//			{ }
-//		
-//			try
-//			{
-//				var index = importedNodesIndex .at (baseNode -> getExecutionContext ());
-//		
-//				if (index .count (baseNode -> getId ()))
-//					return true;
-//			}
-//			catch (...)
-//			{ }
-		
+
+			var
+				executionContext = baseNode .getExecutionContext (),
+				index            = this .importedNodesIndex [executionContext .getId ()];
+
+			if (index)
+			{
+				if (index [baseNode .getId ()])
+					return true;
+			}
+
+			var index = this .exportedNodesIndex [executionContext .getId ()];
+
+			if (index)
+			{
+				if (index [baseNode .getId ()])
+					return true;
+			}
+
 			return false;
 		},
 		UniqueName: function ()

@@ -52,11 +52,13 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Basic/X3DBaseNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
           X3DBaseNode,
-          X3DConstants)
+          X3DConstants,
+          Generator)
 {
 "use strict";
 
@@ -196,6 +198,85 @@ function ($,
 		},
 		toXMLStream: function (stream)
 		{
+			if (Generator .ExistsNode (this .getInlineNode ()))
+			{
+				stream .string += Generator .Indent ();
+				stream .string += "<IMPORT";
+				stream .string += " ";
+				stream .string += "inlineDEF='";
+				stream .string += Generator .XMLEncode (Generator .Name (this .getInlineNode ()));
+				stream .string += "'";
+				stream .string += " ";
+				stream .string += "exportedDEF='";
+				stream .string += Generator .XMLEncode (this .getExportedName ());
+				stream .string += "'";
+
+				if (this .getImportedName () !== this .getExportedName ())
+				{
+					stream .string += " ";
+					stream .string += "AS='";
+					stream .string += Generator .XMLEncode (this .getImportedName ());
+					stream .string += "'";
+				}
+
+				stream .string += "/>";
+
+				try
+				{
+					Generator .AddRouteNode (this);
+					Generator .AddImportedNode (this .getExportedNode (), this .getImportedName ());
+				}
+				catch (error)
+				{
+					var routes = this .routes;
+
+					for (var id in routes)
+					{
+						var
+							route            = routes [id],
+							sourceNode       = route .sourceNode,
+							sourceField      = route .sourceField,
+							destinationNode  = route .destinationNode,
+							destinationField = route .destinationField;
+
+						if (Generator .ExistsRouteNode (sourceNode) && Generator .ExistsRouteNode (destinationNode))
+						{
+							if (sourceNode instanceof ImportedNode)
+								var sourceNodeName = sourceNode .getImportedName ();
+							else
+								var sourceNodeName = sourceNode .getName ();
+	
+							if (destinationNode instanceof ImportedNode)
+								var destinationNodeName = destinationNode .getImportedName ();
+							else
+								var sourceNodeName = destinationNode .getName ();
+	
+							stream .string += "\n";
+							stream .string += Generator .Indent ();
+							stream .string += "<ROUTE";
+							stream .string += " ";
+							stream .string += "fromNode='";
+							stream .string += Generator .XMLEncode (sourceNodeName);
+							stream .string += "'";
+							stream .string += " ";
+							stream .string += "fromField='";
+							stream .string += Generator .XMLEncode (sourceField);
+							stream .string += "'";
+							stream .string += " ";
+							stream .string += "toNode='";
+							stream .string += Generator .XMLEncode (destinationNodeName);
+							stream .string += "'";
+							stream .string += " ";
+							stream .string += "toField='";
+							stream .string += Generator .XMLEncode (destinationField);
+							stream .string += "'";
+							stream .string += "/>";
+						}
+					}
+				}
+			}
+			else
+				throw new Error ("ImportedNode.toXMLStream: Inline node does not exist.");
 		},
 		dispose: function ()
 		{

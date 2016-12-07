@@ -895,9 +895,10 @@ function ($,
 					throw new Error ("Bad ROUTE statement: Expected toField attribute.");
 
 				var
-					sourceNode      = this .getExecutionContext () .getLocalNode (sourceNodeName),
-					destinationNode = this .getExecutionContext () .getLocalNode (destinationNodeName),
-					route           = this .getExecutionContext () .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+					executionContext = this .getExecutionContext (),
+					sourceNode       = executionContext .getLocalNode (sourceNodeName),
+					destinationNode  = executionContext .getLocalNode (destinationNodeName),
+					route            = executionContext .addRoute (sourceNode, sourceField, destinationNode, destinationField);
 
 				element .x3d = route;
 			}
