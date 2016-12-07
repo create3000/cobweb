@@ -1286,6 +1286,9 @@
     <None Include="tests\Components\Rendering\DRracer\t85.x3d" />
     <None Include="tests\Components\Rendering\DRracer\townsite_withHud_cobweb.x3d" />
     <None Include="tests\Components\Scripting\toXMLString.x3d" />
+    <None Include="tests\Components\Core\Comment.x3d" />
+    <None Include="tests\Components\Core\EXPORT.wrl" />
+    <None Include="tests\Components\PROTO\Rotor.wrl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
