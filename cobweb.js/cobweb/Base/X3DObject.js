@@ -122,6 +122,8 @@ function ()
 			for (var key in interests)
 				interests [key] ();
 		},
+		toVRMLString: function ()
+		{ },
 		toXMLString: function ()
 		{
 			var stream = { string: "" };
