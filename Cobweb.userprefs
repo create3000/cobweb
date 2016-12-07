@@ -1,24 +1,16 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/tests/Components/Scripting/toXMLString.x3d">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="421" Column="95" />
-      <File FileName="cobweb.js/cobweb/InputOutput/Generator.js" Line="338" Column="1" />
-      <File FileName="cobweb.js/cobweb/Basic/X3DBaseNode.js" Line="59" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Core/X3DPrototypeInstance.js" Line="277" Column="1" />
-      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="172" Column="10" />
-      <File FileName="cobweb.js/tests/Components/Scripting/toXMLString.x3d" Line="227" Column="1" />
-      <File FileName="cobweb.js/cobweb/Prototype/X3DProtoDeclaration.js" Line="224" Column="1" />
-      <File FileName="cobweb.js/cobweb/Prototype/X3DExternProtoDeclaration.js" Line="204" Column="1" />
-      <File FileName="cobweb.js/cobweb/Routing/X3DRoute.js" Line="149" Column="46" />
-      <File FileName="cobweb.js/cobweb/Execution/ImportedNode.js" Line="232" Column="1" />
-      <File FileName="cobweb.js/cobweb/Execution/X3DScene.js" Line="254" Column="1" />
-      <File FileName="cobweb.js/cobweb/Execution/ExportedNode.js" Line="87" Column="1" />
-      <File FileName="cobweb.js/cobweb/Configuration/UnitInfo.js" Line="72" Column="1" />
-      <File FileName="cobweb.js/cobweb/Configuration/ComponentInfo.js" Line="91" Column="1" />
-      <File FileName="cobweb.js/cobweb/InputOutput/Loader.js" Line="141" Column="54" />
-      <File FileName="cobweb.js/cobweb/Fields/ArrayFields.js" Line="289" Column="1" />
-      <File FileName="cobweb.js/cobweb/Basic/X3DArrayField.js" Line="444" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="439" Column="1" />
+      <File FileName="cobweb.js/cobweb/InputOutput/Generator.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Basic/X3DBaseNode.js" Line="518" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Core/X3DPrototypeInstance.js" Line="267" Column="5" />
+      <File FileName="cobweb.js/tests/Components/Scripting/toXMLString.x3d" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Basic/FieldDefinitionArray.js" Line="81" Column="3" />
+      <File FileName="cobweb.js/cobweb/Prototype/X3DExternProtoDeclaration.js" Line="117" Column="4" />
+      <File FileName="cobweb.js/cobweb/Components/Scripting/Script.js" Line="148" Column="1" />
+      <File FileName="cobweb.js/cobweb/Base/X3DObject.js" Line="125" Column="15" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

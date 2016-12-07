@@ -154,6 +154,9 @@ function ($,
 			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
 				return;
 
+			if (this .url_ .length === 0)
+				return;
+
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 			this .getScene () .addInitLoadCount (this);
 
@@ -183,42 +186,51 @@ function ($,
 		},
 		getContext: function (text)
 		{
-			var
-				callbacks         = ["initialize", "prepareEvents", "eventsProcessed", "shutdown"],
-				userDefinedFields = this .getUserDefinedFields ();
-
-			for (var name in userDefinedFields)
+			try
 			{
-				var field = userDefinedFields [name];
+				var
+					callbacks         = ["initialize", "prepareEvents", "eventsProcessed", "shutdown"],
+					userDefinedFields = this .getUserDefinedFields ();
 
-				switch (field .getAccessType ())
+				for (var name in userDefinedFields)
 				{
-					case X3DConstants .inputOnly:
-						callbacks .push (field .getName ());
-						break;
-					case X3DConstants .inputOutput:
-						callbacks .push ("set_" + field .getName ());
-						break;
+					var field = userDefinedFields [name];
+
+					switch (field .getAccessType ())
+					{
+						case X3DConstants .inputOnly:
+							callbacks .push (field .getName ());
+							break;
+						case X3DConstants .inputOutput:
+							callbacks .push ("set_" + field .getName ());
+							break;
+					}
 				}
+
+				text += "\n;var " + callbacks .join (",") + ";";
+				text += "\n[" + callbacks .join (",") + "];"
+
+				var
+					global  = this .getGlobal (),
+					result  = evaluate (global, text),
+					context = { };
+
+				for (var i = 0; i < callbacks .length; ++ i)
+				{
+					if (typeof result [i] === "function")
+						context [callbacks [i]] = result [i];
+					else
+						context [callbacks [i]] = null;
+				}
+
+				return context;
 			}
-
-			text += "\n;var " + callbacks .join (",") + ";";
-			text += "\n[" + callbacks .join (",") + "];"
-
-			var
-				global  = this .getGlobal (),
-				result  = evaluate (global, text),
-				context = { };
-
-			for (var i = 0; i < callbacks .length; ++ i)
+			catch (error)
 			{
-				if (typeof result [i] === "function")
-					context [callbacks [i]] = result [i];
-				else
-					context [callbacks [i]] = null;
-			}
+				this .setError ("preprocessing", error);
 
-			return context;
+				return { };
+			}
 		},
 		getGlobal: function ()
 		{
@@ -504,6 +516,7 @@ function ($,
 		{
 			console .error ("JavaScript Error in Script '" + this .getName () + "', function '" + callback + "'\nworld url is '" + this .getExecutionContext () .getURL () + "':");
 			console .error (error);
+			console .error (this .url_ .toString ());
 		},
 	});
 
