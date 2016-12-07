@@ -51,10 +51,12 @@ define ([
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
-          X3DConstants)
+          X3DConstants,
+          Generator)
 {
 "use strict";
 
@@ -73,6 +75,20 @@ function ($,
 	$.extend (ComponentInfo .prototype,
 	{
 		constructor: ComponentInfo,
+		toXMLStream: function (stream)
+		{
+			stream .string += Generator .Indent ();
+			stream .string += "<component";
+			stream .string += " ";
+			stream .string += "name='";
+			stream .string += this .name;
+			stream .string += "'";
+			stream .string += " ";
+			stream .string += "level='";
+			stream .string += this .level;
+			stream .string += "'";
+			stream .string += "/>";
+		},
 	});
 
 	return ComponentInfo;

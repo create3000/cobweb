@@ -51,10 +51,12 @@ define ([
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Base/X3DObject",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
-          X3DObject)
+          X3DObject,
+          Generator)
 {
 "use strict";
 
@@ -79,6 +81,24 @@ function ($,
 		},
 		toXMLStream: function (stream)
 		{
+			var localName = Generator .LocalName (this .localNode);
+
+			stream .string += Generator .Indent ();
+			stream .string += "<EXPORT";
+			stream .string += " ";
+			stream .string += "localDEF='";
+			stream .string += Generator .XMLEncode (localName);
+			stream .string += "'";
+
+			if (this .exportedName !== localName)
+			{
+				stream .string += " ";
+				stream .string += "AS='";
+				stream .string += Generator .XMLEncode (this .exportedName);
+				stream .string += "'";
+			}
+
+			stream .string += "/>";
 		},
 	});
 

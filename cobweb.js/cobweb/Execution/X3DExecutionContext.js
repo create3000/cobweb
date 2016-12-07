@@ -135,6 +135,14 @@ function ($,
 		{
 			return false;
 		},
+		getSpecificationVersion: function ()
+		{
+			return this .specificationVersion;
+		},
+		getEncoding: function ()
+		{
+			return this .encoding;
+		},
 		getWorldURL: function ()
 		{
 			return this .getURL () .location;
@@ -151,9 +159,17 @@ function ($,
 		{
 			this .profile = profile;
 		},
+		getProfile: function (profile)
+		{
+			return this .profile;
+		},
 		addComponent: function (component)
 		{
 			this .components .add (component .name, component);
+		},
+		getComponents: function ()
+		{
+			return this .components;
 		},
 		createNode: function (typeName, setup)
 		{
@@ -504,25 +520,11 @@ function ($,
 
 			// Output extern protos
 
-			var externprotos = this .getExternProtoDeclarations ();
-
-			for (var i = 0, length = externprotos .length; i < length; ++ i)
-			{
-				externprotos [i] .toXMLStream (stream);
-
-				stream .string += "\n";
-			}
+			this .getExternProtoDeclarations () .toXMLStream (stream);
 
 			// Output protos
 
-			var protos = this .getProtoDeclarations ();
-
-			for (var i = 0, length = protos .length; i < length; ++ i)
-			{
-				protos [i] .toXMLStream (stream);
-
-				stream .string += "\n";
-			}
+			this .getProtoDeclarations () .toXMLStream (stream);
 		
 			// Output root nodes
 
@@ -541,31 +543,19 @@ function ($,
 
 			for (var importedName in importedNodes)
 			{
-				//try
+				try
 				{
 					importedNodes [importedName] .toXMLStream (stream);
 
 					stream .string += "\n";
 				}
-				//catch (error)
+				catch (error)
 				{ }
 			}
 		
 			// Output routes
 
-			var routes = this .getRoutes ();
-
-			for (var i = 0, length = routes .length; i < length; ++ i)
-			{
-				try
-				{
-					routes [i] .toXMLStream (stream);
-	
-					stream .string += "\n";
-				}
-				catch (error)
-				{ }
-			}
+			this .getRoutes () .toXMLStream (stream);
 
 			Generator .LeaveScope ();
 			Generator .PopExecutionContext ();

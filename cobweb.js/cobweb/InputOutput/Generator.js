@@ -124,6 +124,9 @@ function ($,
 				this .importedNodes = { };
 			}
 		},
+		ExportedNodes: function (exportedNodes)
+		{
+		},
 		ImportedNodes: function (importedNodes)
 		{
 			var index = this .importedNodesIndex [this .ExecutionContext () .getId ()];

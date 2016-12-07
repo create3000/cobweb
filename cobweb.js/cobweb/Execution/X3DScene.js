@@ -55,6 +55,7 @@ define ([
 	"cobweb/Configuration/UnitInfoArray",
 	"cobweb/Execution/ExportedNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -62,7 +63,8 @@ function ($,
           UnitInfo,
           UnitInfoArray,
           ExportedNode,
-          X3DConstants)
+          X3DConstants,
+          Generator)
 {
 "use strict";
 
@@ -113,6 +115,10 @@ function ($,
 			unit .name             = name;
 			unit .conversionFactor = conversionFactor;
 		},
+		getUnits: function ()
+		{
+			return this .units;
+		},
 		setMetaData: function (name, value)
 		{
 			if (! name .length)
@@ -123,6 +129,10 @@ function ($,
 		getMetaData: function (name)
 		{
 			return this .metaData [name];
+		},
+		getMetaDatas: function ()
+		{
+			return this .metaData;
 		},
 		addExportedNode: function (exportedName, node)
 		{
@@ -193,7 +203,122 @@ function ($,
 		},
 		toXMLStream: function (stream)
 		{
+			var specificationVersion = this .getSpecificationVersion ();
+
+			if (specificationVersion === "2.0")
+				specificationVersion = "3.3";
+		
+			stream .string += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+			stream .string += "<!DOCTYPE X3D PUBLIC \"ISO//Web3D//DTD X3D ";
+			stream .string += specificationVersion;
+			stream .string += "//EN\" \"http://www.web3d.org/specifications/x3d-";
+			stream .string += specificationVersion;
+			stream .string += ".dtd\">\n";
+		
+			stream .string += "<X3D";
+			stream .string += " ";
+			stream .string += "profile='";
+			stream .string += this .getProfile () ? this .getProfile () .name : "Full";
+			stream .string += "'";
+			stream .string += " ";
+			stream .string += "version='";
+			stream .string += specificationVersion;
+			stream .string += "'";
+			stream .string += " ";
+			stream .string += "xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance'";
+			stream .string += " ";
+			stream .string += "xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-";
+			stream .string += specificationVersion;
+			stream .string += ".xsd'>\n";
+
+			Generator .IncIndent ();
+
+			stream .string += Generator .Indent ();
+			stream .string += "<head>\n";
+
+			Generator .IncIndent ();
+		
+			// <head>
+
+			this .getComponents () .toXMLStream (stream);
+
+			var units = this .getUnits ();
+
+			for (var i = 0, length = units .length; i < length; ++ i)
+			{
+				var unit = units [i];
+
+				if (unit .conversionFactor !== 1)
+				{
+					unit .toXMLStream (stream);
+
+					stream .string += "\n";
+				}
+			}
+		
+			var metaDatas = this .getMetaDatas ();
+
+			for (var key in metaDatas)
+			{
+				stream .string += Generator .Indent ();
+				stream .string += "<meta";
+				stream .string += " ";
+				stream .string += "name='";
+				stream .string += Generator .XMLEncode (key);
+				stream .string += "'";
+				stream .string += " ";
+				stream .string += "content='";
+				stream .string += Generator .XMLEncode (metaDatas [key]);
+				stream .string += "'";
+				stream .string += "/>\n";
+			}
+		
+			// </head>
+
+			Generator .DecIndent ();
+
+			stream .string += Generator .Indent ();
+			stream .string += "</head>\n";
+			stream .string += Generator .Indent ();
+			stream .string += "<Scene>\n";
+
+			Generator .IncIndent ();
+		
+			// <Scene>
+
+			var exportedNodes = this .getExportedNodes ();
+
+			Generator .PushExecutionContext (this);
+			Generator .EnterScope ();
+			Generator .ExportedNodes (exportedNodes);
+
 			X3DExecutionContext .prototype .toXMLStream .call (this, stream);
+		
+			for (var exportedName in exportedNodes)
+			{
+				//try
+				{
+					exportedNodes [exportedName] .toXMLStream (stream);
+
+					stream .string += "\n";
+				}
+				//catch (const X3DError &)
+				{ }
+			}
+
+			Generator .LeaveScope ();
+			Generator .PopExecutionContext ();
+
+			// </Scene>
+
+			Generator .DecIndent ();
+
+			stream .string += Generator .Indent ();
+			stream .string += "</Scene>\n";
+
+			Generator .DecIndent ();
+
+			stream .string += "</X3D>\n";
 		},
 	});
 

@@ -228,6 +228,8 @@ function ($,
 				}
 				catch (error)
 				{
+					// Output unresolved routes.
+
 					var routes = this .routes;
 
 					for (var id in routes)

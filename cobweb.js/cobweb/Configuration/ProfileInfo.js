@@ -69,6 +69,9 @@ function ($)
 	$.extend (ProfileInfo .prototype,
 	{
 		constructor: ProfileInfo,
+		toXMLStream: function (stream)
+		{
+		},
 	});
 
 	return ProfileInfo;

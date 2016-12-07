@@ -49,8 +49,10 @@
 
 define ([
 	"jquery",
+	"cobweb/InputOutput/Generator",
 ],
-function ($)
+function ($,
+          Generator)
 {
 "use strict";
 
@@ -64,6 +66,24 @@ function ($)
 	$.extend (UnitInfo .prototype,
 	{
 		constructor: UnitInfo,
+		toXMLStream: function (stream)
+		{
+			stream .string += Generator .Indent ();
+			stream .string += "<unit";
+			stream .string += " ";
+			stream .string += "category='";
+			stream .string += this .category;
+			stream .string += "'";
+			stream .string += " ";
+			stream .string += "name='";
+			stream .string += Generator .XMLEncode (this .name);
+			stream .string += "'";
+			stream .string += " ";
+			stream .string += "conversionFactor='";
+			stream .string += this .conversionFactor;
+			stream .string += "'";
+			stream .string += "/>";
+		},
 	});
 
 	Object .defineProperty (UnitInfo .prototype, "conversion_factor",

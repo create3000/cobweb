@@ -83,6 +83,22 @@ function ($)
 		{
 			return this .array;
 		},
+		toXMLStream: function (stream)
+		{
+			var array = this .array;
+
+			for (var i = 0, length = array .length; i < length; ++ i)
+			{
+				try
+				{
+					array [i] .toXMLStream (stream);
+	
+					stream .string += "\n";
+				}
+				catch (error)
+				{ }
+			}
+		},
 	});
 
 	return RouteArray;
