@@ -318,9 +318,9 @@ function ($,
 				browser .setHitRay (this .getProjectionMatrix () .get (), viewport);
 				this .getModelViewMatrix () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 
-				this .currentViewport .push (renderObject);
+				this .currentViewport .push (this);
 				this .groupNode .traverse (type, renderObject);
-				this .currentViewport .pop (renderObject);
+				this .currentViewport .pop (this);
 
 				this .getModelViewMatrix () .pop ()
 			}
@@ -329,9 +329,9 @@ function ($,
 		{
 			this .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
 	
-			this .currentViewport .push (renderObject);
+			this .currentViewport .push (this);
 			this .groupNode .traverse (type, renderObject);
-			this .currentViewport .pop (renderObject);
+			this .currentViewport .pop (this);
 
 			this .navigationInfos .update ();
 			this .backgrounds     .update ();
@@ -358,9 +358,9 @@ function ($,
 			this .getModelViewMatrix  () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 	
 			// Render
-			this .currentViewport .push (renderObject);
+			this .currentViewport .push (this);
 			renderObject .render (type, this .groupNode);
-			this .currentViewport .pop (renderObject);
+			this .currentViewport .pop (this);
 
 			this .getModelViewMatrix  () .pop ()
 			this .getProjectionMatrix () .pop ()
@@ -371,9 +371,9 @@ function ($,
 
 			this .getModelViewMatrix () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 
-			this .currentViewport .push (renderObject);
+			this .currentViewport .push (this);
 			renderObject .render (type, this .groupNode);
-			this .currentViewport .pop (renderObject);
+			this .currentViewport .pop (this);
 
 			this .getModelViewMatrix () .pop ()
 		},

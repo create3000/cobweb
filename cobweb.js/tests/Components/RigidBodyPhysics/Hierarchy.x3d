@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/RigidBodyPhysics/Hierarchy.x3d'/>
-    <meta name='modified' content='Wed, 23 Nov 2016 10:40:44 GMT'/>
+    <meta name='modified' content='Mon, 12 Dec 2016 05:48:36 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -44,29 +44,45 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='5.87788534164429, 6.46984958648682, 13.8524446487427'/>
+              value='-3.27109456062317, 0.403321444988251, 3.7999849319458'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.704047462871212, 0.695566762376517, 0.143192350010952, 0.568941727555854'/>
+              value='-0.324169425913282, -0.945703758479303, -0.0236343923377275, 0.292580105235394'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='-1.77635683940025e-15, -7.105427357601e-15, 3.5527136788005e-15'/>
+              value='-2.13188505172729, 0.00838322006165981, -0.2039525359869'/>
         </MetadataSet>
         <MetadataSet DEF='Selection' containerField='value'
             name='Selection'
             reference='http://titania.create3000.de'>
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
-              reference='http://titania.create3000.de'/>
+              reference='http://titania.create3000.de'>
+            <Shape DEF='_1' containerField='value'>
+              <Appearance>
+                <Material/>
+              </Appearance>
+              <IndexedFaceSet DEF='_2'
+                  texCoordIndex='0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1, 5, 4, 7, 6, -1, 3, 2, 6, 7, -1, 4, 5, 1, 0, -1, 4, 0, 3, 7, -1, 1, 5, 6, 2, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 1 1, 0 1'/>
+                <Coordinate
+                    point='-5.21533 -0.131018 1, -3.21534 -0.131018 1, -3.21534 1.86898 1, -5.21533 1.86898 1, -5.21533 -0.131018 -1, -3.21534 -0.131018 -1, -3.21534 1.86898 -1, -5.21533 1.86898 -1'/>
+              </IndexedFaceSet>
+            </Shape>
+          </MetadataSet>
           <MetadataSet DEF='children' containerField='value'
               name='children'
-              reference='http://titania.create3000.de'/>
+              reference='http://titania.create3000.de'>
+            <IndexedFaceSet USE='_2' containerField='value'/>
+          </MetadataSet>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
-    <CollidableShape DEF='_1'
+    <CollidableShape DEF='_3'
         translation='-3 0 0'>
       <Shape containerField='shape'>
         <Appearance>
@@ -75,37 +91,33 @@
         <Cone/>
       </Shape>
     </CollidableShape>
-    <CollidableOffset DEF='_2'
+    <CollidableOffset DEF='_4'
         translation='1 0 0'>
       <CollidableShape containerField='collidable'
           translation='2 0 0'>
-        <Shape containerField='shape'>
-          <Appearance>
-            <Material/>
-          </Appearance>
-          <Box/>
-        </Shape>
+        <Shape USE='_1' containerField='shape'/>
       </CollidableShape>
     </CollidableOffset>
     <RigidBodyCollection>
-      <CollisionCollection DEF='_3'>
-        <CollidableShape USE='_1' containerField='collidables'/>
-        <CollidableOffset USE='_2' containerField='collidables'/>
+      <CollisionCollection DEF='_5'
+          enabled='true'>
+        <CollidableShape USE='_3' containerField='collidables'/>
+        <CollidableOffset USE='_4' containerField='collidables'/>
         <CollisionSpace containerField='collidables'/>
       </CollisionCollection>
       <RigidBody
           enabled='false'
           position='-3 0 0'>
-        <CollidableShape USE='_1' containerField='geometry'/>
+        <CollidableShape USE='_3' containerField='geometry'/>
       </RigidBody>
       <RigidBody
           enabled='false'
           position='1 0 0'>
-        <CollidableOffset USE='_2' containerField='geometry'/>
+        <CollidableOffset USE='_4' containerField='geometry'/>
       </RigidBody>
     </RigidBodyCollection>
     <CollisionSensor>
-      <CollisionCollection USE='_3'/>
+      <CollisionCollection USE='_5'/>
     </CollisionSensor>
     <Contact/>
   </Scene>

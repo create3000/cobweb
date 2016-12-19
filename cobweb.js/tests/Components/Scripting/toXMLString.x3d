@@ -10,7 +10,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Scripting/toXMLString.x3d'/>
-    <meta name='modified' content='Wed, 07 Dec 2016 12:08:13 GMT'/>
+    <meta name='modified' content='Fri, 09 Dec 2016 01:33:45 GMT'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='BooleanSwitch' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Grouping/BooleanSwitch.x3d", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Grouping/BooleanSwitch.x3d", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Grouping/BooleanSwitch.x3d", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Grouping/BooleanSwitch.x3d"'>
@@ -43,8 +43,7 @@
         </TimeSensor>
       </ProtoBody>
     </ProtoDeclare>
-    <WorldInfo
-        title='test'>
+    <WorldInfo>
       <MetadataSet DEF='Titania'
           name='Titania'
           reference='http://titania.create3000.de'>

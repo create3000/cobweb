@@ -1289,6 +1289,7 @@
     <None Include="tests\Components\Core\Comment.x3d" />
     <None Include="tests\Components\Core\EXPORT.wrl" />
     <None Include="tests\Components\PROTO\Rotor.wrl" />
+    <None Include="tests\Components\RigidBodyPhysics\BallBounceSimple.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
