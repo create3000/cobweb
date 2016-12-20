@@ -525,7 +525,7 @@ function ($,
 		{
 			return this ._fields;
 		},
-		getCDATA: function ()
+		getSourceText: function ()
 		{
 			return null;
 		},
@@ -673,7 +673,7 @@ function ($,
 				references = [ ],
 				childNodes = [ ];
 
-			var cdata = this .getCDATA ();
+			var cdata = this .getSourceText ();
 
 			if (cdata && cdata .length === 0)
 				cdata = null;

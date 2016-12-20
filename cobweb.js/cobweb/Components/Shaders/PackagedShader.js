@@ -100,6 +100,10 @@ function ($,
 		{
 			return "shaders";
 		},
+		getSourceText: function ()
+		{
+			return this .url_;
+		},
 	});
 
 	return PackagedShader;

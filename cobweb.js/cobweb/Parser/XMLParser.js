@@ -611,7 +611,7 @@ function ($,
 		{
 			var
 				node  = this .getParent (),
-				field = node .getCDATA ();
+				field = node .getSourceText ();
 
 			if (field)
 			{

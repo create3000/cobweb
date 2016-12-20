@@ -97,7 +97,7 @@ function ($,
 		{
 			return "programs";
 		},
-		getCDATA: function ()
+		getSourceText: function ()
 		{
 			return this .url_;
 		},
