@@ -11,7 +11,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Scripting/toXMLString.x3d'/>
-    <meta name='modified' content='Thu, 22 Dec 2016 08:35:04 GMT'/>
+    <meta name='modified' content='Thu, 22 Dec 2016 12:33:40 GMT'/>
     <meta name='outputStyle' content='nicest'/>
   </head>
   <Scene>
@@ -44,7 +44,7 @@
             <connect nodeField='cycleTime' protoField='cycleTime'/>
           </IS>
         </TimeSensor>
-        <ProtoInstance name='BooleanSwitch' DEF='_1'>
+        <ProtoInstance name='BooleanSwitch'>
           <fieldValue name='bboxSize' value='1 2 3'/>
           <IS>
             <connect nodeField='whichChoice' protoField='enabled'/>
@@ -86,6 +86,9 @@
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -112,7 +115,7 @@
             <Box/>
           </Shape>
         </Transform>
-        <Viewpoint DEF='_2'/>
+        <Viewpoint DEF='_1'/>
       </field>
       <field accessType='initializeOnly' type='MFVec3f' name='point' value='1 2 3, 4 5 6'/>
 <![CDATA[javascript:
@@ -153,21 +156,21 @@ function initialize ()
       <field accessType='initializeOnly' type='SFMatrix4d' name='SFMatrix4dValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='SFMatrix4f' name='SFMatrix4fValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='SFNode' name='SFNodeValue'>
-        <ProtoInstance name='Prototype' DEF='_3'>
+        <ProtoInstance name='Prototype' DEF='_2'>
           <fieldValue name='enabled' value='true'/>
           <fieldValue name='translation' value='1 2 3'/>
           <fieldValue name='children'>
-            <PixelTexture DEF='_4'/>
-            <Collision DEF='_5'>
-              <TimeSensor DEF='_6' containerField='proxy'/>
-              <TimeSensor USE='_6'/>
+            <PixelTexture DEF='_3'/>
+            <Collision DEF='_4'>
+              <TimeSensor DEF='_5' containerField='proxy'/>
+              <TimeSensor USE='_5'/>
             </Collision>
-            <PixelTexture USE='_4'/>
+            <PixelTexture USE='_3'/>
           </fieldValue>
         </ProtoInstance>
       </field>
       <field accessType='initializeOnly' type='SFRotation' name='SFRotationValue' value='0.267261241912424 0.534522483824849 0.801783725737273 4'/>
-      <field accessType='initializeOnly' type='SFString' name='SFStringValue' value='Hello Wörld!&#xA;&amp;&#35;&quot;-&apos;&lt;&gt;&#92;&#xA;äöü'/>
+      <field accessType='initializeOnly' type='SFString' name='SFStringValue' value='Hello Wörld!&#xA;&amp;&#35;&quot;&quot;-&apos;&lt;&gt;&#92;&#xA;äöü'/>
       <field accessType='initializeOnly' type='SFTime' name='SFTimeValue' value='123.456789012346'/>
       <field accessType='initializeOnly' type='SFVec2d' name='SFVec2dValue' value='1 2'/>
       <field accessType='initializeOnly' type='SFVec2f' name='SFVec2fValue' value='1 2'/>
@@ -193,9 +196,9 @@ function initialize ()
       <field accessType='initializeOnly' type='MFMatrix4d' name='MFMatrix4dValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1, 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='MFMatrix4f' name='MFMatrix4fValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1, 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='MFNode' name='MFNodeValue'>
-        <ProtoInstance name='Prototype' USE='_3'/>
-        <TimeSensor DEF='_7'/>
-        <TimeSensor USE='_7'/>
+        <ProtoInstance name='Prototype' USE='_2'/>
+        <TimeSensor DEF='_6'/>
+        <TimeSensor USE='_6'/>
       </field>
       <field accessType='initializeOnly' type='MFRotation' name='MFRotationValue' value='0.267261241912424 0.534522483824849 0.801783725737273 4, 0.267261241912424 0.534522483824849 0.801783725737273 4'/>
       <field accessType='initializeOnly' type='MFString' name='MFStringValue' value='"ABCDEF", "abcdef"'/>
@@ -221,13 +224,13 @@ function initialize ()
 ]]>
     </Script>
     <ProtoInstance name='BooleanSwitch'/>
-    <Inline DEF='_8'
+    <Inline DEF='_7'
         url='"../Core/EXPORT.x3d"'/>
     <ProtoInstance name='Prototype'/>
-    <IMPORT inlineDEF='_8' exportedDEF='Export'/>
-    <IMPORT inlineDEF='_8' exportedDEF='ExportAs' AS='ImportAs'/>
+    <IMPORT inlineDEF='_7' exportedDEF='Export'/>
+    <IMPORT inlineDEF='_7' exportedDEF='ExportAs' AS='ImportAs'/>
     <ROUTE fromNode='Box_1' fromField='translation_changed' toNode='Box_1' toField='set_scale'/>
-    <ROUTE fromNode='Box_1' fromField='translation_changed' toNode='_2' toField='set_position'/>
+    <ROUTE fromNode='Box_1' fromField='translation_changed' toNode='_1' toField='set_position'/>
     <ROUTE fromNode='Export' fromField='translation_changed' toNode='ImportAs' toField='set_translation'/>
     <ROUTE fromNode='Box_1' fromField='translation_changed' toNode='Export' toField='set_translation'/>
     <EXPORT localDEF='Box_1' AS='Box'/>
