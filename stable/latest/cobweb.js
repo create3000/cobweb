@@ -9448,6 +9448,10 @@ function ($)
 	function FieldDefinitionArray (value)
 	{
 		this .array = value;
+		this .index = { };
+
+		for (var i = 0, length = value .length; i < length; ++ i)
+			this .index [value [i] .name] = value [i];
 
 		return new Proxy (this, handler);
 	}
@@ -9455,6 +9459,15 @@ function ($)
 	$.extend (FieldDefinitionArray .prototype,
 	{
 		constructor: FieldDefinitionArray,
+		add: function (fieldDefinition)
+		{
+			this .array .push (fieldDefinition);
+			this .index [fieldDefinition .name] = fieldDefinition;
+		},
+		get: function (key)
+		{
+			return this .index [key];
+		},
 		getValue: function ()
 		{
 			return this .array;
@@ -9594,6 +9607,16 @@ function ()
 
 			for (var key in interests)
 				interests [key] ();
+		},
+		toVRMLString: function ()
+		{ },
+		toXMLString: function ()
+		{
+			var stream = { string: "" };
+
+			this .toXMLStream (stream);
+
+			return stream .string;
 		},
 		dispose: function () { },
 	};
@@ -10500,6 +10523,36 @@ function ($,
 		{
 			return this ._fieldCallbacks;
 		},
+		addOutputRoute: function (route)
+		{
+			if (! this .hasOwnProperty ("_outputRoutes"))
+				this ._outputRoutes = { };
+
+			this ._outputRoutes [route .getId ()] = route;
+		},
+		removeOutputRoute: function (route)
+		{
+			delete this ._outputRoutes [route .getId ()];
+		},
+		getOutputRoutes: function ()
+		{
+			return this ._outputRoutes;
+		},
+		addInputRoute: function (route)
+		{
+			if (! this .hasOwnProperty ("_inputRoutes"))
+				this ._inputRoutes = { };
+
+			this ._inputRoutes [route .getId ()] = route;
+		},
+		removeInputRoute: function (route)
+		{
+			delete this ._inputRoutes [route .getId ()];
+		},
+		getInputRoutes: function ()
+		{
+			return this ._inputRoutes;
+		},
 		processEvent: function (event)
 		{
 			if (event .sources [this .getId ()])
@@ -10604,14 +10657,27 @@ function ($,
 
 define ('cobweb/InputOutput/Generator',[
 	"jquery",
+	"cobweb/Bits/X3DConstants",
 ],
-function ($)
+function ($,
+          X3DConstants)
 {
 
 
 	return {
 		indent: "",
 		indentChar: "  ",
+		executionContextStack: [ null ],
+		importedNodesIndex: { },
+		exportedNodesIndex: { },
+		nodes: { },
+		names: { },
+		namesByNode: { },
+		importedNames: { },
+		routeNodes: { },
+		level: 0,
+		newName: 0,
+		containerFields: [ ],
 		Indent: function ()
 		{
 			return this .indent;
@@ -10623,6 +10689,256 @@ function ($)
 		DecIndent: function ()
 		{
 			this .indent = this .indent .substr (0, this .indent .length - this .indentChar .length);
+		},
+		PushExecutionContext: function (executionContext)
+		{
+			this .executionContextStack .push (executionContext);
+
+			this .importedNodesIndex [executionContext .getId ()] = { };
+			this .exportedNodesIndex [executionContext .getId ()] = { };
+		},
+		PopExecutionContext: function ()
+		{
+			this .executionContextStack .pop ();
+
+			if (this .ExecutionContext ())
+				return;
+
+			this .importedNodesIndex = { };
+			this .exportedNodesIndex = { };
+		},
+		ExecutionContext: function ()
+		{
+			return this .executionContextStack [this .executionContextStack .length - 1];
+		},
+		EnterScope: function ()
+		{
+			if (this .level === 0)
+				this .newName = 0;
+		
+			++ this .level;
+		},
+		LeaveScope: function ()
+		{
+			-- this .level;
+		
+			if (this .level === 0)
+			{
+				this .nodes         = { };
+				this .names         = { };
+				this .namesByNode   = { };
+				this .importedNames = { };
+				this .importedNodes = { };
+			}
+		},
+		ExportedNodes: function (exportedNodes)
+		{
+		},
+		ImportedNodes: function (importedNodes)
+		{
+			var index = this .importedNodesIndex [this .ExecutionContext () .getId ()];
+
+			for (var importedName in importedNodes)
+			{
+				try
+				{
+					index [importedNodes [importedName] .getInlineNode () .getId ()] = true;
+				}
+				catch (error)
+				{ }
+			}
+		},
+		AddImportedNode: function (exportedNode, importedName)
+		{
+			this .importedNames [exportedNode .getId ()] = importedName;
+		},
+		AddRouteNode: function (routeNode)
+		{
+			this .routeNodes [routeNode .getId ()] = true;
+		},
+		ExistsRouteNode: function (routeNode)
+		{
+			if (this .routeNodes [routeNode .getId ()])
+				return true;
+	
+			return false;
+		},
+		IsSharedNode: function (baseNode)
+		{
+			return false;
+		},
+		AddNode: function (baseNode)
+		{
+			this .nodes [baseNode .getId ()] = true;
+
+			this .AddRouteNode (baseNode);
+		},
+		ExistsNode: function (baseNode)
+		{
+			return this .nodes [baseNode .getId ()] !== undefined;
+		},
+		Name: function (baseNode)
+		{
+			// Is the node already in index
+
+			var name = this .namesByNode [baseNode .getId ()];
+
+			if (name !== undefined)
+				return name;
+
+			// The node has no name
+
+			if (baseNode .getName () .length === 0)
+			{
+				if (this .NeedsName (baseNode))
+				{
+					var name = this .UniqueName ();
+		
+					this .names [name]                     = baseNode;
+					this .namesByNode [baseNode .getId ()] = name;
+
+					return name;
+				}
+		
+				// The node doesn't need a name
+
+				return baseNode .getName ();
+			}
+		
+			// The node has a name
+		 	
+			var _TrailingNumbers = /(_\d+$)/;
+
+			var name      = baseNode .getName ();
+			var hasNumber = name .match (_TrailingNumbers) !== null;
+		
+			name = name .replace (_TrailingNumbers, "");
+		
+			if (name .length === 0)
+			{
+				if (this .NeedsName (baseNode))
+					name = this .UniqueName ();
+
+				else
+					return "";
+			}
+			else
+			{
+				var
+					i       = 0,
+					newName = hasNumber ? name + '_' + (++ i) : name;
+
+				while (this .names [newName] !== undefined)
+				{
+					newName = name + '_' + (++ i);
+				}
+
+				name = newName;
+			}
+
+			this .names [name]                     = baseNode;
+			this .namesByNode [baseNode .getId ()] = name;
+
+			return name;
+		},
+		NeedsName: function (baseNode)
+		{
+			if (baseNode .getCloneCount () > 1)
+				return true;
+
+			if (baseNode .hasRoutes ())
+				return true;
+
+			var
+				executionContext = baseNode .getExecutionContext (),
+				index            = this .importedNodesIndex [executionContext .getId ()];
+
+			if (index)
+			{
+				if (index [baseNode .getId ()])
+					return true;
+			}
+
+			var index = this .exportedNodesIndex [executionContext .getId ()];
+
+			if (index)
+			{
+				if (index [baseNode .getId ()])
+					return true;
+			}
+
+			return false;
+		},
+		UniqueName: function ()
+		{
+			for (; ;)
+			{
+				var name = '_' + (++ this .newName);
+		
+				if (this .names [name] !== undefined)
+					continue;
+
+				return name;
+			}
+		},
+		LocalName: function (baseNode)
+		{
+			var importedName = this .importedNames [baseNode .getId ()];
+
+			if (importedName !== undefined)
+				return importedName;
+
+			if (this .ExistsNode (baseNode))
+				return this .Name (baseNode);
+
+			throw new Error ("Couldn't get local name for node '" + baseNode .getTypeName () + "'.");
+		},
+		PushContainerField: function (field)
+		{
+			this .containerFields .push (field);
+		},
+		PopContainerField: function ()
+		{
+			this .containerFields .pop ();
+		},
+		ContainerField: function ()
+		{
+			if (this .containerFields .length)
+				return this .containerFields [this .containerFields .length - 1];
+
+			return null;
+		},
+		AccessType: function (accessType)
+		{
+			switch (accessType)
+			{
+				case X3DConstants .initializeOnly:
+					return "initializeOnly";
+				case X3DConstants .inputOnly:
+					return "inputOnly";
+				case X3DConstants .outputOnly:
+					return "outputOnly";
+				case X3DConstants .inputOutput:
+					return "inputOutput";
+			}
+		},
+		XMLEncode: function (string)
+		{
+			return string
+				.replace (/&/g, "&amp;")
+				.replace (/#/g, "&#35;")
+				.replace (/\\/g, "&#92;")
+				.replace (/\t/g, "&#x9;")
+				.replace (/\n/g, "&#xA;")
+				.replace (/\r/g, "&#xD;")
+				.replace (/</g, "&lt;")
+				.replace (/>/g, "&gt;")
+				.replace (/'/g, "&apos;")
+				.replace (/"/g, "&quot;");
+		},
+		escapeCDATA: function (string)
+		{
+			return string .replace (/\]\]\>/g, "\\]\\]\\>");
 		},
 	};
 });
@@ -10806,6 +11122,10 @@ function ($,
 		{
 			this .set (value instanceof X3DArrayField ? value .getValue () : value);
 			this .addEvent ();
+		},
+		isDefaultValue: function ()
+		{
+			return this .length === 0;
 		},
 		set: function (value)
 		{
@@ -11049,22 +11369,21 @@ function ($,
 
 			return string;
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
 			var length = this .length;
 
 			if (length)
 			{
-				var
-					value  = this .getValue (),
-					string = "";
+				var value = this .getValue ();
 
 				for (var i = 0, n = length - 1; i < n; ++ i)
-					string += value [i] .toXMLString () + ", ";
+				{
+					value [i] .toXMLStream (stream);
+					stream .string += ", ";
+				}
 
-				string += value [n] .toXMLString ();
-
-				return string;
+				value [n] .toXMLStream (stream);
 			}
 		},
 		dispose: function ()
@@ -11158,6 +11477,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return new SFBool (this .getValue ());
 		},
+		isDefaultValue: function ()
+		{
+			return this .getValue () === false;
+		},
 		set: function (value)
 		{
 			X3DField .prototype .set .call (this, Boolean (value));
@@ -11179,9 +11502,9 @@ function ($, X3DField, X3DConstants)
 		{
 			return this .getValue () ? "TRUE" : "FALSE";
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
-			return this .getValue () ? "true" : "false";
+			stream .string += this .getValue () ? "true" : "false";
 		},
 	});
 
@@ -11797,6 +12120,13 @@ function ($, Color3, X3DField, X3DConstants)
 		{
 			return this .getValue () .equals (color .getValue ());
 		},
+		isDefaultValue: function ()
+		{
+			return (
+				this .getValue () .r === 0 &&
+				this .getValue () .g === 0 &&
+				this .getValue () .b === 0);
+		},
 		set: function (value)
 		{
 			this .getValue () .assign (value);
@@ -11814,9 +12144,9 @@ function ($, Color3, X3DField, X3DConstants)
 		{
 			return this .getValue () .toString ();
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
-			return this .getValue () .toString ();
+			stream .string += this .getValue () .toString ();
 		},
 	});
 
@@ -12146,12 +12476,20 @@ function ($, X3DField, SFColor, X3DConstants, Color4)
 		{
 			return X3DConstants .SFColorRGBA;
 		},
-		equals: SFColor .equals,
-		set: SFColor .set,
-		getHSV: SFColor .getHSV,
-		setHSV: SFColor .setHSV,
-		toString: SFColor .toString,
-		toXMLString: SFColor .toXMLString,
+		equals: SFColor .prototype .equals,
+		isDefaultValue: function ()
+		{
+			return (
+				this .getValue () .r === 0 &&
+				this .getValue () .g === 0 &&
+				this .getValue () .b === 0 &&
+				this .getValue () .a === 0);
+		},
+		set: SFColor .prototype .set,
+		getHSV: SFColor .prototype .getHSV,
+		setHSV: SFColor .prototype .setHSV,
+		toString: SFColor .prototype .toString,
+		toXMLStream: SFColor .prototype .toXMLStream,
 	});
 
 	var r = {
@@ -12309,6 +12647,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return X3DConstants .SFDouble;
 		},
+		isDefaultValue: function ()
+		{
+			return this .getValue () === 0;
+		},
 		set: function (value)
 		{
 			X3DField .prototype .set .call (this, +value);
@@ -12318,9 +12660,9 @@ function ($, X3DField, X3DConstants)
 		{
 			return String (this .getValue ());
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
-			return String (this .getValue ());
+			stream .string += String (this .getValue ());
 		},
 	});
 
@@ -12408,6 +12750,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return X3DConstants .SFFloat;
 		},
+		isDefaultValue: function ()
+		{
+			return this .getValue () === 0;
+		},
 		set: function (value)
 		{
 			X3DField .prototype .set .call (this, +value);
@@ -12417,9 +12763,9 @@ function ($, X3DField, X3DConstants)
 		{
 			return String (this .getValue ());
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
-			return String (this .getValue ());
+			stream .string += String (this .getValue ());
 		},
 	});
 
@@ -12507,6 +12853,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return X3DConstants .SFInt32;
 		},
+		isDefaultValue: function ()
+		{
+			return this .getValue () === 0;
+		},
 		set: function (value)
 		{
 			X3DField .prototype .set .call (this, ~~value);
@@ -12516,9 +12866,9 @@ function ($, X3DField, X3DConstants)
 		{
 			return this .getValue () .toString (base);
 		},
-		toXMLString: function (base)
+		toXMLStream: function (stream)
 		{
-			return this .getValue () .toString (base);
+			stream .string += this .getValue () .toString ();
 		},
 	});
 
@@ -12594,6 +12944,10 @@ function ($, X3DField)
 			{
 				return this .getValue () .equals (matrix .getValue ());
 			},
+			isDefaultValue: function ()
+			{
+				return this .getValue () .equals (Matrix .Identity);
+			},
 			set: function (value)
 			{
 				this .getValue () .assign (value);
@@ -12658,9 +13012,9 @@ function ($, X3DField)
 			{
 				return this .getValue () .toString ();
 			},
-			toString: function ()
+			toXMLStream: function (stream)
 			{
-				return this .getValue () .toString ();
+				stream .string += this .getValue () .toString ();
 			},
 		});
 	};
@@ -12735,6 +13089,10 @@ function ($, X3DField)
 			{
 				return this .getValue () .equals (vector .getValue ());
 			},
+			isDefaultValue: function (vector)
+			{
+				return this .getValue () .equals (Type .Zero);
+			},
 			set: function (value)
 			{
 				this .getValue () .assign (value);
@@ -12775,9 +13133,9 @@ function ($, X3DField)
 			{
 				return this .getValue () .toString ();
 			},
-			toString: function ()
+			toXMLStream: function (stream)
 			{
-				return this .getValue () .toString ();
+				stream .string += this .getValue () .toString ();
 			},
 		});
 	};
@@ -17868,7 +18226,14 @@ function ($, X3DField, X3DConstants)
 	{
 	   if (this instanceof SFNode)
 	   {
-			X3DField .call (this, value ? value : null);
+			if (value)
+			{
+				value .addParent (this);
+
+				X3DField .call (this, value);
+			}
+			else
+				X3DField .call (this, null);
 
 			return new Proxy (this, handler);
 		}
@@ -17905,6 +18270,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return this .getValue () === node .getValue ();
 		},
+		isDefaultValue: function ()
+		{
+			return this .getValue () === null;
+		},
 		set: function (value)
 		{
 			var current = this .getValue ();
@@ -17927,15 +18296,39 @@ function ($, X3DField, X3DConstants)
 		},
 		getNodeTypeName: function ()
 		{
-			return this .getValue () .getTypeName ();
+			var value = this .getValue ();
+
+			if (value)
+				return value .getTypeName ();
+
+			throw new Error ("SFNode.getNodeTypeName: node is null.");
 		},
 		getNodeName: function ()
 		{
-			return this .getValue () .getName ();
+			var value = this .getValue ();
+
+			if (value)
+				return value .getName ();
+
+			throw new Error ("SFNode.getNodeName: node is null.");
+		},
+		getNodeType: function ()
+		{
+			var value = this .getValue ();
+
+			if (value)
+				return value .getType () .slice ();
+
+			throw new Error ("SFNode.getNodeType: node is null.");
 		},
 		getFieldDefinitions: function ()
 		{
-			return this .getValue () .getFieldDefinitions ();
+			var value = this .getValue ();
+
+			if (value)
+				return value .getFieldDefinitions ();
+
+			throw new Error ("SFNode.getFieldDefinitions: node is null.");
 		},
 		addClones: function (count)
 		{
@@ -17965,21 +18358,25 @@ function ($, X3DField, X3DConstants)
 		toString: function ()
 		{
 			var node = this .getValue ();
+
 			return node ? node .toString () : "NULL";
 		},
 		toVRMLString: function ()
 		{
 			var node = this .getValue ();
+
 			return node ? node .toVRMLString () : "NULL";
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
 			var node = this .getValue ();
-			return node ? node .toXMLString () : "<!-- NULL -->";
+
+			stream .string += node ? node .toXMLString () : "NULL";
 		},
 		dispose: function ()
 		{
 			this .set (null);
+
 			X3DField .prototype .dispose .call (this);
 		},
 	});
@@ -18083,6 +18480,10 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 		{
 			return this .getValue () .equals (rotation .getValue ());
 		},
+		isDefaultValue: function ()
+		{
+			return this .getValue () .equals (Rotation4 .Identity);
+		},
 		getTypeName: function ()
 		{
 			return "SFRotation";
@@ -18124,82 +18525,82 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 		{
 			return this .getValue () .toString ();
 		},
-		toString: function ()
+		toXMLStream: function (stream)
 		{
-			return this .getValue () .toString ();
+			stream .string += this .getValue () .toString ();
 		},
 	});
 
-		var x = {
-			get: function ()
-			{
-				return this .getValue () .x;
-			},
-			set: function (value)
-			{
-				this .getValue () .x = value;
-				this .addEvent ();
-			},
-			enumerable: true,
-			configurable: false
-		};
-	
-		var y = {
-			get: function ()
-			{
-				return this .getValue () .y;
-			},
-			set: function (value)
-			{
-				this .getValue () .y = value;
-				this .addEvent ();
-			},
-			enumerable: true,
-			configurable: false
-		};
-	
-		var z = {
-			get: function ()
-			{
-				return this .getValue () .z;
-			},
-			set: function (value)
-			{
-				this .getValue () .z = value;
-				this .addEvent ();
-			},
-			enumerable: true,
-			configurable: false
-		};
-	
-		var angle = {
-			get: function ()
-			{
-				return this .getValue () .angle;
-			},
-			set: function (value)
-			{
-				this .getValue () .angle = value;
-				this .addEvent ();
-			},
-			enumerable: true,
-			configurable: false
-		};
-	
-		Object .defineProperty (SFRotation .prototype, "x",     x);
-		Object .defineProperty (SFRotation .prototype, "y",     y);
-		Object .defineProperty (SFRotation .prototype, "z",     z);
-		Object .defineProperty (SFRotation .prototype, "angle", angle);
+	var x = {
+		get: function ()
+		{
+			return this .getValue () .x;
+		},
+		set: function (value)
+		{
+			this .getValue () .x = value;
+			this .addEvent ();
+		},
+		enumerable: true,
+		configurable: false
+	};
 
-		x     .enumerable = false;
-		y     .enumerable = false;
-		z     .enumerable = false;
-		angle .enumerable = false;
+	var y = {
+		get: function ()
+		{
+			return this .getValue () .y;
+		},
+		set: function (value)
+		{
+			this .getValue () .y = value;
+			this .addEvent ();
+		},
+		enumerable: true,
+		configurable: false
+	};
 
-		Object .defineProperty (SFRotation .prototype, "0", x);
-		Object .defineProperty (SFRotation .prototype, "1", y);
-		Object .defineProperty (SFRotation .prototype, "2", z);
-		Object .defineProperty (SFRotation .prototype, "3", angle);
+	var z = {
+		get: function ()
+		{
+			return this .getValue () .z;
+		},
+		set: function (value)
+		{
+			this .getValue () .z = value;
+			this .addEvent ();
+		},
+		enumerable: true,
+		configurable: false
+	};
+
+	var angle = {
+		get: function ()
+		{
+			return this .getValue () .angle;
+		},
+		set: function (value)
+		{
+			this .getValue () .angle = value;
+			this .addEvent ();
+		},
+		enumerable: true,
+		configurable: false
+	};
+
+	Object .defineProperty (SFRotation .prototype, "x",     x);
+	Object .defineProperty (SFRotation .prototype, "y",     y);
+	Object .defineProperty (SFRotation .prototype, "z",     z);
+	Object .defineProperty (SFRotation .prototype, "angle", angle);
+
+	x     .enumerable = false;
+	y     .enumerable = false;
+	z     .enumerable = false;
+	angle .enumerable = false;
+
+	Object .defineProperty (SFRotation .prototype, "0", x);
+	Object .defineProperty (SFRotation .prototype, "1", y);
+	Object .defineProperty (SFRotation .prototype, "2", z);
+	Object .defineProperty (SFRotation .prototype, "3", angle);
 
 	return SFRotation;
 });
@@ -18257,15 +18658,18 @@ define ('cobweb/Fields/SFString',[
 	"jquery",
 	"cobweb/Basic/X3DField",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
-function ($, X3DField, X3DConstants)
+function ($,
+          X3DField,
+          X3DConstants,
+          Generator)
 {
 
 
 	var
 		unescape = /\\([\\"])/g,
-		escape   = /([\\"])/g,
-		div      = $('<div>');
+		escape   = /([\\"])/g;
 
 	function SFString (value)
 	{
@@ -18302,6 +18706,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return X3DConstants .SFString;
 		},
+		isDefaultValue: function ()
+		{
+			return this .getValue () === "";
+		},
 		set: function (value)
 		{
 			X3DField .prototype .set .call (this, String (value));
@@ -18311,9 +18719,9 @@ function ($, X3DField, X3DConstants)
 		{
 			return '"'+ SFString .escape (this .getValue ()) + '"';
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
-			return div .text (this .getValue ()) .html ();
+			stream .string += Generator .XMLEncode (this .getValue ());
 		},
 	});
 
@@ -18411,6 +18819,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return X3DConstants .SFTime;
 		},
+		isDefaultValue: function ()
+		{
+			return this .getValue () === 0;
+		},
 		set: function (value)
 		{
 			X3DField .prototype .set .call (this, +value);
@@ -18420,9 +18832,9 @@ function ($, X3DField, X3DConstants)
 		{
 			return String (this .getValue ());
 		},
-		toString: function ()
+		toXMLStream: function (stream)
 		{
-			return String (this .getValue ());
+			stream .string += String (this .getValue ());
 		},
 	});
 
@@ -18781,17 +19193,15 @@ function ($,
 
 			value .removeClones (this ._cloneCount);
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
 			var length = this .length;
 
 			if (length)
 			{
-				var
-					value  = this .getValue (),
-					string = "";
+				Generator .EnterScope ();
 
-				//Generator .EnterScope ();
+				var value = this .getValue ();
 
 				for (var i = 0, n = length - 1; i < n; ++ i)
 				{
@@ -18799,28 +19209,29 @@ function ($,
 
 					if (node)
 					{
-						string += node .toXMLString () + "\n";
+						node .toXMLStream (stream);
+						stream .string += "\n";
 					}
 					else
 					{
-						string += Generator .Indent ();
-						string += "<!-- NULL -->\n";
+						stream .string += Generator .Indent ();
+						stream .string += "<!-- NULL -->\n";
 					}
 				}
-		
+
 				var node = value [n] .getValue ();
 
 				if (node)
 				{
-					string += node .toXMLString ();
+					node .toXMLStream (stream);
 				}
 				else
 				{
-					string += Generator .Indent ();
-					string += "<!-- NULL -->";
+					stream .string += Generator .Indent ();
+					stream .string += "<!-- NULL -->";
 				}
 
-				//Generator .LeaveScope ();
+				Generator .LeaveScope ();
 			}
 		},
 	});
@@ -18852,6 +19263,49 @@ function ($,
 		return MFField;
 	}
 
+	function MFString (value)
+	{
+		if (this instanceof MFString)
+			return X3DArrayField .call (this, arguments);
+		
+		return X3DArrayField .call (Object .create (MFString .prototype), arguments);
+	}
+
+	MFString .prototype = $.extend (Object .create (X3DArrayField .prototype),
+	{
+		constructor: MFString,
+		_valueType: SFString,
+		getTypeName: function ()
+		{
+			return "MFString";
+		},
+		getType: function ()
+		{
+			return X3DConstants .MFString;
+		},
+		toXMLStream: function (stream)
+		{
+			var length = this .length;
+
+			if (length)
+			{
+				var value = this .getValue ();
+
+				for (var i = 0, n = length - 1; i < n; ++ i)
+				{
+					stream .string += "\"";
+					value [i] .toXMLStream (stream);
+					stream .string += "\"";
+					stream .string += ", ";
+				}
+
+				stream .string += "\"";
+				value [n] .toXMLStream (stream);
+				stream .string += "\"";
+			}
+		},
+	});
+
 	var ArrayFields =
 	{
 		MFBool:      MFFieldTemplate ("MFBool",      X3DConstants .MFBool,      SFBool),
@@ -18867,7 +19321,7 @@ function ($,
 		MFMatrix4f:  MFFieldTemplate ("MFMatrix4f",  X3DConstants .MFMatrix4f,  SFMatrix4f),
 		MFNode:      MFNode,
 		MFRotation:  MFFieldTemplate ("MFRotation",  X3DConstants .MFRotation,  SFRotation),
-		MFString:    MFFieldTemplate ("MFString",    X3DConstants .MFString,    SFString),
+		MFString:    MFString,
 		MFTime:      MFFieldTemplate ("MFTime",      X3DConstants .MFTime,      SFTime),
 		MFVec2d:     MFFieldTemplate ("MFVec2d",     X3DConstants .MFVec2d,     SFVec2d),
 		MFVec2f:     MFFieldTemplate ("MFVec2f",     X3DConstants .MFVec2f,     SFVec2f),
@@ -19059,6 +19513,13 @@ function ($, X3DField, ArrayFields, X3DConstants)
 		{
 			return this .getValue () .equals (image .getValue ());
 		},
+		isDefaultValue: function ()
+		{
+			return (
+				this .width  === 0 &&
+				this .height === 0 &&
+				this .comp   === 0);
+		},
 		set: function (image)
 		{
 			this .getValue () .assign (image);
@@ -19082,9 +19543,9 @@ function ($, X3DField, ArrayFields, X3DConstants)
 
 			return string;
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
-			return this .toString ();
+			stream .string += this .toString ();
 		},
 	});
 
@@ -19332,7 +19793,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "2.5";
+	return "2.6";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -19517,6 +19978,7 @@ define ('cobweb/Basic/X3DBaseNode',[
 	"cobweb/Basic/FieldDefinitionArray",
 	"cobweb/Fields",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           X3DEventObject,
@@ -19524,7 +19986,8 @@ function ($,
           X3DFieldDefinition,
           FieldDefinitionArray,
           Fields,
-          X3DConstants)
+          X3DConstants,
+          Generator)
 {
 
 
@@ -19860,6 +20323,9 @@ function ($,
 
 			this ._fields [name] = field;
 
+			if (! this .getPrivate ())
+				field .addClones (1);
+
 			if (userDefined)
 			{
 				this ._userDefinedFields [name] = field;
@@ -19875,9 +20341,6 @@ function ($,
 				enumerable: true,
 				configurable: true, // false : non deleteable
 			});
-
-			if (! this .getPrivate ())
-				field .addClones (1);
 		},
 		removeField: function (name)
 		{
@@ -19936,7 +20399,7 @@ function ($,
 			field .setName (name);
 			field .setAccessType (accessType);
 
-			this .fieldDefinitions .getValue () .push (new X3DFieldDefinition (accessType, name, field));
+			this .fieldDefinitions .add (new X3DFieldDefinition (accessType, name, field));
 
 			this .setField (name, field, true);
 		},
@@ -19948,11 +20411,44 @@ function ($,
 		{
 			return this ._predefinedFields;
 		},
+		getChangedFields: function ()
+		{
+			var
+				changedFields    = [ ],
+				predefinedFields = this .getPredefinedFields ();
+		
+			for (var name in predefinedFields)
+			{
+				var field = predefinedFields [name];
+
+				if ($.isEmptyObject (field .getReferences ()))
+				{
+					if (! field .isInitializable ())
+						continue;
+
+					if (this .isDefaultValue (field))
+						continue;
+				}
+
+				changedFields .push (field);
+			}
+
+			return changedFields;
+		},
+		isDefaultValue: function (field)
+		{
+			var fieldDefinition = this .getFieldDefinitions () .get (field .getName ());
+
+			if (fieldDefinition)
+				return fieldDefinition .value .equals (field);
+
+			return ! field .getSet ();
+		},
 		getFields: function ()
 		{
 			return this ._fields;
 		},
-		getCDATA: function ()
+		getSourceText: function ()
 		{
 			return null;
 		},
@@ -19966,8 +20462,8 @@ function ($,
 			{
 				var field = this .getField (fieldDefinitions [i] .name);
 
-				//if (field .getInputRoutes () .empty () and field .getOutputRoutes () .empty ())
-				//	continue;
+				if ($.isEmptyObject (field .getInputRoutes ()) && $.isEmptyObject (field .getOutputRoutes ()))
+					continue;
 
 				return true;
 			}
@@ -20020,8 +20516,349 @@ function ($,
 		{
 			return this .getTypeName () + " { }";
 		},
-		toXMLString: function ()
+		toXMLStream: function (stream)
 		{
+			if (Generator .IsSharedNode (this))
+			{
+				stream .string += Generator .Indent ();
+				stream .string += "<!-- NULL -->";		
+				return;
+			}
+
+			Generator .EnterScope ();
+
+			var name = Generator .Name (this);
+
+			if (name .length)
+			{
+				if (Generator .ExistsNode (this))
+				{
+					stream .string += Generator .Indent ();
+					stream .string += "<";
+					stream .string += this .getTypeName ();
+					stream .string += " ";
+					stream .string += "USE='";
+					stream .string += Generator .XMLEncode (name);
+					stream .string += "'";
+
+					var containerField = Generator .ContainerField ();
+
+					if (containerField)
+					{
+						if (containerField .getName () !== this .getContainerField ())
+						{
+							stream .string += " ";
+							stream .string += "containerField='";
+							stream .string += Generator .XMLEncode (containerField .getName ());
+							stream .string += "'";
+						}
+					}
+
+					stream .string += "/>";
+
+					Generator .LeaveScope ();
+					return;
+				}
+			}
+		
+			stream .string += Generator .Indent ();
+			stream .string += "<";
+			stream .string += this .getTypeName ();
+
+			if (name .length)
+			{
+				Generator .AddNode (this);
+
+				stream .string += " ";
+				stream .string += "DEF='";
+				stream .string += Generator .XMLEncode (name);
+				stream .string += "'";
+			}
+
+			var containerField = Generator .ContainerField ();
+
+			if (containerField)
+			{
+				if (containerField .getName () !== this .getContainerField ())
+				{
+					stream .string += " ";
+					stream .string += "containerField='";
+					stream .string += Generator .XMLEncode (containerField .getName ());
+					stream .string += "'";
+				}
+			}
+
+			var
+				fields            = this .getChangedFields (),
+				userDefinedFields = this .getUserDefinedFields ();
+
+			var
+				references = [ ],
+				childNodes = [ ];
+
+			var cdata = this .getSourceText ();
+
+			if (cdata && cdata .length === 0)
+				cdata = null;
+
+			Generator .IncIndent ();
+			Generator .IncIndent ();
+
+			for (var i = 0, length = fields .length; i < length; ++ i)
+			{
+				var field = fields [i];
+
+				// If the field is a inputOutput and we have as reference only inputOnly or outputOnly we must output the value
+				// for this field.
+
+				var mustOutputValue = false;
+
+				if (Generator .ExecutionContext ())
+				{
+					if (field .getAccessType () === X3DConstants .inputOutput && ! $.isEmptyObject (field .getReferences ()))
+					{
+						var
+							initializableReference = false,
+							fieldReferences        = field .getReferences ();
+		
+						for (var id in fieldReferences)
+						{
+							initializableReference |= fieldReferences [id] .isInitializable ();
+						}
+
+						if (! initializableReference)
+							mustOutputValue = true;
+					}
+				}
+
+				// If we have no execution context we are not in a proto and must not generate IS references the same is true
+				// if the node is a shared node as the node does not belong to the execution context.
+
+				if ($.isEmptyObject (field .getReferences ()) || ! Generator .ExecutionContext () || mustOutputValue)
+				{
+					if (mustOutputValue)
+						references .push (field);
+
+					if (field .isInitializable ())
+					{
+						switch (field .getType ())
+						{
+							case X3DConstants .SFNode:
+							case X3DConstants .MFNode:
+							{
+								childNodes .push (field);
+								break;
+							}
+							default:
+							{
+								if (field === cdata)
+									break;
+
+								stream .string += "\n";
+								stream .string += Generator .Indent ();
+								stream .string += field .getName ();
+								stream .string += "='";
+
+								field .toXMLStream (stream);
+
+								stream .string += "'";			
+								break;
+							}
+						}
+					}
+				}
+				else
+				{
+					references .push (field);
+				}
+			}
+
+			Generator .DecIndent ();
+			Generator .DecIndent ();
+	
+			if ((! this .hasUserDefinedFields () || userDefinedFields .length === 0) && references .length === 0 && childNodes .length === 0 && ! cdata)
+			{
+				stream .string += "/>";
+			}
+			else
+			{
+				stream .string += ">\n";
+
+				Generator .IncIndent ();
+
+				if (this .hasUserDefinedFields ())
+				{
+					for (var name in userDefinedFields)
+					{
+						var field = userDefinedFields [name];
+
+						stream .string += Generator .Indent ();
+						stream .string += "<field";
+						stream .string += " ";
+						stream .string += "accessType='";
+						stream .string += Generator .AccessType (field .getAccessType ());
+						stream .string += "'";
+						stream .string += " ";
+						stream .string += "type='";
+						stream .string += field .getTypeName ();
+						stream .string += "'";
+						stream .string += " ";
+						stream .string += "name='";
+						stream .string += Generator .XMLEncode (field .getName ());
+						stream .string += "'";
+
+						// If the field is a inputOutput and we have as reference only inputOnly or outputOnly we must output the value
+						// for this field.
+
+						var mustOutputValue = false;
+
+						if (field .getAccessType () === X3DConstants .inputOutput && ! $.isEmptyObject (field .getReferences ()))
+						{
+							var
+								initializableReference = false,
+								fieldReferences        = field .getReferences ();
+
+							for (var id in fieldReferences)
+							{
+								initializableReference |= fieldReferences [id] .isInitializable ();
+							}
+
+							if (! initializableReference)
+								mustOutputValue = true;
+						}
+
+						if (($.isEmptyObject (field .getReferences ()) || ! Generator .ExecutionContext ()) || mustOutputValue)
+						{
+							if (mustOutputValue && Generator .ExecutionContext ())
+								references .push (field);
+		
+							if (! field .isInitializable () || field .isDefaultValue ())
+							{
+								stream .string += "/>\n";
+							}
+							else
+							{
+								// Output value
+
+								switch (field .getType ())
+								{
+									case X3DConstants .SFNode:
+									case X3DConstants .MFNode:
+									{
+										Generator .PushContainerField (null);
+
+										stream .string += ">\n";
+
+										Generator .IncIndent ();
+
+										field .toXMLStream (stream);
+
+										stream .string += "\n";
+
+										Generator .DecIndent ();
+
+										stream .string += Generator .Indent ();
+										stream .string += "</field>\n";
+
+										Generator .PopContainerField ();
+										break;
+									}
+									default:
+									{
+										stream .string += " ";
+										stream .string += "value='";
+
+										field .toXMLStream (stream);
+
+										stream .string += "'";
+										stream .string += "/>\n";
+										break;
+									}
+								}
+							}
+						}
+						else
+						{
+							if (Generator .ExecutionContext ())
+								references .push (field);
+
+							stream .string += "/>\n";
+						}
+					}
+				}
+		
+				if (references .length)
+				{
+					stream .string += Generator .Indent ();
+					stream .string += "<IS>";
+					stream .string += "\n";
+
+					Generator .IncIndent ();
+		
+					for (var i = 0, length = references .length; i < length; ++ i)
+					{
+						var
+							field       = references [i],
+							protoFields = field .getReferences ()
+
+						for (var id in protoFields)
+						{
+							var protoField = protoFields [id];
+
+							stream .string += Generator .Indent ();
+							stream .string += "<connect";
+							stream .string += " ";
+							stream .string += "nodeField='";
+							stream .string += Generator .XMLEncode (field .getName ());
+							stream .string += "'";
+							stream .string += " ";
+							stream .string += "protoField='";
+							stream .string += Generator .XMLEncode (protoField .getName ());
+							stream .string += "'";
+							stream .string += "/>\n";
+						}
+					}
+
+					Generator .DecIndent ();
+
+					stream .string += Generator .Indent ();
+					stream .string += "</IS>\n";
+				}
+
+				for (var i = 0, length = childNodes .length; i < length; ++ i)
+				{
+					var field = childNodes [i];
+
+					Generator .PushContainerField (field);
+
+					field .toXMLStream (stream);
+
+					stream .string += "\n";
+
+					Generator .PopContainerField ();
+				}
+
+				if (cdata)
+				{
+					for (var i = 0, length = cdata .length; i < length; ++ i)
+					{
+						var value = cdata [i];
+
+						stream .string += "<![CDATA[";
+						stream .string += Generator .escapeCDATA (value);
+						stream .string += "]]>\n";
+					}
+				}
+
+				Generator .DecIndent ();
+
+				stream .string += Generator .Indent ();
+				stream .string += "</";
+				stream .string += this .getTypeName ();
+				stream .string += ">";
+			}
+
+			Generator .LeaveScope ();
 		},
 		dispose: function ()
 		{
@@ -23855,6 +24692,26 @@ function ($)
 		{
 			return this .index [key];
 		},
+		getValue: function ()
+		{
+			return this .array;
+		},
+		toXMLStream: function (stream)
+		{
+			var array = this .array;
+
+			for (var i = 0, length = array .length; i < length; ++ i)
+			{
+				try
+				{
+					array [i] .toXMLStream (stream);
+	
+					stream .string += "\n";
+				}
+				catch (error)
+				{ }
+			}
+		},
 	});
 
 	return X3DInfoArray;
@@ -23913,10 +24770,12 @@ define ('cobweb/Configuration/ComponentInfo',[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
-          X3DConstants)
+          X3DConstants,
+          Generator)
 {
 
 
@@ -23935,6 +24794,20 @@ function ($,
 	$.extend (ComponentInfo .prototype,
 	{
 		constructor: ComponentInfo,
+		toXMLStream: function (stream)
+		{
+			stream .string += Generator .Indent ();
+			stream .string += "<component";
+			stream .string += " ";
+			stream .string += "name='";
+			stream .string += this .name;
+			stream .string += "'";
+			stream .string += " ";
+			stream .string += "level='";
+			stream .string += this .level;
+			stream .string += "'";
+			stream .string += "/>";
+		},
 	});
 
 	return ComponentInfo;
@@ -24078,11 +24951,13 @@ define ('cobweb/Execution/ImportedNode',[
 	"cobweb/Fields",
 	"cobweb/Basic/X3DBaseNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
           X3DBaseNode,
-          X3DConstants)
+          X3DConstants,
+          Generator)
 {
 
 
@@ -24219,6 +25094,90 @@ function ($,
 					break;
 				}
 			}
+		},
+		toXMLStream: function (stream)
+		{
+			if (Generator .ExistsNode (this .getInlineNode ()))
+			{
+				stream .string += Generator .Indent ();
+				stream .string += "<IMPORT";
+				stream .string += " ";
+				stream .string += "inlineDEF='";
+				stream .string += Generator .XMLEncode (Generator .Name (this .getInlineNode ()));
+				stream .string += "'";
+				stream .string += " ";
+				stream .string += "exportedDEF='";
+				stream .string += Generator .XMLEncode (this .getExportedName ());
+				stream .string += "'";
+
+				if (this .getImportedName () !== this .getExportedName ())
+				{
+					stream .string += " ";
+					stream .string += "AS='";
+					stream .string += Generator .XMLEncode (this .getImportedName ());
+					stream .string += "'";
+				}
+
+				stream .string += "/>";
+
+				try
+				{
+					Generator .AddRouteNode (this);
+					Generator .AddImportedNode (this .getExportedNode (), this .getImportedName ());
+				}
+				catch (error)
+				{
+					// Output unresolved routes.
+
+					var routes = this .routes;
+
+					for (var id in routes)
+					{
+						var
+							route            = routes [id],
+							sourceNode       = route .sourceNode,
+							sourceField      = route .sourceField,
+							destinationNode  = route .destinationNode,
+							destinationField = route .destinationField;
+
+						if (Generator .ExistsRouteNode (sourceNode) && Generator .ExistsRouteNode (destinationNode))
+						{
+							if (sourceNode instanceof ImportedNode)
+								var sourceNodeName = sourceNode .getImportedName ();
+							else
+								var sourceNodeName = sourceNode .getName ();
+	
+							if (destinationNode instanceof ImportedNode)
+								var destinationNodeName = destinationNode .getImportedName ();
+							else
+								var sourceNodeName = destinationNode .getName ();
+	
+							stream .string += "\n";
+							stream .string += Generator .Indent ();
+							stream .string += "<ROUTE";
+							stream .string += " ";
+							stream .string += "fromNode='";
+							stream .string += Generator .XMLEncode (sourceNodeName);
+							stream .string += "'";
+							stream .string += " ";
+							stream .string += "fromField='";
+							stream .string += Generator .XMLEncode (sourceField);
+							stream .string += "'";
+							stream .string += " ";
+							stream .string += "toNode='";
+							stream .string += Generator .XMLEncode (destinationNodeName);
+							stream .string += "'";
+							stream .string += " ";
+							stream .string += "toField='";
+							stream .string += Generator .XMLEncode (destinationField);
+							stream .string += "'";
+							stream .string += "/>";
+						}
+					}
+				}
+			}
+			else
+				throw new Error ("ImportedNode.toXMLStream: Inline node does not exist.");
 		},
 		dispose: function ()
 		{
@@ -24458,6 +25417,22 @@ function ($)
 		{
 			return this .array;
 		},
+		toXMLStream: function (stream)
+		{
+			var array = this .array;
+
+			for (var i = 0, length = array .length; i < length; ++ i)
+			{
+				try
+				{
+					array [i] .toXMLStream (stream);
+	
+					stream .string += "\n";
+				}
+				catch (error)
+				{ }
+			}
+		},
 	});
 
 	return RouteArray;
@@ -24516,10 +25491,14 @@ define ('cobweb/Routing/X3DRoute',[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
-          X3DBaseNode)
+          X3DBaseNode,
+          X3DConstants,
+          Generator)
 {
 
 
@@ -24534,7 +25513,12 @@ function ($,
 		this ._destinationField = destinationField;
 
 		//if (! (this .getExecutionContext () instanceof X3DProtoDeclaration))
+		{
 			sourceField .addFieldInterest (destinationField);
+
+			sourceField      .addOutputRoute (this);
+			destinationField .addInputRoute (this);
+		}
 	}
 
 	X3DRoute .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -24571,15 +25555,72 @@ function ($,
 		{
 			this ._sourceField .removeFieldInterest (this ._destinationField);
 
+			this ._sourceField      .removeOutputRoute (this);
+			this ._destinationField .removeInputRoute (this);
+
 			if (this .sourceNode_ .getValue ())
 				this .sourceNode_ .removeInterest (this, "set_node");
 
 			if (this .destinationNode_ .getValue ())
 				this .destinationNode_ .removeInterest (this, "set_node");
 		},
+		getSourceNode: function ()
+		{
+			///  SAI
+			return this .sourceNode_ .getValue ();
+		},
+		getSourceField: function ()
+		{
+			///  SAI
+			return this ._sourceField .getName ();
+		},
+		getDestinationNode: function ()
+		{
+			///  SAI
+			return this .destinationNode_ .getValue ();
+		},
+		getDestinationField: function ()
+		{
+			///  SAI
+			return this ._destinationField .getName ();
+		},
 		toString: function ()
 		{
 			return Object .prototype .toString (this);
+		},
+		toXMLStream: function (stream)
+		{
+			var
+				sourceNodeName      = Generator .LocalName (this .getSourceNode ()),
+				destinationNodeName = Generator .LocalName (this .getDestinationNode ());
+
+			stream .string += Generator .Indent ();
+			stream .string += "<ROUTE";
+			stream .string += " ";
+			stream .string += "fromNode='";
+			stream .string += Generator .XMLEncode (sourceNodeName);
+			stream .string += "'";
+			stream .string += " ";
+			stream .string += "fromField='";
+			stream .string += Generator .XMLEncode (this ._sourceField .getName ());
+
+			if (this ._sourceField .getAccessType () === X3DConstants .inputOutput)
+				stream .string += "_changed";
+
+			stream .string += "'";
+			stream .string += " ";
+			stream .string += "toNode='";
+			stream .string += Generator .XMLEncode (destinationNodeName);
+			stream .string += "'";
+			stream .string += " ";
+			stream .string += "toField='";
+
+			if (this ._destinationField .getAccessType () === X3DConstants .inputOutput)
+				stream .string += "set_";
+
+			stream .string += Generator .XMLEncode (this ._destinationField .getName ());
+			stream .string += "'";
+			stream .string += "/>";
 		},
 		dispose: function ()
 		{
@@ -25466,6 +26507,7 @@ define ("cobweb/Execution/X3DExecutionContext", [
 	"cobweb/Bits/X3DConstants",
 	"standard/Networking/URI",
 	"standard/Math/Algorithm",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -25481,7 +26523,8 @@ function ($,
           X3DCast,
           X3DConstants,
           URI,
-          Algorithm)
+          Algorithm,
+          Generator)
 {
 
 
@@ -25536,6 +26579,14 @@ function ($,
 		{
 			return false;
 		},
+		getSpecificationVersion: function ()
+		{
+			return this .specificationVersion;
+		},
+		getEncoding: function ()
+		{
+			return this .encoding;
+		},
 		getWorldURL: function ()
 		{
 			return this .getURL () .location;
@@ -25552,9 +26603,17 @@ function ($,
 		{
 			this .profile = profile;
 		},
+		getProfile: function (profile)
+		{
+			return this .profile;
+		},
 		addComponent: function (component)
 		{
 			this .components .add (component .name, component);
+		},
+		getComponents: function ()
+		{
+			return this .components;
 		},
 		createNode: function (typeName, setup)
 		{
@@ -25726,6 +26785,10 @@ function ($,
 
 			throw new Error ("Imported node '" + importedName + "' not found.");
 		},
+		getImportedNodes: function ()
+		{
+			return this .importedNodes;
+		},
 		getLocalNode: function (name)
 		{
 			try
@@ -25734,25 +26797,34 @@ function ($,
 			}
 			catch (error)
 			{
-				try
-				{
-					var importedNode = this .importedNodes [name];
+				var importedNode = this .importedNodes [name];
 
-					if (importedNode)
-						return new Fields .SFNode (importedNode);
+				if (importedNode)
+					return new Fields .SFNode (importedNode);
 
-					throw true;
-				}
-				catch (error)
-				{
-					throw new Error ("Unknown named or imported node '" + name + "'.");
-				}
+				throw new Error ("Unknown named or imported node '" + name + "'.");
 			}
 		},
 		setRootNodes: function () { },
 		getRootNodes: function ()
 		{
 			return this .rootNodes_;
+		},
+		getProtoDeclaration: function (name)
+		{
+			return this .protos .get (name);
+		},
+		getProtoDeclarations: function ()
+		{
+			return this .protos;
+		},
+		getExternProtoDeclaration: function (name)
+		{
+			return this .externprotos .get (name);
+		},
+		getExternProtoDeclarations: function ()
+		{
+			return this .externprotos;
 		},
 		addRoute: function (sourceNode, sourceField, destinationNode, destinationField)
 		{
@@ -25780,7 +26852,7 @@ function ($,
 				{
 					if (sourceNode instanceof ImportedNode)
 						sourceNode .addRoute (sourceNode, sourceField, destinationNode, destinationField);
-	
+
 					if (destinationNode instanceof ImportedNode)
 						destinationNode .addRoute (sourceNode, sourceField, destinationNode, destinationField);
 
@@ -25855,6 +26927,10 @@ function ($,
 
 			return this .routeIndex [id];
 		},
+		getRoutes: function ()
+		{
+			return this .routes;
+		},
 		changeViewpoint: function (name)
 		{
 			try
@@ -25879,6 +26955,54 @@ function ($,
 				else
 					throw new Error ("Viewpoint named '" + name + "' not found.");
 			}
+		},
+		toXMLStream: function (stream)
+		{
+			Generator .PushExecutionContext (this);
+			Generator. EnterScope ();
+			Generator .ImportedNodes (this .getImportedNodes ());
+
+			// Output extern protos
+
+			this .getExternProtoDeclarations () .toXMLStream (stream);
+
+			// Output protos
+
+			this .getProtoDeclarations () .toXMLStream (stream);
+		
+			// Output root nodes
+
+			var rootNodes = this .getRootNodes ();
+
+			if (rootNodes .length)
+			{
+				rootNodes .toXMLStream (stream);
+
+				stream .string += "\n";
+			}
+		
+			// Output imported nodes
+
+			var importedNodes = this .getImportedNodes ();
+
+			for (var importedName in importedNodes)
+			{
+				try
+				{
+					importedNodes [importedName] .toXMLStream (stream);
+
+					stream .string += "\n";
+				}
+				catch (error)
+				{ }
+			}
+		
+			// Output routes
+
+			this .getRoutes () .toXMLStream (stream);
+
+			Generator .LeaveScope ();
+			Generator .PopExecutionContext ();
 		},
 	});
 
@@ -25951,8 +27075,10 @@ function ($,
 
 define ('cobweb/Configuration/UnitInfo',[
 	"jquery",
+	"cobweb/InputOutput/Generator",
 ],
-function ($)
+function ($,
+          Generator)
 {
 
 
@@ -25966,6 +27092,24 @@ function ($)
 	$.extend (UnitInfo .prototype,
 	{
 		constructor: UnitInfo,
+		toXMLStream: function (stream)
+		{
+			stream .string += Generator .Indent ();
+			stream .string += "<unit";
+			stream .string += " ";
+			stream .string += "category='";
+			stream .string += this .category;
+			stream .string += "'";
+			stream .string += " ";
+			stream .string += "name='";
+			stream .string += Generator .XMLEncode (this .name);
+			stream .string += "'";
+			stream .string += " ";
+			stream .string += "conversionFactor='";
+			stream .string += this .conversionFactor;
+			stream .string += "'";
+			stream .string += "/>";
+		},
 	});
 
 	Object .defineProperty (UnitInfo .prototype, "conversion_factor",
@@ -26100,10 +27244,12 @@ define ('cobweb/Execution/ExportedNode',[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Base/X3DObject",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
-          X3DObject)
+          X3DObject,
+          Generator)
 {
 
 
@@ -26125,6 +27271,27 @@ function ($,
 		getLocalNode: function ()
 		{
 			return new Fields .SFNode (this .localNode);
+		},
+		toXMLStream: function (stream)
+		{
+			var localName = Generator .LocalName (this .localNode);
+
+			stream .string += Generator .Indent ();
+			stream .string += "<EXPORT";
+			stream .string += " ";
+			stream .string += "localDEF='";
+			stream .string += Generator .XMLEncode (localName);
+			stream .string += "'";
+
+			if (this .exportedName !== localName)
+			{
+				stream .string += " ";
+				stream .string += "AS='";
+				stream .string += Generator .XMLEncode (this .exportedName);
+				stream .string += "'";
+			}
+
+			stream .string += "/>";
 		},
 	});
 
@@ -26188,6 +27355,7 @@ define ('cobweb/Execution/X3DScene',[
 	"cobweb/Configuration/UnitInfoArray",
 	"cobweb/Execution/ExportedNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -26195,7 +27363,8 @@ function ($,
           UnitInfo,
           UnitInfoArray,
           ExportedNode,
-          X3DConstants)
+          X3DConstants,
+          Generator)
 {
 
 
@@ -26246,6 +27415,10 @@ function ($,
 			unit .name             = name;
 			unit .conversionFactor = conversionFactor;
 		},
+		getUnits: function ()
+		{
+			return this .units;
+		},
 		setMetaData: function (name, value)
 		{
 			if (! name .length)
@@ -26256,6 +27429,10 @@ function ($,
 		getMetaData: function (name)
 		{
 			return this .metaData [name];
+		},
+		getMetaDatas: function ()
+		{
+			return this .metaData;
 		},
 		addExportedNode: function (exportedName, node)
 		{
@@ -26295,6 +27472,10 @@ function ($,
 
 			throw new Error ("Exported node '" + exportedName + "' not found.");
 		},
+		getExportedNodes: function ()
+		{
+			return this .exportedNodes;
+		},
 		addRootNode: function (node)
 		{
 			if (! (node instanceof Fields .SFNode || node === null))
@@ -26319,6 +27500,125 @@ function ($,
 		setRootNodes: function (value)
 		{
 			this .getRootNodes () .setValue (value);
+		},
+		toXMLStream: function (stream)
+		{
+			var specificationVersion = this .getSpecificationVersion ();
+
+			if (specificationVersion === "2.0")
+				specificationVersion = "3.3";
+		
+			stream .string += "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+			stream .string += "<!DOCTYPE X3D PUBLIC \"ISO//Web3D//DTD X3D ";
+			stream .string += specificationVersion;
+			stream .string += "//EN\" \"http://www.web3d.org/specifications/x3d-";
+			stream .string += specificationVersion;
+			stream .string += ".dtd\">\n";
+		
+			stream .string += "<X3D";
+			stream .string += " ";
+			stream .string += "profile='";
+			stream .string += this .getProfile () ? this .getProfile () .name : "Full";
+			stream .string += "'";
+			stream .string += " ";
+			stream .string += "version='";
+			stream .string += specificationVersion;
+			stream .string += "'";
+			stream .string += " ";
+			stream .string += "xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance'";
+			stream .string += " ";
+			stream .string += "xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-";
+			stream .string += specificationVersion;
+			stream .string += ".xsd'>\n";
+
+			Generator .IncIndent ();
+
+			stream .string += Generator .Indent ();
+			stream .string += "<head>\n";
+
+			Generator .IncIndent ();
+		
+			// <head>
+
+			this .getComponents () .toXMLStream (stream);
+
+			var units = this .getUnits ();
+
+			for (var i = 0, length = units .length; i < length; ++ i)
+			{
+				var unit = units [i];
+
+				if (unit .conversionFactor !== 1)
+				{
+					unit .toXMLStream (stream);
+
+					stream .string += "\n";
+				}
+			}
+		
+			var metaDatas = this .getMetaDatas ();
+
+			for (var key in metaDatas)
+			{
+				stream .string += Generator .Indent ();
+				stream .string += "<meta";
+				stream .string += " ";
+				stream .string += "name='";
+				stream .string += Generator .XMLEncode (key);
+				stream .string += "'";
+				stream .string += " ";
+				stream .string += "content='";
+				stream .string += Generator .XMLEncode (metaDatas [key]);
+				stream .string += "'";
+				stream .string += "/>\n";
+			}
+		
+			// </head>
+
+			Generator .DecIndent ();
+
+			stream .string += Generator .Indent ();
+			stream .string += "</head>\n";
+			stream .string += Generator .Indent ();
+			stream .string += "<Scene>\n";
+
+			Generator .IncIndent ();
+		
+			// <Scene>
+
+			var exportedNodes = this .getExportedNodes ();
+
+			Generator .PushExecutionContext (this);
+			Generator .EnterScope ();
+			Generator .ExportedNodes (exportedNodes);
+
+			X3DExecutionContext .prototype .toXMLStream .call (this, stream);
+		
+			for (var exportedName in exportedNodes)
+			{
+				//try
+				{
+					exportedNodes [exportedName] .toXMLStream (stream);
+
+					stream .string += "\n";
+				}
+				//catch (const X3DError &)
+				{ }
+			}
+
+			Generator .LeaveScope ();
+			Generator .PopExecutionContext ();
+
+			// </Scene>
+
+			Generator .DecIndent ();
+
+			stream .string += Generator .Indent ();
+			stream .string += "</Scene>\n";
+
+			Generator .DecIndent ();
+
+			stream .string += "</X3D>\n";
 		},
 	});
 
@@ -26761,6 +28061,7 @@ define ('cobweb/Components/Core/X3DPrototypeInstance',[
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Execution/X3DExecutionContext",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           FieldDefinitionArray,
@@ -26768,7 +28069,8 @@ function ($,
           X3DChildObject,
           X3DNode,
           X3DExecutionContext,
-          X3DConstants)
+          X3DConstants,
+          Generator)
 {
 
 
@@ -26970,6 +28272,264 @@ function ($,
 				}
 			}
 		},
+		toXMLStream: function (stream)
+		{
+			if (Generator .IsSharedNode (this))
+			{
+				stream .string += Generator .Indent ();
+				stream .string += "<!-- NULL -->";		
+				return;
+			}
+
+			Generator .EnterScope ();
+
+			var name = Generator .Name (this);
+
+			if (name .length)
+			{
+				if (Generator .ExistsNode (this))
+				{
+					stream .string += Generator .Indent ();
+					stream .string += "<ProtoInstance";
+					stream .string += " ";
+					stream .string += "name='";
+					stream .string += Generator .XMLEncode (this .getTypeName ());
+					stream .string += "'";
+					stream .string += " ";
+					stream .string += "USE='";
+					stream .string += Generator .XMLEncode (name);
+					stream .string += "'";
+
+					var containerField = Generator .ContainerField ();
+
+					if (containerField)
+					{
+						if (containerField .getName () !== this .getContainerField ())
+						{
+							stream .string += " ";
+							stream .string += "containerField='";
+							stream .string += Generator .XMLEncode (containerField .getName ());
+							stream .string += "'";
+						}
+					}
+
+					stream .string += "/>";
+
+					Generator .LeaveScope ();
+					return;
+				}
+			}
+
+			stream .string += Generator .Indent ();
+			stream .string += "<ProtoInstance";
+			stream .string += " ";
+			stream .string += "name='";
+			stream .string += Generator .XMLEncode (this .getTypeName ());
+			stream .string += "'";
+
+			if (name .length)
+			{
+				Generator .AddNode (this);
+
+				stream .string += " ";
+				stream .string += "DEF='";
+				stream .string += Generator .XMLEncode (name);
+				stream .string += "'";
+			}
+
+			var containerField = Generator .ContainerField ();
+
+			if (containerField)
+			{
+				if (containerField .getName () !== this .getContainerField ())
+				{
+					stream .string += " ";
+					stream .string += "containerField='";
+					stream .string += Generator .XMLEncode (containerField .getName ());
+					stream .string += "'";
+				}
+			}
+		
+			var fields = this .getChangedFields ();
+		
+			if (fields .length === 0)
+			{
+				stream .string += "/>";
+			}
+			else
+			{
+				stream .string += ">\n";
+
+				Generator .IncIndent ();
+
+				var references = [ ];
+
+				for (var i = 0, length = fields .length; i < length; ++ i)
+				{
+					var field = fields [i];
+
+					// If the field is a inputOutput and we have as reference only inputOnly or outputOnly we must output the value
+					// for this field.
+
+					var mustOutputValue = false;
+
+					if (Generator .ExecutionContext ())
+					{
+						if (field .getAccessType () === X3DConstants .inputOutput && ! $.isEmptyObject (field .getReferences ()))
+						{
+							var
+								initializableReference = false,
+								references             = field .getReferences ();
+
+							for (var id in references)
+							{
+								initializableReference |= references [id] .isInitializable ();
+							}
+
+							if (! initializableReference)
+								mustOutputValue = true;
+						}
+					}
+
+					// If we have no execution context we are not in a proto and must not generate IS references the same is true
+					// if the node is a shared node as the node does not belong to the execution context.
+
+					if ($.isEmptyObject (field .getReferences ()) || ! Generator .ExecutionContext () || mustOutputValue)
+					{
+						if (mustOutputValue)
+							references .push (field);
+
+						switch (field .getType ())
+						{
+							case X3DConstants .MFNode:
+							{
+								stream .string += Generator .Indent ();
+								stream .string += "<fieldValue";
+								stream .string += " ";
+								stream .string += "name='";
+								stream .string += Generator .XMLEncode (field .getName ());
+								stream .string += "'";
+
+								if (field .length === 0)
+								{
+									stream .string += "/>\n";
+								}
+								else
+								{
+									stream .string += ">\n";
+
+									Generator .IncIndent ();
+
+									field .toXMLStream (stream);
+
+									stream .string += "\n";
+
+									Generator .DecIndent ();
+
+									stream .string += Generator .Indent ();
+									stream .string += "</fieldValue>\n";
+								}
+
+								break;
+							}
+							case X3DConstants .SFNode:
+							{
+								if (field .getValue () !== null)
+								{
+									stream .string += Generator .Indent ();
+									stream .string += "<fieldValue";
+									stream .string += " ";
+									stream .string += "name='";
+									stream .string += Generator .XMLEncode (field .getName ())
+									stream .string += "'";
+									stream .string += ">\n";
+									
+									Generator .IncIndent ();
+
+									field .toXMLStream (stream);
+
+									stream .string += "\n";
+
+									Generator .DecIndent ();
+
+									stream .string += Generator .Indent ();
+									stream .string += "</fieldValue>\n";		
+									break;
+								}
+		
+								// Proceed with next case.
+							}
+							default:
+							{
+								stream .string += Generator .Indent ();
+								stream .string += "<fieldValue";
+								stream .string += " ";
+								stream .string += "name='";
+								stream .string += Generator .XMLEncode (field .getName ())
+								stream .string += "'";
+								stream .string += " ";
+								stream .string += "value='";
+
+								field .toXMLStream (stream);
+
+								stream .string += "'";
+								stream .string += "/>\n";
+								break;
+							}
+						}
+					}
+					else
+					{
+						references .push (field);
+					}
+				}
+
+				if (references .length)
+				{
+					stream .string += Generator .Indent ();
+					stream .string += "<IS>";
+					stream .string += "\n";
+
+					Generator .IncIndent ();
+		
+					for (var i = 0, length = reference .length; i < length; ++ i)
+					{
+						var
+							field       = reference [i],
+							protoFields = field .getReferences ()
+
+						for (var id in protoFields)
+						{
+							var protoField = protoFields [id];
+
+							stream .string += Generator .Indent ();
+							stream .string += "<connect";
+							stream .string += " ";
+							stream .string += "nodeField='";
+							stream .string += Generator .XMLEncode (field .getName ());
+							stream .string += "'";
+							stream .string += " ";
+							stream .string += "protoField='";
+							stream .string += Generator .XMLEncode (protoField .getName ());
+							stream .string += "'";
+							stream .string += "/>\n";
+						}
+					}
+
+					Generator .DecIndent ();
+
+					stream .string += Generator .Indent ();
+					stream .string += "</IS>\n";
+				}
+
+				Generator .DecIndent ();
+
+				stream .string += Generator .Indent ();
+				stream .string += "</ProtoInstance>";
+			}
+
+			Generator .LeaveScope ();
+		},
 	});
 
 	return X3DPrototypeInstance;
@@ -27132,6 +28692,7 @@ define ('cobweb/Prototype/X3DExternProtoDeclaration',[
 	"cobweb/Components/Networking/X3DUrlObject",
 	"cobweb/Prototype/X3DProtoDeclarationNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -27139,7 +28700,8 @@ function ($,
           FieldDefinitionArray,
           X3DUrlObject,
           X3DProtoDeclarationNode, 
-          X3DConstants)
+          X3DConstants,
+          Generator)
 {
 
 
@@ -27188,9 +28750,27 @@ function ($,
 				this .scene .setLive (this .isLive () .getValue ());
 			}
 		},
-		setProtoDeclaration: function (value)
+		hasUserDefinedFields: function ()
 		{
-			this .proto = value;
+			return true;
+		},
+		setProtoDeclaration: function (proto)
+		{
+			this .proto = proto;
+
+			var
+				fieldDefinitions      = this .getFieldDefinitions (),
+				protoFieldDefinitions = proto .getFieldDefinitions ();
+
+			for (var i = 0, length = protoFieldDefinitions .length; i < length; ++ i)
+			{
+				var
+					protoFieldDefinition = protoFieldDefinitions [i],
+					fieldDefinition      = fieldDefinitions .get (protoFieldDefinition .name);
+
+				if (fieldDefinition)
+					fieldDefinition .value .setValue (protoFieldDefinition .value);
+			}
 		},
 		getProtoDeclaration: function ()
 		{
@@ -27258,6 +28838,52 @@ function ($,
 
 			this .deferred .resolve ();
 			this .deferred = $.Deferred ();
+		},
+		toXMLStream: function (stream)
+		{
+			stream .string += Generator .Indent ();
+			stream .string += "<ExternProtoDeclare";
+			stream .string += " ";
+			stream .string += "name='";
+			stream .string += Generator .XMLEncode (this .getName ());
+			stream .string += "'";
+			stream .string += " ";
+			stream .string += "url='";
+
+			this .url_ .toXMLStream (stream);
+
+			stream .string += "'";
+			stream .string += ">\n";
+
+			Generator .IncIndent ();
+
+			var fields = this .getUserDefinedFields ();
+
+			for (var name in fields)
+			{
+				var field = fields [name];
+
+				stream .string += Generator .Indent ();
+				stream .string += "<field";
+				stream .string += " ";
+				stream .string += "accessType='";
+				stream .string += Generator .AccessType (field .getAccessType ());
+				stream .string += "'";
+				stream .string += " ";
+				stream .string += "type='";
+				stream .string += field .getTypeName ();
+				stream .string += "'";
+				stream .string += " ";
+				stream .string += "name='";
+				stream .string += Generator .XMLEncode (field .getName ());
+				stream .string += "'";
+				stream .string += "/>\n";
+			}
+
+			Generator .DecIndent ();
+
+			stream .string += Generator .Indent ();
+			stream .string += "</ExternProtoDeclare>";
 		},
 	});
 
@@ -27357,6 +28983,7 @@ define ('cobweb/Prototype/X3DProtoDeclaration',[
 	"cobweb/Execution/X3DExecutionContext",
 	"cobweb/Prototype/X3DProtoDeclarationNode",
 	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -27364,7 +28991,8 @@ function ($,
           FieldDefinitionArray,
           X3DExecutionContext,
           X3DProtoDeclarationNode, 
-          X3DConstants)
+          X3DConstants,
+          Generator)
 {
 
 
@@ -27403,6 +29031,10 @@ function ($,
 
 			this .loadState_ = X3DConstants .COMPLETE_STATE;
 		},
+		hasUserDefinedFields: function ()
+		{
+			return true;
+		},
 		getURL: function ()
 		{
 			return this .getExecutionContext () .getURL ();
@@ -27414,6 +29046,130 @@ function ($,
 		checkLoadState: function ()
 		{
 			return this .loadState_ .getValue ();
+		},
+		toXMLStream: function (stream)
+		{
+			stream .string += Generator .Indent ();
+			stream .string += "<ProtoDeclare";
+			stream .string += " ";
+			stream .string += "name='";
+			stream .string += Generator .XMLEncode (this .getName ());
+			stream .string += "'";
+			stream .string += ">";
+			stream .string += "\n";
+		
+			// <ProtoInterface>
+
+			Generator .EnterScope ();
+		
+			var userDefinedFields = this .getUserDefinedFields ();
+
+			if (! $.isEmptyObject (userDefinedFields))
+			{
+				Generator .IncIndent ();
+
+				stream .string += Generator .Indent ();
+				stream .string += "<ProtoInterface>\n";
+
+				Generator .IncIndent ();
+
+				for (var name in userDefinedFields)
+				{
+					var field = userDefinedFields [name];
+
+					stream .string += Generator .Indent ();
+					stream .string += "<field";
+					stream .string += " ";
+					stream .string += "accessType='";
+					stream .string += Generator .AccessType (field .getAccessType ());
+					stream .string += "'";
+					stream .string += " ";
+					stream .string += "type='";
+					stream .string += field .getTypeName ();
+					stream .string += "'";
+					stream .string += " ";
+					stream .string += "name='";
+					stream .string += Generator .XMLEncode (field .getName ());
+					stream .string += "'";
+
+					if (field .isDefaultValue ())
+					{
+						stream .string += "/>\n";
+					}
+					else
+					{
+						switch (field .getType ())
+						{
+							case X3DConstants .SFNode:
+							case X3DConstants .MFNode:
+							{
+								Generator .PushContainerField (null);
+		
+								stream .string += ">\n";
+
+								Generator .IncIndent ();
+
+								field .toXMLStream (stream);
+
+								stream .string += "\n";
+
+								Generator .DecIndent ();
+
+								stream .string += Generator .Indent ();
+								stream .string += "</field>\n";
+
+								Generator .PopContainerField ();
+								break;
+							}
+							default:
+							{
+								stream .string += " ";
+								stream .string += "value='";
+
+								field .toXMLStream (stream);
+
+								stream .string += "'";
+								stream .string += "/>\n";
+								break;
+							}
+						}
+					}
+				}
+		
+				Generator .DecIndent ();
+
+				stream .string += Generator .Indent ();
+				stream .string += "</ProtoInterface>\n";
+
+				Generator .DecIndent ();
+			}
+		
+			Generator .LeaveScope ();
+		
+			// </ProtoInterface>
+
+			// <ProtoBody>
+		
+			Generator .IncIndent ();
+
+			stream .string += Generator .Indent ();
+			stream .string += "<ProtoBody>\n";
+
+			Generator .IncIndent ();
+
+			X3DExecutionContext .prototype .toXMLStream .call (this, stream);
+
+			Generator .DecIndent ();
+
+			stream .string += Generator .Indent ();
+			stream .string += "</ProtoBody>\n";
+
+			Generator .DecIndent ();
+		
+			// </ProtoBody>
+
+			stream .string += Generator .Indent ();
+			stream .string += "</ProtoDeclare>";
 		},
 	});
 
@@ -30361,7 +32117,7 @@ function ($,
 				array = field .getValue (),
 				value = new Fields .SFVec4f ();
 
-			while (this .sfvec4Value (value))
+			while (this .sfvec4fValue (value))
 			{
 				value .addParent (field);
 				array .push (value);
@@ -35690,7 +37446,7 @@ function ($,
 		{
 			var
 				node  = this .getParent (),
-				field = node .getCDATA ();
+				field = node .getSourceText ();
 
 			if (field)
 			{
@@ -35974,9 +37730,10 @@ function ($,
 					throw new Error ("Bad ROUTE statement: Expected toField attribute.");
 
 				var
-					sourceNode      = this .getExecutionContext () .getLocalNode (sourceNodeName),
-					destinationNode = this .getExecutionContext () .getLocalNode (destinationNodeName),
-					route           = this .getExecutionContext () .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+					executionContext = this .getExecutionContext (),
+					sourceNode       = executionContext .getLocalNode (sourceNodeName),
+					destinationNode  = executionContext .getLocalNode (destinationNodeName),
+					route            = executionContext .addRoute (sourceNode, sourceField, destinationNode, destinationField);
 
 				element .x3d = route;
 			}
@@ -36035,8 +37792,8 @@ function ($,
 	XMLParser .prototype .fieldTypes [X3DConstants .SFFloat]     = Parser .prototype .sffloatValue;
 	XMLParser .prototype .fieldTypes [X3DConstants .SFImage]     = Parser .prototype .sfimageValue;
 	XMLParser .prototype .fieldTypes [X3DConstants .SFInt32]     = Parser .prototype .sfint32Value;
-	XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix3f]  = Parser .prototype .sfmatrix4dValue;
-	XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix3d]  = Parser .prototype .sfmatrix4fValue;
+	XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix3f]  = Parser .prototype .sfmatrix3dValue;
+	XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix3d]  = Parser .prototype .sfmatrix3fValue;
 	XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix4f]  = Parser .prototype .sfmatrix4dValue;
 	XMLParser .prototype .fieldTypes [X3DConstants .SFMatrix4d]  = Parser .prototype .sfmatrix4fValue;
 	XMLParser .prototype .fieldTypes [X3DConstants .SFNode]      = function (field) { field .set (null); };
@@ -39962,7 +41719,7 @@ function ($,
 
 			return "VERTEX_SHADER";
 		},
-		getCDATA: function ()
+		getSourceText: function ()
 		{
 			return this .url_;
 		},
@@ -71751,9 +73508,9 @@ function ($,
 				browser .setHitRay (this .getProjectionMatrix () .get (), viewport);
 				this .getModelViewMatrix () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 
-				this .currentViewport .push (renderObject);
+				this .currentViewport .push (this);
 				this .groupNode .traverse (type, renderObject);
-				this .currentViewport .pop (renderObject);
+				this .currentViewport .pop (this);
 
 				this .getModelViewMatrix () .pop ()
 			}
@@ -71762,9 +73519,9 @@ function ($,
 		{
 			this .getModelViewMatrix () .pushMatrix (Matrix4 .Identity);
 	
-			this .currentViewport .push (renderObject);
+			this .currentViewport .push (this);
 			this .groupNode .traverse (type, renderObject);
-			this .currentViewport .pop (renderObject);
+			this .currentViewport .pop (this);
 
 			this .navigationInfos .update ();
 			this .backgrounds     .update ();
@@ -71791,9 +73548,9 @@ function ($,
 			this .getModelViewMatrix  () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 	
 			// Render
-			this .currentViewport .push (renderObject);
+			this .currentViewport .push (this);
 			renderObject .render (type, this .groupNode);
-			this .currentViewport .pop (renderObject);
+			this .currentViewport .pop (this);
 
 			this .getModelViewMatrix  () .pop ()
 			this .getProjectionMatrix () .pop ()
@@ -71804,9 +73561,9 @@ function ($,
 
 			this .getModelViewMatrix () .pushMatrix (this .getInverseCameraSpaceMatrix () .get ());
 
-			this .currentViewport .push (renderObject);
+			this .currentViewport .push (this);
 			renderObject .render (type, this .groupNode);
-			this .currentViewport .pop (renderObject);
+			this .currentViewport .pop (this);
 
 			this .getModelViewMatrix () .pop ()
 		},
@@ -72792,6 +74549,9 @@ function ($)
 	$.extend (ProfileInfo .prototype,
 	{
 		constructor: ProfileInfo,
+		toXMLStream: function (stream)
+		{
+		},
 	});
 
 	return ProfileInfo;
@@ -97916,13 +99676,16 @@ function ($,
 		{
 			return true;
 		},
-		getCDATA: function ()
+		getSourceText: function ()
 		{
 			return this .url_;
 		},
 		requestAsyncLoad: function ()
 		{
 			if (this .checkLoadState () === X3DConstants .COMPLETE_STATE || this .checkLoadState () === X3DConstants .IN_PROGRESS_STATE)
+				return;
+
+			if (this .url_ .length === 0)
 				return;
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
@@ -97954,42 +99717,51 @@ function ($,
 		},
 		getContext: function (text)
 		{
-			var
-				callbacks         = ["initialize", "prepareEvents", "eventsProcessed", "shutdown"],
-				userDefinedFields = this .getUserDefinedFields ();
-
-			for (var name in userDefinedFields)
+			try
 			{
-				var field = userDefinedFields [name];
+				var
+					callbacks         = ["initialize", "prepareEvents", "eventsProcessed", "shutdown"],
+					userDefinedFields = this .getUserDefinedFields ();
 
-				switch (field .getAccessType ())
+				for (var name in userDefinedFields)
 				{
-					case X3DConstants .inputOnly:
-						callbacks .push (field .getName ());
-						break;
-					case X3DConstants .inputOutput:
-						callbacks .push ("set_" + field .getName ());
-						break;
+					var field = userDefinedFields [name];
+
+					switch (field .getAccessType ())
+					{
+						case X3DConstants .inputOnly:
+							callbacks .push (field .getName ());
+							break;
+						case X3DConstants .inputOutput:
+							callbacks .push ("set_" + field .getName ());
+							break;
+					}
 				}
+
+				text += "\n;var " + callbacks .join (",") + ";";
+				text += "\n[" + callbacks .join (",") + "];"
+
+				var
+					global  = this .getGlobal (),
+					result  = evaluate (global, text),
+					context = { };
+
+				for (var i = 0; i < callbacks .length; ++ i)
+				{
+					if (typeof result [i] === "function")
+						context [callbacks [i]] = result [i];
+					else
+						context [callbacks [i]] = null;
+				}
+
+				return context;
 			}
-
-			text += "\n;var " + callbacks .join (",") + ";";
-			text += "\n[" + callbacks .join (",") + "];"
-
-			var
-				global  = this .getGlobal (),
-				result  = evaluate (global, text),
-				context = { };
-
-			for (var i = 0; i < callbacks .length; ++ i)
+			catch (error)
 			{
-				if (typeof result [i] === "function")
-					context [callbacks [i]] = result [i];
-				else
-					context [callbacks [i]] = null;
-			}
+				this .setError ("preprocessing", error);
 
-			return context;
+				return { };
+			}
 		},
 		getGlobal: function ()
 		{
@@ -98275,6 +100047,7 @@ function ($,
 		{
 			console .error ("JavaScript Error in Script '" + this .getName () + "', function '" + callback + "'\nworld url is '" + this .getExecutionContext () .getURL () + "':");
 			console .error (error);
+			console .error (this .url_ .toString ());
 		},
 	});
 

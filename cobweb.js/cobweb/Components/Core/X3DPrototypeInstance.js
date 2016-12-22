@@ -367,7 +367,7 @@ function ($,
 
 					var mustOutputValue = false;
 
-					if (Generator .ExecutionContext () && ! Generator .IsSharedNode (this))
+					if (Generator .ExecutionContext ())
 					{
 						if (field .getAccessType () === X3DConstants .inputOutput && ! $.isEmptyObject (field .getReferences ()))
 						{
@@ -381,14 +381,14 @@ function ($,
 							}
 
 							if (! initializableReference)
-								mustOutputValue = ! this .isDefaultValue (field);
+								mustOutputValue = true;
 						}
 					}
 
 					// If we have no execution context we are not in a proto and must not generate IS references the same is true
 					// if the node is a shared node as the node does not belong to the execution context.
 
-					if (($.isEmptyObject (field .getReferences ()) || ! Generator .ExecutionContext () || Generator .IsSharedNode (this)) || mustOutputValue)
+					if ($.isEmptyObject (field .getReferences ()) || ! Generator .ExecutionContext () || mustOutputValue)
 					{
 						if (mustOutputValue)
 							references .push (field);
