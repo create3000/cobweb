@@ -34,7 +34,7 @@
         },
         {
           "@name": "created",
-          "@content": "Mon, 23 Mar 2015 10:08:53 GMT"
+          "@content": "Mon, 24 Mar 2015 10:08:53 GMT"
         },
         {
           "@name": "creator",
@@ -50,14 +50,14 @@
         },
         {
           "@name": "modified",
-          "@content": "Thu, 22 Dec 2016 12:34:01 GMT"
+          "@content": "Fri, 06 Jan 2017 05:12:03 GMT"
         },
         {
           "@name": "outputStyle",
           "@content": "nicest"
         }
       ]
-    }
+    },
     "Scene": {
       "-children": [
         { "ExternProtoDeclare":
@@ -141,9 +141,7 @@
                         {
                           "@nodeField": "translation",
                           "@protoField": "translation"
-                        }
-                      ]
-                      "connect": [
+                        },
                         {
                           "@nodeField": "children",
                           "@protoField": "children"
@@ -159,9 +157,7 @@
                         {
                           "@nodeField": "enabled",
                           "@protoField": "enabled"
-                        }
-                      ]
-                      "connect": [
+                        },
                         {
                           "@nodeField": "cycleTime",
                           "@protoField": "cycleTime"
@@ -184,6 +180,10 @@
                         {
                           "@nodeField": "whichChoice",
                           "@protoField": "enabled"
+                        },
+                        {
+                          "@nodeField": "children",
+                          "@protoField": "children"
                         }
                       ]
                     }
@@ -276,6 +276,20 @@
                           {
                             "@DEF": "previous",
                             "@name": "previous",
+                            "@reference": "http://titania.create3000.de",
+                            "-value": [
+                              { "Transform":
+                                {
+                                  "@DEF": "_1"
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        { "MetadataSet":
+                          {
+                            "@DEF": "children",
+                            "@name": "children",
                             "@reference": "http://titania.create3000.de"
                           }
                         }
@@ -359,7 +373,7 @@
                   },
                   { "Viewpoint":
                     {
-                      "@DEF": "_1"
+                      "@DEF": "_2"
                     }
                   }
                 ]
@@ -439,8 +453,8 @@
                 "@type": "SFImage",
                 "@name": "SFImageValue",
                 "@value": [ 2, 2, 4,
-                  0x4d2, 0x929,
-                  0xd80, 0x11d7 ]
+                  1234, 2345,
+                  3456, 4567 ]
               },
               {
                 "@accessType": "initializeOnly",
@@ -479,7 +493,7 @@
                 "-children": [
                   { "Prototype":
                     {
-                      "@DEF": "_2",
+                      "@DEF": "_3",
                       "@name": "Prototype",
                       "fieldValue": [
                         {
@@ -495,21 +509,21 @@
                           "-children": [
                             { "PixelTexture":
                               {
-                                "@DEF": "_3"
+                                "@DEF": "_4"
                               }
                             },
                             { "Collision":
                               {
-                                "@DEF": "_4",
+                                "@DEF": "_5",
                                 "-proxy": { "TimeSensor":
                                   {
-                                    "@DEF": "_5"
+                                    "@DEF": "_6"
                                   }
                                 },
                                 "-children": [
                                   { "TimeSensor":
                                     {
-                                      "@USE": "_5"
+                                      "@USE": "_6"
                                     }
                                   }
                                 ]
@@ -517,7 +531,7 @@
                             },
                             { "PixelTexture":
                               {
-                                "@USE": "_3"
+                                "@USE": "_4"
                               }
                             }
                           ]
@@ -632,13 +646,13 @@
                 "@name": "MFImageValue",
                 "@value": [
                   2, 2, 4,
-                    0x4d2, 0x929,
-                    0xd80, 0x11d7,
+                    1234, 2345,
+                    3456, 4567,
                   2, 4, 4,
-                    0x4d2, 0x929,
-                    0xd80, 0x11d7,
-                    0x4d2, 0x929,
-                    0xd80, 0x11d7
+                    1234, 2345,
+                    3456, 4567,
+                    1234, 2345,
+                    3456, 4567
                 ]
               },
               {
@@ -693,17 +707,17 @@
                 "-children": [
                   { "ProtoInstance":
                     {
-                      "@USE": "_2"
+                      "@USE": "_3"
                     }
                   },
                   { "TimeSensor":
                     {
-                      "@DEF": "_6"
+                      "@DEF": "_7"
                     }
                   },
                   { "TimeSensor":
                     {
-                      "@USE": "_6"
+                      "@USE": "_7"
                     }
                   }
                 ]
@@ -809,12 +823,22 @@
         },
         { "BooleanSwitch":
           {
-            "@name": "BooleanSwitch"
+            "@name": "BooleanSwitch",
+            "fieldValue": [
+              {
+                "@name": "whichChoice",
+                "@value": true
+              },
+              {
+                "@name": "bboxSize",
+                "@value": [ 1, 1, 1 ]
+              }
+            ]
           }
         },
         { "Inline":
           {
-            "@DEF": "_7",
+            "@DEF": "_8",
             "@url": [
               "../Core/EXPORT.x3d"
             ]
@@ -825,15 +849,24 @@
             "@name": "Prototype"
           }
         },
+        { "Collision":
+          {
+            "-proxy": { "Transform":
+              {
+                "@USE": "_1"
+              }
+            }
+          }
+        },
         { "IMPORT":
           {
-            "@inlineDEF": "_7",
+            "@inlineDEF": "_8",
             "@importedDEF": "Export"
           }
         },
         { "IMPORT":
           {
-            "@inlineDEF": "_7",
+            "@inlineDEF": "_8",
             "@importedDEF": "ExportAs",
             "@AS": "ImportAs"
           }
@@ -850,7 +883,7 @@
           {
             "@fromNode": "Box_1",
             "@fromField": "translation",
-            "@toNode": "_1",
+            "@toNode": "_2",
             "@toField": "position"
           }
         },

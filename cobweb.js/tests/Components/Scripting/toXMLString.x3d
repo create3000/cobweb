@@ -7,11 +7,11 @@
     <unit category='angle' name='degree' conversionFactor='0.0174532925199432958'/>
     <unit category='mass' name='gram' conversionFactor='0.001'/>
     <meta name='comment' content='World of Titania'/>
-    <meta name='created' content='Mon, 23 Mar 2015 10:08:53 GMT'/>
+    <meta name='created' content='Mon, 24 Mar 2015 10:08:53 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Scripting/toXMLString.x3d'/>
-    <meta name='modified' content='Thu, 22 Dec 2016 12:33:40 GMT'/>
+    <meta name='modified' content='Fri, 06 Jan 2017 11:04:59 GMT'/>
     <meta name='outputStyle' content='nicest'/>
   </head>
   <Scene>
@@ -48,6 +48,7 @@
           <fieldValue name='bboxSize' value='1 2 3'/>
           <IS>
             <connect nodeField='whichChoice' protoField='enabled'/>
+            <connect nodeField='children' protoField='children'/>
           </IS>
         </ProtoInstance>
       </ProtoBody>
@@ -85,39 +86,39 @@
             reference='http://titania.create3000.de'>
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
-              reference='http://titania.create3000.de'/>
+              reference='http://titania.create3000.de'>
+            <MetadataSet containerField='value'
+                reference='http://titania.create3000.de'/>
+          </MetadataSet>
           <MetadataSet DEF='children' containerField='value'
               name='children'
-              reference='http://titania.create3000.de'/>
-        </MetadataSet>
-      </MetadataSet>
-    </WorldInfo>
-    <Script DEF='CustomStript'>
-      <field accessType='inputOutput' type='SFVec3f' name='translation' value='3 4 5'/>
-      <field accessType='initializeOnly' type='SFNode' name='child'>
-        <Transform DEF='Box'>
-          <Shape>
-            <Appearance>
-              <Material/>
-            </Appearance>
-            <Box/>
-          </Shape>
-        </Transform>
-      </field>
-      <field accessType='initializeOnly' type='MFNode' name='children'>
-        <Transform DEF='Box_1'
-            translation='3 4 5'
-            scale='2 2 2'>
-          <Shape>
-            <Appearance>
-              <Material/>
-            </Appearance>
-            <Box/>
-          </Shape>
-        </Transform>
-        <Viewpoint DEF='_1'/>
-      </field>
-      <field accessType='initializeOnly' type='MFVec3f' name='point' value='1 2 3, 4 5 6'/>
+              reference='http://titania.create3000.de'>
+            <Script DEF='CustomStript' containerField='value'>
+              <field accessType='inputOutput' type='SFVec3f' name='translation' value='3 4 5'/>
+              <field accessType='initializeOnly' type='SFNode' name='child'>
+                <Transform DEF='Box'>
+                  <Shape>
+                    <Appearance>
+                      <Material/>
+                    </Appearance>
+                    <Box/>
+                  </Shape>
+                </Transform>
+              </field>
+              <field accessType='initializeOnly' type='MFNode' name='children'>
+                <Transform DEF='Box_1'
+                    translation='3 4 5'
+                    scale='2 2 2'>
+                  <Shape>
+                    <Appearance>
+                      <Material/>
+                    </Appearance>
+                    <Box/>
+                  </Shape>
+                </Transform>
+                <Viewpoint DEF='_1'/>
+              </field>
+              <field accessType='initializeOnly' type='MFVec3f' name='point' value='1 2 3, 4 5 6'/>
 <![CDATA[javascript:
 
 function initialize ()
@@ -140,7 +141,12 @@ function initialize ()
 	print ($.parseXML (Browser .currentScene .toXMLString ()));
 }
 ]]>
-    </Script>
+            </Script>
+          </MetadataSet>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <Script USE='CustomStript'/>
     <Script DEF='FieldsScript'>
       <field accessType='initializeOnly' type='SFBool' name='SFBoolValue' value='true'/>
       <field accessType='initializeOnly' type='SFColor' name='SFColorValue' value='0.1 0.2 0.3'/>
@@ -223,10 +229,16 @@ function initialize ()
 }
 ]]>
     </Script>
-    <ProtoInstance name='BooleanSwitch'/>
+    <ProtoInstance name='BooleanSwitch'>
+      <fieldValue name='whichChoice' value='true'/>
+      <fieldValue name='bboxSize' value='1 1 1'/>
+    </ProtoInstance>
     <Inline DEF='_7'
         url='"../Core/EXPORT.x3d"'/>
     <ProtoInstance name='Prototype'/>
+    <Collision>
+      <Transform containerField='proxy'/>
+    </Collision>
     <IMPORT inlineDEF='_7' exportedDEF='Export'/>
     <IMPORT inlineDEF='_7' exportedDEF='ExportAs' AS='ImportAs'/>
     <ROUTE fromNode='Box_1' fromField='translation_changed' toNode='Box_1' toField='set_scale'/>

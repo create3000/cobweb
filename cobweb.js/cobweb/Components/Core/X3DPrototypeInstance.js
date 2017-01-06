@@ -373,11 +373,11 @@ function ($,
 						{
 							var
 								initializableReference = false,
-								references             = field .getReferences ();
+								fieldReferences        = field .getReferences ();
 
-							for (var id in references)
+							for (var id in fieldReferences)
 							{
-								initializableReference |= references [id] .isInitializable ();
+								initializableReference |= fieldReferences [id] .isInitializable ();
 							}
 
 							if (! initializableReference)
@@ -486,10 +486,10 @@ function ($,
 
 					Generator .IncIndent ();
 		
-					for (var i = 0, length = reference .length; i < length; ++ i)
+					for (var i = 0, length = references .length; i < length; ++ i)
 					{
 						var
-							field       = reference [i],
+							field       = references [i],
 							protoFields = field .getReferences ()
 
 						for (var id in protoFields)

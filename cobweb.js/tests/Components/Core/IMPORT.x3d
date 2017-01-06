@@ -5,8 +5,10 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Mon, 11 Jan 2016 23:02:48 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.2.2, http://titania.create3000.de'/>
-    <meta name='modified' content='Wed, 13 Jan 2016 09:02:00 GMT'/>
+    <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Core/IMPORT.x3d'/>
+    <meta name='modified' content='Sat, 24 Dec 2016 09:27:22 GMT'/>
+    <meta name='outputStyle' content='nicest'/>
   </head>
   <Scene>
     <ExternProtoDeclare name='Rotor' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Engines/Rotor.x3d", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Engines/Rotor.x3d", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Engines/Rotor.x3d", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Engines/Rotor.x3d"'>
@@ -67,6 +69,19 @@
               reference='http://titania.create3000.de'
               value='true'/>
         </MetadataSet>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <Inline DEF='_1' containerField='value'
+                url='"EXPORT.x3d"'/>
+          </MetadataSet>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
+        </MetadataSet>
       </MetadataSet>
     </WorldInfo>
     <Transform DEF='Text'
@@ -84,8 +99,7 @@
         </Text>
       </Shape>
     </Transform>
-    <Inline DEF='_1'
-        url='"EXPORT.x3d"'/>
+    <Inline USE='_1'/>
     <ProtoInstance name='Rotor' DEF='_2'>
       <fieldValue name='axis' value='0 0 -1'/>
     </ProtoInstance>
@@ -140,7 +154,7 @@ function set_triggerTime ()
 	{
 		print ("Test message if Inline is unloaded: ", error .message);
 	}
-}]]> 
+}]]>
       </Script>
     </Transform>
     <Transform DEF='RemoveRightImportedNodeButton'
@@ -165,7 +179,7 @@ function set_triggerTime ()
 function set_triggerTime (time)
 {
 	Browser .currentScene .removeImportedNode ("ImportAs");
-}]]> 
+}]]>
       </Script>
     </Transform>
     <IMPORT inlineDEF='_1' exportedDEF='Export'/>
