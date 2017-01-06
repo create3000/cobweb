@@ -118,7 +118,8 @@ function ($,
 			{
 				// If there is a proto the externproto is completely loaded.
 			
-				this .metadata_ = proto .metadata_;
+				if (! this .metadata_ .getSet ())
+					this .metadata_ = proto .metadata_;
 
 				if (this .protoNode .isExternProto)
 				{
@@ -144,6 +145,9 @@ function ($,
 							// Continue if field is eventIn or eventOut.
 							if (! (field .getAccessType () & X3DConstants .initializeOnly))
 								continue;
+
+if (field .getSet () && field .getName () == "metadata")
+	console .log (this .getTypeName (), this .getId (), field .getName (), field .getId (), field .getValue ());
 
 							// Is set during parse.	
 							if (field .getSet ())
@@ -344,9 +348,23 @@ function ($,
 				}
 			}
 		
-			var fields = this .getChangedFields ();
-		
-			if (fields .length === 0)
+			var
+				fields   = this .getChangedFields (),
+				metadata = this .metadata_;
+
+			try
+			{
+				metadata = this .getField ("metadata");
+			}
+			catch (error)
+			{ }
+
+			if (metadata === this .metadata_)
+			{
+				fields = fields .filter (function (value) { return value !== this .metadata_; } .bind (this));
+			}
+
+			if (fields .length === 0 && (metadata === this .metadata_ ? true || ! metadata .getValue () : true))
 			{
 				stream .string += "/>";
 			}
@@ -514,6 +532,16 @@ function ($,
 
 					stream .string += Generator .Indent ();
 					stream .string += "</IS>\n";
+				}
+
+				if (metadata === this .metadata_)
+				{
+					if (metadata .getValue ())
+					{
+						metadata .toXMLStream (stream);
+
+						stream .string += "\n";
+					}
 				}
 
 				Generator .DecIndent ();

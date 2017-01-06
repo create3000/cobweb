@@ -11,7 +11,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Scripting/toXMLString.x3d'/>
-    <meta name='modified' content='Fri, 06 Jan 2017 11:04:59 GMT'/>
+    <meta name='modified' content='Fri, 06 Jan 2017 11:41:32 GMT'/>
     <meta name='outputStyle' content='nicest'/>
   </head>
   <Scene>
@@ -87,12 +87,6 @@
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'>
-            <MetadataSet containerField='value'
-                reference='http://titania.create3000.de'/>
-          </MetadataSet>
-          <MetadataSet DEF='children' containerField='value'
-              name='children'
-              reference='http://titania.create3000.de'>
             <Script DEF='CustomStript' containerField='value'>
               <field accessType='inputOutput' type='SFVec3f' name='translation' value='3 4 5'/>
               <field accessType='initializeOnly' type='SFNode' name='child'>
@@ -143,6 +137,12 @@ function initialize ()
 ]]>
             </Script>
           </MetadataSet>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
+              reference='http://titania.create3000.de'>
+            <MetadataSet DEF='_2' containerField='value'
+                reference='http://titania.create3000.de'/>
+          </MetadataSet>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -162,16 +162,16 @@ function initialize ()
       <field accessType='initializeOnly' type='SFMatrix4d' name='SFMatrix4dValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='SFMatrix4f' name='SFMatrix4fValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='SFNode' name='SFNodeValue'>
-        <ProtoInstance name='Prototype' DEF='_2'>
+        <ProtoInstance name='Prototype' DEF='_3'>
           <fieldValue name='enabled' value='true'/>
           <fieldValue name='translation' value='1 2 3'/>
           <fieldValue name='children'>
-            <PixelTexture DEF='_3'/>
-            <Collision DEF='_4'>
-              <TimeSensor DEF='_5' containerField='proxy'/>
-              <TimeSensor USE='_5'/>
+            <PixelTexture DEF='_4'/>
+            <Collision DEF='_5'>
+              <TimeSensor DEF='_6' containerField='proxy'/>
+              <TimeSensor USE='_6'/>
             </Collision>
-            <PixelTexture USE='_3'/>
+            <PixelTexture USE='_4'/>
           </fieldValue>
         </ProtoInstance>
       </field>
@@ -202,9 +202,9 @@ function initialize ()
       <field accessType='initializeOnly' type='MFMatrix4d' name='MFMatrix4dValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1, 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='MFMatrix4f' name='MFMatrix4fValue' value='1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1, 1 2 3 4 5 1 2 3 4 5 1 2 3 4 5 1'/>
       <field accessType='initializeOnly' type='MFNode' name='MFNodeValue'>
-        <ProtoInstance name='Prototype' USE='_2'/>
-        <TimeSensor DEF='_6'/>
-        <TimeSensor USE='_6'/>
+        <ProtoInstance name='Prototype' USE='_3'/>
+        <TimeSensor DEF='_7'/>
+        <TimeSensor USE='_7'/>
       </field>
       <field accessType='initializeOnly' type='MFRotation' name='MFRotationValue' value='0.267261241912424 0.534522483824849 0.801783725737273 4, 0.267261241912424 0.534522483824849 0.801783725737273 4'/>
       <field accessType='initializeOnly' type='MFString' name='MFStringValue' value='"ABCDEF", "abcdef"'/>
@@ -232,15 +232,16 @@ function initialize ()
     <ProtoInstance name='BooleanSwitch'>
       <fieldValue name='whichChoice' value='true'/>
       <fieldValue name='bboxSize' value='1 1 1'/>
+      <MetadataSet USE='_2'/>
     </ProtoInstance>
-    <Inline DEF='_7'
+    <Inline DEF='_8'
         url='"../Core/EXPORT.x3d"'/>
     <ProtoInstance name='Prototype'/>
     <Collision>
       <Transform containerField='proxy'/>
     </Collision>
-    <IMPORT inlineDEF='_7' exportedDEF='Export'/>
-    <IMPORT inlineDEF='_7' exportedDEF='ExportAs' AS='ImportAs'/>
+    <IMPORT inlineDEF='_8' exportedDEF='Export'/>
+    <IMPORT inlineDEF='_8' exportedDEF='ExportAs' AS='ImportAs'/>
     <ROUTE fromNode='Box_1' fromField='translation_changed' toNode='Box_1' toField='set_scale'/>
     <ROUTE fromNode='Box_1' fromField='translation_changed' toNode='_1' toField='set_position'/>
     <ROUTE fromNode='Export' fromField='translation_changed' toNode='ImportAs' toField='set_translation'/>
