@@ -19793,7 +19793,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "2.6";
+	return "2.7a";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -28124,7 +28124,8 @@ function ($,
 			{
 				// If there is a proto the externproto is completely loaded.
 			
-				this .metadata_ = proto .metadata_;
+				if (! this .metadata_ .getSet ())
+					this .metadata_ = proto .metadata_;
 
 				if (this .protoNode .isExternProto)
 				{
@@ -28150,6 +28151,9 @@ function ($,
 							// Continue if field is eventIn or eventOut.
 							if (! (field .getAccessType () & X3DConstants .initializeOnly))
 								continue;
+
+if (field .getSet () && field .getName () == "metadata")
+	console .log (this .getTypeName (), this .getId (), field .getName (), field .getId (), field .getValue ());
 
 							// Is set during parse.	
 							if (field .getSet ())
@@ -28350,9 +28354,23 @@ function ($,
 				}
 			}
 		
-			var fields = this .getChangedFields ();
-		
-			if (fields .length === 0)
+			var
+				fields   = this .getChangedFields (),
+				metadata = this .metadata_;
+
+			try
+			{
+				metadata = this .getField ("metadata");
+			}
+			catch (error)
+			{ }
+
+			if (metadata === this .metadata_)
+			{
+				fields = fields .filter (function (value) { return value !== this .metadata_; } .bind (this));
+			}
+
+			if (fields .length === 0 && (metadata === this .metadata_ ? true || ! metadata .getValue () : true))
 			{
 				stream .string += "/>";
 			}
@@ -28379,11 +28397,11 @@ function ($,
 						{
 							var
 								initializableReference = false,
-								references             = field .getReferences ();
+								fieldReferences        = field .getReferences ();
 
-							for (var id in references)
+							for (var id in fieldReferences)
 							{
-								initializableReference |= references [id] .isInitializable ();
+								initializableReference |= fieldReferences [id] .isInitializable ();
 							}
 
 							if (! initializableReference)
@@ -28492,10 +28510,10 @@ function ($,
 
 					Generator .IncIndent ();
 		
-					for (var i = 0, length = reference .length; i < length; ++ i)
+					for (var i = 0, length = references .length; i < length; ++ i)
 					{
 						var
-							field       = reference [i],
+							field       = references [i],
 							protoFields = field .getReferences ()
 
 						for (var id in protoFields)
@@ -28520,6 +28538,16 @@ function ($,
 
 					stream .string += Generator .Indent ();
 					stream .string += "</IS>\n";
+				}
+
+				if (metadata === this .metadata_)
+				{
+					if (metadata .getValue ())
+					{
+						metadata .toXMLStream (stream);
+
+						stream .string += "\n";
+					}
 				}
 
 				Generator .DecIndent ();
@@ -29792,6 +29820,7 @@ function ($,
 							catch (error)
 							{
 							   console .log (error .message);
+							   return true;
 							}
 						}
 		
@@ -83564,17 +83593,50 @@ function ($,
 			this .setGeometryType (2);
 			this .setSolid (this .solid_ .getValue ());
 		},
+		intersectsLine: function (line, clipPlanes, modelViewMatrix, intersections)
+		{
+			if (this .getGeometryType () < 2)
+			{
+				return X3DLineGeometryNode .prototype .intersectsLine .call (this, line, clipPlanes, modelViewMatrix, intersections);
+			}
+			else
+			{
+				return X3DGeometryNode .prototype .intersectsLine .call (this, line, clipPlanes, modelViewMatrix, intersections);
+			}
+		},
+		intersectsBox: function (box, clipPlanes, modelViewMatrix)
+		{
+			if (this .getGeometryType () < 2)
+			{
+				return X3DLineGeometryNode .prototype .intersectsBox .call (this, box, clipPlanes, modelViewMatrix);
+			}
+			else
+			{
+				return X3DGeometryNode .prototype .intersectsBox .call (this, box, clipPlanes, modelViewMatrix);
+			}
+		},
 		display: function (context)
 		{
 			if (this .getGeometryType () < 2)
 			{
-				X3DLineGeometryNode .prototype .display .call (this, context);
+				return X3DLineGeometryNode .prototype .display .call (this, context);
 			}
 			else
 			{
-				X3DGeometryNode .prototype .display .call (this, context);
+				return X3DGeometryNode .prototype .display .call (this, context);
 			}
 		},
+		displayParticles: function (context, particles, numParticles)
+		{
+			if (this .getGeometryType () < 2)
+			{
+				return X3DLineGeometryNode .prototype .displayParticles .call (this, context, particles, numParticles);
+			}
+			else
+			{
+				return X3DGeometryNode .prototype .displayParticles .call (this, context, particles, numParticles);
+			}
+		}
 	});
 
 	return Disk2D;
