@@ -226,17 +226,50 @@ function ($,
 			this .setGeometryType (2);
 			this .setSolid (this .solid_ .getValue ());
 		},
+		intersectsLine: function (line, clipPlanes, modelViewMatrix, intersections)
+		{
+			if (this .getGeometryType () < 2)
+			{
+				return X3DLineGeometryNode .prototype .intersectsLine .call (this, line, clipPlanes, modelViewMatrix, intersections);
+			}
+			else
+			{
+				return X3DGeometryNode .prototype .intersectsLine .call (this, line, clipPlanes, modelViewMatrix, intersections);
+			}
+		},
+		intersectsBox: function (box, clipPlanes, modelViewMatrix)
+		{
+			if (this .getGeometryType () < 2)
+			{
+				return X3DLineGeometryNode .prototype .intersectsBox .call (this, box, clipPlanes, modelViewMatrix);
+			}
+			else
+			{
+				return X3DGeometryNode .prototype .intersectsBox .call (this, box, clipPlanes, modelViewMatrix);
+			}
+		},
 		display: function (context)
 		{
 			if (this .getGeometryType () < 2)
 			{
-				X3DLineGeometryNode .prototype .display .call (this, context);
+				return X3DLineGeometryNode .prototype .display .call (this, context);
 			}
 			else
 			{
-				X3DGeometryNode .prototype .display .call (this, context);
+				return X3DGeometryNode .prototype .display .call (this, context);
 			}
 		},
+		displayParticles: function (context, particles, numParticles)
+		{
+			if (this .getGeometryType () < 2)
+			{
+				return X3DLineGeometryNode .prototype .displayParticles .call (this, context, particles, numParticles);
+			}
+			else
+			{
+				return X3DGeometryNode .prototype .displayParticles .call (this, context, particles, numParticles);
+			}
+		}
 	});
 
 	return Disk2D;

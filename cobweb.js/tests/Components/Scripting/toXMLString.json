@@ -50,7 +50,7 @@
         },
         {
           "@name": "modified",
-          "@content": "Fri, 06 Jan 2017 05:12:03 GMT"
+          "@content": "Sat, 07 Jan 2017 09:22:10 GMT"
         },
         {
           "@name": "outputStyle",
@@ -166,7 +166,7 @@
                     }
                   }
                 },
-                { "BooleanSwitch":
+                { "ProtoInstance":
                   {
                     "@name": "BooleanSwitch",
                     "fieldValue": [
@@ -276,21 +276,22 @@
                           {
                             "@DEF": "previous",
                             "@name": "previous",
-                            "@reference": "http://titania.create3000.de",
-                            "-value": [
-                              { "Transform":
-                                {
-                                  "@DEF": "_1"
-                                }
-                              }
-                            ]
+                            "@reference": "http://titania.create3000.de"
                           }
                         },
                         { "MetadataSet":
                           {
                             "@DEF": "children",
                             "@name": "children",
-                            "@reference": "http://titania.create3000.de"
+                            "@reference": "http://titania.create3000.de",
+                            "-value": [
+                              { "MetadataSet":
+                                {
+                                  "@DEF": "_1",
+                                  "@reference": "http://titania.create3000.de"
+                                }
+                              }
+                            ]
                           }
                         }
                       ]
@@ -491,7 +492,7 @@
                 "@type": "SFNode",
                 "@name": "SFNodeValue",
                 "-children": [
-                  { "Prototype":
+                  { "ProtoInstance":
                     {
                       "@DEF": "_3",
                       "@name": "Prototype",
@@ -707,6 +708,7 @@
                 "-children": [
                   { "ProtoInstance":
                     {
+                      "@name": "Prototype",
                       "@USE": "_3"
                     }
                   },
@@ -821,7 +823,7 @@
             ]
           }
         },
-        { "BooleanSwitch":
+        { "ProtoInstance":
           {
             "@name": "BooleanSwitch",
             "fieldValue": [
@@ -833,7 +835,12 @@
                 "@name": "bboxSize",
                 "@value": [ 1, 1, 1 ]
               }
-            ]
+            ],
+            "-metadata": { "MetadataSet":
+              {
+                "@USE": "_1"
+              }
+            }
           }
         },
         { "Inline":
@@ -844,7 +851,7 @@
             ]
           }
         },
-        { "Prototype":
+        { "ProtoInstance":
           {
             "@name": "Prototype"
           }
@@ -853,7 +860,6 @@
           {
             "-proxy": { "Transform":
               {
-                "@USE": "_1"
               }
             }
           }
