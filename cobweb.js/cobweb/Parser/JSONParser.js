@@ -331,6 +331,9 @@ function ($,
 		},
 		node: function (object, key)
 		{
+			if (typeof object === 'string') {
+				return;
+			}
 			try
 			{
 				if (this .USE (object))
@@ -447,7 +450,7 @@ function ($,
 						return;
 
 					default:
-						this .node (child);
+						this .node (child, key);
 						return;
 				}
 			}
