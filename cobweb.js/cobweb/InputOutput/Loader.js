@@ -53,6 +53,7 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Browser/Networking/urls",
 	"cobweb/Parser/Parser",
+	"cobweb/Parser/JSONParser",
 	"cobweb/Parser/XMLParser",
 	"standard/Networking/URI",
 	"lib/BinaryTransport",
@@ -64,6 +65,7 @@ function ($,
           Fields,
           urls,
           Parser,
+          JSONParser,
           XMLParser,
           URI,
           BinaryTransport,
@@ -127,10 +129,17 @@ function ($,
 				}
 				catch (exceptionParseXML)
 				{
-					// If we cannot parse XML we try to parse X3D Classic Encoding.	
+					// If we cannot parse XML we try to parse JSON Encoding.	
 
-					new Parser (scene) .parseIntoScene (string);
-
+					try
+					{
+						new JSONParser (scene) .parseIntoScene (string);
+					}
+					catch (exceptionParseJSON)
+					{
+						// If we cannot parse JSON we try to parse X3D Classic Encoding.	
+						new Parser (scene) .parseIntoScene (string);
+					}
 					this .setScene (scene, success);
 				}
 			}
@@ -141,14 +150,21 @@ function ($,
 					this .importDocument (scene, $.parseXML (string));
 					return scene;
 				}
-				catch (exception1)
+				catch (exceptionParseXML)
 				{
-					//var exception1 = new Error ("Couldn't parse XML");
+					// If we cannot parse XML we try to parse JSON Encoding.	
 
-					// If we cannot parse XML we try to parse X3D Classic Encoding.	
-
-					new Parser (scene) .parseIntoScene (string);
-					return scene;
+					try
+					{
+						new JSONParser (scene) .parseIntoScene (string);
+						return scene;
+					}
+					catch (exceptionParseJSON)
+					{
+						// If we cannot parse JSON we try to parse X3D Classic Encoding.	
+						new Parser (scene) .parseIntoScene (string);
+						return scene;
+					}
 				}
 			}
 		},
