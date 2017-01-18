@@ -64,6 +64,7 @@ function ($,
           Fields,
           urls,
           Parser,
+          JSONParser,
           XMLParser,
           URI,
           BinaryTransport,
@@ -127,11 +128,22 @@ function ($,
 				}
 				catch (exceptionParseXML)
 				{
-					// If we cannot parse XML we try to parse X3D Classic Encoding.	
+					try
+					{
+						// If we cannot parse XML we try to parse X3D JSON Encoding.	
 
-					new Parser (scene) .parseIntoScene (string);
+						new JSONParser (scene) .parseIntoScene (string);
 
-					this .setScene (scene, success);
+						this .setScene (scene, success);
+					}
+					catch (exceptionParseJSON)
+					{
+						// If we cannot parse JSON we try to parse X3D Classic Encoding.	
+
+						new Parser (scene) .parseIntoScene (string);
+
+						this .setScene (scene, success);
+					}
 				}
 			}
 			else
@@ -141,14 +153,24 @@ function ($,
 					this .importDocument (scene, $.parseXML (string));
 					return scene;
 				}
-				catch (exception1)
+				catch (exceptionParseXML)
 				{
-					//var exception1 = new Error ("Couldn't parse XML");
 
-					// If we cannot parse XML we try to parse X3D Classic Encoding.	
+					try
+					{
+						// If we cannot parse XML we try to parse X3D JSON Encoding.	
 
-					new Parser (scene) .parseIntoScene (string);
-					return scene;
+						new JSONParser (scene) .parseIntoScene (string);
+						return scene;
+					}
+					catch (exceptionParseJSON)
+					{
+
+						// If we cannot parse JSON we try to parse X3D Classic Encoding.	
+
+						new Parser (scene) .parseIntoScene (string);
+						return scene;
+					}
 				}
 			}
 		},
