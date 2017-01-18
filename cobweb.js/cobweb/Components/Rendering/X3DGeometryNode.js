@@ -80,6 +80,8 @@ function ($,
 "use strict";
 
 	var
+		min             = new Vector3 (0, 0, 0),
+		max             = new Vector3 (0, 0, 0),
 		clipPoint       = new Vector3 (0, 0, 0),
 		modelViewMatrix = new Matrix4 (),
 		invMatrix       = new Matrix4 ();
@@ -192,6 +194,22 @@ function ($,
 		{
 			// With screen matrix applied.
 			return this .bbox;
+		},
+		setBBox: function (bbox)
+		{
+			if (! bbox .equals (this .bbox))
+			{
+			   bbox .getExtents (min, max);
+	
+				this .min  .assign (min);
+				this .max  .assign (max);
+				this .bbox .assign (bbox);
+	
+				for (var i = 0; i < 5; ++ i)
+					this .planes [i] .set (i % 2 ? min : max, boxNormals [i]);
+	
+				this .bbox_changed_ .addEvent ();
+			}
 		},
 		getMin: function ()
 		{
@@ -420,7 +438,7 @@ function ($,
 		{
 			// Apply sceen nodes transformation in place here.
 		},
-		intersectsLine: function (line, clipPlanes, modelViewMatrix, intersections)
+		intersectsLine: function (line, clipPlanes, modelViewMatrix_, intersections)
 		{
 			try
 			{
@@ -428,8 +446,8 @@ function ($,
 
 				if (this .intersectsBBox (line))
 				{
-					this .transformLine   (line);            // Apply screen transformations from screen nodes.
-					this .transformMatrix (modelViewMatrix); // Apply screen transformations from screen nodes.
+					this .transformLine   (line);                                       // Apply screen transformations from screen nodes.
+					this .transformMatrix (modelViewMatrix .assign (modelViewMatrix_)); // Apply screen transformations from screen nodes.
 
 					var
 						texCoords  = this .texCoords [0],

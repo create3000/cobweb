@@ -1,14 +1,15 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.html">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="439" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="431" Column="15" />
       <File FileName="cobweb.js/cobweb/InputOutput/Generator.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Basic/X3DBaseNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Core/X3DPrototypeInstance.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/tests/Components/Scripting/toXMLString.x3d" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Execution/X3DScene.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb.release.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Text/Text.js" Line="157" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Shape/Shape.js" Line="133" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Text/X3DTextGeometry.js" Line="652" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Layout/ScreenText.js" Line="453" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Rendering/X3DGeometryNode.js" Line="436" Column="5" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
