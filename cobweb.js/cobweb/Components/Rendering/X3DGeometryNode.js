@@ -438,7 +438,7 @@ function ($,
 		{
 			// Apply sceen nodes transformation in place here.
 		},
-		intersectsLine: function (line, clipPlanes, modelViewMatrix, intersections)
+		intersectsLine: function (line, clipPlanes, modelViewMatrix_, intersections)
 		{
 			try
 			{
@@ -446,8 +446,8 @@ function ($,
 
 				if (this .intersectsBBox (line))
 				{
-					this .transformLine   (line);            // Apply screen transformations from screen nodes.
-					this .transformMatrix (modelViewMatrix); // Apply screen transformations from screen nodes.
+					this .transformLine   (line);                                       // Apply screen transformations from screen nodes.
+					this .transformMatrix (modelViewMatrix .assign (modelViewMatrix_)); // Apply screen transformations from screen nodes.
 
 					var
 						texCoords  = this .texCoords [0],
