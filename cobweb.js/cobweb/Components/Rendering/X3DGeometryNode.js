@@ -80,6 +80,8 @@ function ($,
 "use strict";
 
 	var
+		min             = new Vector3 (0, 0, 0),
+		max             = new Vector3 (0, 0, 0),
 		clipPoint       = new Vector3 (0, 0, 0),
 		modelViewMatrix = new Matrix4 (),
 		invMatrix       = new Matrix4 ();
@@ -192,6 +194,22 @@ function ($,
 		{
 			// With screen matrix applied.
 			return this .bbox;
+		},
+		setBBox: function (bbox)
+		{
+			if (! bbox .equals (this .bbox))
+			{
+			   bbox .getExtents (min, max);
+	
+				this .min  .assign (min);
+				this .max  .assign (max);
+				this .bbox .assign (bbox);
+	
+				for (var i = 0; i < 5; ++ i)
+					this .planes [i] .set (i % 2 ? min : max, boxNormals [i]);
+	
+				this .bbox_changed_ .addEvent ();
+			}
 		},
 		getMin: function ()
 		{

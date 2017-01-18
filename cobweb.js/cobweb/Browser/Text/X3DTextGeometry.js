@@ -647,6 +647,8 @@ function (TextAlignment,
 
 			return glyphs;
 		},
+		traverse: function (type, renderObject)
+		{ },
 	};
 
 	return X3DTextGeometry;
