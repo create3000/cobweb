@@ -129,7 +129,7 @@ function ($,
 				}
 				catch (exceptionParseXML)
 				{
-					// If we cannot parse XML we try to parse JSON Encoding.	
+					// If we cannot parse XML we try to parse X3D JSON Encoding.	
 
 					try
 					{
@@ -152,10 +152,11 @@ function ($,
 				}
 				catch (exceptionParseXML)
 				{
-					// If we cannot parse XML we try to parse JSON Encoding.	
 
 					try
 					{
+						// If we cannot parse XML we try to parse X3D JSON Encoding.	
+
 						new JSONParser (scene) .parseIntoScene (string);
 						return scene;
 					}
