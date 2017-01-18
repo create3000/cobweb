@@ -53,6 +53,7 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Browser/Networking/urls",
 	"cobweb/Parser/Parser",
+	"cobweb/Parser/JSONParser",
 	"cobweb/Parser/XMLParser",
 	"standard/Networking/URI",
 	"lib/BinaryTransport",
@@ -64,6 +65,7 @@ function ($,
           Fields,
           urls,
           Parser,
+          JSONParser,
           XMLParser,
           URI,
           BinaryTransport,
@@ -132,10 +134,9 @@ function ($,
 					{
 
 						new JSONParser (scene) .parseIntoScene (string);
-	>>>>>>> 1e5dc6423f578c5bfdf53b69614a70eb5d7ce653
 
 					}
-					catch (exceptionParseXML)
+					catch (exceptionParseJSON)
 					{
 						// If we cannot parse XML we try to parse X3D Classic Encoding.	
 
@@ -152,7 +153,7 @@ function ($,
 					this .importDocument (scene, $.parseXML (string));
 					return scene;
 				}
-				catch (exception1)
+				catch (exceptionParseXML)
 				{
 
 					try
