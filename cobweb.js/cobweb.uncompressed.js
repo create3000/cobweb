@@ -47095,14 +47095,8 @@ function ($,
 			{
 				var intersected = false;
 
-if (this .getTypeName () == "Text")
-	console .log (this .fontStyle_ .getValue () .getTypeName (), this .getBBox () .toString ());
-
 				if (this .intersectsBBox (line))
 				{
-if (this .getTypeName () == "Text")
-	console .log (this .fontStyle_ .getValue () .getTypeName ());
-
 					this .transformLine   (line);            // Apply screen transformations from screen nodes.
 					this .transformMatrix (modelViewMatrix); // Apply screen transformations from screen nodes.
 
