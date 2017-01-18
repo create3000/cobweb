@@ -149,6 +149,19 @@ function ($,
 
 			this .setSolid (this .solid_ .getValue ());
 		},
+		traverse: function (type, renderObject)
+		{
+			try
+			{
+				this .textGeometry .traverse (type, renderObject);
+
+				X3DGeometryNode .prototype .traverse .call (this, type, renderObject);
+			}
+			catch (error)
+			{
+				console .log (error);
+			}
+		},
 		display: function (context)
 		{
 			try

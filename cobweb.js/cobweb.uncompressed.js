@@ -46731,6 +46731,8 @@ function ($,
 
 
 	var
+		min             = new Vector3 (0, 0, 0),
+		max             = new Vector3 (0, 0, 0),
 		clipPoint       = new Vector3 (0, 0, 0),
 		modelViewMatrix = new Matrix4 (),
 		invMatrix       = new Matrix4 ();
@@ -46843,6 +46845,22 @@ function ($,
 		{
 			// With screen matrix applied.
 			return this .bbox;
+		},
+		setBBox: function (bbox)
+		{
+			if (! bbox .equals (this .bbox))
+			{
+			   bbox .getExtents (min, max);
+	
+				this .min  .assign (min);
+				this .max  .assign (max);
+				this .bbox .assign (bbox);
+	
+				for (var i = 0; i < 5; ++ i)
+					this .planes [i] .set (i % 2 ? min : max, boxNormals [i]);
+	
+				this .bbox_changed_ .addEvent ();
+			}
 		},
 		getMin: function ()
 		{
@@ -61234,6 +61252,8 @@ function (TextAlignment,
 
 			return glyphs;
 		},
+		traverse: function (type, renderObject)
+		{ },
 	};
 
 	return X3DTextGeometry;
@@ -99058,15 +99078,14 @@ function ($,
 			min .set ((glyph .xMin || 0) / unitsPerEm, (glyph .yMin || 0) / unitsPerEm, 0);
 			max .set ((glyph .xMax || 0) / unitsPerEm, (glyph .yMax || 0) / unitsPerEm, 0);
 		},
-		transform: function (context)
+		transform: function (renderObject)
 		{
 			// throws an exception
 
 			var
-				renderObject     = context .renderer,
 				text             = this .getText (),
 				projectionMatrix = renderObject .getProjectionMatrix () .get (),
-				modelViewMatrix  = context .modelViewMatrix,
+				modelViewMatrix  = renderObject .getModelViewMatrix () .get (),
 				viewport         = renderObject .getViewVolume () .getViewport (),
 				screenMatrix     = this .screenMatrix;
 
@@ -99101,20 +99120,15 @@ function ($,
 
 			bbox .assign (this .getBBox ()) .multRight (this .matrix);
 
-			if (! bbox .equals (text .getBBox ()))
-			{
-			   bbox .getExtents (min, max);
-				text .getMin ()  .assign (min);
-				text .getMax ()  .assign (max);
-				text .getBBox () .assign (bbox);
-				text .bbox_changed_ .addEvent ();
-			}
-
-			return this .matrix;
+			text .setBBox (bbox);
+		},
+		traverse: function (type, renderObject)
+		{
+			this .transform (renderObject);
 		},
 		display: function (context)
 		{
-			Matrix4 .prototype .multLeft .call (context .modelViewMatrix, this .transform (context));
+			Matrix4 .prototype .multLeft .call (context .modelViewMatrix, this .matrix);
 
 		   context .textureNode          = this .texture;
 		   context .textureTransformNode = this .getBrowser () .getDefaultTextureTransform ();
@@ -103643,6 +103657,19 @@ function ($,
 			this .textGeometry .build ();
 
 			this .setSolid (this .solid_ .getValue ());
+		},
+		traverse: function (type, renderObject)
+		{
+			try
+			{
+				this .textGeometry .traverse (type, renderObject);
+
+				X3DGeometryNode .prototype .traverse .call (this, type, renderObject);
+			}
+			catch (error)
+			{
+				console .log (error);
+			}
 		},
 		display: function (context)
 		{

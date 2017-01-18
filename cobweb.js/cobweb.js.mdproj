@@ -1291,6 +1291,7 @@
     <None Include="tests\Components\PROTO\Rotor.wrl" />
     <None Include="tests\Components\RigidBodyPhysics\BallBounceSimple.x3d" />
     <None Include="tests\Components\Scripting\toXMLString.json" />
+    <None Include="tests\Components\Scripting\MURCIELAGO640.json" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
