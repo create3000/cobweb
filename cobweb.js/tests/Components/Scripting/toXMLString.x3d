@@ -11,7 +11,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Scripting/toXMLString.x3d'/>
-    <meta name='modified' content='Fri, 06 Jan 2017 11:41:32 GMT'/>
+    <meta name='modified' content='Sat, 21 Jan 2017 08:27:58 GMT'/>
     <meta name='outputStyle' content='nicest'/>
   </head>
   <Scene>
@@ -86,33 +86,42 @@
             reference='http://titania.create3000.de'>
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
+              reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
               reference='http://titania.create3000.de'>
-            <Script DEF='CustomStript' containerField='value'>
-              <field accessType='inputOutput' type='SFVec3f' name='translation' value='3 4 5'/>
-              <field accessType='initializeOnly' type='SFNode' name='child'>
-                <Transform DEF='Box'>
-                  <Shape>
-                    <Appearance>
-                      <Material/>
-                    </Appearance>
-                    <Box/>
-                  </Shape>
-                </Transform>
-              </field>
-              <field accessType='initializeOnly' type='MFNode' name='children'>
-                <Transform DEF='Box_1'
-                    translation='3 4 5'
-                    scale='2 2 2'>
-                  <Shape>
-                    <Appearance>
-                      <Material/>
-                    </Appearance>
-                    <Box/>
-                  </Shape>
-                </Transform>
-                <Viewpoint DEF='_1'/>
-              </field>
-              <field accessType='initializeOnly' type='MFVec3f' name='point' value='1 2 3, 4 5 6'/>
+            <MetadataSet DEF='_1' containerField='value'
+                reference='http://titania.create3000.de'/>
+          </MetadataSet>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <Script DEF='CustomStript'>
+      <field accessType='inputOutput' type='SFVec3f' name='translation' value='3 4 5'/>
+      <field accessType='initializeOnly' type='SFNode' name='child'>
+        <Transform DEF='Box'>
+          <Shape>
+            <Appearance>
+              <Material/>
+            </Appearance>
+            <Box/>
+          </Shape>
+        </Transform>
+      </field>
+      <field accessType='initializeOnly' type='MFNode' name='children'>
+        <Transform DEF='Box_1'
+            translation='3 4 5'
+            scale='2 2 2'>
+          <Shape>
+            <Appearance>
+              <Material/>
+            </Appearance>
+            <Box/>
+          </Shape>
+        </Transform>
+        <Viewpoint DEF='_2'/>
+      </field>
+      <field accessType='initializeOnly' type='MFVec3f' name='point' value='1 2 3, 4 5 6'/>
 <![CDATA[javascript:
 
 function initialize ()
@@ -135,18 +144,7 @@ function initialize ()
 	print ($.parseXML (Browser .currentScene .toXMLString ()));
 }
 ]]>
-            </Script>
-          </MetadataSet>
-          <MetadataSet DEF='children' containerField='value'
-              name='children'
-              reference='http://titania.create3000.de'>
-            <MetadataSet DEF='_2' containerField='value'
-                reference='http://titania.create3000.de'/>
-          </MetadataSet>
-        </MetadataSet>
-      </MetadataSet>
-    </WorldInfo>
-    <Script USE='CustomStript'/>
+    </Script>
     <Script DEF='FieldsScript'>
       <field accessType='initializeOnly' type='SFBool' name='SFBoolValue' value='true'/>
       <field accessType='initializeOnly' type='SFColor' name='SFColorValue' value='0.1 0.2 0.3'/>
@@ -232,7 +230,7 @@ function initialize ()
     <ProtoInstance name='BooleanSwitch'>
       <fieldValue name='whichChoice' value='true'/>
       <fieldValue name='bboxSize' value='1 1 1'/>
-      <MetadataSet USE='_2'/>
+      <MetadataSet USE='_1'/>
     </ProtoInstance>
     <Inline DEF='_8'
         url='"../Core/EXPORT.x3d"'/>
@@ -243,7 +241,7 @@ function initialize ()
     <IMPORT inlineDEF='_8' exportedDEF='Export'/>
     <IMPORT inlineDEF='_8' exportedDEF='ExportAs' AS='ImportAs'/>
     <ROUTE fromNode='Box_1' fromField='translation_changed' toNode='Box_1' toField='set_scale'/>
-    <ROUTE fromNode='Box_1' fromField='translation_changed' toNode='_1' toField='set_position'/>
+    <ROUTE fromNode='Box_1' fromField='translation_changed' toNode='_2' toField='set_position'/>
     <ROUTE fromNode='Export' fromField='translation_changed' toNode='ImportAs' toField='set_translation'/>
     <ROUTE fromNode='Box_1' fromField='translation_changed' toNode='Export' toField='set_translation'/>
     <EXPORT localDEF='Box_1' AS='Box'/>
