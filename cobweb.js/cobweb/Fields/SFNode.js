@@ -154,7 +154,10 @@ function ($, X3DField, X3DConstants)
 		},
 		equals: function (node)
 		{
-			return this .getValue () === node .getValue ();
+			if (node)
+				return this .getValue () === node .getValue ();
+
+			return this .getValue () === null;
 		},
 		isDefaultValue: function ()
 		{

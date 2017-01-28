@@ -134,8 +134,7 @@ function ($,
 		if (value [0] instanceof Array)
 			value = value [0];
 
-		for (var i = 0, length = value .length; i < length; ++ i)
-			this .push (value [i]);
+		X3DArrayField .prototype .push .apply (this, value);
 
 		return new Proxy (this, handler);
 	}
@@ -149,8 +148,7 @@ function ($,
 				copy  = new (this .constructor) (),
 				array = this .getValue ();
 
-			for (var i = 0, length = array .length; i < length; ++ i)
-				copy .push (array [i]);
+			X3DArrayField .prototype .push .apply (copy, array);
 
 			return copy;
 		},
@@ -193,16 +191,22 @@ function ($,
 		},
 		unshift: function (value)
 		{
-			var
-				array = this .getValue (),
-				field = new (this ._valueType) ();
+			var array = this .getValue ();
 
-			field .setValue (value);
+			for (var i = arguments .length - 1; i >= 0; -- i)
+			{
+				var field = new (this ._valueType) ();
 
-			this .addChildObject (field);
+				field .setValue (arguments [i]);
+	
+				this .addChildObject (field);
+
+				array .unshift (field);
+			}
+
 			this .addEvent ();
 
-			return array .unshift (field);
+			return array .length;
 		},
 		shift: function ()
 		{
@@ -218,16 +222,22 @@ function ($,
 		},
 		push: function (value)
 		{
-			var
-				array = this .getValue (),
-				field = new (this ._valueType) ();
+			var array = this .getValue ();
 
-			field .setValue (value);
+			for (var i = 0, length = arguments .length; i < length; ++ i)
+			{
+				var field = new (this ._valueType) ();
 
-			this .addChildObject (field);
+				field .setValue (arguments [i]);
+
+				this .addChildObject (field);
+
+				array .push (field);
+			}
+
 			this .addEvent ();
 
-			return array .push (field);
+			return array .length;
 		},
 		pop: function ()
 		{
