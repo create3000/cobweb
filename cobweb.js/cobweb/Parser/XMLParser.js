@@ -530,21 +530,29 @@ function ($,
 
 			try
 			{
-				var
-					node      = this .getParent (),
-					proto     = this .getExecutionContext (),
-					field     = node .getField (nodeFieldName),
-					reference = proto .getField (protoFieldName);
+				if (this .getParents () .length === 0)
+					return;
 
-				if (field .getType () === reference .getType ())
+				var
+					node  = this .getParent (),
+					proto = this .getExecutionContext ();
+
+				if (! (node instanceof X3DBaseNode))
+					return;
+
+				var
+					nodeField  = node .getField (nodeFieldName),
+					protoField = proto .getField (protoFieldName);
+
+				if (nodeField .getType () === protoField .getType ())
 				{
-					if (reference .isReference (field .getAccessType ()))
-						field .addReference (reference);
+					if (protoField .isReference (nodeField .getAccessType ()))
+						nodeField .addReference (protoField);
 					else
-						throw new Error ("Field '" + field .getName () + "' and '" + reference .getName () + "' in PROTO " + this .getExecutionContext () . getName () + " are incompatible as an IS mapping.");
+						throw new Error ("Field '" + nodeField .getName () + "' and '" + protoField .getName () + "' in PROTO " + this .getExecutionContext () . getName () + " are incompatible as an IS mapping.");
 				}
 				else
-					throw new Error ("Field '" + field .getName () + "' and '" + reference .getName () + "' in PROTO " + this .getExecutionContext () .getName () + " have different types.");
+					throw new Error ("Field '" + nodeField .getName () + "' and '" + protoField .getName () + "' in PROTO " + this .getExecutionContext () .getName () + " have different types.");
 			}
 			catch (error)
 			{
