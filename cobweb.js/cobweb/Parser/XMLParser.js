@@ -125,7 +125,7 @@ function ($,
 							this .x3dElement (X3D [i]);
 					}
 					else
-						this .sceneElement (xmlElement);
+						this .childrenElements (xmlElement);
 
 					break;
 				}
