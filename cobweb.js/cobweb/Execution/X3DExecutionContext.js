@@ -139,6 +139,10 @@ function ($,
 		{
 			return this .specificationVersion;
 		},
+		setEncoding: function (value)
+		{
+			this .encoding = value;
+		},
 		getEncoding: function ()
 		{
 			return this .encoding;

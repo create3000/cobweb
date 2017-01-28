@@ -121,18 +121,21 @@ function ($,
 		{
 			this .proto = proto;
 
-			var
-				fieldDefinitions      = this .getFieldDefinitions (),
-				protoFieldDefinitions = proto .getFieldDefinitions ();
-
-			for (var i = 0, length = protoFieldDefinitions .length; i < length; ++ i)
+			if (this .proto)
 			{
 				var
-					protoFieldDefinition = protoFieldDefinitions [i],
-					fieldDefinition      = fieldDefinitions .get (protoFieldDefinition .name);
-
-				if (fieldDefinition)
-					fieldDefinition .value .setValue (protoFieldDefinition .value);
+					fieldDefinitions      = this .getFieldDefinitions (),
+					protoFieldDefinitions = proto .getFieldDefinitions ();
+	
+				for (var i = 0, length = protoFieldDefinitions .length; i < length; ++ i)
+				{
+					var
+						protoFieldDefinition = protoFieldDefinitions [i],
+						fieldDefinition      = fieldDefinitions .get (protoFieldDefinition .name);
+	
+					if (fieldDefinition)
+						fieldDefinition .value .setValue (protoFieldDefinition .value);
+				}
 			}
 		},
 		getProtoDeclaration: function ()

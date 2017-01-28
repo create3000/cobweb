@@ -51,6 +51,8 @@ define ([
 	"jquery",
 	"cobweb/Basic/X3DField",
 	"cobweb/Basic/X3DArrayField",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Components/Core/X3DPrototypeInstance",
 	"cobweb/Fields",
 	"cobweb/Parser/Parser",
 	"cobweb/Parser/HTMLSupport",
@@ -61,9 +63,11 @@ define ([
 function ($,
           X3DField,
           X3DArrayField,
+          X3DBaseNode,
+          X3DPrototypeInstance,
           Fields,
           Parser,
-	  HTMLSupport,   
+          HTMLSupport,   
           X3DExternProtoDeclaration,
           X3DProtoDeclaration,
           X3DConstants)
@@ -93,6 +97,8 @@ function ($,
 		constructor: XMLParser,
 		parseIntoScene: function (xmlElement)
 		{
+			this .scene .setEncoding ("XML");
+
 			this .xmlElement (xmlElement);
 		},
 		parseIntoNode: function (node, xmlElement)
@@ -100,7 +106,7 @@ function ($,
 			this .pushExecutionContext (node .getExecutionContext ());
 			this .pushParent (node);
 
-			this .statement (xmlElement);
+			this .childElement (xmlElement);
 
 			this .popParent ();
 			this .popExecutionContext ();
@@ -131,44 +137,14 @@ function ($,
 					this .sceneElement (xmlElement);
 					break;
 				default:
-					this .statement (xmlElement);
+					this .childElement (xmlElement);
 					break;
 			}
 		},
 		x3dElement: function (xmlElement)
 		{
-			this .profileAttribute (xmlElement);
+			// Profile
 
-			var specificationVersion = xmlElement .getAttribute ("version");
-
-			if (specificationVersion)
-				this .scene .specificationVersion = specificationVersion;
-
-			this .scene .encoding = "XML";
-
-			// Process child nodes
-
-			var childNodes = xmlElement .childNodes;
-	
-			for (var i = 0; i < childNodes .length; ++ i)
-			{
-				var xmlElement = childNodes [i];
-			
-				switch (xmlElement .nodeName)
-				{
-					case "head":
-					case "HEAD":
-						this .headElement (xmlElement);
-						continue;
-					case "Scene":
-					case "SCENE":
-						this .sceneElement (xmlElement);
-						continue;
-				}
-			}
-		},
-		profileAttribute: function (xmlElement)
-		{
 			try
 			{
 				var
@@ -181,30 +157,58 @@ function ($,
 			{
 				console .log (error);
 			}
+
+			// Specification version
+
+			var specificationVersion = xmlElement .getAttribute ("version");
+
+			if (specificationVersion)
+				this .scene .specificationVersion = specificationVersion;
+
+			// Process child nodes
+
+			var childNodes = xmlElement .childNodes;
+
+			for (var i = 0; i < childNodes .length; ++ i)
+				this .x3dElementChild (childNodes [i])
+		},
+		x3dElementChild: function (xmlElement)
+		{
+			switch (xmlElement .nodeName)
+			{
+				case "head":
+				case "HEAD":
+					this .headElement (xmlElement);
+					return;
+				case "Scene":
+				case "SCENE":
+					this .sceneElement (xmlElement);
+					return;
+			}
 		},
 		headElement: function (xmlElement)
 		{
 			var childNodes = xmlElement .childNodes;
 	
 			for (var i = 0; i < childNodes .length; ++ i)
+				this .headElementChild (childNodes [i]);
+		},
+		headElementChild: function (xmlElement)
+		{
+			switch (xmlElement .nodeName)
 			{
-				var xmlElement = childNodes [i];
-			
-				switch (xmlElement .nodeName)
-				{
-					case "component":
-					case "COMPONENT":
-						this .componentElement (xmlElement);
-						continue;
-					case "unit":
-					case "UNIT":
-						this .unitElement (xmlElement);
-						continue;
-					case "meta":
-					case "META":
-						this .metaElement (xmlElement);
-						continue;
-				}
+				case "component":
+				case "COMPONENT":
+					this .componentElement (xmlElement);
+					return;
+				case "unit":
+				case "UNIT":
+					this .unitElement (xmlElement);
+					return;
+				case "meta":
+				case "META":
+					this .metaElement (xmlElement);
+					return;
 			}
 		},
 		componentElement: function (xmlElement)
@@ -264,51 +268,70 @@ function ($,
 		},
 		sceneElement: function (xmlElement)
 		{
-			this .statements (xmlElement .childNodes);
+			this .childrenElements (xmlElement);
 		},
-		statements: function (childNodes)
+		childrenElements: function (xmlElement)
 		{
+			var childNodes = xmlElement .childNodes;
+
 			for (var i = 0; i < childNodes .length; ++ i)
-				this .statement (childNodes [i]);
+				this .childElement (childNodes [i]);
 		},
-		statement: function (child)
+		childElement: function (xmlElement)
 		{
-			switch (child .nodeName)
+			switch (xmlElement .nodeName)
 			{
 				case "#comment":
 				case "#text":
+					return;
+
 				case "#cdata-section":
+					this .cdataNode (xmlElement);
 					return;
 				
 				case "ExternProtoDeclare":
 				case "EXTERNPROTODECLARE":
-					this .externProtoDeclareElement (child);
+					this .externProtoDeclareElement (xmlElement);
 					return;
 
 				case "ProtoDeclare":
 				case "PROTODECLARE":
-					this .protoDeclareElement (child);
+					this .protoDeclareElement (xmlElement);
+					return;
+
+				case "IS":
+					this .isElement (xmlElement);
 					return;
 
 				case "ProtoInstance":
 				case "PROTOINSTANCE":
-					this .protoInstanceElement (child);
+					this .protoInstanceElement (xmlElement);
+					return;
+
+				case "fieldValue":
+				case "FIELDVALUE":
+					this .fieldValueElement (xmlElement);
+					return;
+
+				case "field":
+				case "FIELD":
+					this .fieldElement (xmlElement);
 					return;
 
 				case "ROUTE":
-					this .routeElement (child);
+					this .routeElement (xmlElement);
 					return;
 
 				case "IMPORT":
-					this .importElement (child);
+					this .importElement (xmlElement);
 					return;
 
 				case "EXPORT":
-					this .exportElement (child);
+					this .exportElement (xmlElement);
 					return;
 
 				default:
-					this .nodeElement (child);
+					this .nodeElement (xmlElement);
 					return;
 			}
 		},
@@ -358,28 +381,44 @@ function ($,
 				{
 					var child = childNodes [i];
 
-					if (child .nodeName === "ProtoInterface")
+					switch (child .nodeName)
 					{
-						this .pushParent (proto);
-						this .protoInterfaceElement (child);
-						this .popParent ();
-						break;
+						case "ProtoInterface":
+						case "PROTOINTERFACE":
+						{
+							this .pushParent (proto);
+							this .protoInterfaceElement (child);
+							this .popParent ();
+							break;
+						}
+						default:
+							continue;
 					}
+
+					break;
 				}
 
 				for (var i = 0; i < childNodes .length; ++ i)
 				{
 					var child = childNodes [i];
 
-					if (child .nodeName === "ProtoBody")
+					switch (child .nodeName)
 					{
-						this .pushExecutionContext (proto);
-						this .pushParent (proto);
-						this .protoBodyElement (child);
-						this .popParent ();
-						this .popExecutionContext ();
-						break;
+						case "ProtoBody":
+						case "PROTOBODY":
+						{
+							this .pushExecutionContext (proto);
+							this .pushParent (proto);
+							this .protoBodyElement (child);
+							this .popParent ();
+							this .popExecutionContext ();
+							break;
+						}
+						default:
+							continue;
 					}
+
+					break;
 				}
 
 				proto .setName (name);
@@ -393,24 +432,30 @@ function ($,
 			var childNodes = xmlElement .childNodes;
 
 			for (var i = 0; i < childNodes .length; ++ i)
+				this .protoInterfaceElementChild (childNodes [i]);
+		},
+		protoInterfaceElementChild: function (xmlElement)
+		{
+			switch (xmlElement .nodeName)
 			{
-				var child = childNodes [i];
-
-				switch (child .nodeName)
-				{
-					case "FIELD": // User-defined field
-					case "field": // User-defined field
-						this .fieldElement (child);
-						continue;
-				}
+				case "field": // User-defined field
+				case "FIELD": // User-defined field
+					this .fieldElement (xmlElement);
+					return;
 			}
 		},
 		fieldElement: function (xmlElement)
 		{
 			try
 			{
+				if (this .getParents () .length === 0)
+					return;
+
 				var node = this .getParent ();
 	
+				if (! (node instanceof X3DBaseNode))
+					return;
+
 				if (! node .hasUserDefinedFields ())
 					return;
 	
@@ -436,7 +481,7 @@ function ($,
 					this .fieldValue (field, xmlElement .getAttribute ("value"));
 	
 					this .pushParent (field);
-					this .statements (xmlElement .childNodes);
+					this .childrenElements (xmlElement);
 					this .popParent ();
 				}
 	
@@ -449,7 +494,7 @@ function ($,
 		},
 		protoBodyElement: function (xmlElement)
 		{
-			this .statements (xmlElement .childNodes);
+			this .childrenElements (xmlElement);
 		},
 		isElement: function (xmlElement)
 		{
@@ -458,16 +503,17 @@ function ($,
 				var childNodes = xmlElement .childNodes;
 
 				for (var i = 0; i < childNodes .length; ++ i)
-				{
-					var child = childNodes [i];
-
-					switch (child .nodeName)
-					{
-						case "connect":
-							this .connectElement (child);
-							continue;
-					}
-				}
+					this .isElementChild (childNodes [i]);
+			}
+		},
+		isElementChild: function (xmlElement)
+		{
+			switch (xmlElement .nodeName)
+			{
+				case "connect":
+				case "CONNECT":
+					this .connectElement (xmlElement);
+					return;
 			}
 		},
 		connectElement: function (xmlElement)
@@ -524,7 +570,7 @@ function ($,
 					this .defAttribute (xmlElement, node);
 					this .addNode (xmlElement, node);
 					this .pushParent (node);
-					this .children (xmlElement .childNodes, true);
+					this .childrenElements (xmlElement);
 					this .getExecutionContext () .addUninitializedNode (node);
 					this .popParent ();
 				}
@@ -539,9 +585,15 @@ function ($,
 		{
 			try
 			{
+				if (this .getParents () .length === 0)
+					return;
+
 				var
 					node = this .getParent (),
 					name = xmlElement .getAttribute ("name");
+
+				if (! (node instanceof X3DPrototypeInstance))
+					return;
 
 				if (! this .id (name))
 					return;
@@ -555,7 +607,7 @@ function ($,
 					this .fieldValue (field, xmlElement .getAttribute ("value"));
 
 					this .pushParent (field);
-					this .statements (xmlElement .childNodes);
+					this .childrenElements (xmlElement);
 					this .popParent ();
 				}
 			}
@@ -579,8 +631,8 @@ function ($,
 				this .defAttribute (xmlElement, node);
 				this .addNode (xmlElement, node);
 				this .pushParent (node);
-				this .nodeAttributes (xmlElement .attributes, node);
-				this .children (xmlElement .childNodes, false);
+				this .nodeAttributes (xmlElement, node);
+				this .childrenElements (xmlElement);
 				this .getExecutionContext () .addUninitializedNode (node);
 				this .popParent ();
 			}
@@ -589,70 +641,6 @@ function ($,
 				//console .error (error);
 
 				console .error ("XML Parser Error: " + error .message);
-			}
-		},
-		children: function (childNodes, protoInstance)
-		{
-			for (var i = 0; i < childNodes .length; ++ i)
-				this .child (childNodes [i], protoInstance);
-		},
-		child: function (child, protoInstance)
-		{
-			switch (child .nodeName)
-			{
-				case "#comment":
-				case "#text":
-					return;
-
-				case "#cdata-section":
-					this .cdataNode (child);
-					return;
-				
-				case "IS":
-					this .isElement (child);
-					return;
-
-				case "field":
-				case "FIELD":
-					this .fieldElement (child);
-					return;
-
-				case "fieldValue":
-				case "FIELDVALUE":
-					if (protoInstance)
-						this .fieldValueElement (child);
-					return;
-						
-				case "ExternProtoDeclare":
-				case "EXTERNPROTODECLARE":
-					this .externProtoDeclareElement (child);
-					return;
-
-				case "ProtoDeclare":
-				case "PROTODECLARE":
-					this .protoDeclareElement (child);
-					return;
-
-				case "ProtoInstance":
-				case "PROTOINSTANCE":
-					this .protoInstanceElement (child);
-					return;
-
-				case "ROUTE":
-					this .routeElement (child);
-					return;
-
-				case "IMPORT":
-					this .importElement (child);
-					return;
-
-				case "EXPORT":
-					this .exportElement (child);
-					return;
-
-				default:
-					this .nodeElement (child);
-					return;
 			}
 		},
 		routeElement: function (xmlElement)
@@ -745,14 +733,20 @@ function ($,
 		},
 		cdataNode: function (xmlElement)
 		{
-			var
-				node  = this .getParent (),
-				field = node .getSourceText ();
+			if (this .getParents () .length === 0)
+				return;
 
-			if (field)
+			var node = this .getParent ();
+
+			if (node instanceof X3DBaseNode)
 			{
-				field .push (xmlElement .data);
-				field .setSet (true);
+				var field = node .getSourceText ();
+
+				if (field)
+				{
+					field .push (xmlElement .data);
+					field .setSet (true);
+				}
 			}
 		},
 		useAttribute: function (xmlElement)
@@ -801,8 +795,10 @@ function ($,
 				console .warn ("Invalid DEF name: " + error .message);
 			}
 		},
-		nodeAttributes: function (xmlAttributes, node)
+		nodeAttributes: function (xmlElement, node)
 		{
+			var xmlAttributes = xmlElement .attributes;
+
 			for (var i = 0; i < xmlAttributes .length; ++ i)
 				this .nodeAttribute (xmlAttributes [i], node);
 		},
@@ -901,6 +897,10 @@ function ($,
 		popExecutionContext: function ()
 		{
 			this .executionContexts .pop ();
+		},
+		getParents: function ()
+		{
+			return this .parents;
 		},
 		getParent: function ()
 		{
