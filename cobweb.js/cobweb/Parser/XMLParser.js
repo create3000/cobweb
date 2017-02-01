@@ -98,6 +98,7 @@ function ($,
 		parseIntoScene: function (xmlElement)
 		{
 			this .scene .setEncoding ("XML");
+			this .scene .setProfile (this .getBrowser () .getProfile ("Full"));
 
 			this .xmlElement (xmlElement);
 		},

@@ -91,6 +91,7 @@ function initialize ()
 	a .push (7,8,9);
 
 	print (a);
+	console .log (a .pop ());
 }
 ]]>
             </Script>
