@@ -106,9 +106,9 @@ function ($,
 			X3DLineGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getArc2DOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getArc2DOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getArc2DOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getArc2DOptions () .removeInterest ("eventsProcessed", this);
 		},
 		getAngle: function ()
 		{

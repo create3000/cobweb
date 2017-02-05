@@ -120,7 +120,7 @@ function ($,
 
 			// Connect after Group setup.
 			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
-			this .group .children_       .addInterest (this, "set_children__");
+			this .group .children_       .addInterest ("set_children__", this);
 
 			this .set_children__ ();
 		},

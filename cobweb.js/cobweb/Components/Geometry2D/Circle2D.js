@@ -104,9 +104,9 @@ function ($,
 			X3DLineGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getCircle2DOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getCircle2DOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getCircle2DOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getCircle2DOptions () .removeInterest ("eventsProcessed", this);
 		},
 		build: function ()
 		{

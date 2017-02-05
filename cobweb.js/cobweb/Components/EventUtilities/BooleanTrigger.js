@@ -96,7 +96,7 @@ function ($,
 		{
 			X3DTriggerNode .prototype .initialize .call (this);
 
-			this .set_triggerTime_ .addInterest (this, "set_triggerTime__");
+			this .set_triggerTime_ .addInterest ("set_triggerTime__", this);
 		},
 		set_triggerTime__: function ()
 		{

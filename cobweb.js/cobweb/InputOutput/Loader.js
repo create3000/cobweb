@@ -174,7 +174,7 @@ function ($,
 		},
 		setScene: function (scene, success)
 		{
-			scene .initLoadCount_ .addInterest (this, "set_initLoadCount__", scene, success);
+			scene .initLoadCount_ .addInterest ("set_initLoadCount__", this, scene, success);
 			scene .initLoadCount_ .addEvent ();
 		},
 		set_initLoadCount__: function (field, scene, success)
@@ -182,7 +182,7 @@ function ($,
 			if (field .getValue ())
 				return;
 
-			scene .initLoadCount_ .removeInterest (this, "set_initLoadCount__");
+			scene .initLoadCount_ .removeInterest ("set_initLoadCount__", this);
 
 			success (scene);
 

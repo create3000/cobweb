@@ -113,9 +113,9 @@ function ($,
 			X3DGroupingNode .prototype .initialize .call (this);
 			//X3DSensorNode   .prototype .initialize .call (this); // We can only call the base of a *Objects.
 	
-			this .isLive () .addInterest (this, "set_live__");
-			this .enabled_  .addInterest (this, "set_live__");
-			this .proxy_    .addInterest (this, "set_proxy__");
+			this .isLive () .addInterest ("set_live__", this);
+			this .enabled_  .addInterest ("set_live__", this);
+			this .proxy_    .addInterest ("set_proxy__", this);
 
 			this .set_live__ ();
 			this .set_proxy__ ();

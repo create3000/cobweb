@@ -64,8 +64,8 @@ function (Fields)
 	{
 		initialize: function ()
 		{
-			this .volume_ .addInterest (this, "set_volume__");
-			this .mute_   .addInterest (this, "set_mute__");
+			this .volume_ .addInterest ("set_volume__", this);
+			this .mute_   .addInterest ("set_mute__", this);
 
 			var
 				volume = this .getDataStorage () ["X3DSoundContext.volume"],

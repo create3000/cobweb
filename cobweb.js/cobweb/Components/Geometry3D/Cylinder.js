@@ -107,9 +107,9 @@ function ($,
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getCylinderOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getCylinderOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getCylinderOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getCylinderOptions () .removeInterest ("eventsProcessed", this);
 		},
 		build: function ()
 		{

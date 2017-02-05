@@ -163,8 +163,8 @@ function ($,
 			X3DViewpointNode    .prototype .initialize .call (this);
 			X3DGeospatialObject .prototype .initialize .call (this);
 
-			this .position_       .addInterest (this, "set_position__");
-			this .positionOffset_ .addInterest (this, "set_position__");
+			this .position_       .addInterest ("set_position__", this);
+			this .positionOffset_ .addInterest ("set_position__", this);
 			this .navType_        .addFieldInterest (this .navigationInfoNode .type_);
 			this .headlight_      .addFieldInterest (this .navigationInfoNode .headlight_);
 		

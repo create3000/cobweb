@@ -176,7 +176,7 @@ function ($,
 
 				// Apply texture properties.
 
-				this .isLive () .addInterest (this, "set_live__");
+				this .isLive () .addInterest ("set_live__", this);
 
 				this .set_live__ ();
 			}

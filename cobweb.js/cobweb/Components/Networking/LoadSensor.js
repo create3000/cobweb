@@ -106,9 +106,9 @@ function ($,
 		{
 			X3DNetworkSensorNode .prototype .initialize .call (this);
 
-			this .enabled_   .addInterest (this,"set_enabled__");
-			this .timeOut_   .addInterest (this,"set_timeOut__");
-			this .watchList_ .addInterest (this,"set_watchList__");
+			this .enabled_   .addInterest ("set_enabled__", this);
+			this .timeOut_   .addInterest ("set_timeOut__", this);
+			this .watchList_ .addInterest ("set_watchList__", this);
 
 			this .watchList_ .addEvent ();
 		},
@@ -227,7 +227,7 @@ function ($,
 					{
 						urlObjects .push (urlObject);
 		
-						urlObject .loadState_ .addInterest (this, "set_loadState__", urlObject);
+						urlObject .loadState_ .addInterest ("set_loadState__", this, urlObject);
 					}
 				}
 
@@ -241,7 +241,7 @@ function ($,
 			var urlObjects = this .urlObjects;
 
 			for (var i = 0, length = urlObjects .length; i < length; ++ i)
-				urlObjects [i] .loadState_ .removeInterest (this, "set_loadState__");
+				urlObjects [i] .loadState_ .removeInterest ("set_loadState__", this);
 
 			urlObjects .length = 0;
 		},

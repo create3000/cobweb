@@ -88,16 +88,16 @@ function ($,
 			this .addChildObjects ("initialized", new Fields .SFTime (),
 			                       "isEvenLive",  new Fields .SFBool ());
 
-			this .isLive ()   .addInterest (this, "set_live__");
-			this .isEvenLive_ .addInterest (this, "_set_live__"); // to X3DBaseNode
+			this .isLive ()   .addInterest ("set_live__", this);
+			this .isEvenLive_ .addInterest ("_set_live__", this); // to X3DBaseNode
 
-			this .initialized_ .addInterest (this, "set_loop__");
-			this .enabled_     .addInterest (this, "set_enabled__");
-			this .loop_        .addInterest (this, "set_loop__");
-			this .startTime_   .addInterest (this, "set_startTime__");
-			this .pauseTime_   .addInterest (this, "set_pauseTime__");
-			this .resumeTime_  .addInterest (this, "set_resumeTime__");
-			this .stopTime_    .addInterest (this, "set_stopTime__");
+			this .initialized_ .addInterest ("set_loop__", this);
+			this .enabled_     .addInterest ("set_enabled__", this);
+			this .loop_        .addInterest ("set_loop__", this);
+			this .startTime_   .addInterest ("set_startTime__", this);
+			this .pauseTime_   .addInterest ("set_pauseTime__", this);
+			this .resumeTime_  .addInterest ("set_resumeTime__", this);
+			this .stopTime_    .addInterest ("set_stopTime__", this);
 
 			this .startTimeValue  = this .startTime_  .getValue ();
 			this .pauseTimeValue  = this .pauseTime_  .getValue ();
@@ -248,7 +248,7 @@ function ($,
 
 				if (this .isLive () .getValue ())
 				{
-					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+					this .getBrowser () .prepareEvents () .addInterest ("prepareEvents", this);
 				}
 				else if (! this .disabled)
 				{
@@ -279,7 +279,7 @@ function ($,
 
 			this .set_pause ();
 
-			this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+			this .getBrowser () .prepareEvents () .removeInterest ("prepareEvents", this);
 		},
 		do_resume: function ()
 		{
@@ -302,7 +302,7 @@ function ($,
 
 			this .set_resume (interval);
 
-			this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+			this .getBrowser () .prepareEvents () .addInterest ("prepareEvents", this);
 			this .getBrowser () .addBrowserEvent ();
 		},
 		do_stop: function ()
@@ -325,7 +325,7 @@ function ($,
 				this .isActive_ = false;
 
 				if (this .isLive () .getValue ())
-					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+					this .getBrowser () .prepareEvents () .removeInterest ("prepareEvents", this);
 			}
 		},
 		timeout: function (callback)

@@ -81,11 +81,11 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .enabled_   .addInterest (this, "set_live__");
-			this .size_      .addInterest (this, "set_live__");
-			this .traversed_ .addInterest (this, "set_live__");
+			this .enabled_   .addInterest ("set_live__", this);
+			this .size_      .addInterest ("set_live__", this);
+			this .traversed_ .addInterest ("set_live__", this);
 
 			this .set_live__ ();
 		},
@@ -93,11 +93,11 @@ function ($,
 		{
 			if (this .isLive () .getValue () && this .traversed_ .getValue () && this .enabled_ .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
 			{
-				this .getBrowser () .sensors () .addInterest (this, "update");
+				this .getBrowser () .sensors () .addInterest ("update", this);
 			}
 			else
 			{
-				this .getBrowser () .sensors () .removeInterest (this, "update");
+				this .getBrowser () .sensors () .removeInterest ("update", this);
 				
 				if (this .isActive_ .getValue ())
 				{

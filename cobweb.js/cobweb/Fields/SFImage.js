@@ -152,7 +152,7 @@ function ($, X3DField, ArrayFields, X3DConstants)
 				X3DField .call (this, new Image (0, 0, 0, new MFInt32 ()));
 
 			this .getValue () .getArray () .addParent (this);
-			this .addInterest (this, "set_size__");
+			this .addInterest ("set_size__", this);
 			return this;
 		}
 

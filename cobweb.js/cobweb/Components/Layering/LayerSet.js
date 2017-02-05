@@ -110,9 +110,9 @@ function ($,
 			this .layerNode0 .setup ();
 			this .layerNode0 .isLayer0 (true);
 
-			this .activeLayer_ .addInterest (this, "set_activeLayer");
-			this .order_       .addInterest (this, "set_layers");
-			this .layers_      .addInterest (this, "set_layers");
+			this .activeLayer_ .addInterest ("set_activeLayer", this);
+			this .order_       .addInterest ("set_layers", this);
+			this .layers_      .addInterest ("set_layers", this);
 
 			this .set_layers ();
 		},

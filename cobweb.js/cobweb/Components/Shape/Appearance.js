@@ -108,13 +108,13 @@ function ($,
 		{
 			X3DAppearanceNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .lineProperties_   .addInterest (this, "set_lineProperties__");
-			this .material_         .addInterest (this, "set_material__");
-			this .texture_          .addInterest (this, "set_texture__");
-			this .textureTransform_ .addInterest (this, "set_textureTransform__");
-			this .shaders_          .addInterest (this, "set_shaders__");
+			this .lineProperties_   .addInterest ("set_lineProperties__", this);
+			this .material_         .addInterest ("set_material__", this);
+			this .texture_          .addInterest ("set_texture__", this);
+			this .textureTransform_ .addInterest ("set_textureTransform__", this);
+			this .shaders_          .addInterest ("set_shaders__", this);
 
 			this .set_lineProperties__ ();
 			this .set_material__ ();
@@ -158,24 +158,24 @@ function ($,
 		set_material__: function ()
 		{
 			if (this .materialNode)
-				this .materialNode .transparent_ .removeInterest (this, "set_transparent__");
+				this .materialNode .transparent_ .removeInterest ("set_transparent__", this);
 
 			this .materialNode = X3DCast (X3DConstants .X3DMaterialNode, this .material_);
 
 			if (this .materialNode)
-				this .materialNode .transparent_ .addInterest (this, "set_transparent__");
+				this .materialNode .transparent_ .addInterest ("set_transparent__", this);
 			
 			this .set_transparent__ ();
 		},
 		set_texture__: function ()
 		{
 			if (this .textureNode)
-				this .textureNode .transparent_ .removeInterest (this, "set_transparent__");
+				this .textureNode .transparent_ .removeInterest ("set_transparent__", this);
 
 			this .textureNode = X3DCast (X3DConstants .X3DTextureNode, this .texture_);
 
 			if (this .textureNode)
-				this .textureNode .transparent_ .addInterest (this, "set_transparent__");
+				this .textureNode .transparent_ .addInterest ("set_transparent__", this);
 
 			this .generatedCubeMapTexture = X3DCast (X3DConstants .GeneratedCubeMapTexture, this .texture_);
 
@@ -197,7 +197,7 @@ function ($,
 				shaderNodes = this .shaderNodes;
 
 			for (var i = 0, length = shaderNodes .length; i < length; ++ i)
-				shaderNodes [i] .isValid_ .removeInterest (this, "set_shader__");
+				shaderNodes [i] .isValid_ .removeInterest ("set_shader__", this);
 		
 			shaderNodes .length = 0;
 		
@@ -208,7 +208,7 @@ function ($,
 				if (shaderNode)
 				{
 					shaderNodes .push (shaderNode);
-					shaderNode .isValid_ .addInterest (this, "set_shader__");
+					shaderNode .isValid_ .addInterest ("set_shader__", this);
 				}
 			}
 

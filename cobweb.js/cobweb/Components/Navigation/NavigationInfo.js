@@ -116,8 +116,8 @@ function ($,
 		{
 			X3DBindableNode .prototype .initialize .call (this);
 
-			this .type_      .addInterest (this, "set_type__");
-			this .headlight_ .addInterest (this, "set_headlight__");
+			this .type_      .addInterest ("set_type__", this);
+			this .headlight_ .addInterest ("set_headlight__", this);
 
 			this .set_type__ ();
 			this .set_headlight__ ();

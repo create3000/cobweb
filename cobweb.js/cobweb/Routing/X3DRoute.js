@@ -99,8 +99,8 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			this .sourceNode_      .addInterest (this, "set_node");
-			this .destinationNode_ .addInterest (this, "set_node");
+			this .sourceNode_      .addInterest ("set_node", this);
+			this .destinationNode_ .addInterest ("set_node", this);
 
 //			Object .preventExtensions (this);
 //			Object .freeze (this);
@@ -119,10 +119,10 @@ function ($,
 			this ._destinationField .removeInputRoute (this);
 
 			if (this .sourceNode_ .getValue ())
-				this .sourceNode_ .removeInterest (this, "set_node");
+				this .sourceNode_ .removeInterest ("set_node", this);
 
 			if (this .destinationNode_ .getValue ())
-				this .destinationNode_ .removeInterest (this, "set_node");
+				this .destinationNode_ .removeInterest ("set_node", this);
 		},
 		getSourceNode: function ()
 		{

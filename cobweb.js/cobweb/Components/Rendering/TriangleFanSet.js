@@ -106,7 +106,7 @@ function ($,
 		{
 			X3DComposedGeometryNode .prototype .initialize .call (this);
 		
-			this .fanCount_ .addInterest (this, "set_fanCount__");
+			this .fanCount_ .addInterest ("set_fanCount__", this);
 		
 			this .set_fanCount__ ();
 		},

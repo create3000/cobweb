@@ -133,7 +133,7 @@ function ($,
 			this .proximitySensor .orientation_changed_      .addFieldInterest (this .orientation_changed_);
 			this .proximitySensor .centerOfRotation_changed_ .addFieldInterest (this .centerOfRotation_changed_);
 		
-			this .proximitySensor .position_changed_ .addInterest (this, "set_position__");
+			this .proximitySensor .position_changed_ .addInterest ("set_position__", this);
 		
 			this .proximitySensor .enabled_ = this .enabled_;
 			this .proximitySensor .size_    = this .size_;

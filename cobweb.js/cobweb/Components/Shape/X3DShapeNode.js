@@ -83,10 +83,10 @@ function ($,
 			X3DChildNode     .prototype .initialize .call (this);
 			X3DBoundedObject .prototype .initialize .call (this);
 
-			this .bboxSize_   .addInterest (this, "set_bbox__");
-			this .bboxCenter_ .addInterest (this, "set_bbox__");
-			this .appearance_ .addInterest (this, "set_apparance__");
-			this .geometry_   .addInterest (this, "set_geometry__");
+			this .bboxSize_   .addInterest ("set_bbox__", this);
+			this .bboxCenter_ .addInterest ("set_bbox__", this);
+			this .appearance_ .addInterest ("set_apparance__", this);
+			this .geometry_   .addInterest ("set_geometry__", this);
 
 			this .set_apparance__ ();
 			this .set_geometry__ ();
@@ -139,12 +139,12 @@ function ($,
 		set_apparance__: function ()
 		{
 			if (this .apparanceNode)
-				this .apparanceNode .removeInterest (this, "set_transparent__");
+				this .apparanceNode .removeInterest ("set_transparent__", this);
 
 			this .apparanceNode = X3DCast (X3DConstants .X3DAppearanceNode, this .appearance_);
 
 			if (this .apparanceNode)
-				this .apparanceNode .addInterest (this, "set_transparent__");
+				this .apparanceNode .addInterest ("set_transparent__", this);
 
 			else
 				this .apparanceNode = this .getBrowser () .getDefaultAppearance ();
@@ -155,16 +155,16 @@ function ($,
 		{
 			if (this .geometryNode)
 			{
-				this .geometryNode .transparent_  .addInterest (this, "set_transparent__");
-				this .geometryNode .bbox_changed_ .addInterest (this, "set_bbox__");
+				this .geometryNode .transparent_  .addInterest ("set_transparent__", this);
+				this .geometryNode .bbox_changed_ .addInterest ("set_bbox__", this);
 			}
 
 			this .geometryNode = X3DCast (X3DConstants .X3DGeometryNode, this .geometry_);
 
 			if (this .geometryNode)
 			{
-				this .geometryNode .transparent_  .addInterest (this, "set_transparent__");
-				this .geometryNode .bbox_changed_ .addInterest (this, "set_bbox__");
+				this .geometryNode .transparent_  .addInterest ("set_transparent__", this);
+				this .geometryNode .bbox_changed_ .addInterest ("set_bbox__", this);
 			}
 
 			this .set_transparent__ ();

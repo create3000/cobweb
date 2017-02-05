@@ -108,9 +108,9 @@ function ($,
 			X3DChildNode     .prototype .initialize .call (this);
 			X3DBoundedObject .prototype .initialize .call (this);
 
-			this .addChildren_    .addInterest (this, "set_addChildren__");
-			this .removeChildren_ .addInterest (this, "set_removeChildren__");
-			this .children_       .addInterest (this, "set_children__");
+			this .addChildren_    .addInterest ("set_addChildren__", this);
+			this .removeChildren_ .addInterest ("set_removeChildren__", this);
+			this .children_       .addInterest ("set_children__", this);
 
 			this .set_children__ ();
 		},
@@ -169,8 +169,8 @@ function ($,
 
 			if (! this .children_ .getTainted ())
 			{
-				this .children_ .removeInterest (this, "set_children__");
-				this .children_ .addInterest (this, "connectChildren");
+				this .children_ .removeInterest ("set_children__", this);
+				this .children_ .addInterest ("connectChildren", this);
 			}
 
 			this .children_ .insert (this .children_ .length, this .addChildren_, 0, this .addChildren_ .length);
@@ -189,8 +189,8 @@ function ($,
 
 			if (! this .children_ .getTainted ())
 			{
-				this .children_ .removeInterest (this, "set_children__");
-				this .children_ .addInterest (this, "connectChildren");
+				this .children_ .removeInterest ("set_children__", this);
+				this .children_ .addInterest ("connectChildren", this);
 			}
 
 			this .children_ .erase (remove (this .children_,       0, this .children_ .length,
@@ -208,8 +208,8 @@ function ($,
 		},
 		connectChildren: function ()
 		{
-			this .children_ .removeInterest (this, "connectChildren");
-			this .children_ .addInterest (this, "set_children__");
+			this .children_ .removeInterest ("connectChildren", this);
+			this .children_ .addInterest ("set_children__", this);
 		},
 		add: function (children)
 		{
@@ -264,7 +264,7 @@ function ($,
 								case X3DConstants .X3DBackgroundNode:
 								case X3DConstants .X3DChildNode:
 								{
-									innerNode .isCameraObject_ .addInterest (this, "set_cameraObjects__");
+									innerNode .isCameraObject_ .addInterest ("set_cameraObjects__", this);
 
 									this .maybeCameraObjects .push (innerNode);
 									this .childNodes .push (innerNode);
@@ -301,7 +301,7 @@ function ($,
 		clear: function ()
 		{
 			for (var i = 0, length = this .childNodes .length; i < length; ++ i)
-				this .childNodes [i] .isCameraObject_ .removeInterest (this, "set_cameraObjects__");
+				this .childNodes [i] .isCameraObject_ .removeInterest ("set_cameraObjects__", this);
 			
 			this .pointingDeviceSensors .length = 0;
 			this .maybeCameraObjects    .length = 0;

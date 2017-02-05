@@ -100,7 +100,7 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .position_ .addInterest (this, "set_position__");
+			this .position_ .addInterest ("set_position__", this);
 
 			this .set_position__ ();
 		},

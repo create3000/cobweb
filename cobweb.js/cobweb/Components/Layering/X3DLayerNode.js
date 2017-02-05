@@ -144,7 +144,7 @@ function ($,
 			this .navigationInfos .setup ();
 			this .viewpoints      .setup ();
 
-			this .viewport_       .addInterest (this, "set_viewport__");
+			this .viewport_       .addInterest ("set_viewport__", this);
 			this .addChildren_    .addFieldInterest (this .groupNode .addChildren_);
 			this .removeChildren_ .addFieldInterest (this .groupNode .removeChildren_);
 			this .children_       .addFieldInterest (this .groupNode .children_);

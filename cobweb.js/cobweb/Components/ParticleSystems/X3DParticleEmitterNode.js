@@ -105,9 +105,9 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
-			this .speed_     .addInterest (this, "set_speed__");
-			this .variation_ .addInterest (this, "set_variation__");
-			this .mass_      .addInterest (this, "set_mass__");
+			this .speed_     .addInterest ("set_speed__", this);
+			this .variation_ .addInterest ("set_variation__", this);
+			this .mass_      .addInterest ("set_mass__", this);
 
 			this .set_speed__ ();
 			this .set_variation__ ();

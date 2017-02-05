@@ -71,7 +71,7 @@ function ($,
 		this .importedName = importedName;
 		this .routes       = { };
 
-		this .inlineNode .loadState_ .addInterest (this, "set_loadState__");
+		this .inlineNode .loadState_ .addInterest ("set_loadState__", this);
 	}
 
 	ImportedNode .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -282,7 +282,7 @@ function ($,
 		},
 		dispose: function ()
 		{
-			this .inlineNode .loadState_ .removeInterest (this, "set_loadState__");
+			this .inlineNode .loadState_ .removeInterest ("set_loadState__", this);
 
 			this .deleteRoutes ();
 

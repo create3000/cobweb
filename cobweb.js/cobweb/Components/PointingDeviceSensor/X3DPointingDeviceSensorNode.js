@@ -75,7 +75,7 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
-			this .enabled_ .addInterest (this, "set_enabled__");
+			this .enabled_ .addInterest ("set_enabled__", this);
 		},
 		getMatrices: function ()
 		{

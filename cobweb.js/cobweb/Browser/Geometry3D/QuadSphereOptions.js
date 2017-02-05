@@ -97,7 +97,7 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 		},
 		getGeometry: function ()
 		{

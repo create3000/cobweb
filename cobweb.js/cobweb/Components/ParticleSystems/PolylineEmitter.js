@@ -113,7 +113,7 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .direction_ .addInterest (this, "set_direction__");
+			this .direction_ .addInterest ("set_direction__", this);
 
 			this .coordIndex_ .addFieldInterest (this .polylineNode .coordIndex_);
 			this .coord_      .addFieldInterest (this .polylineNode .coord_);
@@ -121,7 +121,7 @@ function ($,
 			this .polylineNode .coordIndex_ = this .coordIndex_;
 			this .polylineNode .coord_      = this .coord_;
 
-			this .polylineNode .addInterest (this, "set_polyline");
+			this .polylineNode .addInterest ("set_polyline", this);
 			this .polylineNode .setPrivate (true);
 			this .polylineNode .setup ();
 

@@ -124,7 +124,7 @@ function ($,
 		{
 			X3DSoundNode .prototype .initialize .call (this);
 
-			this .source_ .addInterest (this, "set_source__");
+			this .source_ .addInterest ("set_source__", this);
 
 			this .set_source__ ();
 		},

@@ -103,7 +103,7 @@ function ($,
 		{
 			X3DTexture2DNode .prototype .initialize .call (this);
 
-			this .image_ .addInterest (this, "set_image__");
+			this .image_ .addInterest ("set_image__", this);
 
 			this .set_image__ ();
 		},

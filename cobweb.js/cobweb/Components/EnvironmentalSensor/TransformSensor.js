@@ -120,13 +120,13 @@ function ($,
 		{
 			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
 		
-			this .isLive () .addInterest (this, "set_enabled__");
+			this .isLive () .addInterest ("set_enabled__", this);
 
-			this .enabled_      .addInterest (this, "set_enabled__");
-			this .size_         .addInterest (this, "set_enabled__");
-			this .size_         .addInterest (this, "set_bbox__");
-			this .center_       .addInterest (this, "set_bbox__");
-			this .targetObject_ .addInterest (this, "set_targetObject__");
+			this .enabled_      .addInterest ("set_enabled__", this);
+			this .size_         .addInterest ("set_enabled__", this);
+			this .size_         .addInterest ("set_bbox__", this);
+			this .center_       .addInterest ("set_bbox__", this);
+			this .targetObject_ .addInterest ("set_targetObject__", this);
 
 			this .set_bbox__ ();
 			this .set_targetObject__ ();
@@ -137,11 +137,11 @@ function ($,
 		{
 			if (this .isLive () .getValue () && this .targetObjectNode && this .enabled_ .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
 			{
-				this .getBrowser () .sensors () .addInterest (this, "update");
+				this .getBrowser () .sensors () .addInterest ("update", this);
 			}
 			else
 			{
-				this .getBrowser () .sensors () .removeInterest (this, "update");
+				this .getBrowser () .sensors () .removeInterest ("update", this);
 					
 				if (this .isActive_ .getValue ())
 				{

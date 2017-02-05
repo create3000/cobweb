@@ -252,7 +252,7 @@ function ($,
 				{
 					field ._uniformLocation = location;
 
-					field .addInterest (this, "set_field__");
+					field .addInterest ("set_field__", this);
 
 					switch (field .getType ())
 					{
@@ -357,7 +357,7 @@ function ($,
 			{
 				var field = userDefinedFields [name];
 
-				field .removeInterest (this, "set_field__");
+				field .removeInterest ("set_field__", this);
 
 				switch (field .getType ())
 				{

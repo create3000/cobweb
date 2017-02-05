@@ -124,7 +124,7 @@ function ($,
 		
 			X3DNode .prototype .setup .call (this);
 
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 			this .eventsProcessed ();
 
 			this .setTainted (false);
@@ -133,7 +133,7 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
 			var gl = this .getBrowser () .getContext ();
 
@@ -618,9 +618,9 @@ function ($,
 		set_live__: function ()
 		{
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shading__");
+				this .getBrowser () .getBrowserOptions () .Shading_ .addInterest ("set_shading__", this);
 			else
-				this .getBrowser () .getBrowserOptions () .Shading_ .removeInterest (this, "set_shading__");
+				this .getBrowser () .getBrowserOptions () .Shading_ .removeInterest ("set_shading__", this);
 		},
 		set_shading__: function (shading)
 		{

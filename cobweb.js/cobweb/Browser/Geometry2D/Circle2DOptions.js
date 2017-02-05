@@ -88,7 +88,7 @@ function ($,
 		},
 		initialize: function ()
 		{
-			this .addInterest (this, "build");
+			this .addInterest ("build", this);
 
 			this .build ();
 		},

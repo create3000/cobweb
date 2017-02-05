@@ -105,9 +105,9 @@ function ($,
 		{
 			X3DLineGeometryNode .prototype .initialize .call (this);
 
-			this .attrib_ .addInterest (this, "set_attrib__");
-			this .color_  .addInterest (this, "set_color__");
-			this .coord_  .addInterest (this, "set_coord__");
+			this .attrib_ .addInterest ("set_attrib__", this);
+			this .color_  .addInterest ("set_color__", this);
+			this .coord_  .addInterest ("set_coord__", this);
 
 			var browser = this .getBrowser ();
 
@@ -124,7 +124,7 @@ function ($,
 			var attribNodes = this .getAttrib ();
 
 			for (var i = 0, length = attribNodes .length; i < length; ++ i)
-				attribNodes [i] .removeInterest (this, "addNodeEvent");
+				attribNodes [i] .removeInterest ("addNodeEvent", this);
 
 			attribNodes .length = 0;
 
@@ -137,27 +137,27 @@ function ($,
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest ("addNodeEvent", this);
 		},
 		set_color__: function ()
 		{
 			if (this .colorNode)
-				this .colorNode .removeInterest (this, "addNodeEvent");
+				this .colorNode .removeInterest ("addNodeEvent", this);
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
-				this .colorNode .addInterest (this, "addNodeEvent");
+				this .colorNode .addInterest ("addNodeEvent", this);
 		},
 		set_coord__: function ()
 		{
 			if (this .coordNode)
-				this .coordNode .removeInterest (this, "addNodeEvent");
+				this .coordNode .removeInterest ("addNodeEvent", this);
 
 			this .coordNode = X3DCast (X3DConstants .X3DCoordinateNode, this .coord_);
 
 			if (this .coordNode)
-				this .coordNode .addInterest (this, "addNodeEvent");
+				this .coordNode .addInterest ("addNodeEvent", this);
 		},
 		build: function ()
 		{

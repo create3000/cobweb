@@ -106,7 +106,7 @@ function ($,
 		{
 			X3DComposedGeometryNode .prototype .initialize .call (this);
 		
-			this .stripCount_ .addInterest (this, "set_stripCount__");
+			this .stripCount_ .addInterest ("set_stripCount__", this);
 		
 			this .set_stripCount__ ();
 		},

@@ -90,12 +90,12 @@ function ($,
 		{
 			if (this .isLive () .getValue ())
 			{
-				this .getBrowser () .getBrowserOptions () .TextureQuality_ .addInterest (this, "set_textureQuality__");
+				this .getBrowser () .getBrowserOptions () .TextureQuality_ .addInterest ("set_textureQuality__", this);
 	
 				this .set_textureQuality__ ();
 			}
 			else
-				this .getBrowser () .getBrowserOptions () .TextureQuality_ .removeInterest (this, "set_textureQuality__");
+				this .getBrowser () .getBrowserOptions () .TextureQuality_ .removeInterest ("set_textureQuality__", this);
 		},
 		set_textureQuality__: function ()
 		{

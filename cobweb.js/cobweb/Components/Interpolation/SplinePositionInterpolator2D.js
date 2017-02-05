@@ -104,8 +104,8 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 		
-			this .keyValue_    .addInterest (this, "set_keyValue__");
-			this .keyVelocity_ .addInterest (this, "set_keyVelocity__");
+			this .keyValue_    .addInterest ("set_keyValue__", this);
+			this .keyVelocity_ .addInterest ("set_keyVelocity__", this);
 		},
 		set_keyValue__: function ()
 		{

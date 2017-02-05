@@ -107,12 +107,12 @@ function ($,
 
 			this .addChildObjects ("transparent", new Fields .SFBool ());
 
-			this .ambientIntensity_ .addInterest (this, "set_ambientIntensity__");
-			this .diffuseColor_     .addInterest (this, "set_diffuseColor__");
-			this .specularColor_    .addInterest (this, "set_specularColor__");
-			this .emissiveColor_    .addInterest (this, "set_emissiveColor__");
-			this .shininess_        .addInterest (this, "set_shininess__");
-			this .transparency_     .addInterest (this, "set_transparency__");
+			this .ambientIntensity_ .addInterest ("set_ambientIntensity__", this);
+			this .diffuseColor_     .addInterest ("set_diffuseColor__", this);
+			this .specularColor_    .addInterest ("set_specularColor__", this);
+			this .emissiveColor_    .addInterest ("set_emissiveColor__", this);
+			this .shininess_        .addInterest ("set_shininess__", this);
+			this .transparency_     .addInterest ("set_transparency__", this);
 	
 			this .set_ambientIntensity__ ();
 			this .set_diffuseColor__ ();

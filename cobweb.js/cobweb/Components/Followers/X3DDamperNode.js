@@ -75,9 +75,9 @@ function ($,
 		{
 			X3DFollowerNode .prototype .initialize .call (this);
 		
-			this .order_           .addInterest (this, "set_order__");
-			this .set_value_       .addInterest (this, "set_value__");
-			this .set_destination_ .addInterest (this, "set_destination__");
+			this .order_           .addInterest ("set_order__", this);
+			this .set_value_       .addInterest ("set_value__", this);
+			this .set_destination_ .addInterest ("set_destination__", this);
 
 			var
 				buffer             = this .getBuffer (),

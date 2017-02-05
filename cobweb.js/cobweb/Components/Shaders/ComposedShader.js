@@ -116,12 +116,12 @@ function ($,
 
 			this .primitiveMode = gl .TRIANGLES;
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .activate_ .addInterest (this, "set_activate__");
+			this .activate_ .addInterest ("set_activate__", this);
 			this .parts_    .addFieldInterest (this .loadSensor .watchList_);
 
-			this .loadSensor .isLoaded_ .addInterest (this, "set_loaded__");
+			this .loadSensor .isLoaded_ .addInterest ("set_loaded__", this);
 			this .loadSensor .watchList_ = this .parts_;
 			this .loadSensor .setPrivate (true);
 			this .loadSensor .setup ();

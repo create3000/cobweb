@@ -110,11 +110,11 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 			
-			this .Rubberband_                .addInterest (this, "set_rubberband__");
-			this .PrimitiveQuality_          .addInterest (this, "set_primitiveQuality__");
-			this .TextureQuality_            .addInterest (this, "set_textureQuality__");
-			this .Shading_                   .addInterest (this, "set_shading__");
-			this .getBrowser () .shutdown () .addInterest (this, "configure");
+			this .Rubberband_                .addInterest ("set_rubberband__", this);
+			this .PrimitiveQuality_          .addInterest ("set_primitiveQuality__", this);
+			this .TextureQuality_            .addInterest ("set_textureQuality__", this);
+			this .Shading_                   .addInterest ("set_shading__", this);
+			this .getBrowser () .shutdown () .addInterest ("configure", this);
 
 			this .configure ();
 		},

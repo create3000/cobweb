@@ -102,7 +102,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{

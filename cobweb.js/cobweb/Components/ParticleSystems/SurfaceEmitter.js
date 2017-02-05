@@ -115,19 +115,19 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .surface_ .addInterest (this, "set_surface__");
+			this .surface_ .addInterest ("set_surface__", this);
 
 			this .set_surface__ ();
 		},
 		set_surface__: function ()
 		{
 			if (this .surfaceNode)
-				this .surfaceNode .removeInterest (this, "set_geometry__");
+				this .surfaceNode .removeInterest ("set_geometry__", this);
 
 			this .surfaceNode = X3DCast (X3DConstants .X3DGeometryNode, this .surface_);
 
 			if (this .surfaceNode)
-				this .surfaceNode .addInterest (this, "set_geometry__");
+				this .surfaceNode .addInterest ("set_geometry__", this);
 
 			this .set_geometry__ ();
 		},

@@ -91,7 +91,7 @@ function ($,
 
 			$("<span></span>") .appendTo (this .element);
 
-			this .string_ .addInterest (this, "set_string__");
+			this .string_ .addInterest ("set_string__", this);
 		},
 		set_string__: function ()
 		{

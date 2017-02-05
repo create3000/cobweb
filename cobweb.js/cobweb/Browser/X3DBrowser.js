@@ -114,7 +114,7 @@ function ($,
 
 			X3DBrowserContext .prototype .initialize .call (this);
 
-			this .getLoadSensor () .loadTime_ .addInterest (this, "realize");
+			this .getLoadSensor () .loadTime_ .addInterest ("realize", this);
 
 			this .print ("Welcome to " + this .name + " X3D Browser " + this .version + ":\n" +
 			                "        Current Graphics Renderer\n" +
@@ -137,7 +137,7 @@ function ($,
 		},
 		realize: function ()
 		{
-			this .getLoadSensor () .loadTime_ .removeInterest (this, "realize");
+			this .getLoadSensor () .loadTime_ .removeInterest ("realize", this);
 
 			var urlCharacters = this .getElement () [0] .getAttribute ("src");
 
@@ -218,8 +218,8 @@ function ($,
 		{
 			// Cancel any loading.
 
-			this .loadCount_       .removeInterest (this, "set_loadCount__");
-			this .prepareEvents () .removeInterest (this, "bind");
+			this .loadCount_       .removeInterest ("set_loadCount__", this);
+			this .prepareEvents () .removeInterest ("bind", this);
 
 			if (this .loader)
 				this .loader .abort ();
@@ -244,7 +244,7 @@ function ($,
 			this .description = "";
 
 			this .setBrowserLoading (true);
-			this .loadCount_ .addInterest (this, "set_loadCount__");
+			this .loadCount_ .addInterest ("set_loadCount__", this);
 	
 			for (var id in scene .getLoadingObjects ())
 				this .addLoadCount (scene .getLoadingObjects () [id]);
@@ -260,14 +260,14 @@ function ($,
 			if (loadCount .getValue ())
 				return;
 
-			this .loadCount_ .removeInterest (this, "set_loadCount__");
+			this .loadCount_ .removeInterest ("set_loadCount__", this);
 
-			this .prepareEvents () .addInterest (this, "bind");
+			this .prepareEvents () .addInterest ("bind", this);
 			this .addBrowserEvent ();
 		},
 		bind: function ()
 		{
-			this .prepareEvents () .removeInterest (this, "bind");
+			this .prepareEvents () .removeInterest ("bind", this);
 
 			this .getWorld () .bind ();
 			this .setBrowserLoading (false);
@@ -290,7 +290,7 @@ function ($,
 			if (! external)
 			{
 				scene .setExecutionContext (currentScene);
-				currentScene .isLive () .addInterest (scene, "setLive");
+				currentScene .isLive () .addInterest ("setLive", scene);
 
 				if (currentScene .isLive () .getValue ())
 					scene .setLive (true);
@@ -335,7 +335,7 @@ function ($,
 				   if (! external)
 				   {
 						scene .setExecutionContext (currentScene);
-				      currentScene .isLive () .addInterest (scene, "setLive");
+				      currentScene .isLive () .addInterest ("setLive", scene);
 
 						if (currentScene .isLive () .getValue ())
 						   scene .setLive (true);
@@ -362,7 +362,7 @@ function ($,
 			if (! external)
 			{
 				scene .setExecutionContext (currentScene);
-				currentScene .isLive () .addInterest (scene, "setLive");
+				currentScene .isLive () .addInterest ("setLive", scene);
 						
 				if (currentScene .isLive () .getValue ())
 					scene .setLive (true);
@@ -376,8 +376,8 @@ function ($,
 		{
 			// Cancel any loading.
 
-			this .loadCount_       .removeInterest (this, "set_loadCount__");
-			this .prepareEvents () .removeInterest (this, "bind");
+			this .loadCount_       .removeInterest ("set_loadCount__", this);
+			this .prepareEvents () .removeInterest ("bind", this);
 
 			if (this .loader)
 				this .loader .abort ();
@@ -450,7 +450,7 @@ function ($,
 			if (! external)
 			{
 				scene .setExecutionContext (currentScene);
-				currentScene .isLive () .addInterest (scene, "setLive");
+				currentScene .isLive () .addInterest ("setLive", scene);
 						
 				if (currentScene .isLive () .getValue ())
 					scene .setLive (true);

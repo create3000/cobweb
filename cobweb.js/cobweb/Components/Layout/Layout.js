@@ -149,12 +149,12 @@ function ($,
 		{
 			X3DLayoutNode .prototype .initialize .call (this);
 
-			this .align_       .addInterest (this, "set_align__");
-			this .offsetUnits_ .addInterest (this, "set_offsetUnits__");
-			this .offset_      .addInterest (this, "set_offset__");
-			this .sizeUnits_   .addInterest (this, "set_sizeUnits__");
-			this .size_        .addInterest (this, "set_size__");
-			this .scaleMode_   .addInterest (this, "set_scaleMode__");
+			this .align_       .addInterest ("set_align__", this);
+			this .offsetUnits_ .addInterest ("set_offsetUnits__", this);
+			this .offset_      .addInterest ("set_offset__", this);
+			this .sizeUnits_   .addInterest ("set_sizeUnits__", this);
+			this .size_        .addInterest ("set_size__", this);
+			this .scaleMode_   .addInterest ("set_scaleMode__", this);
 
 			this .set_align__ ();
 			this .set_offsetUnits__ ();

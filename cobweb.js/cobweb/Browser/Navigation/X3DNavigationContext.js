@@ -100,10 +100,10 @@ function (Fields,
 	{
 		initialize: function ()
 		{
-			this .viewer_ .addInterest (this, "set_viewer__");
+			this .viewer_ .addInterest ("set_viewer__", this);
 
-			this .initialized () .addInterest (this, "set_world__");
-			this .shutdown ()    .addInterest (this, "remove_world__");
+			this .initialized () .addInterest ("set_world__", this);
+			this .shutdown ()    .addInterest ("remove_world__", this);
 
 			this .headlightContainer = getHeadLight (this);
 		},
@@ -143,23 +143,23 @@ function (Fields,
 		},
 		remove_world__: function ()
 		{
-			this .getWorld () .activeLayer_ .removeInterest (this, "set_activeLayer__");
+			this .getWorld () .activeLayer_ .removeInterest ("set_activeLayer__", this);
 		},
 		set_world__: function ()
 		{
-			this .getWorld () .activeLayer_ .addInterest (this, "set_activeLayer__");
+			this .getWorld () .activeLayer_ .addInterest ("set_activeLayer__", this);
 
 			this .set_activeLayer__ ();
 		},
 		set_activeLayer__: function ()
 		{
 			if (this .activeLayerNode)
-				this .activeLayerNode .getNavigationInfoStack () .removeInterest (this, "set_navigationInfo__");
+				this .activeLayerNode .getNavigationInfoStack () .removeInterest ("set_navigationInfo__", this);
 
 			this .activeLayerNode = this .getWorld () .getActiveLayer ();
 
 			if (this .activeLayerNode)
-				this .activeLayerNode .getNavigationInfoStack () .addInterest (this, "set_navigationInfo__");
+				this .activeLayerNode .getNavigationInfoStack () .addInterest ("set_navigationInfo__", this);
 
 			this .set_navigationInfo__ ();
 		},

@@ -110,9 +110,9 @@ function ($,
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getArcClose2DOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getArcClose2DOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getArcClose2DOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getArcClose2DOptions () .removeInterest ("eventsProcessed", this);
 		},
 		getAngle: function ()
 		{

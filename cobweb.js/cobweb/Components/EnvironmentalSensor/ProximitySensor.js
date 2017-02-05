@@ -125,9 +125,9 @@ function ($,
 		{
 			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
 			
-			this .enabled_ .addInterest (this, "set_enabled__");
-			this .size_    .addInterest (this, "set_extents__");
-			this .center_  .addInterest (this, "set_extents__");
+			this .enabled_ .addInterest ("set_enabled__", this);
+			this .size_    .addInterest ("set_extents__", this);
+			this .center_  .addInterest ("set_extents__", this);
 
 			this .traversed_ .addFieldInterest (this .isCameraObject_);
 	

@@ -127,9 +127,9 @@ function ($,
 			X3DGeometryNode     .prototype .initialize .call (this);
 			X3DGeospatialObject .prototype .initialize .call (this);
 
-			this .color_    .addInterest (this, "set_color__");
-			this .texCoord_ .addInterest (this, "set_texCoord__");
-			this .normal_   .addInterest (this, "set_normal__");
+			this .color_    .addInterest ("set_color__", this);
+			this .texCoord_ .addInterest ("set_texCoord__", this);
+			this .normal_   .addInterest ("set_normal__", this);
 		
 			this .set_color__ ();
 			this .set_texCoord__ ();
@@ -139,16 +139,16 @@ function ($,
 		{
 			if (this .colorNode)
 			{
-				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
+				this .colorNode .removeInterest ("addNodeEvent", this);
+				this .colorNode .removeInterest ("set_transparent__", this);
 			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
 			{
-				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
+				this .colorNode .addInterest ("addNodeEvent", this);
+				this .colorNode .addInterest ("set_transparent__", this);
 
 				this .set_transparent__ ();
 			}
@@ -162,24 +162,24 @@ function ($,
 		set_texCoord__: function ()
 		{
 			if (this .texCoordNode)
-				this .texCoordNode .removeInterest (this, "addNodeEvent");
+				this .texCoordNode .removeInterest ("addNodeEvent", this);
 
 			this .texCoordNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoord_);
 
 			if (this .texCoordNode)
-				this .texCoordNode .addInterest (this, "addNodeEvent");
+				this .texCoordNode .addInterest ("addNodeEvent", this);
 
 			this .setCurrentTexCoord (this .texCoordNode);
 		},
 		set_normal__: function ()
 		{
 			if (this .normalNode)
-				this .normalNode .removeInterest (this, "addNodeEvent");
+				this .normalNode .removeInterest ("addNodeEvent", this);
 
 			this .normalNode = X3DCast (X3DConstants .X3DNormalNode, this .normal_);
 
 			if (this .normalNode)
-				this .normalNode .addInterest (this, "addNodeEvent");
+				this .normalNode .addInterest ("addNodeEvent", this);
 		},
 		getColor: function ()
 		{

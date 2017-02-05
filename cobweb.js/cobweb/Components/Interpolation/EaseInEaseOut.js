@@ -97,7 +97,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .easeInEaseOut_ .addInterest (this, "set_keyValue__");
+			this .easeInEaseOut_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{

@@ -109,12 +109,12 @@ function ($,
 		{
 			X3DBackgroundNode .prototype .initialize .call (this);
 
-			this .frontTexture_  .addInterest (this, "set_frontTexture__");
-			this .backTexture_   .addInterest (this, "set_backTexture__");
-			this .leftTexture_   .addInterest (this, "set_leftTexture__");
-			this .rightTexture_  .addInterest (this, "set_rightTexture__");
-			this .topTexture_    .addInterest (this, "set_topTexture__");
-			this .bottomTexture_ .addInterest (this, "set_bottomTexture__");
+			this .frontTexture_  .addInterest ("set_frontTexture__", this);
+			this .backTexture_   .addInterest ("set_backTexture__", this);
+			this .leftTexture_   .addInterest ("set_leftTexture__", this);
+			this .rightTexture_  .addInterest ("set_rightTexture__", this);
+			this .topTexture_    .addInterest ("set_topTexture__", this);
+			this .bottomTexture_ .addInterest ("set_bottomTexture__", this);
 
 			this .set_frontTexture__  (this .frontTexture_);
 			this .set_backTexture__   (this .backTexture_);

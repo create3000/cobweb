@@ -124,8 +124,8 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
-			this .style_   .addInterest (this, "set_style__");
-			this .justify_ .addInterest (this, "set_justify__");
+			this .style_   .addInterest ("set_style__", this);
+			this .justify_ .addInterest ("set_justify__", this);
 
 			this .font        = null;
 			this .familyIndex = 0;

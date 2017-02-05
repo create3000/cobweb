@@ -135,7 +135,7 @@ function ($,
 
 			// Initialize.
 
-			this .url_ .addInterest (this, "set_url__");
+			this .url_ .addInterest ("set_url__", this);
 
 			this .canvas = $("<canvas></canvas>");
 

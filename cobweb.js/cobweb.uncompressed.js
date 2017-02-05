@@ -9582,18 +9582,17 @@ function ()
 		{
 			return this ._tainted;
 		},
-		addInterest: function (object, callback)
+		addInterest: function (callback, object)
 		{
 			if (! this .hasOwnProperty ("_interests"))
 				this ._interests = { };
-
-			var args = Array .prototype .slice .call (arguments, 0);
 	
-			args [1] = this;
+			arguments [0] = arguments [1];
+			arguments [1] = this;
 
-			this ._interests [object .getId () + callback] = Function .prototype .bind .apply (object [callback], args);
+			this ._interests [object .getId () + callback] = Function .prototype .bind .apply (object [callback], arguments);
 		},
-		removeInterest: function (object, callback)
+		removeInterest: function (callback, object)
 		{
 			delete this ._interests [object .getId () + callback];
 		},
@@ -19504,7 +19503,7 @@ function ($, X3DField, ArrayFields, X3DConstants)
 				X3DField .call (this, new Image (0, 0, 0, new MFInt32 ()));
 
 			this .getValue () .getArray () .addParent (this);
-			this .addInterest (this, "set_size__");
+			this .addInterest ("set_size__", this);
 			return this;
 		}
 
@@ -20092,7 +20091,7 @@ function ($,
 			// Connect to execution context.
 
 			if (this ._executionContext !== this)
-				this ._executionContext .isLive () .addInterest (this, "_set_live__");
+				this ._executionContext .isLive () .addInterest ("_set_live__", this);
 
 			// Return field
 
@@ -21177,11 +21176,11 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 			
-			this .Rubberband_                .addInterest (this, "set_rubberband__");
-			this .PrimitiveQuality_          .addInterest (this, "set_primitiveQuality__");
-			this .TextureQuality_            .addInterest (this, "set_textureQuality__");
-			this .Shading_                   .addInterest (this, "set_shading__");
-			this .getBrowser () .shutdown () .addInterest (this, "configure");
+			this .Rubberband_                .addInterest ("set_rubberband__", this);
+			this .PrimitiveQuality_          .addInterest ("set_primitiveQuality__", this);
+			this .TextureQuality_            .addInterest ("set_textureQuality__", this);
+			this .Shading_                   .addInterest ("set_shading__", this);
+			this .getBrowser () .shutdown () .addInterest ("configure", this);
 
 			this .configure ();
 		},
@@ -21560,7 +21559,7 @@ function ($,
 			this .ColorDepth_     = browser .getColorDepth ();
 			this .TextureMemory_  = browser .getTextureMemory ();
 
-			browser .getBrowserOptions () .Shading_ .addInterest (this, "set_shading__");
+			browser .getBrowserOptions () .Shading_ .addInterest ("set_shading__", this);
 
 			this .set_shading__ (browser .getBrowserOptions () .Shading_);
 		},
@@ -21666,7 +21665,7 @@ function ($,
 
 			$("<span></span>") .appendTo (this .element);
 
-			this .string_ .addInterest (this, "set_string__");
+			this .string_ .addInterest ("set_string__", this);
 		},
 		set_string__: function ()
 		{
@@ -22228,7 +22227,7 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			this .enabled_ .addInterest (this, "set_enabled__");
+			this .enabled_ .addInterest ("set_enabled__", this);
 
 			this .localeOptions = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
 			this .type          = this .getBrowser () .getDataStorage () ["BrowserTimings.type"] || "LESS";
@@ -22255,13 +22254,13 @@ function ($,
 			if (enabled .getValue ())
 			{
 				this .element .fadeIn ();
-				this .getBrowser () .prepareEvents () .addInterest (this, "update");
+				this .getBrowser () .prepareEvents () .addInterest ("update", this);
 				this .update ();
 			}
 			else
 			{
 				this .element .fadeOut ();
-				this .getBrowser () .prepareEvents () .removeInterest (this, "update");
+				this .getBrowser () .prepareEvents () .removeInterest ("update", this);
 			}
 		},
 		set_type__: function ()
@@ -24985,7 +24984,7 @@ function ($,
 		this .importedName = importedName;
 		this .routes       = { };
 
-		this .inlineNode .loadState_ .addInterest (this, "set_loadState__");
+		this .inlineNode .loadState_ .addInterest ("set_loadState__", this);
 	}
 
 	ImportedNode .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -25196,7 +25195,7 @@ function ($,
 		},
 		dispose: function ()
 		{
-			this .inlineNode .loadState_ .removeInterest (this, "set_loadState__");
+			this .inlineNode .loadState_ .removeInterest ("set_loadState__", this);
 
 			this .deleteRoutes ();
 
@@ -25554,8 +25553,8 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			this .sourceNode_      .addInterest (this, "set_node");
-			this .destinationNode_ .addInterest (this, "set_node");
+			this .sourceNode_      .addInterest ("set_node", this);
+			this .destinationNode_ .addInterest ("set_node", this);
 
 //			Object .preventExtensions (this);
 //			Object .freeze (this);
@@ -25574,10 +25573,10 @@ function ($,
 			this ._destinationField .removeInputRoute (this);
 
 			if (this .sourceNode_ .getValue ())
-				this .sourceNode_ .removeInterest (this, "set_node");
+				this .sourceNode_ .removeInterest ("set_node", this);
 
 			if (this .destinationNode_ .getValue ())
-				this .destinationNode_ .removeInterest (this, "set_node");
+				this .destinationNode_ .removeInterest ("set_node", this);
 		},
 		getSourceNode: function ()
 		{
@@ -28786,7 +28785,7 @@ function ($,
 			X3DProtoDeclarationNode .prototype .initialize .call (this);
 			X3DUrlObject            .prototype .initialize .call (this);
 				
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 		},
 		set_live__: function ()
 		{
@@ -33161,9 +33160,9 @@ function ($,
 		{
 			X3DNetworkSensorNode .prototype .initialize .call (this);
 
-			this .enabled_   .addInterest (this,"set_enabled__");
-			this .timeOut_   .addInterest (this,"set_timeOut__");
-			this .watchList_ .addInterest (this,"set_watchList__");
+			this .enabled_   .addInterest ("set_enabled__", this);
+			this .timeOut_   .addInterest ("set_timeOut__", this);
+			this .watchList_ .addInterest ("set_watchList__", this);
 
 			this .watchList_ .addEvent ();
 		},
@@ -33282,7 +33281,7 @@ function ($,
 					{
 						urlObjects .push (urlObject);
 		
-						urlObject .loadState_ .addInterest (this, "set_loadState__", urlObject);
+						urlObject .loadState_ .addInterest ("set_loadState__", this, urlObject);
 					}
 				}
 
@@ -33296,7 +33295,7 @@ function ($,
 			var urlObjects = this .urlObjects;
 
 			for (var i = 0, length = urlObjects .length; i < length; ++ i)
-				urlObjects [i] .loadState_ .removeInterest (this, "set_loadState__");
+				urlObjects [i] .loadState_ .removeInterest ("set_loadState__", this);
 
 			urlObjects .length = 0;
 		},
@@ -34067,13 +34066,13 @@ function ($,
 		{
 			X3DAppearanceNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .lineProperties_   .addInterest (this, "set_lineProperties__");
-			this .material_         .addInterest (this, "set_material__");
-			this .texture_          .addInterest (this, "set_texture__");
-			this .textureTransform_ .addInterest (this, "set_textureTransform__");
-			this .shaders_          .addInterest (this, "set_shaders__");
+			this .lineProperties_   .addInterest ("set_lineProperties__", this);
+			this .material_         .addInterest ("set_material__", this);
+			this .texture_          .addInterest ("set_texture__", this);
+			this .textureTransform_ .addInterest ("set_textureTransform__", this);
+			this .shaders_          .addInterest ("set_shaders__", this);
 
 			this .set_lineProperties__ ();
 			this .set_material__ ();
@@ -34117,24 +34116,24 @@ function ($,
 		set_material__: function ()
 		{
 			if (this .materialNode)
-				this .materialNode .transparent_ .removeInterest (this, "set_transparent__");
+				this .materialNode .transparent_ .removeInterest ("set_transparent__", this);
 
 			this .materialNode = X3DCast (X3DConstants .X3DMaterialNode, this .material_);
 
 			if (this .materialNode)
-				this .materialNode .transparent_ .addInterest (this, "set_transparent__");
+				this .materialNode .transparent_ .addInterest ("set_transparent__", this);
 			
 			this .set_transparent__ ();
 		},
 		set_texture__: function ()
 		{
 			if (this .textureNode)
-				this .textureNode .transparent_ .removeInterest (this, "set_transparent__");
+				this .textureNode .transparent_ .removeInterest ("set_transparent__", this);
 
 			this .textureNode = X3DCast (X3DConstants .X3DTextureNode, this .texture_);
 
 			if (this .textureNode)
-				this .textureNode .transparent_ .addInterest (this, "set_transparent__");
+				this .textureNode .transparent_ .addInterest ("set_transparent__", this);
 
 			this .generatedCubeMapTexture = X3DCast (X3DConstants .GeneratedCubeMapTexture, this .texture_);
 
@@ -34156,7 +34155,7 @@ function ($,
 				shaderNodes = this .shaderNodes;
 
 			for (var i = 0, length = shaderNodes .length; i < length; ++ i)
-				shaderNodes [i] .isValid_ .removeInterest (this, "set_shader__");
+				shaderNodes [i] .isValid_ .removeInterest ("set_shader__", this);
 		
 			shaderNodes .length = 0;
 		
@@ -34167,7 +34166,7 @@ function ($,
 				if (shaderNode)
 				{
 					shaderNodes .push (shaderNode);
-					shaderNode .isValid_ .addInterest (this, "set_shader__");
+					shaderNode .isValid_ .addInterest ("set_shader__", this);
 				}
 			}
 
@@ -34910,7 +34909,7 @@ function ($,
 				{
 					field ._uniformLocation = location;
 
-					field .addInterest (this, "set_field__");
+					field .addInterest ("set_field__", this);
 
 					switch (field .getType ())
 					{
@@ -35015,7 +35014,7 @@ function ($,
 			{
 				var field = userDefinedFields [name];
 
-				field .removeInterest (this, "set_field__");
+				field .removeInterest ("set_field__", this);
 
 				switch (field .getType ())
 				{
@@ -35979,12 +35978,12 @@ function ($,
 
 			this .primitiveMode = gl .TRIANGLES;
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .activate_ .addInterest (this, "set_activate__");
+			this .activate_ .addInterest ("set_activate__", this);
 			this .parts_    .addFieldInterest (this .loadSensor .watchList_);
 
-			this .loadSensor .isLoaded_ .addInterest (this, "set_loaded__");
+			this .loadSensor .isLoaded_ .addInterest ("set_loaded__", this);
 			this .loadSensor .watchList_ = this .parts_;
 			this .loadSensor .setPrivate (true);
 			this .loadSensor .setup ();
@@ -41304,7 +41303,7 @@ function ($,
 		},
 		setScene: function (scene, success)
 		{
-			scene .initLoadCount_ .addInterest (this, "set_initLoadCount__", scene, success);
+			scene .initLoadCount_ .addInterest ("set_initLoadCount__", this, scene, success);
 			scene .initLoadCount_ .addEvent ();
 		},
 		set_initLoadCount__: function (field, scene, success)
@@ -41312,7 +41311,7 @@ function ($,
 			if (field .getValue ())
 				return;
 
-			scene .initLoadCount_ .removeInterest (this, "set_initLoadCount__");
+			scene .initLoadCount_ .removeInterest ("set_initLoadCount__", this);
 
 			success (scene);
 
@@ -42581,7 +42580,7 @@ function ($,
 		},
 		initialize: function ()
 		{
-			this .addInterest (this, "build");
+			this .addInterest ("build", this);
 
 			this .build ();
 		},
@@ -42704,7 +42703,7 @@ function ($,
 		},
 		initialize: function ()
 		{
-			this .addInterest (this, "build");
+			this .addInterest ("build", this);
 
 			this .build ();
 		},
@@ -46791,7 +46790,7 @@ function ($,
 		
 			X3DNode .prototype .setup .call (this);
 
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 			this .eventsProcessed ();
 
 			this .setTainted (false);
@@ -46800,7 +46799,7 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
 			var gl = this .getBrowser () .getContext ();
 
@@ -47285,9 +47284,9 @@ function ($,
 		set_live__: function ()
 		{
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shading__");
+				this .getBrowser () .getBrowserOptions () .Shading_ .addInterest ("set_shading__", this);
 			else
-				this .getBrowser () .getBrowserOptions () .Shading_ .removeInterest (this, "set_shading__");
+				this .getBrowser () .getBrowserOptions () .Shading_ .removeInterest ("set_shading__", this);
 		},
 		set_shading__: function (shading)
 		{
@@ -47855,11 +47854,11 @@ function ($,
 		{
 			X3DGeometryNode .prototype .initialize .call (this);
 
-			this .attrib_   .addInterest (this, "set_attrib__");
-			this .color_    .addInterest (this, "set_color__");
-			this .texCoord_ .addInterest (this, "set_texCoord__");
-			this .normal_   .addInterest (this, "set_normal__");
-			this .coord_    .addInterest (this, "set_coord__");
+			this .attrib_   .addInterest ("set_attrib__", this);
+			this .color_    .addInterest ("set_color__", this);
+			this .texCoord_ .addInterest ("set_texCoord__", this);
+			this .normal_   .addInterest ("set_normal__", this);
+			this .coord_    .addInterest ("set_coord__", this);
 
 			this .set_attrib__ ();
 			this .set_color__ ();
@@ -47888,7 +47887,7 @@ function ($,
 			var attribNodes = this .getAttrib ();
 
 			for (var i = 0, length = attribNodes .length; i < length; ++ i)
-				attribNodes [i] .removeInterest (this, "addNodeEvent");
+				attribNodes [i] .removeInterest ("addNodeEvent", this);
 
 			attribNodes .length = 0;
 
@@ -47901,22 +47900,22 @@ function ($,
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest ("addNodeEvent", this);
 		},
 		set_color__: function ()
 		{
 			if (this .colorNode)
 			{
-				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
+				this .colorNode .removeInterest ("addNodeEvent", this);
+				this .colorNode .removeInterest ("set_transparent__", this);
 			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
 			{
-				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
+				this .colorNode .addInterest ("addNodeEvent", this);
+				this .colorNode .addInterest ("set_transparent__", this);
 
 				this .set_transparent__ ();
 			}
@@ -47930,34 +47929,34 @@ function ($,
 		set_texCoord__: function ()
 		{
 			if (this .texCoordNode)
-				this .texCoordNode .removeInterest (this, "addNodeEvent");
+				this .texCoordNode .removeInterest ("addNodeEvent", this);
 
 			this .texCoordNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoord_);
 
 			if (this .texCoordNode)
-				this .texCoordNode .addInterest (this, "addNodeEvent");
+				this .texCoordNode .addInterest ("addNodeEvent", this);
 
 			this .setCurrentTexCoord (this .texCoordNode);
 		},
 		set_normal__: function ()
 		{
 			if (this .normalNode)
-				this .normalNode .removeInterest (this, "addNodeEvent");
+				this .normalNode .removeInterest ("addNodeEvent", this);
 
 			this .normalNode = X3DCast (X3DConstants .X3DNormalNode, this .normal_);
 
 			if (this .normalNode)
-				this .normalNode .addInterest (this, "addNodeEvent");
+				this .normalNode .addInterest ("addNodeEvent", this);
 		},
 		set_coord__: function ()
 		{
 			if (this .coordNode)
-				this .coordNode .removeInterest (this, "addNodeEvent");
+				this .coordNode .removeInterest ("addNodeEvent", this);
 
 			this .coordNode = X3DCast (X3DConstants .X3DCoordinateNode, this .coord_);
 
 			if (this .coordNode)
-				this .coordNode .addInterest (this, "addNodeEvent");
+				this .coordNode .addInterest ("addNodeEvent", this);
 		},
 		getPolygonIndex: function (index)
 		{
@@ -49770,7 +49769,7 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 		},
 		getGeometry: function ()
 		{
@@ -50189,7 +50188,7 @@ function (jquery,
 					event .stopImmediatePropagation (); // Keeps the rest of the handlers from being executed
 
 					browser .setCursor ("HAND");
-					browser .finished () .addInterest (this, "onverifymotion", x, y);
+					browser .finished () .addInterest ("onverifymotion", this, x, y);
 				}
 			}
 		},
@@ -50212,7 +50211,7 @@ function (jquery,
 				browser .getCanvas () .bind ("mousemove.PointingDevice", this .mousemove .bind (this));
 
 				browser .setCursor (this .isOver ? "HAND" : "DEFAULT");
-				browser .finished () .addInterest (this, "onverifymotion", x, y);
+				browser .finished () .addInterest ("onverifymotion", this, x, y);
 				browser .addBrowserEvent ();
 
 				this .cursor = "DEFAULT";
@@ -50277,7 +50276,7 @@ function (jquery,
 			// and the new child has a sensor node inside. This sensor node must be update to
 			// reflect the correct isOver state.
 
-			this .getBrowser () .finished () .removeInterest (this, "onverifymotion");
+			this .getBrowser () .finished () .removeInterest ("onverifymotion", this);
 
 			this .onmotion (x, y);
 		},
@@ -51478,7 +51477,7 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .set_bind_ .addInterest (this, "set_bind__");
+			this .set_bind_ .addInterest ("set_bind__", this);
 		},
 		getCameraObject: function ()
 		{
@@ -51606,16 +51605,16 @@ function ($,
 			this .addChildObjects ("initialized", new Fields .SFTime (),
 			                       "isEvenLive",  new Fields .SFBool ());
 
-			this .isLive ()   .addInterest (this, "set_live__");
-			this .isEvenLive_ .addInterest (this, "_set_live__"); // to X3DBaseNode
+			this .isLive ()   .addInterest ("set_live__", this);
+			this .isEvenLive_ .addInterest ("_set_live__", this); // to X3DBaseNode
 
-			this .initialized_ .addInterest (this, "set_loop__");
-			this .enabled_     .addInterest (this, "set_enabled__");
-			this .loop_        .addInterest (this, "set_loop__");
-			this .startTime_   .addInterest (this, "set_startTime__");
-			this .pauseTime_   .addInterest (this, "set_pauseTime__");
-			this .resumeTime_  .addInterest (this, "set_resumeTime__");
-			this .stopTime_    .addInterest (this, "set_stopTime__");
+			this .initialized_ .addInterest ("set_loop__", this);
+			this .enabled_     .addInterest ("set_enabled__", this);
+			this .loop_        .addInterest ("set_loop__", this);
+			this .startTime_   .addInterest ("set_startTime__", this);
+			this .pauseTime_   .addInterest ("set_pauseTime__", this);
+			this .resumeTime_  .addInterest ("set_resumeTime__", this);
+			this .stopTime_    .addInterest ("set_stopTime__", this);
 
 			this .startTimeValue  = this .startTime_  .getValue ();
 			this .pauseTimeValue  = this .pauseTime_  .getValue ();
@@ -51766,7 +51765,7 @@ function ($,
 
 				if (this .isLive () .getValue ())
 				{
-					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+					this .getBrowser () .prepareEvents () .addInterest ("prepareEvents", this);
 				}
 				else if (! this .disabled)
 				{
@@ -51797,7 +51796,7 @@ function ($,
 
 			this .set_pause ();
 
-			this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+			this .getBrowser () .prepareEvents () .removeInterest ("prepareEvents", this);
 		},
 		do_resume: function ()
 		{
@@ -51820,7 +51819,7 @@ function ($,
 
 			this .set_resume (interval);
 
-			this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+			this .getBrowser () .prepareEvents () .addInterest ("prepareEvents", this);
 			this .getBrowser () .addBrowserEvent ();
 		},
 		do_stop: function ()
@@ -51843,7 +51842,7 @@ function ($,
 				this .isActive_ = false;
 
 				if (this .isLive () .getValue ())
-					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+					this .getBrowser () .prepareEvents () .removeInterest ("prepareEvents", this);
 			}
 		},
 		timeout: function (callback)
@@ -52143,8 +52142,8 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 			
-			this .set_fraction_ .addInterest (this, "set_fraction__");
-			this .key_          .addInterest (this, "set_key__");
+			this .set_fraction_ .addInterest ("set_fraction__", this);
+			this .key_          .addInterest ("set_key__", this);
 		},
 		set_fraction__: function ()
 		{
@@ -52292,7 +52291,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .easeInEaseOut_ .addInterest (this, "set_keyValue__");
+			this .easeInEaseOut_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -52443,7 +52442,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -52567,7 +52566,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -52757,7 +52756,7 @@ function ($,
 			this .scaleInterpolator            .value_changed_ .addFieldInterest (this .scaleOffset_);
 			this .scaleOrientationInterpolator .value_changed_ .addFieldInterest (this .scaleOrientationOffset_);
 
-			this .isBound_ .addInterest (this, "set_bound__");
+			this .isBound_ .addInterest ("set_bound__", this);
 		},
 		getEaseInEaseOut: function ()
 		{
@@ -52881,7 +52880,7 @@ function ($,
 					this .timeSensor .cycleInterval_ = transitionTime;
 					this .timeSensor .stopTime_      = this .getBrowser () .getCurrentTime ();
 					this .timeSensor .startTime_     = this .getBrowser () .getCurrentTime ();
-					this .timeSensor .isActive_ .addInterest (this, "set_active__");
+					this .timeSensor .isActive_ .addInterest ("set_active__", this);
 
 					this .getRelativeTransformation (fromViewpoint, relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
 
@@ -52917,7 +52916,7 @@ function ($,
 		transitionStop: function ()
 		{
 			this .timeSensor .stopTime_ = this .getBrowser () .getCurrentTime ();
-			this .timeSensor .isActive_ .removeInterest (this, "set_active__");
+			this .timeSensor .isActive_ .removeInterest ("set_active__", this);
 		},
 		resetUserOffsets: function ()
 		{
@@ -52984,7 +52983,7 @@ function ($,
 			this .timeSensor .cycleInterval_ = 0.2;
 			this .timeSensor .stopTime_      = this .getBrowser () .getCurrentTime ();
 			this .timeSensor .startTime_     = this .getBrowser () .getCurrentTime ();
-			this .timeSensor .isActive_ .addInterest (this, "set_active__");
+			this .timeSensor .isActive_ .addInterest ("set_active__", this);
 	
 			this .easeInEaseOut .easeInEaseOut_ = [ new Vector2 (0, 1), new Vector2 (1, 0) ];
 
@@ -53299,8 +53298,8 @@ function ($,
 		{
 			X3DViewpointNode .prototype .initialize .call (this);
 
-			this .fieldOfView_      .addInterest (this, "set_fieldOfView___");
-			this .fieldOfViewScale_ .addInterest (this, "set_fieldOfView___");
+			this .fieldOfView_      .addInterest ("set_fieldOfView___", this);
+			this .fieldOfViewScale_ .addInterest ("set_fieldOfView___", this);
 
 			this .set_fieldOfView___ ();
 		},
@@ -54146,7 +54145,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			canvas .bind ("mouseup.X3DFlyViewer",    this .mouseup    .bind (this));
 			canvas .bind ("mousewheel.X3DFlyViewer", this .mousewheel .bind (this));
 
-			this .getBrowser () .controlKey_ .addInterest (this, "set_controlKey_");
+			this .getBrowser () .controlKey_ .addInterest ("set_controlKey_", this);
 		},
 		addCollision: function () { },
 		removeCollision: function () { },
@@ -54200,7 +54199,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 						this .direction  .set (0, 0, 0);
 
 						if (this .getBrowser () .getBrowserOption ("Rubberband"))
-							this .getBrowser () .finished () .addInterest (this, "display", MOVE);
+							this .getBrowser () .finished () .addInterest ("display", this, MOVE);
 					}
 
 					break;
@@ -54222,7 +54221,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					this .toVector   .assign (this .fromVector);
 
 					if (this .getBrowser () .getBrowserOption ("Rubberband"))
-						this .getBrowser () .finished () .addInterest (this, "display", PAN);
+						this .getBrowser () .finished () .addInterest ("display", this, PAN);
 					
 					break;
 				}
@@ -54429,7 +54428,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			if (this .startTime)
 				return;
 
-			this .getBrowser () .prepareEvents () .addInterest (this, "fly");
+			this .getBrowser () .prepareEvents () .addInterest ("fly", this);
 			this .getBrowser () .addBrowserEvent ();
 
 			this .startTime = performance .now ();
@@ -54439,7 +54438,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			if (this .startTime)
 				return;
 			
-			this .getBrowser () .prepareEvents () .addInterest (this, "pan");
+			this .getBrowser () .prepareEvents () .addInterest ("pan", this);
 			this .getBrowser () .addBrowserEvent ();
 
 			this .startTime = performance .now ();
@@ -54449,7 +54448,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			if (this .startTime)
 				return;
 			
-			this .getBrowser () .prepareEvents () .addInterest (this, "roll");
+			this .getBrowser () .prepareEvents () .addInterest ("roll", this);
 			this .getBrowser () .addBrowserEvent ();
 			
 			this .startTime = performance .now ();
@@ -54546,17 +54545,17 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			browser .addBrowserEvent ();
 
-			browser .prepareEvents () .removeInterest (this, "fly");
-			browser .prepareEvents () .removeInterest (this, "pan");
-			browser .prepareEvents () .removeInterest (this, "roll");
-			browser .finished ()      .removeInterest (this, "display");
+			browser .prepareEvents () .removeInterest ("fly", this);
+			browser .prepareEvents () .removeInterest ("pan", this);
+			browser .prepareEvents () .removeInterest ("roll", this);
+			browser .finished ()      .removeInterest ("display", this);
 
 			this .startTime = 0;
 		},
 		dispose: function ()
 		{
 			this .disconnect ();
-			this .getBrowser () .controlKey_ .removeInterest (this, "set_controlKey_");
+			this .getBrowser () .controlKey_ .removeInterest ("set_controlKey_", this);
 			this .getBrowser () .getCanvas () .unbind (".X3DFlyViewer");
 			$(document) .unbind (".X3DFlyViewer" + this .getId ());
 		},
@@ -54857,7 +54856,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -56134,8 +56133,8 @@ function ($,
 		constructor: X3DGeospatialObject,
 		initialize: function ()
 		{
-			this .geoSystem_ .addInterest (this, "set_geoSystem__");
-			this .geoOrigin_ .addInterest (this, "set_geoOrigin__");
+			this .geoSystem_ .addInterest ("set_geoSystem__", this);
+			this .geoOrigin_ .addInterest ("set_geoOrigin__", this);
 
 			this .set_geoSystem__ ();
 			this .set_geoOrigin__ ();
@@ -56151,18 +56150,18 @@ function ($,
 		{
 			if (this .geoOriginNode)
 			{
-				this .geoOriginNode .removeInterest (this, "set_origin__");
-				this .geoOriginNode .removeInterest (this, "set_rotateYUp__");
-				this .geoOriginNode .removeInterest (this, "addNodeEvent");
+				this .geoOriginNode .removeInterest ("set_origin__", this);
+				this .geoOriginNode .removeInterest ("set_rotateYUp__", this);
+				this .geoOriginNode .removeInterest ("addNodeEvent", this);
 			}
 		
 			this .geoOriginNode = X3DCast (X3DConstants .GeoOrigin, this .geoOrigin_);
 		
 			if (this .geoOriginNode)
 			{
-				this .geoOriginNode .addInterest (this, "set_origin__");
-				this .geoOriginNode .addInterest (this, "set_rotateYUp__");
-				this .geoOriginNode .addInterest (this, "addNodeEvent");
+				this .geoOriginNode .addInterest ("set_origin__", this);
+				this .geoOriginNode .addInterest ("set_rotateYUp__", this);
+				this .geoOriginNode .addInterest ("addNodeEvent", this);
 			}
 		
 			this .set_origin__ ();
@@ -56445,8 +56444,8 @@ function ($,
 		{
 			X3DBindableNode .prototype .initialize .call (this);
 
-			this .type_      .addInterest (this, "set_type__");
-			this .headlight_ .addInterest (this, "set_headlight__");
+			this .type_      .addInterest ("set_type__", this);
+			this .headlight_ .addInterest ("set_headlight__", this);
 
 			this .set_type__ ();
 			this .set_headlight__ ();
@@ -56824,8 +56823,8 @@ function ($,
 			X3DViewpointNode    .prototype .initialize .call (this);
 			X3DGeospatialObject .prototype .initialize .call (this);
 
-			this .position_       .addInterest (this, "set_position__");
-			this .positionOffset_ .addInterest (this, "set_position__");
+			this .position_       .addInterest ("set_position__", this);
+			this .positionOffset_ .addInterest ("set_position__", this);
 			this .navType_        .addFieldInterest (this .navigationInfoNode .type_);
 			this .headlight_      .addFieldInterest (this .navigationInfoNode .headlight_);
 		
@@ -57792,9 +57791,9 @@ function ($,
 			X3DChildNode     .prototype .initialize .call (this);
 			X3DBoundedObject .prototype .initialize .call (this);
 
-			this .addChildren_    .addInterest (this, "set_addChildren__");
-			this .removeChildren_ .addInterest (this, "set_removeChildren__");
-			this .children_       .addInterest (this, "set_children__");
+			this .addChildren_    .addInterest ("set_addChildren__", this);
+			this .removeChildren_ .addInterest ("set_removeChildren__", this);
+			this .children_       .addInterest ("set_children__", this);
 
 			this .set_children__ ();
 		},
@@ -57853,8 +57852,8 @@ function ($,
 
 			if (! this .children_ .getTainted ())
 			{
-				this .children_ .removeInterest (this, "set_children__");
-				this .children_ .addInterest (this, "connectChildren");
+				this .children_ .removeInterest ("set_children__", this);
+				this .children_ .addInterest ("connectChildren", this);
 			}
 
 			this .children_ .insert (this .children_ .length, this .addChildren_, 0, this .addChildren_ .length);
@@ -57873,8 +57872,8 @@ function ($,
 
 			if (! this .children_ .getTainted ())
 			{
-				this .children_ .removeInterest (this, "set_children__");
-				this .children_ .addInterest (this, "connectChildren");
+				this .children_ .removeInterest ("set_children__", this);
+				this .children_ .addInterest ("connectChildren", this);
 			}
 
 			this .children_ .erase (remove (this .children_,       0, this .children_ .length,
@@ -57892,8 +57891,8 @@ function ($,
 		},
 		connectChildren: function ()
 		{
-			this .children_ .removeInterest (this, "connectChildren");
-			this .children_ .addInterest (this, "set_children__");
+			this .children_ .removeInterest ("connectChildren", this);
+			this .children_ .addInterest ("set_children__", this);
 		},
 		add: function (children)
 		{
@@ -57948,7 +57947,7 @@ function ($,
 								case X3DConstants .X3DBackgroundNode:
 								case X3DConstants .X3DChildNode:
 								{
-									innerNode .isCameraObject_ .addInterest (this, "set_cameraObjects__");
+									innerNode .isCameraObject_ .addInterest ("set_cameraObjects__", this);
 
 									this .maybeCameraObjects .push (innerNode);
 									this .childNodes .push (innerNode);
@@ -57985,7 +57984,7 @@ function ($,
 		clear: function ()
 		{
 			for (var i = 0, length = this .childNodes .length; i < length; ++ i)
-				this .childNodes [i] .isCameraObject_ .removeInterest (this, "set_cameraObjects__");
+				this .childNodes [i] .isCameraObject_ .removeInterest ("set_cameraObjects__", this);
 			
 			this .pointingDeviceSensors .length = 0;
 			this .maybeCameraObjects    .length = 0;
@@ -58730,10 +58729,10 @@ function (Fields,
 	{
 		initialize: function ()
 		{
-			this .viewer_ .addInterest (this, "set_viewer__");
+			this .viewer_ .addInterest ("set_viewer__", this);
 
-			this .initialized () .addInterest (this, "set_world__");
-			this .shutdown ()    .addInterest (this, "remove_world__");
+			this .initialized () .addInterest ("set_world__", this);
+			this .shutdown ()    .addInterest ("remove_world__", this);
 
 			this .headlightContainer = getHeadLight (this);
 		},
@@ -58773,23 +58772,23 @@ function (Fields,
 		},
 		remove_world__: function ()
 		{
-			this .getWorld () .activeLayer_ .removeInterest (this, "set_activeLayer__");
+			this .getWorld () .activeLayer_ .removeInterest ("set_activeLayer__", this);
 		},
 		set_world__: function ()
 		{
-			this .getWorld () .activeLayer_ .addInterest (this, "set_activeLayer__");
+			this .getWorld () .activeLayer_ .addInterest ("set_activeLayer__", this);
 
 			this .set_activeLayer__ ();
 		},
 		set_activeLayer__: function ()
 		{
 			if (this .activeLayerNode)
-				this .activeLayerNode .getNavigationInfoStack () .removeInterest (this, "set_navigationInfo__");
+				this .activeLayerNode .getNavigationInfoStack () .removeInterest ("set_navigationInfo__", this);
 
 			this .activeLayerNode = this .getWorld () .getActiveLayer ();
 
 			if (this .activeLayerNode)
-				this .activeLayerNode .getNavigationInfoStack () .addInterest (this, "set_navigationInfo__");
+				this .activeLayerNode .getNavigationInfoStack () .addInterest ("set_navigationInfo__", this);
 
 			this .set_navigationInfo__ ();
 		},
@@ -59947,8 +59946,8 @@ function (Fields)
 	{
 		initialize: function ()
 		{
-			this .volume_ .addInterest (this, "set_volume__");
-			this .mute_   .addInterest (this, "set_mute__");
+			this .volume_ .addInterest ("set_volume__", this);
+			this .mute_   .addInterest ("set_mute__", this);
 
 			var
 				volume = this .getDataStorage () ["X3DSoundContext.volume"],
@@ -60166,8 +60165,8 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
-			this .style_   .addInterest (this, "set_style__");
-			this .justify_ .addInterest (this, "set_justify__");
+			this .style_   .addInterest ("set_style__", this);
+			this .justify_ .addInterest ("set_justify__", this);
 
 			this .font        = null;
 			this .familyIndex = 0;
@@ -69191,7 +69190,7 @@ function ($,
 		{
 			X3DTextureTransformNode .prototype .initialize .call (this);
 			
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 
 			this .eventsProcessed ();
 		},
@@ -69737,9 +69736,9 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
-			this .speed_     .addInterest (this, "set_speed__");
-			this .variation_ .addInterest (this, "set_variation__");
-			this .mass_      .addInterest (this, "set_mass__");
+			this .speed_     .addInterest ("set_speed__", this);
+			this .variation_ .addInterest ("set_variation__", this);
+			this .mass_      .addInterest ("set_mass__", this);
 
 			this .set_speed__ ();
 			this .set_variation__ ();
@@ -70144,8 +70143,8 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .position_  .addInterest (this, "set_position__");
-			this .direction_ .addInterest (this, "set_direction__");
+			this .position_  .addInterest ("set_position__", this);
+			this .direction_ .addInterest ("set_direction__", this);
 
 			this .set_position__ ();
 			this .set_direction__ ();
@@ -71584,7 +71583,7 @@ function ($,
 		constructor: X3DFogObject,
 		initialize: function ()
 		{
-			this .fogType_ .addInterest (this, "set_fogType__");
+			this .fogType_ .addInterest ("set_fogType__", this);
 
 			this .set_fogType__ ();
 		},
@@ -71967,11 +71966,11 @@ function ($,
 			this .topBuffer       = gl .createBuffer ();
 			this .bottomBuffer    = gl .createBuffer ();
 
-			this .groundAngle_  .addInterest (this, "build");
-			this .groundColor_  .addInterest (this, "build");
-			this .skyAngle_     .addInterest (this, "build");
-			this .skyColor_     .addInterest (this, "build");
-			this .transparency_ .addInterest (this, "build");
+			this .groundAngle_  .addInterest ("build", this);
+			this .groundColor_  .addInterest ("build", this);
+			this .skyAngle_     .addInterest ("build", this);
+			this .skyColor_     .addInterest ("build", this);
+			this .transparency_ .addInterest ("build", this);
 
 			this .build ();
 			this .transferRectangle ();
@@ -72003,13 +72002,13 @@ function ($,
 		setTexture: function (key, texture, bit)
 		{
 			if (this [key])
-				this [key] .loadState_ .removeInterest (this, "setTextureBit");
+				this [key] .loadState_ .removeInterest ("setTextureBit", this);
 
 			this [key] = texture;
 
 			if (texture)
 			{
-				texture .loadState_ .addInterest (this, "setTextureBit", bit);
+				texture .loadState_ .addInterest ("setTextureBit", this, bit);
 				this .setTextureBit (texture .loadState_, bit);
 			}
 			else
@@ -72684,9 +72683,9 @@ function ($,
 			
 			this .target = gl .TEXTURE_2D;
 
-			this .repeatS_           .addInterest (this, "updateTextureProperties");
-			this .repeatT_           .addInterest (this, "updateTextureProperties");
-			this .textureProperties_ .addInterest (this, "set_textureProperties__");
+			this .repeatS_           .addInterest ("updateTextureProperties", this);
+			this .repeatT_           .addInterest ("updateTextureProperties", this);
+			this .textureProperties_ .addInterest ("set_textureProperties__", this);
 
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
 			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
@@ -72696,14 +72695,14 @@ function ($,
 		set_textureProperties__: function ()
 		{
 			if (this .texturePropertiesNode)
-				this .texturePropertiesNode .removeInterest (this, "updateTextureProperties");
+				this .texturePropertiesNode .removeInterest ("updateTextureProperties", this);
 
 			this .texturePropertiesNode = X3DCast (X3DConstants .TextureProperties, this .textureProperties_);
 
 			if (! this .texturePropertiesNode)
 				this .texturePropertiesNode = this .getBrowser () .getDefaultTextureProperties ();
 
-			this .texturePropertiesNode .addInterest (this, "updateTextureProperties");
+			this .texturePropertiesNode .addInterest ("updateTextureProperties", this);
 
 			this .updateTextureProperties ();
 		},
@@ -72946,7 +72945,7 @@ function ($,
 			X3DTexture2DNode .prototype .initialize .call (this);
 			X3DUrlObject     .prototype .initialize .call (this);
 
-			this .url_ .addInterest (this, "set_url__");
+			this .url_ .addInterest ("set_url__", this);
 
 			this .canvas = $("<canvas></canvas>");
 
@@ -73399,7 +73398,7 @@ function ($,
 			this .navigationInfos .setup ();
 			this .viewpoints      .setup ();
 
-			this .viewport_       .addInterest (this, "set_viewport__");
+			this .viewport_       .addInterest ("set_viewport__", this);
 			this .addChildren_    .addFieldInterest (this .groupNode .addChildren_);
 			this .removeChildren_ .addFieldInterest (this .groupNode .removeChildren_);
 			this .children_       .addFieldInterest (this .groupNode .children_);
@@ -73964,9 +73963,9 @@ function ($,
 			this .layerNode0 .setup ();
 			this .layerNode0 .isLayer0 (true);
 
-			this .activeLayer_ .addInterest (this, "set_activeLayer");
-			this .order_       .addInterest (this, "set_layers");
-			this .layers_      .addInterest (this, "set_layers");
+			this .activeLayer_ .addInterest ("set_activeLayer", this);
+			this .order_       .addInterest ("set_layers", this);
+			this .layers_      .addInterest ("set_layers", this);
 
 			this .set_layers ();
 		},
@@ -74174,9 +74173,9 @@ function ($,
 			this .layerSet .setPrivate (true);
 			this .layerSet .setup ();
 			this .layerSet .setLayer0 (this .layer0);
-			this .layerSet .activeLayer_ .addInterest (this, "set_activeLayer");
+			this .layerSet .activeLayer_ .addInterest ("set_activeLayer", this);
 
-			this .getExecutionContext () .getRootNodes () .addInterest (this, "set_rootNodes");
+			this .getExecutionContext () .getRootNodes () .addInterest ("set_rootNodes", this);
 			this .getExecutionContext () .setup ();
 
 			this .set_rootNodes ();
@@ -74217,8 +74216,8 @@ function ($,
 
 			if (this .layerSet !== oldLayerSet)
 			{
-				oldLayerSet    .activeLayer_ .removeInterest (this, "set_activeLayer");
-				this .layerSet .activeLayer_ .addInterest    (this, "set_activeLayer");
+				oldLayerSet    .activeLayer_ .removeInterest ("set_activeLayer", this);
+				this .layerSet .activeLayer_ .addInterest ("set_activeLayer", this);
 
 				this .set_activeLayer ();
 			}
@@ -75455,7 +75454,7 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
-			this .enabled_ .addInterest (this, "set_enabled__");
+			this .enabled_ .addInterest ("set_enabled__", this);
 		},
 		getMatrices: function ()
 		{
@@ -76230,9 +76229,9 @@ function ($,
 			X3DLineGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getArc2DOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getArc2DOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getArc2DOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getArc2DOptions () .removeInterest ("eventsProcessed", this);
 		},
 		getAngle: function ()
 		{
@@ -76408,9 +76407,9 @@ function ($,
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getArcClose2DOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getArcClose2DOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getArcClose2DOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getArcClose2DOptions () .removeInterest ("eventsProcessed", this);
 		},
 		getAngle: function ()
 		{
@@ -76609,13 +76608,13 @@ function ($,
 
 			if (this .getDisabled ())
 			{
-				this .getBrowser () .volume_ .removeInterest (this, "set_volume__");
-				this .getBrowser () .mute_   .removeInterest (this, "set_volume__");
+				this .getBrowser () .volume_ .removeInterest ("set_volume__", this);
+				this .getBrowser () .mute_   .removeInterest ("set_volume__", this);
 			}
 			else
 			{
-				this .getBrowser () .volume_ .addInterest (this, "set_volume__");
-				this .getBrowser () .mute_   .addInterest (this, "set_volume__");
+				this .getBrowser () .volume_ .addInterest ("set_volume__", this);
+				this .getBrowser () .mute_   .addInterest ("set_volume__", this);
 				this .set_volume__ ();
 			}
 		},
@@ -76869,7 +76868,7 @@ function ($,
 			X3DSoundSourceNode .prototype .initialize .call (this);
 			X3DUrlObject       .prototype .initialize .call (this);
 
-			this .url_ .addInterest (this, "set_url__");
+			this .url_ .addInterest ("set_url__", this);
 
 			this .audio = $("<audio></audio>");
 			this .audio .error (this .setError .bind (this));
@@ -77248,7 +77247,7 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .set_boolean_ .addInterest (this, "set_boolean__");
+			this .set_boolean_ .addInterest ("set_boolean__", this);
 		},
 		set_boolean__: function ()
 		{
@@ -77348,10 +77347,10 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 		
-			this .set_fraction_ .addInterest (this, "set_fraction__");
-			this .previous_     .addInterest (this, "set_previous__");
-			this .next_         .addInterest (this, "set_next__");
-			this .key_          .addInterest (this, "set_index__");
+			this .set_fraction_ .addInterest ("set_fraction__", this);
+			this .previous_     .addInterest ("set_previous__", this);
+			this .next_         .addInterest ("set_next__", this);
+			this .key_          .addInterest ("set_index__", this);
 		},
 		set_fraction__: function ()
 		{
@@ -77527,7 +77526,7 @@ function ($,
 		{
 			X3DSequencerNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_index__");
+			this .keyValue_ .addInterest ("set_index__", this);
 		},
 		getSize: function ()
 		{
@@ -77642,7 +77641,7 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .set_boolean_ .addInterest (this, "set_boolean__");
+			this .set_boolean_ .addInterest ("set_boolean__", this);
 		},
 		set_boolean__: function ()
 		{
@@ -77832,7 +77831,7 @@ function ($,
 		{
 			X3DTriggerNode .prototype .initialize .call (this);
 
-			this .set_triggerTime_ .addInterest (this, "set_triggerTime__");
+			this .set_triggerTime_ .addInterest ("set_triggerTime__", this);
 		},
 		set_triggerTime__: function ()
 		{
@@ -78023,19 +78022,19 @@ function ($,
 		{
 			X3DParticlePhysicsModelNode .prototype .initialize .call (this);
 
-			this .geometry_ .addInterest (this, "set_geometry__");
+			this .geometry_ .addInterest ("set_geometry__", this);
 
 			this .set_geometry__ ();
 		},
 		set_geometry__: function ()
 		{
 			if (this .geometryNode)
-				this .geometryNode .removeInterest (this, "addNodeEvent");
+				this .geometryNode .removeInterest ("addNodeEvent", this);
 
 			this .geometryNode = X3DCast (X3DConstants .X3DGeometryNode, this .geometry_);
 
 			if (this .geometryNode)
-				this .geometryNode .addInterest (this, "addNodeEvent");
+				this .geometryNode .addInterest ("addNodeEvent", this);
 		},
 		addGeometry: function (boundedNormals, boundedVertices)
 		{
@@ -78501,7 +78500,7 @@ function ($,
 			X3DProductStructureChildNode .prototype .initialize .call (this);
 			X3DBoundedObject             .prototype .initialize .call (this);
 
-			this .shape_ .addInterest (this, "set_shape__");
+			this .shape_ .addInterest ("set_shape__", this);
 
 			this .set_shape__ ();
 		},
@@ -78671,7 +78670,7 @@ function ($,
 		{
 			X3DGroupingNode .prototype .initialize .call (this);
 
-			this .visible_ .addInterest (this, "set_children__");
+			this .visible_ .addInterest ("set_children__", this);
 		},
 		getVisible: function ()
 		{
@@ -78894,7 +78893,7 @@ function ($,
 		{
 			X3DTransformMatrix3DNode .prototype .initialize .call (this);
 			
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 
 			this .eventsProcessed ();
 		},
@@ -79143,9 +79142,9 @@ function ($,
 			X3DLineGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getCircle2DOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getCircle2DOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getCircle2DOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getCircle2DOptions () .removeInterest ("eventsProcessed", this);
 		},
 		build: function ()
 		{
@@ -79328,8 +79327,8 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .enabled_ .addInterest (this, "set_enabled__");
-			this .plane_   .addInterest (this, "set_enabled__");
+			this .enabled_ .addInterest ("set_enabled__", this);
+			this .plane_   .addInterest ("set_enabled__", this);
 
 			this .set_enabled__ ();
 		},
@@ -79477,9 +79476,9 @@ function ($,
 			X3DGroupingNode .prototype .initialize .call (this);
 			//X3DSensorNode   .prototype .initialize .call (this); // We can only call the base of a *Objects.
 	
-			this .isLive () .addInterest (this, "set_live__");
-			this .enabled_  .addInterest (this, "set_live__");
-			this .proxy_    .addInterest (this, "set_proxy__");
+			this .isLive () .addInterest ("set_live__", this);
+			this .enabled_  .addInterest ("set_live__", this);
+			this .proxy_    .addInterest ("set_proxy__", this);
 
 			this .set_live__ ();
 			this .set_proxy__ ();
@@ -79839,7 +79838,7 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 		},
 		duplicate: function (value)
 		{
@@ -79885,11 +79884,11 @@ function ($,
 		{
 			if (this .isLive () .getValue () && this .isActive_ .getValue ())
 			{
-				this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+				this .getBrowser () .prepareEvents () .addInterest ("prepareEvents", this);
 				this .getBrowser () .addBrowserEvent ();
 			}
 			else
-				this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+				this .getBrowser () .prepareEvents () .removeInterest ("prepareEvents", this);
 		},
 		set_active: function (value)
 		{
@@ -79990,9 +79989,9 @@ function ($,
 		{
 			X3DFollowerNode .prototype .initialize .call (this);
 		
-			this .set_value_       .addInterest (this, "set_value__");
-			this .set_destination_ .addInterest (this, "set_destination__");
-			this .duration_        .addInterest (this, "set_duration__");
+			this .set_value_       .addInterest ("set_value__", this);
+			this .set_destination_ .addInterest ("set_destination__", this);
+			this .duration_        .addInterest ("set_duration__", this);
 
 			this .set_duration__ ();
 
@@ -80389,9 +80388,9 @@ function ($,
 		{
 			X3DFollowerNode .prototype .initialize .call (this);
 		
-			this .order_           .addInterest (this, "set_order__");
-			this .set_value_       .addInterest (this, "set_value__");
-			this .set_destination_ .addInterest (this, "set_destination__");
+			this .order_           .addInterest ("set_order__", this);
+			this .set_value_       .addInterest ("set_value__", this);
+			this .set_destination_ .addInterest ("set_destination__", this);
 
 			var
 				buffer             = this .getBuffer (),
@@ -80750,7 +80749,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -80997,12 +80996,12 @@ function ($,
 		{
 			if (this .isLive () .getValue ())
 			{
-				this .getBrowser () .getBrowserOptions () .TextureQuality_ .addInterest (this, "set_textureQuality__");
+				this .getBrowser () .getBrowserOptions () .TextureQuality_ .addInterest ("set_textureQuality__", this);
 	
 				this .set_textureQuality__ ();
 			}
 			else
-				this .getBrowser () .getBrowserOptions () .TextureQuality_ .removeInterest (this, "set_textureQuality__");
+				this .getBrowser () .getBrowserOptions () .TextureQuality_ .removeInterest ("set_textureQuality__", this);
 		},
 		set_textureQuality__: function ()
 		{
@@ -81152,14 +81151,14 @@ function ($,
 
 			// Initialize.
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .front_  .addInterest (this, "set_texture__", 0);
-			this .back_   .addInterest (this, "set_texture__", 1);
-			this .left_   .addInterest (this, "set_texture__", 2);
-			this .right_  .addInterest (this, "set_texture__", 3);
-			this .top_    .addInterest (this, "set_texture__", 5);
-			this .bottom_ .addInterest (this, "set_texture__", 4);
+			this .front_  .addInterest ("set_texture__", this, 0);
+			this .back_   .addInterest ("set_texture__", this, 1);
+			this .left_   .addInterest ("set_texture__", this, 2);
+			this .right_  .addInterest ("set_texture__", this, 3);
+			this .top_    .addInterest ("set_texture__", this, 5);
+			this .bottom_ .addInterest ("set_texture__", this, 4);
 
 			this .set_texture__ (this .front_,  0);
 			this .set_texture__ (this .back_,   1);
@@ -81178,7 +81177,7 @@ function ($,
 			{
 				var callbackName = "set_loadState__" + texture .getId () + "_" + index;
 
-				texture .removeInterest (this, "set_loadState__");
+				texture .removeInterest ("set_loadState__", this);
 				texture .loadState_ .removeFieldCallback (callbackName);
 			}
 
@@ -81188,7 +81187,7 @@ function ($,
 			{
 				var callbackName = "set_loadState__" + texture .getId () + "_" + index;
 
-				texture .addInterest (this, "set_loadState__", texture, index);
+				texture .addInterest ("set_loadState__", this, texture, index);
 				texture .loadState_ .addFieldCallback (callbackName, this .set_loadState__ .bind (this, null, texture, index));
 			}
 
@@ -81411,9 +81410,9 @@ function ($,
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getConeOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getConeOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getConeOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getConeOptions () .removeInterest ("eventsProcessed", this);
 		},
 		build: function ()
 		{
@@ -81665,9 +81664,9 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .position_  .addInterest (this, "set_position__");
-			this .direction_ .addInterest (this, "set_direction__");
-			this .angle_     .addInterest (this, "set_angle__");
+			this .position_  .addInterest ("set_position__", this);
+			this .direction_ .addInterest ("set_direction__", this);
+			this .angle_     .addInterest ("set_angle__", this);
 
 			this .set_position__ ();
 			this .set_direction__ ();
@@ -82637,9 +82636,9 @@ function ($,
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getCylinderOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getCylinderOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getCylinderOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getCylinderOptions () .removeInterest ("eventsProcessed", this);
 		},
 		build: function ()
 		{
@@ -83512,9 +83511,9 @@ function ($,
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getDisk2DOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getDisk2DOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getDisk2DOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getDisk2DOptions () .removeInterest ("eventsProcessed", this);
 		},
 		build: function ()
 		{
@@ -83804,10 +83803,10 @@ function ($,
 		{
 			X3DGeometryNode .prototype .initialize .call (this);
 
-			this .attrib_   .addInterest (this, "set_attrib__");
-			this .color_    .addInterest (this, "set_color__");
-			this .texCoord_ .addInterest (this, "set_texCoord__");
-			this .normal_   .addInterest (this, "set_normal__");
+			this .attrib_   .addInterest ("set_attrib__", this);
+			this .color_    .addInterest ("set_color__", this);
+			this .texCoord_ .addInterest ("set_texCoord__", this);
+			this .normal_   .addInterest ("set_normal__", this);
 
 			this .set_attrib__ ();
 			this .set_color__ ();
@@ -83819,7 +83818,7 @@ function ($,
 			var attribNodes = this .getAttrib ();
 
 			for (var i = 0, length = attribNodes .length; i < length; ++ i)
-				attribNodes [i] .removeInterest (this, "addNodeEvent");
+				attribNodes [i] .removeInterest ("addNodeEvent", this);
 
 			attribNodes .length = 0;
 
@@ -83832,22 +83831,22 @@ function ($,
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest ("addNodeEvent", this);
 		},
 		set_color__: function ()
 		{
 			if (this .colorNode)
 			{
-				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
+				this .colorNode .removeInterest ("addNodeEvent", this);
+				this .colorNode .removeInterest ("set_transparent__", this);
 			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
 			{
-				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
+				this .colorNode .addInterest ("addNodeEvent", this);
+				this .colorNode .addInterest ("set_transparent__", this);
 
 				this .set_transparent__ ();
 			}
@@ -83861,24 +83860,24 @@ function ($,
 		set_texCoord__: function ()
 		{
 			if (this .texCoordNode)
-				this .texCoordNode .removeInterest (this, "addNodeEvent");
+				this .texCoordNode .removeInterest ("addNodeEvent", this);
 
 			this .texCoordNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoord_);
 
 			if (this .texCoordNode)
-				this .texCoordNode .addInterest (this, "addNodeEvent");
+				this .texCoordNode .addInterest ("addNodeEvent", this);
 
 			this .setCurrentTexCoord (this .texCoordNode);
 		},
 		set_normal__: function ()
 		{
 			if (this .normalNode)
-				this .normalNode .removeInterest (this, "addNodeEvent");
+				this .normalNode .removeInterest ("addNodeEvent", this);
 
 			this .normalNode = X3DCast (X3DConstants .X3DNormalNode, this .normal_);
 
 			if (this .normalNode)
-				this .normalNode .addInterest (this, "addNodeEvent");
+				this .normalNode .addInterest ("addNodeEvent", this);
 		},
 		getColor: function ()
 		{
@@ -84194,7 +84193,7 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .position_ .addInterest (this, "set_position__");
+			this .position_ .addInterest ("set_position__", this);
 
 			this .set_position__ ();
 		},
@@ -85486,7 +85485,7 @@ function ($,
 
 				// Apply texture properties.
 
-				this .isLive () .addInterest (this, "set_live__");
+				this .isLive () .addInterest ("set_live__", this);
 
 				this .set_live__ ();
 			}
@@ -85723,7 +85722,7 @@ function ($,
 			X3DCoordinateNode   .prototype .initialize .call (this);
 			X3DGeospatialObject .prototype .initialize .call (this);
 		
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 		
 			this .eventsProcessed ();
 		},
@@ -85932,9 +85931,9 @@ function ($,
 			X3DGeometryNode     .prototype .initialize .call (this);
 			X3DGeospatialObject .prototype .initialize .call (this);
 
-			this .color_    .addInterest (this, "set_color__");
-			this .texCoord_ .addInterest (this, "set_texCoord__");
-			this .normal_   .addInterest (this, "set_normal__");
+			this .color_    .addInterest ("set_color__", this);
+			this .texCoord_ .addInterest ("set_texCoord__", this);
+			this .normal_   .addInterest ("set_normal__", this);
 		
 			this .set_color__ ();
 			this .set_texCoord__ ();
@@ -85944,16 +85943,16 @@ function ($,
 		{
 			if (this .colorNode)
 			{
-				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
+				this .colorNode .removeInterest ("addNodeEvent", this);
+				this .colorNode .removeInterest ("set_transparent__", this);
 			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
 			{
-				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
+				this .colorNode .addInterest ("addNodeEvent", this);
+				this .colorNode .addInterest ("set_transparent__", this);
 
 				this .set_transparent__ ();
 			}
@@ -85967,24 +85966,24 @@ function ($,
 		set_texCoord__: function ()
 		{
 			if (this .texCoordNode)
-				this .texCoordNode .removeInterest (this, "addNodeEvent");
+				this .texCoordNode .removeInterest ("addNodeEvent", this);
 
 			this .texCoordNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoord_);
 
 			if (this .texCoordNode)
-				this .texCoordNode .addInterest (this, "addNodeEvent");
+				this .texCoordNode .addInterest ("addNodeEvent", this);
 
 			this .setCurrentTexCoord (this .texCoordNode);
 		},
 		set_normal__: function ()
 		{
 			if (this .normalNode)
-				this .normalNode .removeInterest (this, "addNodeEvent");
+				this .normalNode .removeInterest ("addNodeEvent", this);
 
 			this .normalNode = X3DCast (X3DConstants .X3DNormalNode, this .normal_);
 
 			if (this .normalNode)
-				this .normalNode .addInterest (this, "addNodeEvent");
+				this .normalNode .addInterest ("addNodeEvent", this);
 		},
 		getColor: function ()
 		{
@@ -86353,15 +86352,15 @@ function ($,
 			X3DUrlObject     .prototype .initialize .call (this);
 			X3DBoundedObject .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
 			this .group .setPrivate (true);
 			this .group .setup ();
 			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
 
-			this .load_   .addInterest (this, "set_load__");
-			this .url_    .addInterest (this, "set_url__");
-			this .buffer_ .addInterest (this, "set_buffer__");
+			this .load_   .addInterest ("set_load__", this);
+			this .url_    .addInterest ("set_url__", this);
+			this .buffer_ .addInterest ("set_buffer__", this);
 
 			this .requestAsyncLoad ();
 		},
@@ -86443,7 +86442,7 @@ function ($,
 		setInternalScene: function (scene)
 		{
 			this .scene .setLive (false);
-			this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
+			this .scene .rootNodes .removeInterest ("setValue", this .group .children_);
 
 			// Set new scene.
 
@@ -86452,7 +86451,7 @@ function ($,
 			this .scene .setPrivate (this .getExecutionContext () .getPrivate ());
 			this .scene .setup ();
 
-			this .scene .rootNodes .addInterest (this .group .children_, "setValue");
+			this .scene .rootNodes .addInterest ("setValue", this .group .children_);
 			this .group .children_ = this .scene .rootNodes;
 
 			this .set_live__ ();
@@ -86627,11 +86626,11 @@ function ($,
 			this .rootGroup .setPrivate (true);
 			this .rootGroup .setup ();
 		
-			this .rootInline   .loadState_ .addInterest (this, "set_rootLoadState__");
-			this .child1Inline .loadState_ .addInterest (this, "set_childLoadState__");
-			this .child2Inline .loadState_ .addInterest (this, "set_childLoadState__");
-			this .child3Inline .loadState_ .addInterest (this, "set_childLoadState__");
-			this .child4Inline .loadState_ .addInterest (this, "set_childLoadState__");
+			this .rootInline   .loadState_ .addInterest ("set_rootLoadState__", this);
+			this .child1Inline .loadState_ .addInterest ("set_childLoadState__", this);
+			this .child2Inline .loadState_ .addInterest ("set_childLoadState__", this);
+			this .child3Inline .loadState_ .addInterest ("set_childLoadState__", this);
+			this .child4Inline .loadState_ .addInterest ("set_childLoadState__", this);
 		
 			this .rootUrl_   .addFieldInterest (this .rootInline   .url_);
 			this .child1Url_ .addFieldInterest (this .child1Inline .url_);
@@ -86963,7 +86962,7 @@ function ($,
 			X3DTransformMatrix3DNode .prototype .initialize .call (this);
 			X3DGeospatialObject      .prototype .initialize .call (this);
 		
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 		
 			this .eventsProcessed ();
 		},
@@ -87258,7 +87257,7 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
-			this .geoSystem_ .addInterest (this, "set_geoSystem__");
+			this .geoSystem_ .addInterest ("set_geoSystem__", this);
 
 			this .set_geoSystem__ ();
 		},
@@ -87399,7 +87398,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -87515,11 +87514,11 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .enabled_   .addInterest (this, "set_live__");
-			this .size_      .addInterest (this, "set_live__");
-			this .traversed_ .addInterest (this, "set_live__");
+			this .enabled_   .addInterest ("set_live__", this);
+			this .size_      .addInterest ("set_live__", this);
+			this .traversed_ .addInterest ("set_live__", this);
 
 			this .set_live__ ();
 		},
@@ -87527,11 +87526,11 @@ function ($,
 		{
 			if (this .isLive () .getValue () && this .traversed_ .getValue () && this .enabled_ .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
 			{
-				this .getBrowser () .sensors () .addInterest (this, "update");
+				this .getBrowser () .sensors () .addInterest ("update", this);
 			}
 			else
 			{
-				this .getBrowser () .sensors () .removeInterest (this, "update");
+				this .getBrowser () .sensors () .removeInterest ("update", this);
 				
 				if (this .isActive_ .getValue ())
 				{
@@ -87694,9 +87693,9 @@ function ($,
 		{
 			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
 			
-			this .enabled_ .addInterest (this, "set_enabled__");
-			this .size_    .addInterest (this, "set_extents__");
-			this .center_  .addInterest (this, "set_extents__");
+			this .enabled_ .addInterest ("set_enabled__", this);
+			this .size_    .addInterest ("set_extents__", this);
+			this .center_  .addInterest ("set_extents__", this);
 
 			this .traversed_ .addFieldInterest (this .isCameraObject_);
 	
@@ -87997,7 +87996,7 @@ function ($,
 			this .proximitySensor .orientation_changed_      .addFieldInterest (this .orientation_changed_);
 			this .proximitySensor .centerOfRotation_changed_ .addFieldInterest (this .centerOfRotation_changed_);
 		
-			this .proximitySensor .position_changed_ .addInterest (this, "set_position__");
+			this .proximitySensor .position_changed_ .addInterest ("set_position__", this);
 		
 			this .proximitySensor .enabled_ = this .enabled_;
 			this .proximitySensor .size_    = this .size_;
@@ -88287,7 +88286,7 @@ function ($,
 			X3DTransformMatrix3DNode .prototype .initialize .call (this);
 			X3DGeospatialObject      .prototype .initialize .call (this);
 		
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 		
 			this .eventsProcessed ();
 		},
@@ -88458,7 +88457,7 @@ function ($,
 
 			// Initialize.
 
-			this .url_ .addInterest (this, "set_url__");
+			this .url_ .addInterest ("set_url__", this);
 
 			this .canvas = $("<canvas></canvas>");
 
@@ -88730,9 +88729,9 @@ function ($,
 		{
 			X3DLineGeometryNode .prototype .initialize .call (this);
 
-			this .attrib_ .addInterest (this, "set_attrib__");
-			this .color_  .addInterest (this, "set_color__");
-			this .coord_  .addInterest (this, "set_coord__");
+			this .attrib_ .addInterest ("set_attrib__", this);
+			this .color_  .addInterest ("set_color__", this);
+			this .coord_  .addInterest ("set_coord__", this);
 
 			this .setPrimitiveMode (this .getBrowser () .getContext () .LINES);
 			this .setSolid (false);
@@ -88746,7 +88745,7 @@ function ($,
 			var attribNodes = this .getAttrib ();
 
 			for (var i = 0, length = attribNodes .length; i < length; ++ i)
-				attribNodes [i] .removeInterest (this, "addNodeEvent");
+				attribNodes [i] .removeInterest ("addNodeEvent", this);
 
 			attribNodes .length = 0;
 
@@ -88759,22 +88758,22 @@ function ($,
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest ("addNodeEvent", this);
 		},
 		set_color__: function ()
 		{
 			if (this .colorNode)
 			{
-				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
+				this .colorNode .removeInterest ("addNodeEvent", this);
+				this .colorNode .removeInterest ("set_transparent__", this);
 			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
 			{
-				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
+				this .colorNode .addInterest ("addNodeEvent", this);
+				this .colorNode .addInterest ("set_transparent__", this);
 
 				this .set_transparent__ ();
 			}
@@ -88788,12 +88787,12 @@ function ($,
 		set_coord__: function ()
 		{
 			if (this .coordNode)
-				this .coordNode .removeInterest (this, "addNodeEvent");
+				this .coordNode .removeInterest ("addNodeEvent", this);
 
 			this .coordNode = X3DCast (X3DConstants .X3DCoordinateNode, this .coord_);
 
 			if (this .coordNode)
-				this .coordNode .addInterest (this, "addNodeEvent");
+				this .coordNode .addInterest ("addNodeEvent", this);
 		},
 		getColorPerVertexIndex: function (index)
 		{
@@ -89050,7 +89049,7 @@ function ($,
 		{
 			X3DComposedGeometryNode .prototype .initialize .call (this);
 		
-			this .index_ .addInterest (this, "set_index__");
+			this .index_ .addInterest ("set_index__", this);
 		
 			this .set_index__ ();
 		},
@@ -89202,7 +89201,7 @@ function ($,
 		{
 			X3DComposedGeometryNode .prototype .initialize .call (this);
 		
-			this .index_ .addInterest (this, "set_index__");
+			this .index_ .addInterest ("set_index__", this);
 		
 			this .set_index__ ();
 		},
@@ -89481,7 +89480,7 @@ function ($,
 		{
 			X3DComposedGeometryNode .prototype .initialize .call (this);
 		
-			this .index_ .addInterest (this, "set_index__");
+			this .index_ .addInterest ("set_index__", this);
 		
 			this .set_index__ ();
 		},
@@ -89648,7 +89647,7 @@ function ($,
 		{
 			X3DSequencerNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_index__");
+			this .keyValue_ .addInterest ("set_index__", this);
 		},
 		getSize: function ()
 		{
@@ -89764,7 +89763,7 @@ function ($,
 		{
 			X3DTriggerNode .prototype .initialize .call (this);
 
-			this .set_boolean_ .addInterest (this, "set_boolean__");
+			this .set_boolean_ .addInterest ("set_boolean__", this);
 		},
 		set_boolean__: function ()
 		{
@@ -89851,7 +89850,7 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
 			this .set_live__ ();
 		},
@@ -89859,14 +89858,14 @@ function ($,
 		{
 			if (this .isLive () .getValue ())
 			{
-				this .enabled_ .addInterest (this, "set_enabled__");
+				this .enabled_ .addInterest ("set_enabled__", this);
 
 				if (this .enabled_ .getValue ())
 					this .enable ();
 			}
 			else
 			{
-				this .enabled_ .removeInterest (this, "set_enabled__");
+				this .enabled_ .removeInterest ("set_enabled__", this);
 
 				if (this .enabled_ .getValue ())
 					this .disable ();
@@ -90680,12 +90679,12 @@ function ($,
 		{
 			X3DLayoutNode .prototype .initialize .call (this);
 
-			this .align_       .addInterest (this, "set_align__");
-			this .offsetUnits_ .addInterest (this, "set_offsetUnits__");
-			this .offset_      .addInterest (this, "set_offset__");
-			this .sizeUnits_   .addInterest (this, "set_sizeUnits__");
-			this .size_        .addInterest (this, "set_size__");
-			this .scaleMode_   .addInterest (this, "set_scaleMode__");
+			this .align_       .addInterest ("set_align__", this);
+			this .offsetUnits_ .addInterest ("set_offsetUnits__", this);
+			this .offset_      .addInterest ("set_offset__", this);
+			this .sizeUnits_   .addInterest ("set_sizeUnits__", this);
+			this .size_        .addInterest ("set_size__", this);
+			this .scaleMode_   .addInterest ("set_scaleMode__", this);
 
 			this .set_align__ ();
 			this .set_offsetUnits__ ();
@@ -91297,8 +91296,8 @@ function ($,
 		{
 			X3DGroupingNode .prototype .initialize .call (this);
 
-			this .viewport_ .addInterest (this, "set_viewport__");
-			this .layout_   .addInterest (this, "set_layout__");
+			this .viewport_ .addInterest ("set_viewport__", this);
+			this .layout_   .addInterest ("set_layout__", this);
 		
 			this .set_viewport__ ();
 			this .set_layout__ ();
@@ -91591,7 +91590,7 @@ function ($,
 		{
 			X3DAppearanceChildNode .prototype .initialize .call (this);
 
-			this .linewidthScaleFactor_ .addInterest (this, "set_linewidthScaleFactor__");
+			this .linewidthScaleFactor_ .addInterest ("set_linewidthScaleFactor__", this);
 
 			this .set_linewidthScaleFactor__ ();
 		},
@@ -91717,9 +91716,9 @@ function ($,
 		{
 			X3DLineGeometryNode .prototype .initialize .call (this);
 
-			this .attrib_ .addInterest (this, "set_attrib__");
-			this .color_  .addInterest (this, "set_color__");
-			this .coord_  .addInterest (this, "set_coord__");
+			this .attrib_ .addInterest ("set_attrib__", this);
+			this .color_  .addInterest ("set_color__", this);
+			this .coord_  .addInterest ("set_coord__", this);
 
 			this .setPrimitiveMode (this .getBrowser () .getContext () .LINES);
 			this .setSolid (false);
@@ -91733,7 +91732,7 @@ function ($,
 			var attribNodes = this .getAttrib ();
 
 			for (var i = 0, length = attribNodes .length; i < length; ++ i)
-				attribNodes [i] .removeInterest (this, "addNodeEvent");
+				attribNodes [i] .removeInterest ("addNodeEvent", this);
 
 			attribNodes .length = 0;
 
@@ -91746,22 +91745,22 @@ function ($,
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest ("addNodeEvent", this);
 		},
 		set_color__: function ()
 		{
 			if (this .colorNode)
 			{
-				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
+				this .colorNode .removeInterest ("addNodeEvent", this);
+				this .colorNode .removeInterest ("set_transparent__", this);
 			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
 			{
-				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
+				this .colorNode .addInterest ("addNodeEvent", this);
+				this .colorNode .addInterest ("set_transparent__", this);
 
 				this .set_transparent__ ();
 			}
@@ -91775,12 +91774,12 @@ function ($,
 		set_coord__: function ()
 		{
 			if (this .coordNode)
-				this .coordNode .removeInterest (this, "addNodeEvent");
+				this .coordNode .removeInterest ("addNodeEvent", this);
 
 			this .coordNode = X3DCast (X3DConstants .X3DCoordinateNode, this .coord_);
 
 			if (this .coordNode)
-				this .coordNode .addInterest (this, "addNodeEvent");
+				this .coordNode .addInterest ("addNodeEvent", this);
 		},
 		build: function ()
 		{
@@ -92141,12 +92140,12 @@ function ($,
 
 			this .addChildObjects ("transparent", new Fields .SFBool ());
 
-			this .ambientIntensity_ .addInterest (this, "set_ambientIntensity__");
-			this .diffuseColor_     .addInterest (this, "set_diffuseColor__");
-			this .specularColor_    .addInterest (this, "set_specularColor__");
-			this .emissiveColor_    .addInterest (this, "set_emissiveColor__");
-			this .shininess_        .addInterest (this, "set_shininess__");
-			this .transparency_     .addInterest (this, "set_transparency__");
+			this .ambientIntensity_ .addInterest ("set_ambientIntensity__", this);
+			this .diffuseColor_     .addInterest ("set_diffuseColor__", this);
+			this .specularColor_    .addInterest ("set_specularColor__", this);
+			this .emissiveColor_    .addInterest ("set_emissiveColor__", this);
+			this .shininess_        .addInterest ("set_shininess__", this);
+			this .transparency_     .addInterest ("set_transparency__", this);
 	
 			this .set_ambientIntensity__ ();
 			this .set_diffuseColor__ ();
@@ -93317,7 +93316,7 @@ function ($,
 			X3DSoundSourceNode .prototype .initialize .call (this);
 			X3DUrlObject       .prototype .initialize .call (this);
 
-			this .url_ .addInterest (this, "set_url__");
+			this .url_ .addInterest ("set_url__", this);
 
 			this .canvas = $("<canvas></canvas>");
 
@@ -93733,7 +93732,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function () { },
 		interpolate: function (index0, index1, weight)
@@ -94114,10 +94113,10 @@ function ($,
 			X3DChildNode     .prototype .initialize .call (this);
 			X3DBoundedObject .prototype .initialize .call (this);
 
-			this .bboxSize_   .addInterest (this, "set_bbox__");
-			this .bboxCenter_ .addInterest (this, "set_bbox__");
-			this .appearance_ .addInterest (this, "set_apparance__");
-			this .geometry_   .addInterest (this, "set_geometry__");
+			this .bboxSize_   .addInterest ("set_bbox__", this);
+			this .bboxCenter_ .addInterest ("set_bbox__", this);
+			this .appearance_ .addInterest ("set_apparance__", this);
+			this .geometry_   .addInterest ("set_geometry__", this);
 
 			this .set_apparance__ ();
 			this .set_geometry__ ();
@@ -94170,12 +94169,12 @@ function ($,
 		set_apparance__: function ()
 		{
 			if (this .apparanceNode)
-				this .apparanceNode .removeInterest (this, "set_transparent__");
+				this .apparanceNode .removeInterest ("set_transparent__", this);
 
 			this .apparanceNode = X3DCast (X3DConstants .X3DAppearanceNode, this .appearance_);
 
 			if (this .apparanceNode)
-				this .apparanceNode .addInterest (this, "set_transparent__");
+				this .apparanceNode .addInterest ("set_transparent__", this);
 
 			else
 				this .apparanceNode = this .getBrowser () .getDefaultAppearance ();
@@ -94186,16 +94185,16 @@ function ($,
 		{
 			if (this .geometryNode)
 			{
-				this .geometryNode .transparent_  .addInterest (this, "set_transparent__");
-				this .geometryNode .bbox_changed_ .addInterest (this, "set_bbox__");
+				this .geometryNode .transparent_  .addInterest ("set_transparent__", this);
+				this .geometryNode .bbox_changed_ .addInterest ("set_bbox__", this);
 			}
 
 			this .geometryNode = X3DCast (X3DConstants .X3DGeometryNode, this .geometry_);
 
 			if (this .geometryNode)
 			{
-				this .geometryNode .transparent_  .addInterest (this, "set_transparent__");
-				this .geometryNode .bbox_changed_ .addInterest (this, "set_bbox__");
+				this .geometryNode .transparent_  .addInterest ("set_transparent__", this);
+				this .geometryNode .bbox_changed_ .addInterest ("set_bbox__", this);
 			}
 
 			this .set_transparent__ ();
@@ -94773,23 +94772,23 @@ function ($,
 
 			var gl = this .getBrowser () .getContext ();
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shader__");
-			//this .getBrowser () .getDefaultShader () .addInterest (this, "set_shader__");
+			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest ("set_shader__", this);
+			//this .getBrowser () .getDefaultShader () .addInterest ("set_shader__", this);
 
-			this .enabled_           .addInterest (this, "set_enabled__");
-			this .createParticles_   .addInterest (this, "set_createParticles__");
-			this .geometryType_      .addInterest (this, "set_geometryType__");
-			this .maxParticles_      .addInterest (this, "set_enabled__");
-			this .particleLifetime_  .addInterest (this, "set_particleLifetime__");
-			this .lifetimeVariation_ .addInterest (this, "set_lifetimeVariation__");
-			this .emitter_           .addInterest (this, "set_emitter__");
-			this .physics_           .addInterest (this, "set_physics__");
-			this .colorKey_          .addInterest (this, "set_color__");
-			this .colorRamp_         .addInterest (this, "set_colorRamp__");
-			this .texCoordKey_       .addInterest (this, "set_texCoord__");
-			this .texCoordRamp_      .addInterest (this, "set_texCoordRamp__");
+			this .enabled_           .addInterest ("set_enabled__", this);
+			this .createParticles_   .addInterest ("set_createParticles__", this);
+			this .geometryType_      .addInterest ("set_geometryType__", this);
+			this .maxParticles_      .addInterest ("set_enabled__", this);
+			this .particleLifetime_  .addInterest ("set_particleLifetime__", this);
+			this .lifetimeVariation_ .addInterest ("set_lifetimeVariation__", this);
+			this .emitter_           .addInterest ("set_emitter__", this);
+			this .physics_           .addInterest ("set_physics__", this);
+			this .colorKey_          .addInterest ("set_color__", this);
+			this .colorRamp_         .addInterest ("set_colorRamp__", this);
+			this .texCoordKey_       .addInterest ("set_texCoord__", this);
+			this .texCoordRamp_      .addInterest ("set_texCoordRamp__", this);
 
 			this .colorBuffer     = gl .createBuffer ();
 			this .texCoordBuffers = [ gl .createBuffer () ];
@@ -94843,7 +94842,7 @@ function ($,
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
-					this .getBrowser () .sensors () .addInterest (this, "animateParticles");
+					this .getBrowser () .sensors () .addInterest ("animateParticles", this);
 		
 					if (this .pauseTime)
 					{
@@ -94856,7 +94855,7 @@ function ($,
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
-					this .getBrowser () .sensors () .removeInterest (this, "animateParticles");
+					this .getBrowser () .sensors () .removeInterest ("animateParticles", this);
 		
 					if (this .pauseTime === 0)
 						this .pauseTime = performance .now () / 1000;
@@ -94871,7 +94870,7 @@ function ($,
 				{
 					if (this .isLive () .getValue ())
 					{
-						this .getBrowser () .sensors () .addInterest (this, "animateParticles");
+						this .getBrowser () .sensors () .addInterest ("animateParticles", this);
 			
 						this .pauseTime = 0;
 					}
@@ -94887,7 +94886,7 @@ function ($,
 				{
 					if (this .isLive () .getValue ())
 					{
-						this .getBrowser () .sensors () .removeInterest (this, "animateParticles");
+						this .getBrowser () .sensors () .removeInterest ("animateParticles", this);
 					}
 	
 					this .isActive_ = false;
@@ -95110,7 +95109,7 @@ function ($,
 				boundedPhysicsModelNodes = this .boundedPhysicsModelNodes;
 
 			for (var i = 0, length = boundedPhysicsModelNodes .length; i < length; ++ i)
-				boundedPhysicsModelNodes [i] .removeInterest (this, "set_boundedPhysics__");
+				boundedPhysicsModelNodes [i] .removeInterest ("set_boundedPhysics__", this);
 
 			forcePhysicsModelNodes   .length = 0;
 			boundedPhysicsModelNodes .length = 0;
@@ -95135,7 +95134,7 @@ function ($,
 							}
 							case X3DConstants .BoundedPhysicsModel:
 							{
-								innerNode .addInterest (this, "set_boundedPhysics__");
+								innerNode .addInterest ("set_boundedPhysics__", this);
 								boundedPhysicsModelNodes .push (innerNode);
 								break;
 							}
@@ -95172,12 +95171,12 @@ function ($,
 		set_colorRamp__: function ()
 		{
 			if (this .colorRampNode)
-				this .colorRampNode .removeInterest (this, "set_color__");
+				this .colorRampNode .removeInterest ("set_color__", this);
 
 			this .colorRampNode = X3DCast (X3DConstants .X3DColorNode, this .colorRamp_);
 
 			if (this .colorRampNode)
-				this .colorRampNode .addInterest (this, "set_color__");
+				this .colorRampNode .addInterest ("set_color__", this);
 
 			this .set_color__ ();
 			this .set_transparent__ ();
@@ -95207,12 +95206,12 @@ function ($,
 		set_texCoordRamp__: function ()
 		{
 			if (this .texCoordRampNode)
-				this .texCoordRampNode .removeInterest (this, "set_texCoord__");
+				this .texCoordRampNode .removeInterest ("set_texCoord__", this);
 
 			this .texCoordRampNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoordRamp_);
 
 			if (this .texCoordRampNode)
-				this .texCoordRampNode .addInterest (this, "set_texCoord__");
+				this .texCoordRampNode .addInterest ("set_texCoord__", this);
 
 			this .set_texCoord__ ();
 		},
@@ -96033,7 +96032,7 @@ function ($,
 		{
 			X3DTexture2DNode .prototype .initialize .call (this);
 
-			this .image_ .addInterest (this, "set_image__");
+			this .image_ .addInterest ("set_image__", this);
 
 			this .set_image__ ();
 		},
@@ -96963,9 +96962,9 @@ function ($,
 		{
 			X3DLineGeometryNode .prototype .initialize .call (this);
 
-			this .attrib_ .addInterest (this, "set_attrib__");
-			this .color_  .addInterest (this, "set_color__");
-			this .coord_  .addInterest (this, "set_coord__");
+			this .attrib_ .addInterest ("set_attrib__", this);
+			this .color_  .addInterest ("set_color__", this);
+			this .coord_  .addInterest ("set_coord__", this);
 
 			var browser = this .getBrowser ();
 
@@ -96982,7 +96981,7 @@ function ($,
 			var attribNodes = this .getAttrib ();
 
 			for (var i = 0, length = attribNodes .length; i < length; ++ i)
-				attribNodes [i] .removeInterest (this, "addNodeEvent");
+				attribNodes [i] .removeInterest ("addNodeEvent", this);
 
 			attribNodes .length = 0;
 
@@ -96995,27 +96994,27 @@ function ($,
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest ("addNodeEvent", this);
 		},
 		set_color__: function ()
 		{
 			if (this .colorNode)
-				this .colorNode .removeInterest (this, "addNodeEvent");
+				this .colorNode .removeInterest ("addNodeEvent", this);
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
-				this .colorNode .addInterest (this, "addNodeEvent");
+				this .colorNode .addInterest ("addNodeEvent", this);
 		},
 		set_coord__: function ()
 		{
 			if (this .coordNode)
-				this .coordNode .removeInterest (this, "addNodeEvent");
+				this .coordNode .removeInterest ("addNodeEvent", this);
 
 			this .coordNode = X3DCast (X3DConstants .X3DCoordinateNode, this .coord_);
 
 			if (this .coordNode)
-				this .coordNode .addInterest (this, "addNodeEvent");
+				this .coordNode .addInterest ("addNodeEvent", this);
 		},
 		build: function ()
 		{
@@ -97289,7 +97288,7 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .direction_ .addInterest (this, "set_direction__");
+			this .direction_ .addInterest ("set_direction__", this);
 
 			this .coordIndex_ .addFieldInterest (this .polylineNode .coordIndex_);
 			this .coord_      .addFieldInterest (this .polylineNode .coord_);
@@ -97297,7 +97296,7 @@ function ($,
 			this .polylineNode .coordIndex_ = this .coordIndex_;
 			this .polylineNode .coord_      = this .coord_;
 
-			this .polylineNode .addInterest (this, "set_polyline");
+			this .polylineNode .addInterest ("set_polyline", this);
 			this .polylineNode .setPrivate (true);
 			this .polylineNode .setup ();
 
@@ -98104,7 +98103,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -99756,7 +99755,7 @@ function ($,
 		{
 			X3DScriptNode .prototype .initialize .call (this);
 
-			this .url_ .addInterest (this, "set_url__");
+			this .url_ .addInterest ("set_url__", this);
 
 			this .requestAsyncLoad ();
 		},
@@ -99984,10 +99983,10 @@ function ($,
 			if (this .isLive () .getValue ())
 			{
 				if ($.isFunction (this .context .prepareEvents))
-					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents__");
+					this .getBrowser () .prepareEvents () .addInterest ("prepareEvents__", this);
 
 				if ($.isFunction (this .context .eventsProcessed))
-					this .addInterest (this, "eventsProcessed__");
+					this .addInterest ("eventsProcessed__", this);
 
 				for (var name in userDefinedFields)
 				{
@@ -100000,7 +99999,7 @@ function ($,
 							var callback = this .context [field .getName ()];
 
 							if ($.isFunction (callback))
-								field .addInterest (this, "set_field__", callback);
+								field .addInterest ("set_field__", this, callback);
 
 							break;
 						}
@@ -100009,7 +100008,7 @@ function ($,
 							var callback = this .context ["set_" + field .getName ()];
 
 							if ($.isFunction (callback))
-								field .addInterest (this, "set_field__", callback);
+								field .addInterest ("set_field__", this, callback);
 
 							break;
 						}
@@ -100019,10 +100018,10 @@ function ($,
 			else
 			{
 				if (this .context .prepareEvents)
-					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents__");
+					this .getBrowser () .prepareEvents () .removeInterest ("prepareEvents__", this);
 
 				if (this .context .eventsProcessed)
-					this .removeInterest (this, "eventsProcessed__");
+					this .removeInterest ("eventsProcessed__", this);
 
 				for (var name in userDefinedFields)
 				{
@@ -100032,7 +100031,7 @@ function ($,
 					{
 						case X3DConstants .inputOnly:
 						case X3DConstants .inputOutput:
-							field .removeInterest (this, "set_field__");
+							field .removeInterest ("set_field__", this);
 							break;
 					}
 				}
@@ -100042,7 +100041,7 @@ function ($,
 		{
 			this .context = this .getContext (text);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
 			this .set_live__ ();
 
@@ -100576,7 +100575,7 @@ function ($,
 		{
 			X3DSoundNode .prototype .initialize .call (this);
 
-			this .source_ .addInterest (this, "set_source__");
+			this .source_ .addInterest ("set_source__", this);
 
 			this .set_source__ ();
 		},
@@ -100769,9 +100768,9 @@ function ($,
 			X3DGeometryNode .prototype .set_live__ .call (this);
 		   
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getSphereOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getSphereOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getSphereOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getSphereOptions () .removeInterest ("eventsProcessed", this);
 		},
 		build: function ()
 		{
@@ -101721,8 +101720,8 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 		
-			this .keyValue_    .addInterest (this, "set_keyValue__");
-			this .keyVelocity_ .addInterest (this, "set_keyVelocity__");
+			this .keyValue_    .addInterest ("set_keyValue__", this);
+			this .keyVelocity_ .addInterest ("set_keyVelocity__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -101927,8 +101926,8 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 		
-			this .keyValue_    .addInterest (this, "set_keyValue__");
-			this .keyVelocity_ .addInterest (this, "set_keyVelocity__");
+			this .keyValue_    .addInterest ("set_keyValue__", this);
+			this .keyVelocity_ .addInterest ("set_keyVelocity__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -102174,8 +102173,8 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 		
-			this .keyValue_    .addInterest (this, "set_keyValue__");
-			this .keyVelocity_ .addInterest (this, "set_keyVelocity__");
+			this .keyValue_    .addInterest ("set_keyValue__", this);
+			this .keyVelocity_ .addInterest ("set_keyVelocity__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -102802,7 +102801,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 		
-			this .keyValue_    .addInterest (this, "set_keyValue__");
+			this .keyValue_    .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -102957,7 +102956,7 @@ function ($,
 
 			// Connect after Group setup.
 			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
-			this .group .children_       .addInterest (this, "set_children__");
+			this .group .children_       .addInterest ("set_children__", this);
 
 			this .set_children__ ();
 		},
@@ -103097,19 +103096,19 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .surface_ .addInterest (this, "set_surface__");
+			this .surface_ .addInterest ("set_surface__", this);
 
 			this .set_surface__ ();
 		},
 		set_surface__: function ()
 		{
 			if (this .surfaceNode)
-				this .surfaceNode .removeInterest (this, "set_geometry__");
+				this .surfaceNode .removeInterest ("set_geometry__", this);
 
 			this .surfaceNode = X3DCast (X3DConstants .X3DGeometryNode, this .surface_);
 
 			if (this .surfaceNode)
-				this .surfaceNode .addInterest (this, "set_geometry__");
+				this .surfaceNode .addInterest ("set_geometry__", this);
 
 			this .set_geometry__ ();
 		},
@@ -103350,7 +103349,7 @@ function ($,
 		{
 			X3DGroupingNode .prototype .initialize .call (this);
 			
-			this .whichChoice_ .addInterest (this, "set_whichChoice__");
+			this .whichChoice_ .addInterest ("set_whichChoice__", this);
 			
 			this .set_whichChoice__ ();
 		},
@@ -103744,7 +103743,7 @@ function ($,
 		{
 		   X3DGeometryNode .prototype .initialize .call (this);
 
-		   this .fontStyle_ .addInterest (this, "set_fontStyle__");
+		   this .fontStyle_ .addInterest ("set_fontStyle__", this);
 	
 			this .set_fontStyle__ ();
 			this .eventsProcessed ();
@@ -103765,21 +103764,21 @@ function ($,
 		    X3DGeometryNode .prototype .set_live__ .call (this);
 
 		   if (this .isLive () .getValue ())
-				this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .addInterest ("eventsProcessed", this);
 		   else
-				this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .removeInterest ("eventsProcessed", this);
 		},
 		set_fontStyle__: function ()
 		{
 		   if (this .fontStyleNode)
-		      this .fontStyleNode .removeInterest (this, "addNodeEvent");
+		      this .fontStyleNode .removeInterest ("addNodeEvent", this);
 
 			this .fontStyleNode = X3DCast (X3DConstants .X3DFontStyleNode, this .fontStyle_);
 
 			if (! this .fontStyleNode)
 				this .fontStyleNode = this .getBrowser () .getDefaultFontStyle ();
 
-		   this .fontStyleNode .addInterest (this, "addNodeEvent");
+		   this .fontStyleNode .addInterest ("addNodeEvent", this);
 
 		   this .textGeometry = this .fontStyleNode .getTextGeometry (this);
 		},
@@ -103944,12 +103943,12 @@ function ($,
 		{
 			X3DBackgroundNode .prototype .initialize .call (this);
 
-			this .frontTexture_  .addInterest (this, "set_frontTexture__");
-			this .backTexture_   .addInterest (this, "set_backTexture__");
-			this .leftTexture_   .addInterest (this, "set_leftTexture__");
-			this .rightTexture_  .addInterest (this, "set_rightTexture__");
-			this .topTexture_    .addInterest (this, "set_topTexture__");
-			this .bottomTexture_ .addInterest (this, "set_bottomTexture__");
+			this .frontTexture_  .addInterest ("set_frontTexture__", this);
+			this .backTexture_   .addInterest ("set_backTexture__", this);
+			this .leftTexture_   .addInterest ("set_leftTexture__", this);
+			this .rightTexture_  .addInterest ("set_rightTexture__", this);
+			this .topTexture_    .addInterest ("set_topTexture__", this);
+			this .bottomTexture_ .addInterest ("set_bottomTexture__", this);
 
 			this .set_frontTexture__  (this .frontTexture_);
 			this .set_backTexture__   (this .backTexture_);
@@ -104350,7 +104349,7 @@ function ($,
 		{
 			X3DTextureTransformNode .prototype .initialize .call (this);
 			
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 
 			this .eventsProcessed ();
 		},
@@ -104598,7 +104597,7 @@ function ($,
 		{
 			X3DTriggerNode .prototype .initialize .call (this);
 		
-			this .set_boolean_ .addInterest (this, "set_boolean__");
+			this .set_boolean_ .addInterest ("set_boolean__", this);
 		},
 		set_boolean__: function ()
 		{
@@ -104841,13 +104840,13 @@ function ($,
 		{
 			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
 		
-			this .isLive () .addInterest (this, "set_enabled__");
+			this .isLive () .addInterest ("set_enabled__", this);
 
-			this .enabled_      .addInterest (this, "set_enabled__");
-			this .size_         .addInterest (this, "set_enabled__");
-			this .size_         .addInterest (this, "set_bbox__");
-			this .center_       .addInterest (this, "set_bbox__");
-			this .targetObject_ .addInterest (this, "set_targetObject__");
+			this .enabled_      .addInterest ("set_enabled__", this);
+			this .size_         .addInterest ("set_enabled__", this);
+			this .size_         .addInterest ("set_bbox__", this);
+			this .center_       .addInterest ("set_bbox__", this);
+			this .targetObject_ .addInterest ("set_targetObject__", this);
 
 			this .set_bbox__ ();
 			this .set_targetObject__ ();
@@ -104858,11 +104857,11 @@ function ($,
 		{
 			if (this .isLive () .getValue () && this .targetObjectNode && this .enabled_ .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
 			{
-				this .getBrowser () .sensors () .addInterest (this, "update");
+				this .getBrowser () .sensors () .addInterest ("update", this);
 			}
 			else
 			{
-				this .getBrowser () .sensors () .removeInterest (this, "update");
+				this .getBrowser () .sensors () .removeInterest ("update", this);
 					
 				if (this .isActive_ .getValue ())
 				{
@@ -105030,7 +105029,7 @@ function ($,
 		{
 			X3DComposedGeometryNode .prototype .initialize .call (this);
 		
-			this .fanCount_ .addInterest (this, "set_fanCount__");
+			this .fanCount_ .addInterest ("set_fanCount__", this);
 		
 			this .set_fanCount__ ();
 		},
@@ -105440,7 +105439,7 @@ function ($,
 		{
 			X3DComposedGeometryNode .prototype .initialize .call (this);
 		
-			this .stripCount_ .addInterest (this, "set_stripCount__");
+			this .stripCount_ .addInterest ("set_stripCount__", this);
 		
 			this .set_stripCount__ ();
 		},
@@ -105605,19 +105604,19 @@ function ($,
 			
 			this .addChildObjects ("transparent", new Fields .SFBool ());
 
-			this .ambientIntensity_ .addInterest (this, "set_ambientIntensity__");
-			this .diffuseColor_     .addInterest (this, "set_diffuseColor__");
-			this .specularColor_    .addInterest (this, "set_specularColor__");
-			this .emissiveColor_    .addInterest (this, "set_emissiveColor__");
-			this .shininess_        .addInterest (this, "set_shininess__");
-			this .transparency_     .addInterest (this, "set_transparency__");
+			this .ambientIntensity_ .addInterest ("set_ambientIntensity__", this);
+			this .diffuseColor_     .addInterest ("set_diffuseColor__", this);
+			this .specularColor_    .addInterest ("set_specularColor__", this);
+			this .emissiveColor_    .addInterest ("set_emissiveColor__", this);
+			this .shininess_        .addInterest ("set_shininess__", this);
+			this .transparency_     .addInterest ("set_transparency__", this);
 	
-			this .backAmbientIntensity_ .addInterest (this, "set_backAmbientIntensity__");
-			this .backDiffuseColor_     .addInterest (this, "set_backDiffuseColor__");
-			this .backSpecularColor_    .addInterest (this, "set_backSpecularColor__");
-			this .backEmissiveColor_    .addInterest (this, "set_backEmissiveColor__");
-			this .backShininess_        .addInterest (this, "set_backShininess__");
-			this .backTransparency_     .addInterest (this, "set_backTransparency__");
+			this .backAmbientIntensity_ .addInterest ("set_backAmbientIntensity__", this);
+			this .backDiffuseColor_     .addInterest ("set_backDiffuseColor__", this);
+			this .backSpecularColor_    .addInterest ("set_backSpecularColor__", this);
+			this .backEmissiveColor_    .addInterest ("set_backEmissiveColor__", this);
+			this .backShininess_        .addInterest ("set_backShininess__", this);
+			this .backTransparency_     .addInterest ("set_backTransparency__", this);
 	
 			this .set_ambientIntensity__ ();
 			this .set_diffuseColor__ ();
@@ -105899,9 +105898,9 @@ function ($,
 			this .proximitySensor .size_   = this .size_;
 			this .proximitySensor .center_ = this .center_;
 
-			this .displayed_ .addInterest (this, "set_displayed__");
-			this .size_      .addInterest (this, "set_displayed__");
-			this .children_  .addInterest (this, "set_children__");
+			this .displayed_ .addInterest ("set_displayed__", this);
+			this .size_      .addInterest ("set_displayed__", this);
+			this .children_  .addInterest ("set_children__", this);
 
 			this .set_displayed__ ();
 			this .set_children__ ();
@@ -106144,7 +106143,7 @@ function ($,
 		{
 			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
 
-			this .enabled_ .addInterest (this, "set_enabled__");
+			this .enabled_ .addInterest ("set_enabled__", this);
 
 			this .set_enabled__ ();
 		},
@@ -106352,7 +106351,7 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .direction_ .addInterest (this, "set_direction__");
+			this .direction_ .addInterest ("set_direction__", this);
 
 			this .coordIndex_ .addFieldInterest (this .volumeNode .coordIndex_);
 			this .coord_      .addFieldInterest (this .volumeNode .coord_);
@@ -106362,7 +106361,7 @@ function ($,
 			this .volumeNode .coordIndex_  = this .coordIndex_;
 			this .volumeNode .coord_       = this .coord_;
 
-			this .volumeNode .addInterest (this, "set_geometry__");
+			this .volumeNode .addInterest ("set_geometry__", this);
 			this .volumeNode .setPrivate (true);
 			this .volumeNode .setup ();
 
@@ -107626,7 +107625,7 @@ function ($,
 
 			X3DBrowserContext .prototype .initialize .call (this);
 
-			this .getLoadSensor () .loadTime_ .addInterest (this, "realize");
+			this .getLoadSensor () .loadTime_ .addInterest ("realize", this);
 
 			this .print ("Welcome to " + this .name + " X3D Browser " + this .version + ":\n" +
 			                "        Current Graphics Renderer\n" +
@@ -107649,7 +107648,7 @@ function ($,
 		},
 		realize: function ()
 		{
-			this .getLoadSensor () .loadTime_ .removeInterest (this, "realize");
+			this .getLoadSensor () .loadTime_ .removeInterest ("realize", this);
 
 			var urlCharacters = this .getElement () [0] .getAttribute ("src");
 
@@ -107730,8 +107729,8 @@ function ($,
 		{
 			// Cancel any loading.
 
-			this .loadCount_       .removeInterest (this, "set_loadCount__");
-			this .prepareEvents () .removeInterest (this, "bind");
+			this .loadCount_       .removeInterest ("set_loadCount__", this);
+			this .prepareEvents () .removeInterest ("bind", this);
 
 			if (this .loader)
 				this .loader .abort ();
@@ -107756,7 +107755,7 @@ function ($,
 			this .description = "";
 
 			this .setBrowserLoading (true);
-			this .loadCount_ .addInterest (this, "set_loadCount__");
+			this .loadCount_ .addInterest ("set_loadCount__", this);
 	
 			for (var id in scene .getLoadingObjects ())
 				this .addLoadCount (scene .getLoadingObjects () [id]);
@@ -107772,14 +107771,14 @@ function ($,
 			if (loadCount .getValue ())
 				return;
 
-			this .loadCount_ .removeInterest (this, "set_loadCount__");
+			this .loadCount_ .removeInterest ("set_loadCount__", this);
 
-			this .prepareEvents () .addInterest (this, "bind");
+			this .prepareEvents () .addInterest ("bind", this);
 			this .addBrowserEvent ();
 		},
 		bind: function ()
 		{
-			this .prepareEvents () .removeInterest (this, "bind");
+			this .prepareEvents () .removeInterest ("bind", this);
 
 			this .getWorld () .bind ();
 			this .setBrowserLoading (false);
@@ -107802,7 +107801,7 @@ function ($,
 			if (! external)
 			{
 				scene .setExecutionContext (currentScene);
-				currentScene .isLive () .addInterest (scene, "setLive");
+				currentScene .isLive () .addInterest ("setLive", scene);
 
 				if (currentScene .isLive () .getValue ())
 					scene .setLive (true);
@@ -107847,7 +107846,7 @@ function ($,
 				   if (! external)
 				   {
 						scene .setExecutionContext (currentScene);
-				      currentScene .isLive () .addInterest (scene, "setLive");
+				      currentScene .isLive () .addInterest ("setLive", scene);
 
 						if (currentScene .isLive () .getValue ())
 						   scene .setLive (true);
@@ -107874,7 +107873,7 @@ function ($,
 			if (! external)
 			{
 				scene .setExecutionContext (currentScene);
-				currentScene .isLive () .addInterest (scene, "setLive");
+				currentScene .isLive () .addInterest ("setLive", scene);
 						
 				if (currentScene .isLive () .getValue ())
 					scene .setLive (true);
@@ -107888,8 +107887,8 @@ function ($,
 		{
 			// Cancel any loading.
 
-			this .loadCount_       .removeInterest (this, "set_loadCount__");
-			this .prepareEvents () .removeInterest (this, "bind");
+			this .loadCount_       .removeInterest ("set_loadCount__", this);
+			this .prepareEvents () .removeInterest ("bind", this);
 
 			if (this .loader)
 				this .loader .abort ();
@@ -107962,7 +107961,7 @@ function ($,
 			if (! external)
 			{
 				scene .setExecutionContext (currentScene);
-				currentScene .isLive () .addInterest (scene, "setLive");
+				currentScene .isLive () .addInterest ("setLive", scene);
 						
 				if (currentScene .isLive () .getValue ())
 					scene .setLive (true);

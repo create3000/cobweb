@@ -74,7 +74,7 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .set_bind_ .addInterest (this, "set_bind__");
+			this .set_bind_ .addInterest ("set_bind__", this);
 		},
 		getCameraObject: function ()
 		{

@@ -68,7 +68,7 @@ function ($,
 		constructor: X3DFogObject,
 		initialize: function ()
 		{
-			this .fogType_ .addInterest (this, "set_fogType__");
+			this .fogType_ .addInterest ("set_fogType__", this);
 
 			this .set_fogType__ ();
 		},
