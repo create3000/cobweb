@@ -188,6 +188,7 @@ function ($,
 				return node;
 
 			node .setup ();
+
 			return new Fields .SFNode (node);
 		},
 		createProto: function (name, setup)

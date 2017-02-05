@@ -146,9 +146,6 @@ function ($,
 							if (! (field .getAccessType () & X3DConstants .initializeOnly))
 								continue;
 
-if (field .getSet () && field .getName () == "metadata")
-	console .log (this .getTypeName (), this .getId (), field .getName (), field .getId (), field .getValue ());
-
 							// Is set during parse.	
 							if (field .getSet ())
 								continue;
@@ -157,7 +154,7 @@ if (field .getSet () && field .getName () == "metadata")
 							if (field .hasReferences ())
 								continue;
 
-							field .set (protoField .getValue ());
+							field .setValue (protoField .getValue ());
 						}
 						catch (error)
 						{

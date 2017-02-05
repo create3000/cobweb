@@ -1167,14 +1167,6 @@ function ($,
 			if (! this .isActive_ .getValue ())
 				return;
 
-			if (this .geometryType === GEOMETRY)
-			{
-				if (this .getGeometry ())
-					this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
-				else
-					return;
-			}
-
 			switch (type)
 			{
 				case TraverseType .POINTER:
@@ -1198,6 +1190,14 @@ function ($,
 
 					break;
 				}
+			}
+
+			if (this .geometryType === GEOMETRY)
+			{
+				if (this .getGeometry ())
+					this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
+				else
+					return;
 			}
 		},
 		depth: function (context, shaderNode)

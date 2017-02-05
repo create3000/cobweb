@@ -11079,8 +11079,7 @@ function ($,
 		if (value [0] instanceof Array)
 			value = value [0];
 
-		for (var i = 0, length = value .length; i < length; ++ i)
-			this .push (value [i]);
+		X3DArrayField .prototype .push .apply (this, value);
 
 		return new Proxy (this, handler);
 	}
@@ -11094,8 +11093,7 @@ function ($,
 				copy  = new (this .constructor) (),
 				array = this .getValue ();
 
-			for (var i = 0, length = array .length; i < length; ++ i)
-				copy .push (array [i]);
+			X3DArrayField .prototype .push .apply (copy, array);
 
 			return copy;
 		},
@@ -11138,16 +11136,22 @@ function ($,
 		},
 		unshift: function (value)
 		{
-			var
-				array = this .getValue (),
-				field = new (this ._valueType) ();
+			var array = this .getValue ();
 
-			field .setValue (value);
+			for (var i = arguments .length - 1; i >= 0; -- i)
+			{
+				var field = new (this ._valueType) ();
 
-			this .addChildObject (field);
+				field .setValue (arguments [i]);
+	
+				this .addChildObject (field);
+
+				array .unshift (field);
+			}
+
 			this .addEvent ();
 
-			return array .unshift (field);
+			return array .length;
 		},
 		shift: function ()
 		{
@@ -11163,16 +11167,22 @@ function ($,
 		},
 		push: function (value)
 		{
-			var
-				array = this .getValue (),
-				field = new (this ._valueType) ();
+			var array = this .getValue ();
 
-			field .setValue (value);
+			for (var i = 0, length = arguments .length; i < length; ++ i)
+			{
+				var field = new (this ._valueType) ();
 
-			this .addChildObject (field);
+				field .setValue (arguments [i]);
+
+				this .addChildObject (field);
+
+				array .push (field);
+			}
+
 			this .addEvent ();
 
-			return array .push (field);
+			return array .length;
 		},
 		pop: function ()
 		{
@@ -18268,7 +18278,10 @@ function ($, X3DField, X3DConstants)
 		},
 		equals: function (node)
 		{
-			return this .getValue () === node .getValue ();
+			if (node)
+				return this .getValue () === node .getValue ();
+
+			return this .getValue () === null;
 		},
 		isDefaultValue: function ()
 		{
@@ -19876,6 +19889,8 @@ function ($,
 		},
 		addEvent: function (field)
 		{
+			field .setSet (true);
+
 			if (field .getTainted ())
 				return;
 
@@ -26632,6 +26647,7 @@ function ($,
 				return node;
 
 			node .setup ();
+
 			return new Fields .SFNode (node);
 		},
 		createProto: function (name, setup)
@@ -28156,9 +28172,6 @@ function ($,
 							if (! (field .getAccessType () & X3DConstants .initializeOnly))
 								continue;
 
-if (field .getSet () && field .getName () == "metadata")
-	console .log (this .getTypeName (), this .getId (), field .getName (), field .getId (), field .getValue ());
-
 							// Is set during parse.	
 							if (field .getSet ())
 								continue;
@@ -28167,7 +28180,7 @@ if (field .getSet () && field .getName () == "metadata")
 							if (field .hasReferences ())
 								continue;
 
-							field .set (protoField .getValue ());
+							field .setValue (protoField .getValue ());
 						}
 						catch (error)
 						{
@@ -29596,6 +29609,9 @@ function ($,
 		{
 			try
 			{
+				this .scene .setEncoding ("VRML");
+				this .scene .setProfile (this .getBrowser () .getProfile ("Full"));
+
 				this .setInput (input);
 				this .x3dScene ();
 				return;
@@ -36969,6 +36985,7 @@ function ($,
 		parseIntoScene: function (xmlElement)
 		{
 			this .scene .setEncoding ("XML");
+			this .scene .setProfile (this .getBrowser () .getProfile ("Full"));
 
 			this .xmlElement (xmlElement);
 		},
@@ -95723,14 +95740,6 @@ function ($,
 			if (! this .isActive_ .getValue ())
 				return;
 
-			if (this .geometryType === GEOMETRY)
-			{
-				if (this .getGeometry ())
-					this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
-				else
-					return;
-			}
-
 			switch (type)
 			{
 				case TraverseType .POINTER:
@@ -95754,6 +95763,14 @@ function ($,
 
 					break;
 				}
+			}
+
+			if (this .geometryType === GEOMETRY)
+			{
+				if (this .getGeometry ())
+					this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
+				else
+					return;
 			}
 		},
 		depth: function (context, shaderNode)
@@ -100263,8 +100280,6 @@ function ($,
 		traverse: function (type, renderObject)
 		{
 			// Always look at ParticleSystem if you do modify something here and there.
-	
-			this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
 
 			switch (type)
 			{
@@ -100288,6 +100303,8 @@ function ($,
 					break;
 				}
 			}
+	
+			this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
 		},
 		pointer: function (renderObject)
 		{
