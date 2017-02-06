@@ -111,13 +111,16 @@ function ($,
 
 			var browser = this .getBrowser ();
 
-			this .setShader (browser .getPointShader ());
 			this .setPrimitiveMode (browser .getContext () .POINTS);
 			this .setSolid (false);
 
 			this .set_attrib__ ();
 			this .set_color__ ();
 			this .set_coord__ ();
+		},
+		getShader: function (browser)
+		{
+			return browser .getPointShader ();
 		},
 		set_attrib__: function ()
 		{

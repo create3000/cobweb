@@ -65,16 +65,14 @@ function ($,
 		X3DGeometryNode .call (this, executionContext);
 
 		//this .addType (X3DConstants .X3DLineGeometryNode);
-
-		this .shaderNode = this .getBrowser () .getLineShader ();
 	}
 
 	X3DLineGeometryNode .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 	{
 		constructor: X3DLineGeometryNode,
-		setShader: function (value)
+		getShader: function (browser)
 		{
-			this .shaderNode = value;
+			return browser .getLineShader ();
 		},
 		intersectsLine: function (line, clipPlanes, modelViewMatrix, intersections)
 		{
@@ -96,7 +94,7 @@ function ($,
 					attribBuffers = this .attribBuffers;
 	
 				if (shaderNode === browser .getDefaultShader ())
-					shaderNode = this .shaderNode;
+					shaderNode = this .getShader (browser);
 	
 				// Setup shader.
 	
@@ -141,7 +139,7 @@ function ($,
 					attribBuffers = this .attribBuffers;
 	
 				if (shaderNode === browser .getDefaultShader ())
-					shaderNode = this .shaderNode;
+					shaderNode = this .getShader (browser);
 	
 				// Setup shader.
 	

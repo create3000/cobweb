@@ -104,6 +104,12 @@ function ($,
 
 			this .setPrimitiveMode (this .getBrowser () .getContext () .LINE_LOOP);
 		},
+		getShader: function (browser)
+		{
+			// For circle support.
+
+			return browser .getLineShader ();
+		},
 		set_live__: function ()
 		{
 			X3DGeometryNode .prototype .set_live__ .call (this);

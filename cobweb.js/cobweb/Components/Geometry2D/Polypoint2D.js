@@ -105,9 +105,12 @@ function ($,
 
 			var browser = this .getBrowser ();
 
-			this .setShader (browser .getPointShader ());
 			this .setPrimitiveMode (browser .getContext () .POINTS);
 			this .setSolid (false);
+		},
+		getShader: function (browser)
+		{
+			return browser .getPointShader ();
 		},
 		build: function ()
 		{
