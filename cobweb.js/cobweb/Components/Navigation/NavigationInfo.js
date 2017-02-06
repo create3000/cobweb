@@ -317,7 +317,11 @@ function ($,
 		},
 		enable: function (type, renderObject)
 		{
-			renderObject .getGlobalLights () .push (renderObject .getBrowser () .getHeadlight ());
+			if (type !== TraverseType .DISPLAY)
+				return;
+
+			if (this .headlight_ .getValue ())
+				renderObject .getGlobalLights () .push (renderObject .getBrowser () .getHeadlight ());
 		},
 		traverse: function (type, renderObject)
 		{
