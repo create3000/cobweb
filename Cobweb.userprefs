@@ -1,13 +1,14 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Components/Core/X3DPrototypeInstance.js">
     <Files>
       <File FileName="cobweb.js/cobweb.html" Line="257" Column="74" />
       <File FileName="cobweb.js/cobweb/Components/Layering/X3DLayerNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderObject.js" Line="613" Column="2" />
+      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderObject.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Browser/Navigation/X3DNavigationContext.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Browser/Core/ContextMenu.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Browser/Navigation/WalkViewer.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Core/X3DPrototypeInstance.js" Line="199" Column="38" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

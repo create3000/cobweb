@@ -1292,6 +1292,7 @@
     <None Include="tests\Components\RigidBodyPhysics\BallBounceSimple.x3d" />
     <None Include="tests\Components\Scripting\toXMLString.json" />
     <None Include="tests\Components\Scripting\MURCIELAGO640.json" />
+    <None Include="tests\Components\Geometry3D\Geometries.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

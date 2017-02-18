@@ -196,6 +196,8 @@ function ($,
 					this .copyRoutes (proto .routes);
 				}
 
+				// TODO: connect getRootNodes () to X3DChildObject .prototype .addEvent .call (this);
+
 				// Now initialize bases.
 	
 				X3DNode             .prototype .initialize .call (this);
