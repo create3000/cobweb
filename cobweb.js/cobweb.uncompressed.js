@@ -28221,6 +28221,8 @@ function ($,
 					this .copyRoutes (proto .routes);
 				}
 
+				// TODO: connect getRootNodes () to X3DChildObject .prototype .addEvent .call (this);
+
 				// Now initialize bases.
 	
 				X3DNode             .prototype .initialize .call (this);
@@ -56645,7 +56647,11 @@ function ($,
 		},
 		enable: function (type, renderObject)
 		{
-			renderObject .getGlobalLights () .push (renderObject .getBrowser () .getHeadlight ());
+			if (type !== TraverseType .DISPLAY)
+				return;
+
+			if (this .headlight_ .getValue ())
+				renderObject .getGlobalLights () .push (renderObject .getBrowser () .getHeadlight ());
 		},
 		traverse: function (type, renderObject)
 		{
@@ -70870,7 +70876,12 @@ function ($,
 		   {
 				// Terrain following and gravitation
 
-				if (this .getNavigationInfo () .getViewer () !== "WALK")
+				if (this .getBrowser () .getActiveLayer () .getNavigationInfo () === this .getNavigationInfo ())
+				{
+					if (this .getBrowser () .getCurrentViewer () !== "WALK")
+						return;
+				}
+				else if (this .getNavigationInfo () .getViewer () !== "WALK")
 					return;
 
 				// Get NavigationInfo values
@@ -75987,16 +75998,14 @@ function ($,
 		X3DGeometryNode .call (this, executionContext);
 
 		//this .addType (X3DConstants .X3DLineGeometryNode);
-
-		this .shaderNode = this .getBrowser () .getLineShader ();
 	}
 
 	X3DLineGeometryNode .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 	{
 		constructor: X3DLineGeometryNode,
-		setShader: function (value)
+		getShader: function (browser)
 		{
-			this .shaderNode = value;
+			return browser .getLineShader ();
 		},
 		intersectsLine: function (line, clipPlanes, modelViewMatrix, intersections)
 		{
@@ -76018,7 +76027,7 @@ function ($,
 					attribBuffers = this .attribBuffers;
 	
 				if (shaderNode === browser .getDefaultShader ())
-					shaderNode = this .shaderNode;
+					shaderNode = this .getShader (browser);
 	
 				// Setup shader.
 	
@@ -76063,7 +76072,7 @@ function ($,
 					attribBuffers = this .attribBuffers;
 	
 				if (shaderNode === browser .getDefaultShader ())
-					shaderNode = this .shaderNode;
+					shaderNode = this .getShader (browser);
 	
 				// Setup shader.
 	
@@ -78190,6 +78199,10 @@ function ($,
 					                z * defaultVertices [i + 2],
 					                1);
 				}
+
+				x = Math .abs (x);
+				y = Math .abs (y);
+				z = Math .abs (z);
 
 				this .getMin () .set (-x, -y, -z);
 				this .getMax () .set ( x,  y,  z);
@@ -83506,6 +83519,12 @@ function ($,
 
 			this .setPrimitiveMode (this .getBrowser () .getContext () .LINE_LOOP);
 		},
+		getShader: function (browser)
+		{
+			// For circle support.
+
+			return browser .getLineShader ();
+		},
 		set_live__: function ()
 		{
 			X3DGeometryNode .prototype .set_live__ .call (this);
@@ -85912,7 +85931,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "height",          new Fields .MFDouble ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "height",          new Fields .MFDouble (0, 0)),
 		]),
 		getTypeName: function ()
 		{
@@ -96968,13 +96987,16 @@ function ($,
 
 			var browser = this .getBrowser ();
 
-			this .setShader (browser .getPointShader ());
 			this .setPrimitiveMode (browser .getContext () .POINTS);
 			this .setSolid (false);
 
 			this .set_attrib__ ();
 			this .set_color__ ();
 			this .set_coord__ ();
+		},
+		getShader: function (browser)
+		{
+			return browser .getPointShader ();
 		},
 		set_attrib__: function ()
 		{
@@ -97527,9 +97549,12 @@ function ($,
 
 			var browser = this .getBrowser ();
 
-			this .setShader (browser .getPointShader ());
 			this .setPrimitiveMode (browser .getContext () .POINTS);
 			this .setSolid (false);
+		},
+		getShader: function (browser)
+		{
+			return browser .getPointShader ();
 		},
 		build: function ()
 		{
@@ -100802,6 +100827,8 @@ function ($,
 					                radius * defaultVertices [i + 2],
 					                1);
 				}
+
+				radius = Math .abs (radius);
 
 				this .getMin () .set (-radius, -radius, -radius);
 				this .getMax () .set ( radius,  radius,  radius);

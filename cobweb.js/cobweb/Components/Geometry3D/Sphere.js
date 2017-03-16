@@ -132,6 +132,8 @@ function ($,
 					                1);
 				}
 
+				radius = Math .abs (radius);
+
 				this .getMin () .set (-radius, -radius, -radius);
 				this .getMax () .set ( radius,  radius,  radius);
 			}

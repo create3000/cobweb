@@ -5,9 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Fri, 23 Dec 2016 02:12:38 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
-    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Core/scene.x3d'/>
-    <meta name='modified' content='Wed, 22 Feb 2017 16:15:12 GMT'/>
+    <meta name='generator' content='Titania V3.0.0, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Geometry3D/Geometries.x3d'/>
+    <meta name='modified' content='Thu, 16 Mar 2017 06:39:47 GMT'/>
     <meta name='outputStyle' content='Nicest'/>
   </head>
   <Scene>
@@ -18,7 +18,7 @@
       <field accessType='initializeOnly' type='SFBool' name='solid'/>
     </ExternProtoDeclare>
     <WorldInfo
-        title='scene'>
+        title='Geometries'>
       <MetadataSet DEF='Titania'
           name='Titania'
           reference='http://titania.create3000.de'>
@@ -36,29 +36,44 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='6.52422700815563, 1.49390906735138, 13.137423851626'/>
+              value='5.48666366261339, 8.04729561972762, 10.7349474362269'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='0.668823106517403, -0.734077902970784, -0.117495891666168, 5.68153687499294'/>
+              value='-0.989669270722947, -0.135671852810993, -0.0463452580264892, 0.664720155739292'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='5, 0, 10'/>
+              value='6.90924093430898, -3.72643187870546, -4.42079240960062'/>
         </MetadataSet>
         <MetadataSet DEF='Selection' containerField='value'
             name='Selection'
             reference='http://titania.create3000.de'>
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
-              reference='http://titania.create3000.de'/>
+              reference='http://titania.create3000.de'>
+            <Transform DEF='Cylinder' containerField='value'
+                translation='14.54 0 0'>
+              <Shape>
+                <Appearance>
+                  <Material/>
+                </Appearance>
+                <Cylinder/>
+              </Shape>
+            </Transform>
+          </MetadataSet>
           <MetadataSet DEF='nodes' containerField='value'
               name='nodes'
               reference='http://titania.create3000.de'>
-            <Disk2D DEF='_1' containerField='value'
-                innerRadius='0.74'
-                outerRadius='1.15'
-                solid='false'/>
+            <Transform DEF='Box' containerField='value'
+                translation='0 0 -6.93889e-18'>
+              <Shape>
+                <Appearance>
+                  <Material/>
+                </Appearance>
+                <Box/>
+              </Shape>
+            </Transform>
           </MetadataSet>
         </MetadataSet>
         <MetadataSet DEF='Grid' containerField='value'
@@ -104,6 +119,10 @@
               name='majorLineColor'
               reference='http://titania.create3000.de'
               value='1, 0.7, 0.7, 0.4'/>
+          <MetadataBoolean DEF='snap' containerField='value'
+              name='snap'
+              reference='http://titania.create3000.de'
+              value='true'/>
         </MetadataSet>
         <MetadataSet DEF='AngleGrid' containerField='value'
             name='AngleGrid'
@@ -120,7 +139,8 @@
       </MetadataSet>
     </WorldInfo>
     <Background DEF='Gray'
-        skyColor='0.2 0.2 0.2'/>
+        skyAngle='1.5708'
+        skyColor='0.677 0.677 0.677, 0.148 0.148 0.148'/>
     <Transform DEF='X3DPrototypeInstance'>
       <Transform DEF='Icosahedron'
           translation='-1.19209e-07 0 30'>
@@ -195,7 +215,10 @@
           <Appearance>
             <Material/>
           </Appearance>
-          <Disk2D USE='_1'/>
+          <Disk2D
+              innerRadius='0.74'
+              outerRadius='1.15'
+              solid='false'/>
         </Shape>
       </Transform>
       <Transform DEF='TriangleSet2D'
@@ -222,37 +245,21 @@
       </Transform>
     </Transform>
     <Transform DEF='Geometry3D'>
-      <Transform DEF='Box'>
-        <Shape>
-          <Appearance>
-            <Material/>
-          </Appearance>
-          <Box/>
-        </Shape>
-      </Transform>
+      <Transform USE='Box'/>
       <Transform DEF='Cone'
-          translation='7.27 0 0'>
-        <Shape DEF='_2'>
+          translation='7.27 0 -6.93889e-18'>
+        <Shape DEF='_1'>
           <Appearance>
             <Material/>
           </Appearance>
-          <Cone
-              bottomRadius='1.5'/>
+          <Cone/>
         </Shape>
       </Transform>
       <Transform DEF='Cone_1'
           translation='7.27 0 -5'>
-        <Shape USE='_2'/>
+        <Shape USE='_1'/>
       </Transform>
-      <Transform DEF='Cylinder'
-          translation='14.54 0 0'>
-        <Shape>
-          <Appearance>
-            <Material/>
-          </Appearance>
-          <Cylinder/>
-        </Shape>
-      </Transform>
+      <Transform USE='Cylinder'/>
       <Transform DEF='Pyramid'
           translation='20 0 0'>
         <Shape>
@@ -291,7 +298,7 @@
               xDimension='4'
               zDimension='4'
               creaseAngle='3.14159'
-              height='0, 0.2704, 0.7436, 0.2704, 0.7436, 1.4872, 1.69, 0.9464, 1.4196, 1.1492, 1.1492, 1.014, 0.7436, 0.4732, 0.8788, 0.8788'>
+              height='0, 0.32, 0.88, 0.32, 0.88, 1.76, 2, 1.12, 1.68, 1.36, 1.36, 1.2, 0.88, 0.56, 1.04, 1.04'>
             <MetadataSet DEF='ElevationGrid_1'
                 name='ElevationGrid'
                 reference='http://titania.create3000.de'>
@@ -299,14 +306,6 @@
                   name='heightMap'
                   reference='http://titania.create3000.de'
                   value='"../../../../../../Schreibtisch/Jörg.pdf", "file:///home/holger/Schreibtisch/Jörg.pdf"'/>
-              <MetadataFloat DEF='height' containerField='value'
-                  name='height'
-                  reference='http://titania.create3000.de'
-                  value='0, 0.64, 1.76, 0.64, 1.76, 3.52, 4, 2.24, 3.36, 2.72, 2.72, 2.4, 1.76, 1.12, 2.08, 2.08'/>
-              <MetadataString DEF='heightHash' containerField='value'
-                  name='heightHash'
-                  reference='http://titania.create3000.de'
-                  value='"11822801315662085677"'/>
             </MetadataSet>
           </ElevationGrid>
         </Shape>
@@ -327,7 +326,7 @@
                 reference='http://titania.create3000.de'
                 value='10'/>
           </MetadataSet>
-          <TimeSensor DEF='_3'
+          <TimeSensor DEF='_2'
               startTime='1487437954.91121'
               stopTime='1487440041.4583'/>
           <PositionInterpolator DEF='SphereTranslationInterpolator'
@@ -813,10 +812,15 @@
         </Shape>
       </Transform>
     </Transform>
-    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='SphereTranslationInterpolator' toField='set_fraction'/>
+    <Viewpoint
+        position='5.27263 5.82588 15.3666'
+        orientation='-0.310570405611042 -0.940854539170085 -0.135420675236979 0.808370782207174'
+        centerOfRotation='20 0 0'
+        fieldOfView='0.7854'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='SphereTranslationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='SphereTranslationInterpolator' fromField='value_changed' toNode='Extrusion' toField='set_translation'/>
-    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='SphereRotationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='SphereRotationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='SphereRotationInterpolator' fromField='value_changed' toNode='Extrusion' toField='set_rotation'/>
-    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='WhichChoiceInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='WhichChoiceInterpolator' toField='set_fraction'/>
   </Scene>
 </X3D>
