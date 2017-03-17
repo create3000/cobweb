@@ -52,7 +52,7 @@ define ([
 	"cobweb/Rendering/DepthBuffer",
 	"cobweb/Bits/TraverseType",
 	"standard/Math/Algorithm",
-	"standard/Math/Algorithms/QuickSort",
+	"standard/Math/Algorithms/MergeSort",
 	"standard/Math/Geometry/Camera",
 	"standard/Math/Geometry/Box3",
 	"standard/Math/Geometry/ViewVolume",
@@ -66,7 +66,7 @@ function ($,
           DepthBuffer,
 	       TraverseType,
           Algorithm,
-          QuickSort,
+          MergeSort,
           Camera,
           Box3,
           ViewVolume,
@@ -121,7 +121,7 @@ function ($,
 		this .numDepthShapes           = 0;
 		this .opaqueShapes             = [ ];
 		this .transparentShapes        = [ ];
-		this .transparencySorter       = new QuickSort (this .transparentShapes, compareDistance);
+		this .transparencySorter       = new MergeSort (this .transparentShapes, compareDistance);
 		this .collisionShapes          = [ ];
 		this .activeCollisions         = { };
 		this .depthShapes              = [ ];
