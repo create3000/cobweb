@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V3.0.0, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Geometry3D/Geometries.x3d'/>
-    <meta name='modified' content='Fri, 17 Mar 2017 03:48:20 GMT'/>
+    <meta name='modified' content='Sat, 18 Mar 2017 23:15:06 GMT'/>
     <meta name='outputStyle' content='Nicest'/>
   </head>
   <Scene>
@@ -36,15 +36,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='0.984453431610737, 1.50130095397031, 12.9040905266705'/>
+              value='1.12865228717728, 0.600674950040916, 42.6918883433456'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.807453193670534, 0.574711801107671, 0.133137844728058, 0.558795358936131'/>
+              value='-0.501172046607602, 0.856751257493164, 0.121671124277823, 0.417652191728219'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='0, 0, 10'/>
+              value='0.207285649547803, 0.0293311629028498, 40.2279238016402'/>
         </MetadataSet>
         <MetadataSet DEF='Selection' containerField='value'
             name='Selection'
@@ -67,14 +67,14 @@
           <MetadataSet DEF='nodes' containerField='value'
               name='nodes'
               reference='http://titania.create3000.de'>
-            <Transform DEF='Rectangle2D' containerField='value'
-                translation='0 0 10'>
+            <Transform DEF='Arc2D' containerField='value'
+                translation='0 0 40'>
               <Shape>
                 <Appearance>
-                  <Material/>
+                  <Material
+                      emissiveColor='0.8 0.8 0.8'/>
                 </Appearance>
-                <Rectangle2D
-                    solid='false'/>
+                <Arc2D/>
               </Shape>
             </Transform>
           </MetadataSet>
@@ -172,7 +172,7 @@
         <Shape>
           <Appearance>
             <Material/>
-            <ImageTexture
+            <ImageTexture DEF='_1'
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
@@ -202,7 +202,16 @@
       </Transform>
     </Transform>
     <Transform DEF='Geometry2D'>
-      <Transform USE='Rectangle2D'/>
+      <Transform DEF='Rectangle2D'
+          translation='0 0 10'>
+        <Shape>
+          <Appearance>
+            <Material/>
+          </Appearance>
+          <Rectangle2D
+              solid='false'/>
+        </Shape>
+      </Transform>
       <Transform DEF='Disk2D'
           translation='5 0 10'>
         <Shape>
@@ -240,7 +249,7 @@
       </Transform>
       <Transform DEF='Cone'
           translation='7.27 0 -6.93889e-18'>
-        <Shape DEF='_1'>
+        <Shape DEF='_2'>
           <Appearance>
             <Material/>
           </Appearance>
@@ -249,7 +258,7 @@
       </Transform>
       <Transform DEF='Cone_1'
           translation='7.27 0 -5'>
-        <Shape USE='_1'/>
+        <Shape USE='_2'/>
       </Transform>
       <Transform DEF='Cylinder'
           translation='14.54 0 0'>
@@ -326,7 +335,7 @@
                 reference='http://titania.create3000.de'
                 value='10'/>
           </MetadataSet>
-          <TimeSensor DEF='_2'
+          <TimeSensor DEF='_3'
               startTime='1487437954.91121'
               stopTime='1487440041.4583'/>
           <PositionInterpolator DEF='SphereTranslationInterpolator'
@@ -715,16 +724,7 @@
       </Transform>
     </Transform>
     <Transform DEF='LineGeometry'>
-      <Transform DEF='Arc2D'
-          translation='0 0 40'>
-        <Shape>
-          <Appearance>
-            <Material
-                emissiveColor='0.8 0.8 0.8'/>
-          </Appearance>
-          <Arc2D/>
-        </Shape>
-      </Transform>
+      <Transform USE='Arc2D'/>
       <Transform DEF='Circle2D'
           translation='10 0 40'>
         <Shape>
@@ -819,10 +819,10 @@
         orientation='-0.310570405611042 -0.940854539170085 -0.135420675236979 0.808370782207174'
         centerOfRotation='20 0 0'
         fieldOfView='0.7854'/>
-    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='SphereTranslationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='SphereTranslationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='SphereTranslationInterpolator' fromField='value_changed' toNode='Extrusion' toField='set_translation'/>
-    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='SphereRotationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='SphereRotationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='SphereRotationInterpolator' fromField='value_changed' toNode='Extrusion' toField='set_rotation'/>
-    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='WhichChoiceInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='WhichChoiceInterpolator' toField='set_fraction'/>
   </Scene>
 </X3D>

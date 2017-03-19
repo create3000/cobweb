@@ -179,48 +179,48 @@ function ($,
 				{
 					this .primitiveQuality = PrimitiveQuality .LOW;
 				
-					arc .minAngle_      = Math .PI / 10;
-					arcClose .minAngle_ = Math .PI / 10;
-					circle .segments_   = 20;
-					disk .segments_     = 20;
+					arc .dimension_      = 20;
+					arcClose .dimension_ = 20;
+					circle .dimension_   = 20;
+					disk .dimension_     = 20;
 
-					cone     .vDimension_ = 16;
-					cylinder .vDimension_ = 16;
+					cone     .xDimension_ = 16;
+					cylinder .xDimension_ = 16;
 
-					sphere .uDimension_ = 24;
-					sphere .vDimension_ = 12;
+					sphere .xDimension_ = 20;
+					sphere .yDimension_ = 9;
 					break;
 				}
 				case "HIGH":
 				{
 					this .primitiveQuality = PrimitiveQuality .HIGH;
 
-					arc .minAngle_      = Math .PI / 40;
-					arcClose .minAngle_ = Math .PI / 40;
-					circle .segments_   = 80;
-					disk .segments_     = 80;
+					arc .dimension_      = 80;
+					arcClose .dimension_ = 80;
+					circle .dimension_   = 80;
+					disk .dimension_     = 80;
 
-					cone     .vDimension_ = 32;
-					cylinder .vDimension_ = 32;
+					cone     .xDimension_ = 32;
+					cylinder .xDimension_ = 32;
 
-					sphere .uDimension_ = 40;
-					sphere .vDimension_ = 20;
+					sphere .xDimension_ = 64;
+					sphere .yDimension_ = 31;
 					break;
 				}
 				default:
 				{
 					this .primitiveQuality = PrimitiveQuality .MEDIUM;
 
-					arc .minAngle_      = Math .PI / 20;
-					arcClose .minAngle_ = Math .PI / 20;
-					circle .segments_   = 40;
-					disk .segments_     = 40;
+					arc .dimension_      = 40;
+					arcClose .dimension_ = 40;
+					circle .dimension_   = 40;
+					disk .dimension_     = 40;
 
-					cone     .vDimension_ = 20;
-					cylinder .vDimension_ = 20;
+					cone     .xDimension_ = 20;
+					cylinder .xDimension_ = 20;
 
-					sphere .uDimension_ = 32;
-					sphere .vDimension_ = 16;
+					sphere .xDimension_ = 32;
+					sphere .yDimension_ = 15;
 					break;
 				}
 			}

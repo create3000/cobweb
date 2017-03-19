@@ -66,7 +66,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("segments", new Fields .SFInt32 (40))
+		this .addChildObjects ("dimension", new Fields .SFInt32 (40))
 
 		this .vertices = [ ];
 	}
@@ -99,12 +99,12 @@ function ($,
 		build: function ()
 		{
 			var
-				segments = this .segments_ .getValue (),
-				angle    = Math .PI * 2 / segments;
+				dimension = this .dimension_ .getValue (),
+				angle     = Math .PI * 2 / dimension;
 		
 			this .vertices .length = 0;
 
-			for (var n = 0; n < segments; ++ n)
+			for (var n = 0; n < dimension; ++ n)
 			{
 				var point = Complex .Polar (1, angle * n);
 		

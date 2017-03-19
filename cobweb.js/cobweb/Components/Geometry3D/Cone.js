@@ -114,7 +114,7 @@ function ($,
 		{
 			var
 				options      = this .getBrowser () .getConeOptions (),
-				vDimension   = options .vDimension_ .getValue (),
+				xDimension   = options .xDimension_ .getValue (),
 				height       = this .height_ .getValue (),
 				bottomRadius = this .bottomRadius_ .getValue (),
 				texCoords    = [ ],
@@ -130,21 +130,21 @@ function ($,
 
 			if (this .side_ .getValue ())
 			{
-				for (var i = 0; i < vDimension; ++ i)
+				for (var i = 0; i < xDimension; ++ i)
 				{
 					var
-						u1     = (i + 0.5) / vDimension,
+						u1     = (i + 0.5) / xDimension,
 						theta1 = 2 * Math .PI * u1,
 						n1     = Complex .Polar (nz .imag, theta1);
 
 					var
-						u2     = i / vDimension,
+						u2     = i / xDimension,
 						theta2 = 2 * Math .PI * u2,
 						p2     = Complex .Polar (-bottomRadius, theta2),
 						n2     = Complex .Polar (nz .imag, theta2);
 
 					var
-						u3     = (i + 1) / vDimension,
+						u3     = (i + 1) / xDimension,
 						theta3 = 2 * Math .PI * u3,
 						p3     = Complex .Polar (-bottomRadius, theta3),
 						n3     = Complex .Polar (nz .imag, theta3);
@@ -178,10 +178,10 @@ function ($,
 					texCoord = [ ],
 					points   = [ ];
 
-				for (var i = vDimension - 1; i > -1; -- i)
+				for (var i = xDimension - 1; i > -1; -- i)
 				{
 					var
-						u     = i / vDimension,
+						u     = i / xDimension,
 						theta = 2 * Math .PI * u,
 						t     = Complex .Polar (-1, theta),
 						p     = Complex .multiply (t, bottomRadius);
