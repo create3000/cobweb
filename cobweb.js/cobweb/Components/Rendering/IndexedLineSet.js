@@ -208,12 +208,8 @@ function ($,
 					else
 					{
 						// Negativ index.
-
-						if (polyline .length > 1)
-						{
-							// Add polylines.
-							polylines .push (polyline);
-						}
+						// Add polylines.
+						polylines .push (polyline);
 
 						polyline = [ ];
 					}
@@ -221,8 +217,7 @@ function ($,
 
 				if (coordIndex [coordIndex .length - 1] .getValue () >= 0)
 				{
-					if (polyline .length > 1)
-						polylines .push (polyline);
+					polylines .push (polyline);
 				}
 			}
 
@@ -283,26 +278,29 @@ function ($,
 			
 				// Create two vertices for each line.
 
-				for (var line = 0, l_end = polyline .length - 1; line < l_end; ++ line)
+				if (polyline .length > 1)
 				{
-					for (var index = line, i_end = line + 2; index < i_end; ++ index)
+					for (var line = 0, l_end = polyline .length - 1; line < l_end; ++ line)
 					{
-						var
-							i  = polyline [index],
-							ci = coordIndex [i] .getValue ();
-
-						for (var a = 0; a < numAttrib; ++ a)
-							attribNodes [a] .addValue (attribs [a], ci);
-
-						if (colorNode)
+						for (var index = line, i_end = line + 2; index < i_end; ++ index)
 						{
-							if (colorPerVertex)
-								this .addColor (colorNode .get1Color (this .getColorPerVertexIndex (i)));
-							else
-								this .addColor (colorNode .get1Color (this .getColorIndex (face)));
-						}
+							var
+								i  = polyline [index],
+								ci = coordIndex [i] .getValue ();
 
-						this .addVertex (coordNode .get1Point (ci));
+							for (var a = 0; a < numAttrib; ++ a)
+								attribNodes [a] .addValue (attribs [a], ci);
+
+							if (colorNode)
+							{
+								if (colorPerVertex)
+									this .addColor (colorNode .get1Color (this .getColorPerVertexIndex (i)));
+								else
+									this .addColor (colorNode .get1Color (this .getColorIndex (face)));
+							}
+
+							this .addVertex (coordNode .get1Point (ci));
+						}
 					}
 				}
 

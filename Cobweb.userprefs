@@ -3,12 +3,10 @@
   <MonoDevelop.Ide.Workbench>
     <Files>
       <File FileName="cobweb.js/cobweb.html" Line="16" Column="90" />
-      <File FileName="cobweb.js/cobweb/Components/Layering/X3DLayerNode.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderObject.js" Line="69" Column="21" />
-      <File FileName="cobweb.js/cobweb/Browser/Navigation/X3DNavigationContext.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Core/ContextMenu.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Navigation/WalkViewer.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Core/X3DPrototypeInstance.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Core/BrowserOptions.js" Line="212" Column="15" />
+      <File FileName="cobweb.js/cobweb/Browser/Geometry2D/Circle2DOptions.js" Line="81" Column="32" />
+      <File FileName="cobweb.js/cobweb/Components/Geometry2D/Arc2D.js" Line="144" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Geometry2D/ArcClose2D.js" Line="181" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

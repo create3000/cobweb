@@ -1293,6 +1293,7 @@
     <None Include="tests\Components\Scripting\toXMLString.json" />
     <None Include="tests\Components\Scripting\MURCIELAGO640.json" />
     <None Include="tests\Components\Geometry3D\Geometries.x3d" />
+    <None Include="tests\Components\Geometry3D\Cube.x3dv" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

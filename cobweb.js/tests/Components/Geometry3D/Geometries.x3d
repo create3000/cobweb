@@ -2,21 +2,16 @@
 <!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
 <X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
   <head>
+    <unit category='length' name='millimetre' conversionFactor='0.001'/>
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Fri, 23 Dec 2016 02:12:38 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V3.0.0, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Geometry3D/Geometries.x3d'/>
-    <meta name='modified' content='Sat, 18 Mar 2017 23:15:06 GMT'/>
+    <meta name='modified' content='Sat, 01 Apr 2017 11:03:01 GMT'/>
     <meta name='outputStyle' content='Nicest'/>
   </head>
   <Scene>
-    <ExternProtoDeclare name='IcoSphere' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/IcoSphere.x3d", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/IcoSphere.x3d", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/IcoSphere.x3d", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/IcoSphere.x3d"'>
-      <field accessType='inputOutput' type='SFString' name='type'/>
-      <field accessType='inputOutput' type='SFInt32' name='order'/>
-      <field accessType='inputOutput' type='SFFloat' name='radius'/>
-      <field accessType='initializeOnly' type='SFBool' name='solid'/>
-    </ExternProtoDeclare>
     <WorldInfo
         title='Geometries'>
       <MetadataSet DEF='Titania'
@@ -36,15 +31,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='1.12865228717728, 0.600674950040916, 42.6918883433456'/>
+              value='36.8393378257751, 1.71295499801636, 3.34182643890381'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.501172046607602, 0.856751257493164, 0.121671124277823, 0.417652191728219'/>
+              value='-0.645161401563738, 0.753824109836655, 0.124563146079759, 0.650100921256404'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='0.207285649547803, 0.0293311629028498, 40.2279238016402'/>
+              value='35, 0, 0'/>
         </MetadataSet>
         <MetadataSet DEF='Selection' containerField='value'
             name='Selection'
@@ -52,29 +47,22 @@
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'>
-            <Transform DEF='ArcClose2D' containerField='value'
-                translation='15 0 10'>
-              <Shape>
-                <Appearance>
-                  <Material/>
-                </Appearance>
-                <ArcClose2D
-                    endAngle='1.8308'
-                    solid='false'/>
-              </Shape>
-            </Transform>
+            <LayerSet containerField='value'/>
           </MetadataSet>
           <MetadataSet DEF='nodes' containerField='value'
               name='nodes'
               reference='http://titania.create3000.de'>
-            <Transform DEF='Arc2D' containerField='value'
-                translation='0 0 40'>
+            <Transform DEF='Sphere' containerField='value'
+                translation='35 0 0'>
               <Shape>
                 <Appearance>
-                  <Material
-                      emissiveColor='0.8 0.8 0.8'/>
+                  <Material DEF='Summer15'
+                      ambientIntensity='0.102703'
+                      diffuseColor='0.191761 0.139733 0.4'
+                      specularColor='0.0381847 0.164671 0.275676'
+                      shininess='0.0216216'/>
                 </Appearance>
-                <Arc2D/>
+                <Sphere/>
               </Shape>
             </Transform>
           </MetadataSet>
@@ -144,35 +132,13 @@
     <Background DEF='Gray'
         skyAngle='1.5708'
         skyColor='0.677 0.677 0.677, 0.148 0.148 0.148'/>
-    <Transform DEF='X3DPrototypeInstance'>
-      <Transform DEF='Icosahedron'
-          translation='-1.19209e-07 0 30'>
-        <Shape>
-          <Appearance>
-            <Material/>
-          </Appearance>
-          <ProtoInstance name='IcoSphere' containerField='geometry'/>
-        </Shape>
-      </Transform>
-      <Transform DEF='Octahedron'
-          translation='2 0 30'>
-        <Shape>
-          <Appearance>
-            <Material/>
-          </Appearance>
-          <ProtoInstance name='IcoSphere' containerField='geometry'>
-            <fieldValue name='type' value='OCTAHEDRON'/>
-          </ProtoInstance>
-        </Shape>
-      </Transform>
-    </Transform>
     <Transform DEF='CADGeometry'>
       <Transform
           translation='20 0 10'>
         <Shape>
           <Appearance>
             <Material/>
-            <ImageTexture DEF='_1'
+            <ImageTexture
                 repeatS='false'
                 repeatT='false'/>
           </Appearance>
@@ -216,12 +182,49 @@
           translation='5 0 10'>
         <Shape>
           <Appearance>
-            <Material/>
+            <Material DEF='Autumn19'
+                ambientIntensity='0.135135'
+                diffuseColor='0.540541 0 0'
+                specularColor='0.592903 0 0.129656'
+                shininess='0.0648649'/>
           </Appearance>
           <Disk2D
               innerRadius='1'
               outerRadius='2'
               solid='false'/>
+        </Shape>
+      </Transform>
+      <Transform DEF='Disk2D_1'
+          translation='5 0 7'>
+        <Shape>
+          <Appearance>
+            <Material DEF='Autumn19_1'
+                ambientIntensity='0.135135'
+                diffuseColor='0.540541 0 0'
+                specularColor='0.592903 0 0.129656'
+                shininess='0.0648649'/>
+          </Appearance>
+          <Disk2D
+              innerRadius='1'
+              outerRadius='2'
+              solid='false'>
+            <MetadataSet DEF='Disk2D_2'
+                name='Disk2D'
+                reference='http://titania.create3000.de'>
+              <MetadataSet DEF='options' containerField='value'
+                  name='options'
+                  reference='http://titania.create3000.de'>
+                <MetadataString DEF='@typeName' containerField='value'
+                    name='@typeName'
+                    reference='http://titania.create3000.de'
+                    value='"Disk2DOptions"'/>
+                <MetadataInteger DEF='dimension_1' containerField='value'
+                    name='dimension'
+                    reference='http://titania.create3000.de'
+                    value='3'/>
+              </MetadataSet>
+            </MetadataSet>
+          </Disk2D>
         </Shape>
       </Transform>
       <Transform DEF='TriangleSet2D'
@@ -235,7 +238,53 @@
               solid='false'/>
         </Shape>
       </Transform>
-      <Transform USE='ArcClose2D'/>
+      <Transform DEF='ArcClose2D'
+          translation='15 0 10'>
+        <Shape>
+          <Appearance>
+            <Material DEF='Spring13'
+                ambientIntensity='0.174575'
+                diffuseColor='0.685208 0.134679 0.332385'
+                specularColor='0.122449 0.0500352 0.0500352'
+                shininess='0.0714286'/>
+          </Appearance>
+          <ArcClose2D
+              endAngle='1.8308'
+              solid='false'/>
+        </Shape>
+      </Transform>
+      <Transform DEF='ArcClose2D_1'
+          translation='15 0 7'>
+        <Shape>
+          <Appearance>
+            <Material DEF='Spring14'
+                ambientIntensity='0.226102'
+                diffuseColor='0.904409 0.315531 0.544386'
+                specularColor='0.0955906 0.0955906 0.0955906'
+                shininess='0.078125'/>
+          </Appearance>
+          <ArcClose2D
+              endAngle='0'
+              solid='false'>
+            <MetadataSet DEF='ArcClose2D_2'
+                name='ArcClose2D'
+                reference='http://titania.create3000.de'>
+              <MetadataSet DEF='options_1' containerField='value'
+                  name='options'
+                  reference='http://titania.create3000.de'>
+                <MetadataString DEF='@typeName_1' containerField='value'
+                    name='@typeName'
+                    reference='http://titania.create3000.de'
+                    value='"ArcClose2DOptions"'/>
+                <MetadataInteger DEF='dimension_2' containerField='value'
+                    name='dimension'
+                    reference='http://titania.create3000.de'
+                    value='5'/>
+              </MetadataSet>
+            </MetadataSet>
+          </ArcClose2D>
+        </Shape>
+      </Transform>
     </Transform>
     <Transform DEF='Geometry3D'>
       <Transform DEF='Box'
@@ -248,25 +297,101 @@
         </Shape>
       </Transform>
       <Transform DEF='Cone'
-          translation='7.27 0 -6.93889e-18'>
-        <Shape DEF='_2'>
+          translation='8 0 -6.93889e-18'>
+        <Shape DEF='_1'>
           <Appearance>
-            <Material/>
+            <Material DEF='Spring7'
+                ambientIntensity='0.226102'
+                diffuseColor='0.904409 0.457768 0.341109'
+                specularColor='0.0955906 0.0955906 0.0955906'
+                shininess='0.078125'/>
           </Appearance>
           <Cone/>
         </Shape>
       </Transform>
       <Transform DEF='Cone_1'
-          translation='7.27 0 -5'>
-        <Shape USE='_2'/>
+          translation='8 0 -5'>
+        <Shape USE='_1'/>
+      </Transform>
+      <Transform DEF='Cone_2'
+          translation='8 0 -10'>
+        <Shape>
+          <Appearance>
+            <Material DEF='Spring8'
+                ambientIntensity='0.20373'
+                diffuseColor='0.799639 0.256286 0.158549'
+                specularColor='0.20373 0.0832482 0.0832482'
+                shininess='0.0714286'/>
+          </Appearance>
+          <Cone>
+            <MetadataSet DEF='Cone_3'
+                name='Cone'
+                reference='http://titania.create3000.de'>
+              <MetadataSet DEF='options_2' containerField='value'
+                  name='options'
+                  reference='http://titania.create3000.de'>
+                <MetadataString DEF='@typeName_2' containerField='value'
+                    name='@typeName'
+                    reference='http://titania.create3000.de'
+                    value='"ConeOptions"'/>
+                <MetadataInteger DEF='xDimension' containerField='value'
+                    name='xDimension'
+                    reference='http://titania.create3000.de'
+                    value='4'/>
+                <MetadataInteger DEF='yDimension' containerField='value'
+                    name='yDimension'
+                    reference='http://titania.create3000.de'
+                    value='2'/>
+              </MetadataSet>
+            </MetadataSet>
+          </Cone>
+        </Shape>
       </Transform>
       <Transform DEF='Cylinder'
           translation='14.54 0 0'>
         <Shape>
           <Appearance>
-            <Material/>
+            <Material DEF='Spring3'
+                ambientIntensity='0.253968'
+                diffuseColor='1 0.900511 0.314236'
+                specularColor='0.872449 0.247119 0.254214'
+                shininess='1'/>
           </Appearance>
           <Cylinder/>
+        </Shape>
+      </Transform>
+      <Transform DEF='Cylinder_1'
+          translation='15 0 -5'>
+        <Shape>
+          <Appearance>
+            <Material DEF='Spring5'
+                ambientIntensity='0.226102'
+                diffuseColor='0.904409 0.549305 0.224283'
+                specularColor='0.0955906 0.0955906 0.0955906'
+                shininess='0.078125'/>
+          </Appearance>
+          <Cylinder>
+            <MetadataSet DEF='Cylinder_2'
+                name='Cylinder'
+                reference='http://titania.create3000.de'>
+              <MetadataSet DEF='options_3' containerField='value'
+                  name='options'
+                  reference='http://titania.create3000.de'>
+                <MetadataString DEF='@typeName_3' containerField='value'
+                    name='@typeName'
+                    reference='http://titania.create3000.de'
+                    value='"CylinderOptions"'/>
+                <MetadataInteger DEF='xDimension_1' containerField='value'
+                    name='xDimension'
+                    reference='http://titania.create3000.de'
+                    value='5'/>
+                <MetadataInteger DEF='yDimension_1' containerField='value'
+                    name='yDimension'
+                    reference='http://titania.create3000.de'
+                    value='2'/>
+              </MetadataSet>
+            </MetadataSet>
+          </Cylinder>
         </Shape>
       </Transform>
       <Transform DEF='Pyramid'
@@ -335,7 +460,7 @@
                 reference='http://titania.create3000.de'
                 value='10'/>
           </MetadataSet>
-          <TimeSensor DEF='_3'
+          <TimeSensor DEF='_2'
               startTime='1487437954.91121'
               stopTime='1487440041.4583'/>
           <PositionInterpolator DEF='SphereTranslationInterpolator'
@@ -406,17 +531,33 @@
           <Extrusion/>
         </Shape>
       </Transform>
-      <Transform DEF='Sphere'
-          translation='35 0 0'>
+      <Transform USE='Sphere'/>
+      <Transform DEF='Sphere_1'
+          translation='35 0 -5'>
         <Shape>
           <Appearance>
-            <Material DEF='Summer15'
-                ambientIntensity='0.102703'
-                diffuseColor='0.191761 0.139733 0.4'
-                specularColor='0.0381847 0.164671 0.275676'
-                shininess='0.0216216'/>
+            <Material/>
+            <ImageTexture DEF='_3'
+                url='"../../../../../Titania/Library/Tests/images/earth.png", "file:///home/holger/Projekte/Titania/Library/Tests/images/earth.png"'/>
           </Appearance>
-          <Sphere/>
+          <Sphere>
+            <MetadataSet DEF='Sphere_2'
+                name='Sphere'
+                reference='http://titania.create3000.de'>
+              <MetadataSet DEF='options_4' containerField='value'
+                  name='options'
+                  reference='http://titania.create3000.de'>
+                <MetadataString DEF='@typeName_4' containerField='value'
+                    name='@typeName'
+                    reference='http://titania.create3000.de'
+                    value='"OctahedronOptions"'/>
+                <MetadataInteger DEF='order' containerField='value'
+                    name='order'
+                    reference='http://titania.create3000.de'
+                    value='5'/>
+              </MetadataSet>
+            </MetadataSet>
+          </Sphere>
         </Shape>
       </Transform>
     </Transform>
@@ -429,8 +570,7 @@
         <Shape>
           <Appearance>
             <Material/>
-            <ImageTexture
-                url='"../../../../../Titania/Library/Tests/images/earth.png", "file:///home/holger/Projekte/Titania/Library/Tests/images/earth.png"'/>
+            <ImageTexture USE='_3'/>
           </Appearance>
           <GeoElevationGrid
               geoGridOrigin='-90 180 0'
@@ -724,15 +864,87 @@
       </Transform>
     </Transform>
     <Transform DEF='LineGeometry'>
-      <Transform USE='Arc2D'/>
-      <Transform DEF='Circle2D'
-          translation='10 0 40'>
+      <Transform DEF='Arc2D'
+          translation='0 0 40'>
         <Shape>
           <Appearance>
             <Material
                 emissiveColor='0.8 0.8 0.8'/>
           </Appearance>
+          <Arc2D/>
+        </Shape>
+      </Transform>
+      <Transform DEF='Arc2D_1'
+          translation='0 0 37'>
+        <Shape>
+          <Appearance>
+            <Material
+                emissiveColor='0.8 0.8 0.8'/>
+          </Appearance>
+          <Arc2D
+              endAngle='0'>
+            <MetadataSet DEF='Arc2D_2'
+                name='Arc2D'
+                reference='http://titania.create3000.de'>
+              <MetadataSet DEF='options_5' containerField='value'
+                  name='options'
+                  reference='http://titania.create3000.de'>
+                <MetadataString DEF='@typeName_5' containerField='value'
+                    name='@typeName'
+                    reference='http://titania.create3000.de'
+                    value='"Arc2DOptions"'/>
+                <MetadataInteger DEF='dimension_3' containerField='value'
+                    name='dimension'
+                    reference='http://titania.create3000.de'
+                    value='6'/>
+              </MetadataSet>
+            </MetadataSet>
+          </Arc2D>
+        </Shape>
+      </Transform>
+      <Transform DEF='Circle2D'
+          translation='10 0 40'>
+        <Shape>
+          <Appearance>
+            <Material DEF='Neon4'
+                ambientIntensity='0'
+                diffuseColor='0 0 0'
+                specularColor='0.622449 0.622449 0.622449'
+                emissiveColor='0 1 0.734243'
+                shininess='0.0510204'/>
+          </Appearance>
           <Circle2D/>
+        </Shape>
+      </Transform>
+      <Transform DEF='Circle2D_1'
+          translation='10 0 36.6661'>
+        <Shape>
+          <Appearance>
+            <Material DEF='Neon8'
+                ambientIntensity='0'
+                diffuseColor='0 0 0'
+                specularColor='0.622449 0.622449 0.622449'
+                emissiveColor='0.363921 1 0.0478005'
+                shininess='0.0510204'/>
+          </Appearance>
+          <Circle2D>
+            <MetadataSet DEF='Circle2D_2'
+                name='Circle2D'
+                reference='http://titania.create3000.de'>
+              <MetadataSet DEF='options_6' containerField='value'
+                  name='options'
+                  reference='http://titania.create3000.de'>
+                <MetadataString DEF='@typeName_6' containerField='value'
+                    name='@typeName'
+                    reference='http://titania.create3000.de'
+                    value='"Circle2DOptions"'/>
+                <MetadataInteger DEF='dimension_4' containerField='value'
+                    name='dimension'
+                    reference='http://titania.create3000.de'
+                    value='7'/>
+              </MetadataSet>
+            </MetadataSet>
+          </Circle2D>
         </Shape>
       </Transform>
       <Transform DEF='Polyline2D'
@@ -819,10 +1031,27 @@
         orientation='-0.310570405611042 -0.940854539170085 -0.135420675236979 0.808370782207174'
         centerOfRotation='20 0 0'
         fieldOfView='0.7854'/>
-    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='SphereTranslationInterpolator' toField='set_fraction'/>
+    <Transform
+        translation='35 0 -10.2988'>
+      <Shape>
+        <Appearance>
+          <Material/>
+        </Appearance>
+        <IndexedFaceSet
+            creaseAngle='0.5'
+            texCoordIndex='0, 1, 2, -1, 2, 1, 3, -1, 2, 3, 4, -1, 4, 3, 5, -1, 4, 5, 6, -1, 6, 5, 7, -1, 6, 7, 8, -1, 8, 7, 9, -1, 8, 9, 10, -1, 1, 11, 3, -1, 3, 11, 12, -1, 3, 12, 5, -1, 5, 12, 13, -1, 5, 13, 7, -1, 7, 13, 14, -1, 7, 14, 9, -1, 11, 15, 12, -1, 12, 15, 16, -1, 12, 16, 13, -1, 13, 16, 17, -1, 13, 17, 14, -1, 15, 18, 16, -1, 16, 18, 19, -1, 16, 19, 17, -1, 19, 18, 20, -1, 10, 9, 21, -1, 21, 9, 22, -1, 21, 22, 23, -1, 23, 22, 24, -1, 23, 24, 25, -1, 25, 24, 26, -1, 25, 26, 27, -1, 27, 26, 28, -1, 27, 28, 29, -1, 9, 14, 22, -1, 22, 14, 30, -1, 22, 30, 24, -1, 24, 30, 31, -1, 24, 31, 26, -1, 26, 31, 32, -1, 26, 32, 28, -1, 14, 17, 30, -1, 30, 17, 33, -1, 30, 33, 31, -1, 31, 33, 34, -1, 31, 34, 32, -1, 17, 19, 33, -1, 33, 19, 35, -1, 33, 35, 34, -1, 35, 19, 36, -1, 10, 37, 8, -1, 8, 37, 38, -1, 8, 38, 6, -1, 6, 38, 39, -1, 6, 39, 4, -1, 4, 39, 40, -1, 4, 40, 2, -1, 2, 40, 41, -1, 2, 41, 0, -1, 37, 42, 38, -1, 38, 42, 43, -1, 38, 43, 39, -1, 39, 43, 44, -1, 39, 44, 40, -1, 40, 44, 45, -1, 40, 45, 41, -1, 42, 46, 43, -1, 43, 46, 47, -1, 43, 47, 44, -1, 44, 47, 48, -1, 44, 48, 45, -1, 46, 49, 47, -1, 47, 49, 50, -1, 47, 50, 48, -1, 50, 49, 51, -1, 29, 52, 27, -1, 27, 52, 53, -1, 27, 53, 25, -1, 25, 53, 54, -1, 25, 54, 23, -1, 23, 54, 55, -1, 23, 55, 21, -1, 21, 55, 37, -1, 21, 37, 10, -1, 52, 56, 53, -1, 53, 56, 57, -1, 53, 57, 54, -1, 54, 57, 58, -1, 54, 58, 55, -1, 55, 58, 42, -1, 55, 42, 37, -1, 56, 59, 57, -1, 57, 59, 60, -1, 57, 60, 58, -1, 58, 60, 46, -1, 58, 46, 42, -1, 59, 61, 60, -1, 60, 61, 49, -1, 60, 49, 46, -1, 49, 61, 62, -1, 63, 64, 65, -1, 65, 64, 66, -1, 65, 66, 67, -1, 67, 66, 68, -1, 67, 68, 69, -1, 69, 68, 70, -1, 69, 70, 71, -1, 71, 70, 1, -1, 71, 1, 0, -1, 64, 72, 66, -1, 66, 72, 73, -1, 66, 73, 68, -1, 68, 73, 74, -1, 68, 74, 70, -1, 70, 74, 11, -1, 70, 11, 1, -1, 72, 75, 73, -1, 73, 75, 76, -1, 73, 76, 74, -1, 74, 76, 15, -1, 74, 15, 11, -1, 75, 77, 76, -1, 76, 77, 18, -1, 76, 18, 15, -1, 18, 77, 78, -1, 29, 28, 79, -1, 79, 28, 80, -1, 79, 80, 81, -1, 81, 80, 82, -1, 81, 82, 83, -1, 83, 82, 84, -1, 83, 84, 85, -1, 85, 84, 86, -1, 85, 86, 87, -1, 28, 32, 80, -1, 80, 32, 88, -1, 80, 88, 82, -1, 82, 88, 89, -1, 82, 89, 84, -1, 84, 89, 90, -1, 84, 90, 86, -1, 32, 34, 88, -1, 88, 34, 91, -1, 88, 91, 89, -1, 89, 91, 92, -1, 89, 92, 90, -1, 34, 35, 91, -1, 91, 35, 93, -1, 91, 93, 92, -1, 94, 35, 95, -1, 0, 41, 71, -1, 71, 41, 96, -1, 71, 96, 69, -1, 69, 96, 97, -1, 69, 97, 67, -1, 67, 97, 98, -1, 67, 98, 65, -1, 65, 98, 99, -1, 65, 99, 63, -1, 41, 45, 96, -1, 96, 45, 100, -1, 96, 100, 97, -1, 97, 100, 101, -1, 97, 101, 98, -1, 98, 101, 102, -1, 98, 102, 99, -1, 45, 48, 100, -1, 100, 48, 103, -1, 100, 103, 101, -1, 101, 103, 104, -1, 101, 104, 102, -1, 48, 50, 103, -1, 103, 50, 105, -1, 103, 105, 104, -1, 105, 50, 106, -1, 87, 107, 85, -1, 85, 107, 108, -1, 85, 108, 83, -1, 83, 108, 109, -1, 83, 109, 81, -1, 81, 109, 110, -1, 81, 110, 79, -1, 79, 110, 52, -1, 79, 52, 29, -1, 107, 111, 108, -1, 108, 111, 112, -1, 108, 112, 109, -1, 109, 112, 113, -1, 109, 113, 110, -1, 110, 113, 56, -1, 110, 56, 52, -1, 111, 114, 112, -1, 112, 114, 115, -1, 112, 115, 113, -1, 113, 115, 59, -1, 113, 59, 56, -1, 114, 116, 115, -1, 115, 116, 61, -1, 115, 61, 59, -1, 61, 117, 118, -1'
+            coordIndex='0, 1, 2, -1, 2, 1, 3, -1, 2, 3, 4, -1, 4, 3, 5, -1, 4, 5, 6, -1, 6, 5, 7, -1, 6, 7, 8, -1, 8, 7, 9, -1, 8, 9, 10, -1, 1, 11, 3, -1, 3, 11, 12, -1, 3, 12, 5, -1, 5, 12, 13, -1, 5, 13, 7, -1, 7, 13, 14, -1, 7, 14, 9, -1, 11, 15, 12, -1, 12, 15, 16, -1, 12, 16, 13, -1, 13, 16, 17, -1, 13, 17, 14, -1, 15, 18, 16, -1, 16, 18, 19, -1, 16, 19, 17, -1, 19, 18, 20, -1, 10, 9, 21, -1, 21, 9, 22, -1, 21, 22, 23, -1, 23, 22, 24, -1, 23, 24, 25, -1, 25, 24, 26, -1, 25, 26, 27, -1, 27, 26, 28, -1, 27, 28, 29, -1, 9, 14, 22, -1, 22, 14, 30, -1, 22, 30, 24, -1, 24, 30, 31, -1, 24, 31, 26, -1, 26, 31, 32, -1, 26, 32, 28, -1, 14, 17, 30, -1, 30, 17, 33, -1, 30, 33, 31, -1, 31, 33, 34, -1, 31, 34, 32, -1, 17, 19, 33, -1, 33, 19, 35, -1, 33, 35, 34, -1, 35, 19, 20, -1, 10, 36, 8, -1, 8, 36, 37, -1, 8, 37, 6, -1, 6, 37, 38, -1, 6, 38, 4, -1, 4, 38, 39, -1, 4, 39, 2, -1, 2, 39, 40, -1, 2, 40, 0, -1, 36, 41, 37, -1, 37, 41, 42, -1, 37, 42, 38, -1, 38, 42, 43, -1, 38, 43, 39, -1, 39, 43, 44, -1, 39, 44, 40, -1, 41, 45, 42, -1, 42, 45, 46, -1, 42, 46, 43, -1, 43, 46, 47, -1, 43, 47, 44, -1, 45, 48, 46, -1, 46, 48, 49, -1, 46, 49, 47, -1, 49, 48, 50, -1, 29, 51, 27, -1, 27, 51, 52, -1, 27, 52, 25, -1, 25, 52, 53, -1, 25, 53, 23, -1, 23, 53, 54, -1, 23, 54, 21, -1, 21, 54, 36, -1, 21, 36, 10, -1, 51, 55, 52, -1, 52, 55, 56, -1, 52, 56, 53, -1, 53, 56, 57, -1, 53, 57, 54, -1, 54, 57, 41, -1, 54, 41, 36, -1, 55, 58, 56, -1, 56, 58, 59, -1, 56, 59, 57, -1, 57, 59, 45, -1, 57, 45, 41, -1, 58, 60, 59, -1, 59, 60, 48, -1, 59, 48, 45, -1, 48, 60, 50, -1, 61, 62, 63, -1, 63, 62, 64, -1, 63, 64, 65, -1, 65, 64, 66, -1, 65, 66, 67, -1, 67, 66, 68, -1, 67, 68, 69, -1, 69, 68, 1, -1, 69, 1, 0, -1, 62, 70, 64, -1, 64, 70, 71, -1, 64, 71, 66, -1, 66, 71, 72, -1, 66, 72, 68, -1, 68, 72, 11, -1, 68, 11, 1, -1, 70, 73, 71, -1, 71, 73, 74, -1, 71, 74, 72, -1, 72, 74, 15, -1, 72, 15, 11, -1, 73, 75, 74, -1, 74, 75, 18, -1, 74, 18, 15, -1, 18, 75, 20, -1, 29, 28, 76, -1, 76, 28, 77, -1, 76, 77, 78, -1, 78, 77, 79, -1, 78, 79, 80, -1, 80, 79, 81, -1, 80, 81, 82, -1, 82, 81, 62, -1, 82, 62, 61, -1, 28, 32, 77, -1, 77, 32, 83, -1, 77, 83, 79, -1, 79, 83, 84, -1, 79, 84, 81, -1, 81, 84, 70, -1, 81, 70, 62, -1, 32, 34, 83, -1, 83, 34, 85, -1, 83, 85, 84, -1, 84, 85, 73, -1, 84, 73, 70, -1, 34, 35, 85, -1, 85, 35, 75, -1, 85, 75, 73, -1, 75, 35, 20, -1, 0, 40, 69, -1, 69, 40, 86, -1, 69, 86, 67, -1, 67, 86, 87, -1, 67, 87, 65, -1, 65, 87, 88, -1, 65, 88, 63, -1, 63, 88, 89, -1, 63, 89, 61, -1, 40, 44, 86, -1, 86, 44, 90, -1, 86, 90, 87, -1, 87, 90, 91, -1, 87, 91, 88, -1, 88, 91, 92, -1, 88, 92, 89, -1, 44, 47, 90, -1, 90, 47, 93, -1, 90, 93, 91, -1, 91, 93, 94, -1, 91, 94, 92, -1, 47, 49, 93, -1, 93, 49, 95, -1, 93, 95, 94, -1, 95, 49, 50, -1, 61, 89, 82, -1, 82, 89, 96, -1, 82, 96, 80, -1, 80, 96, 97, -1, 80, 97, 78, -1, 78, 97, 98, -1, 78, 98, 76, -1, 76, 98, 51, -1, 76, 51, 29, -1, 89, 92, 96, -1, 96, 92, 99, -1, 96, 99, 97, -1, 97, 99, 100, -1, 97, 100, 98, -1, 98, 100, 55, -1, 98, 55, 51, -1, 92, 94, 99, -1, 99, 94, 101, -1, 99, 101, 100, -1, 100, 101, 58, -1, 100, 58, 55, -1, 94, 95, 101, -1, 101, 95, 60, -1, 101, 60, 58, -1, 60, 95, 50, -1'>
+          <TextureCoordinate
+              point='0.749757 0.5, 0.749757 0.577903, 0.710805 0.5, 0.698598 0.597396, 0.656264 0.5, 0.624878 0.608068, 0.593492 0.5, 0.551158 0.597396, 0.538952 0.5, 0.5 0.577903, 0.5 0.5, 0.749757 0.686985, 0.676037 0.732053, 0.57372 0.732053, 0.5 0.686985, 0.749757 0.812528, 0.624878 0.859431, 0.5 0.812528, 0.749757 0.92161, 0.5 0.92161, 0.624878 1, 0.461048 0.5, 0.448842 0.597396, 0.406508 0.5, 0.375122 0.608068, 0.343736 0.5, 0.301402 0.597396, 0.289195 0.5, 0.250243 0.577903, 0.250243 0.5, 0.42628 0.732053, 0.323963 0.732053, 0.250243 0.686985, 0.375122 0.859431, 0.250243 0.812528, 0.250243 0.92161, 0.375122 1, 0.5 0.422097, 0.551158 0.402604, 0.624878 0.391932, 0.698598 0.402604, 0.749757 0.422097, 0.5 0.313015, 0.57372 0.267947, 0.676037 0.267947, 0.749757 0.313015, 0.5 0.187472, 0.624878 0.140569, 0.749757 0.187472, 0.5 0.07839, 0.749757 0.07839, 0.624878 0, 0.250243 0.422097, 0.301402 0.402604, 0.375122 0.391932, 0.448842 0.402604, 0.250243 0.313015, 0.323963 0.267947, 0.42628 0.267947, 0.250243 0.187472, 0.375122 0.140569, 0.250243 0.07839, 0.375122 0, 0.999513 0.5, 0.999513 0.577903, 0.960562 0.5, 0.948355 0.597396, 0.906021 0.5, 0.874635 0.608068, 0.843249 0.5, 0.800915 0.597396, 0.788708 0.5, 0.999513 0.686985, 0.925793 0.732053, 0.823477 0.732053, 0.999513 0.812528, 0.874635 0.859431, 0.999513 0.92161, 0.874635 1, 0.211292 0.5, 0.199085 0.597396, 0.156751 0.5, 0.125365 0.608068, 0.0939791 0.5, 0.0516451 0.597396, 0.0394384 0.5, 0.000486754 0.577903, 0.000486754 0.5, 0.176523 0.732053, 0.0742067 0.732053, 0.000486754 0.686985, 0.125365 0.859431, 0.000486754 0.812528, 0.000486754 0.92161, 0 0.92161, 0.125122 1, 0.800915 0.402604, 0.874635 0.391932, 0.948355 0.402604, 0.999513 0.422097, 0.823477 0.267947, 0.925793 0.267947, 0.999513 0.313015, 0.874635 0.140569, 0.999513 0.187472, 0.999513 0.07839, 0.874635 0, 0.000486754 0.422097, 0.0516451 0.402604, 0.125365 0.391932, 0.199085 0.402604, 0.000486754 0.313015, 0.0742067 0.267947, 0.176523 0.267947, 0.000486754 0.187472, 0.125365 0.140569, 0.000486754 0.07839, 0 0.07839, 0.125122 0'/>
+          <Coordinate
+              point='1 0 0, 0.970142 0.242536 0, 0.970142 0 0.242536, 0.904534 0.301511 0.301511, 0.83205 0 0.5547, 0.666667 0.333333 0.666667, 0.5547 0 0.83205, 0.301511 0.301511 0.904534, 0.242536 0 0.970142, 0 0.242536 0.970142, 0 0 1, 0.83205 0.5547 0, 0.666667 0.666667 0.333333, 0.333333 0.666667 0.666667, 0 0.5547 0.83205, 0.5547 0.83205 0, 0.301511 0.904534 0.301511, 0 0.83205 0.5547, 0.242536 0.970142 0, 0 0.970142 0.242536, 0 1 0, -0.242536 0 0.970142, -0.301511 0.301511 0.904534, -0.5547 0 0.83205, -0.666667 0.333333 0.666667, -0.83205 0 0.5547, -0.904534 0.301511 0.301511, -0.970142 0 0.242536, -0.970142 0.242536 0, -1 0 0, -0.333333 0.666667 0.666667, -0.666667 0.666667 0.333333, -0.83205 0.5547 0, -0.301511 0.904534 0.301511, -0.5547 0.83205 0, -0.242536 0.970142 0, 0 -0.242536 0.970142, 0.301511 -0.301511 0.904534, 0.666667 -0.333333 0.666667, 0.904534 -0.301511 0.301511, 0.970142 -0.242536 0, 0 -0.5547 0.83205, 0.333333 -0.666667 0.666667, 0.666667 -0.666667 0.333333, 0.83205 -0.5547 0, 0 -0.83205 0.5547, 0.301511 -0.904534 0.301511, 0.5547 -0.83205 0, 0 -0.970142 0.242536, 0.242536 -0.970142 0, 0 -1 0, -0.970142 -0.242536 0, -0.904534 -0.301511 0.301511, -0.666667 -0.333333 0.666667, -0.301511 -0.301511 0.904534, -0.83205 -0.5547 0, -0.666667 -0.666667 0.333333, -0.333333 -0.666667 0.666667, -0.5547 -0.83205 0, -0.301511 -0.904534 0.301511, -0.242536 -0.970142 0, 0 0 -1, 0 0.242536 -0.970142, 0.242536 0 -0.970142, 0.301511 0.301511 -0.904534, 0.5547 0 -0.83205, 0.666667 0.333333 -0.666667, 0.83205 0 -0.5547, 0.904534 0.301511 -0.301511, 0.970142 0 -0.242536, 0 0.5547 -0.83205, 0.333333 0.666667 -0.666667, 0.666667 0.666667 -0.333333, 0 0.83205 -0.5547, 0.301511 0.904534 -0.301511, 0 0.970142 -0.242536, -0.970142 0 -0.242536, -0.904534 0.301511 -0.301511, -0.83205 0 -0.5547, -0.666667 0.333333 -0.666667, -0.5547 0 -0.83205, -0.301511 0.301511 -0.904534, -0.242536 0 -0.970142, -0.666667 0.666667 -0.333333, -0.333333 0.666667 -0.666667, -0.301511 0.904534 -0.301511, 0.904534 -0.301511 -0.301511, 0.666667 -0.333333 -0.666667, 0.301511 -0.301511 -0.904534, 0 -0.242536 -0.970142, 0.666667 -0.666667 -0.333333, 0.333333 -0.666667 -0.666667, 0 -0.5547 -0.83205, 0.301511 -0.904534 -0.301511, 0 -0.83205 -0.5547, 0 -0.970142 -0.242536, -0.301511 -0.301511 -0.904534, -0.666667 -0.333333 -0.666667, -0.904534 -0.301511 -0.301511, -0.333333 -0.666667 -0.666667, -0.666667 -0.666667 -0.333333, -0.301511 -0.904534 -0.301511'/>
+        </IndexedFaceSet>
+      </Shape>
+    </Transform>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='SphereTranslationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='SphereTranslationInterpolator' fromField='value_changed' toNode='Extrusion' toField='set_translation'/>
-    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='SphereRotationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='SphereRotationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='SphereRotationInterpolator' fromField='value_changed' toNode='Extrusion' toField='set_rotation'/>
-    <ROUTE fromNode='_3' fromField='fraction_changed' toNode='WhichChoiceInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_2' fromField='fraction_changed' toNode='WhichChoiceInterpolator' toField='set_fraction'/>
   </Scene>
 </X3D>

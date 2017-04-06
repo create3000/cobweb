@@ -179,8 +179,7 @@ function ($,
 				texCoordNode    = this .getTexCoord (),
 				normalNode      = this .getNormal (),
 				coordNode       = this .getCoord (),
-				textCoords      = this .getTexCoords (),
-				face            = 0;
+				textCoords      = this .getTexCoords ();
 
 			if (texCoordNode)
 				texCoordNode .init (textCoords);
@@ -190,7 +189,8 @@ function ($,
 				var
 					polygon   = polygons [p],
 					vertices  = polygon .vertices,
-					triangles = polygon .triangles;
+					triangles = polygon .triangles,
+					face      = polygon .face;
 
 				for (var v = 0, numVertices = triangles .length; v < numVertices; ++ v)
 				{
@@ -257,7 +257,9 @@ function ($,
 				}
 
 				// Construct triangle array and determine the number of used points.
-				var vertices = [ ];
+				var
+					vertices = [ ],
+					face     = 0;
 
 				for (var i = 0; i < coordLength; ++ i)
 				{
@@ -290,7 +292,7 @@ function ($,
 								case 3:
 								{
 									// Add polygon with one triangle.
-									polygons .push ({ vertices: vertices, triangles: Triangle });
+									polygons .push ({ vertices: vertices, triangles: Triangle, face: face });
 									vertices = [ ];
 									break;
 								}
@@ -299,7 +301,7 @@ function ($,
 									// Triangulate polygons.
 									var
 										triangles = [ ],
-										polygon   = { vertices: vertices, triangles: triangles };
+										polygon   = { vertices: vertices, triangles: triangles, face: face };
 
 									if (convex)
 										this .triangulateConvexPolygon (polygon);
@@ -318,6 +320,8 @@ function ($,
 								}
 							}
 						}
+						
+						++ face;
 					}
 				}
 			}
