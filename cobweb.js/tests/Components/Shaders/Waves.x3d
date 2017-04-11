@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V3.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Shaders/Waves.x3d'/>
-    <meta name='modified' content='Tue, 11 Apr 2017 02:53:53 GMT'/>
+    <meta name='modified' content='Tue, 11 Apr 2017 02:55:06 GMT'/>
     <meta name='outputStyle' content='Nicest'/>
   </head>
   <Scene>
@@ -68,7 +68,7 @@
               name='nodes'
               reference='http://titania.create3000.de'>
             <Transform DEF='ElevationGrid' containerField='value'
-                scale='940 540 1'>
+                scale='980 540 1'>
               <Shape>
                 <Appearance>
                   <Material/>
