@@ -1296,6 +1296,8 @@
     <None Include="tests\Components\Geometry3D\Cube.x3dv" />
     <None Include="tests\Components\Rendering\L-System.x3dv" />
     <None Include="tests\Components\Shaders\Waves.x3d" />
+    <None Include="tests\Components\Shaders\ggreynoise512.png" />
+    <None Include="tests\Components\Shaders\Mountains.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
