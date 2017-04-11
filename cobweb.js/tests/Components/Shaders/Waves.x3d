@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V3.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Shaders/Waves.x3d'/>
-    <meta name='modified' content='Tue, 11 Apr 2017 02:40:40 GMT'/>
+    <meta name='modified' content='Tue, 11 Apr 2017 02:53:53 GMT'/>
     <meta name='outputStyle' content='Nicest'/>
   </head>
   <Scene>
@@ -61,15 +61,21 @@
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'>
+            <NavigationInfo DEF='_1' containerField='value'
+                type='"NONE"'/>
+          </MetadataSet>
+          <MetadataSet DEF='nodes' containerField='value'
+              name='nodes'
+              reference='http://titania.create3000.de'>
             <Transform DEF='ElevationGrid' containerField='value'
-                scale='920 540 1'>
+                scale='940 540 1'>
               <Shape>
                 <Appearance>
                   <Material/>
-                  <ComposedShader DEF='_1'
+                  <ComposedShader DEF='_2'
                       language='GLSL'>
-                    <field accessType='inputOutput' type='SFFloat' name='time' value='409.758'/>
-                    <field accessType='inputOutput' type='SFVec2f' name='resolution' value='920 510'/>
+                    <field accessType='inputOutput' type='SFFloat' name='time' value='491.363'/>
+                    <field accessType='inputOutput' type='SFVec2f' name='resolution' value='940 510'/>
                     <field accessType='inputOutput' type='SFColor' name='diffuse' value='0.1 0.1 0.1'/>
                     <field accessType='inputOutput' type='SFFloat' name='specular' value='8'/>
                     <field accessType='inputOutput' type='SFFloat' name='specularHardness' value='512'/>
@@ -127,7 +133,7 @@ uniform float seaHeight;
 #define CONTRAST 1.1
 #define SATURATION 1.3
 #define BRIGHTNESS 1.3
-#define RAY_DEPTH 256
+#define RAY_DEPTH 64
 #define MAX_DEPTH 200.0
 #define DISTANCE_MIN 0.001
 #define PI 3.14159265
@@ -305,12 +311,6 @@ void main()
               </Shape>
             </Transform>
           </MetadataSet>
-          <MetadataSet DEF='nodes' containerField='value'
-              name='nodes'
-              reference='http://titania.create3000.de'>
-            <NavigationInfo DEF='_2' containerField='value'
-                type='"NONE"'/>
-          </MetadataSet>
         </MetadataSet>
         <MetadataSet DEF='AxonometricGrid' containerField='value'
             name='AxonometricGrid'
@@ -331,8 +331,8 @@ void main()
     <Transform USE='ElevationGrid'/>
     <OrthoViewpoint DEF='_4'
         fieldOfView='-460, -260, 460, 260'/>
-    <NavigationInfo USE='_2'/>
-    <ROUTE fromNode='_3' fromField='value_changed' toNode='_1' toField='set_time'/>
+    <NavigationInfo USE='_1'/>
+    <ROUTE fromNode='_3' fromField='value_changed' toNode='_2' toField='set_time'/>
     <ROUTE fromNode='Timer' fromField='fraction_changed' toNode='_3' toField='set_fraction'/>
   </Scene>
 </X3D>
