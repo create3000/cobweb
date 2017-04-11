@@ -7,10 +7,15 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V3.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Shaders/Waves.x3d'/>
-    <meta name='modified' content='Tue, 11 Apr 2017 03:32:33 GMT'/>
+    <meta name='modified' content='Tue, 11 Apr 2017 04:53:50 GMT'/>
     <meta name='outputStyle' content='Nicest'/>
   </head>
   <Scene>
+    <ExternProtoDeclare name='SFNode' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv"'>
+      <field accessType='inputOnly' type='SFTime' name='set_triggerTime'/>
+      <field accessType='inputOutput' type='SFNode' name='keyValue'/>
+      <field accessType='outputOnly' type='SFNode' name='value_changed'/>
+    </ExternProtoDeclare>
     <WorldInfo>
       <MetadataSet DEF='Titania'
           name='Titania'
@@ -61,62 +66,48 @@
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'>
-            <LayoutLayer DEF='_1' containerField='value'>
-              <Layout
-                  size='1'/>
-              <NavigationInfo
-                  type='"NONE"'/>
-              <TimeSensor DEF='Timer'
-                  cycleInterval='1000'
-                  loop='true'/>
-              <ScalarInterpolator DEF='_2'
-                  key='0, 1'
-                  keyValue='0, 1000'/>
-              <Transform DEF='ElevationGrid'>
-                <Shape>
-                  <Appearance>
-                    <Material/>
-                    <ComposedShader DEF='WaterShader'
-                        language='GLSL'>
-                      <field accessType='inputOutput' type='SFFloat' name='time' value='33.1004'/>
-                      <field accessType='inputOutput' type='SFColor' name='diffuse' value='0.1 0.1 0.1'/>
-                      <field accessType='inputOutput' type='SFFloat' name='specular' value='8'/>
-                      <field accessType='inputOutput' type='SFFloat' name='specularHardness' value='512'/>
-                      <field accessType='inputOutput' type='SFBool' name='postEffects' value='true'/>
-                      <field accessType='inputOutput' type='SFBool' name='moveCamera' value='true'/>
-                      <field accessType='inputOutput' type='SFBool' name='reflections' value='true'/>
-                      <field accessType='inputOutput' type='SFFloat' name='seaHeight' value='-0.5'/>
-                      <field accessType='inputOutput' type='SFVec3f' name='cameraPos' value='0 5 0'/>
-                      <field accessType='inputOutput' type='SFVec3f' name='cameraLookat' value='-125 -100 -95'/>
-                      <field accessType='inputOutput' type='SFVec3f' name='lightDir' value='-1 0.8 -1'/>
-                      <field accessType='inputOutput' type='SFVec3f' name='lightColour' value='0.7 0.8 0.9'/>
-                      <ShaderPart DEF='WaterVertexShader'>
+            <Script DEF='ZScript' containerField='value'>
+              <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
+              <field accessType='inputOutput' type='SFString' name='description' value='z'/>
+              <field accessType='inputOutput' type='SFFloat' name='minValue' value='-100'/>
+              <field accessType='inputOutput' type='SFFloat' name='maxValue' value='100'/>
+              <field accessType='outputOnly' type='SFFloat' name='value_changed'/>
+              <field accessType='outputOnly' type='MFString' name='string_changed'/>
+              <field accessType='initializeOnly' type='SFFloat' name='currentValue' value='-100'/>
+<![CDATA[ecmascript:
+
+function initialized ()
+{
+	set_value (currentValue);
+}
+
+function set_translation (value)
+{
+	set_value (minValue + (value .x * (maxValue - minValue)));
+}
+
+function set_value (value)
+{
+	var rounded = value .toFixed (2);
+
+	if (rounded == currentValue)
+		return;
+
+	currentValue       = rounded;
+	string_changed [0] = description + " " + rounded;
+	value_changed      = value;
+}
+]]>
+            </Script>
+          </MetadataSet>
+          <MetadataSet DEF='nodes' containerField='value'
+              name='nodes'
+              reference='http://titania.create3000.de'>
+            <ShaderPart DEF='WaterFragmentShader' containerField='value'
+                type='FRAGMENT'>
 <![CDATA[data:text/plain,
 
 precision mediump float;
-
-uniform mat4 x3d_ProjectionMatrix;
-uniform mat4 x3d_ModelViewMatrix;
-
-attribute vec4 x3d_Vertex;
-
-varying vec4 vertex;
-
-void main ()
-{
-	vertex = x3d_ModelViewMatrix * x3d_Vertex;
-
-	gl_Position = x3d_ProjectionMatrix * vertex;
-}
-]]>
-                      </ShaderPart>
-                      <ShaderPart DEF='WaterFragmentShader'
-                          type='FRAGMENT'>
-<![CDATA[data:text/plain,
-
-#ifdef GL_ES
-precision highp float;
-#endif
 
 uniform float time;
 uniform vec3 cameraPos;
@@ -139,7 +130,8 @@ vec2 resolution = vec2 (x3d_Viewport .zw);
 #define CONTRAST 1.1
 #define SATURATION 1.3
 #define BRIGHTNESS 1.3
-#define RAY_DEPTH 64
+//#define RAY_DEPTH 64
+#define RAY_DEPTH 256
 #define MAX_DEPTH 200.0
 #define DISTANCE_MIN 0.001
 #define PI 3.14159265
@@ -201,7 +193,7 @@ vec3 GetNormal(vec3 pos)
 // Original method by David Hoskins
 vec3 Sky(in vec3 rd)
 {
-   float sunAmount = max(dot(rd, lightDir), 0.0);
+   float sunAmount = max(dot(rd, normalize (lightDir)), 0.0);
    float v = pow(1.0 - max(rd.y,0.0),6.);
    vec3 sky = mix(vec3(.1, .2, .4), vec3(.32, .32, .32), v);
    sky += lightColour * sunAmount * sunAmount * .25 + lightColour * min(pow(sunAmount, 800.0)*1.5, .3);
@@ -221,9 +213,9 @@ vec3 Fog(vec3 rgb, vec3 rd, float distance)   // camera to point distance
 const vec3 WATER_COLOR = vec3(0.6,0.9,0.6);
 vec3 Shading(vec3 pos, vec3 rd, vec3 norm, vec3 ro)
 {
-   vec3 light = lightColour * max(0.0, dot(norm, lightDir));
+   vec3 light = lightColour * max(0.0, dot(norm, normalize (lightDir)));
    vec3 view = normalize(-rd);
-   vec3 heading = normalize(view + lightDir);
+   vec3 heading = normalize(view + normalize (lightDir));
    float spec = pow(max(0.0, dot(heading, norm)), specularHardness);
    
    float fresnel = 0.0;
@@ -309,20 +301,7 @@ void main()
    gl_FragColor = vec4(res.rgb, 1.0);
 }
 ]]>
-                      </ShaderPart>
-                    </ComposedShader>
-                  </Appearance>
-                  <Rectangle2D
-                      size='1 1'
-                      solid='false'/>
-                </Shape>
-              </Transform>
-            </LayoutLayer>
-          </MetadataSet>
-          <MetadataSet DEF='nodes' containerField='value'
-              name='nodes'
-              reference='http://titania.create3000.de'>
-            <ComposedShader USE='WaterShader' containerField='value'/>
+            </ShaderPart>
           </MetadataSet>
         </MetadataSet>
         <MetadataSet DEF='AxonometricGrid' containerField='value'
@@ -339,15 +318,410 @@ void main()
           <MetadataInteger DEF='activeLayer' containerField='value'
               name='activeLayer'
               reference='http://titania.create3000.de'
-              value='-1'/>
+              value='2'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
     <LayerSet
-        order='1'>
-      <LayoutLayer USE='_1'/>
+        order='1, 2'>
+      <LayoutLayer>
+        <Layout
+            size='1'/>
+        <NavigationInfo
+            type='"NONE"'/>
+        <TimeSensor DEF='Timer'
+            cycleInterval='1000'
+            loop='true'/>
+        <ScalarInterpolator DEF='_1'
+            key='0, 1'
+            keyValue='0, 1000'/>
+        <Transform DEF='Rectangle2D'>
+          <Shape>
+            <Appearance>
+              <Material/>
+              <ComposedShader DEF='WaterShader'
+                  language='GLSL'>
+                <field accessType='inputOutput' type='SFFloat' name='time' value='864.954'/>
+                <field accessType='inputOutput' type='SFColor' name='diffuse' value='0.1 0.1 0.1'/>
+                <field accessType='inputOutput' type='SFFloat' name='specular' value='8'/>
+                <field accessType='inputOutput' type='SFFloat' name='specularHardness' value='512'/>
+                <field accessType='inputOutput' type='SFBool' name='postEffects' value='true'/>
+                <field accessType='inputOutput' type='SFBool' name='moveCamera' value='true'/>
+                <field accessType='inputOutput' type='SFBool' name='reflections' value='true'/>
+                <field accessType='inputOutput' type='SFFloat' name='seaHeight' value='-0.5'/>
+                <field accessType='inputOutput' type='SFVec3f' name='cameraPos' value='0 5 0'/>
+                <field accessType='inputOutput' type='SFVec3f' name='cameraLookat' value='-132.96 -100 -100'/>
+                <field accessType='inputOutput' type='SFVec3f' name='lightDir' value='-1 0.8 -1'/>
+                <field accessType='inputOutput' type='SFVec3f' name='lightColour' value='0.7 0.8 0.9'/>
+                <ShaderPart DEF='WaterVertexShader'>
+<![CDATA[data:text/plain,
+
+precision mediump float;
+
+uniform mat4 x3d_ProjectionMatrix;
+uniform mat4 x3d_ModelViewMatrix;
+
+attribute vec4 x3d_Vertex;
+
+varying vec4 vertex;
+
+void main ()
+{
+	vertex = x3d_ModelViewMatrix * x3d_Vertex;
+
+	gl_Position = x3d_ProjectionMatrix * vertex;
+}
+]]>
+                </ShaderPart>
+                <ShaderPart USE='WaterFragmentShader'/>
+              </ComposedShader>
+            </Appearance>
+            <Rectangle2D
+                size='1 1'
+                solid='false'/>
+          </Shape>
+        </Transform>
+      </LayoutLayer>
+      <Layer DEF='HUD'>
+        <MetadataSet DEF='Titania_1'
+            name='Titania'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='AngleGrid_1' containerField='value'
+              name='AngleGrid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean DEF='enabled_3' containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='false'/>
+          </MetadataSet>
+          <MetadataSet DEF='Grid_1' containerField='value'
+              name='Grid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean DEF='enabled_4' containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='false'/>
+            <MetadataFloat DEF='scale' containerField='value'
+                name='scale'
+                reference='http://titania.create3000.de'
+                value='0.05, 0.05, 0.05'/>
+            <MetadataInteger DEF='dimension' containerField='value'
+                name='dimension'
+                reference='http://titania.create3000.de'
+                value='89, 10, 40'/>
+            <MetadataDouble DEF='rotation' containerField='value'
+                name='rotation'
+                reference='http://titania.create3000.de'
+                value='1, 0, 0, 1.5707963267949'/>
+          </MetadataSet>
+          <MetadataSet DEF='AxonometricGrid_1' containerField='value'
+              name='AxonometricGrid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean DEF='enabled_5' containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='false'/>
+          </MetadataSet>
+        </MetadataSet>
+        <NavigationInfo
+            type='"NONE"'
+            headlight='false'/>
+        <OrthoViewpoint/>
+        <Transform DEF='Header'
+            translation='-1.6905 0.857504 -1'
+            scale='0.0672307 0.0672307 0.0672307'>
+          <Shape>
+            <Appearance>
+              <Material
+                  emissiveColor='1 1 1'/>
+            </Appearance>
+            <Text
+                string='"Waves"'
+                solid='true'>
+              <FontStyle
+                  family='"Ubuntu", "SANS"'
+                  size='1.61'
+                  justify='"BEGIN", "FIRST"'/>
+            </Text>
+          </Shape>
+        </Transform>
+        <Transform DEF='Header_1'
+            translation='1.675 -0.65 -1'
+            scale='0.0672307 0.0672307 0.0672307'>
+          <Shape>
+            <Appearance>
+              <Material DEF='Artdeco31'
+                  ambientIntensity='0'
+                  diffuseColor='0 0 0'
+                  emissiveColor='1 1 1'
+                  shininess='0'/>
+            </Appearance>
+            <Text
+                string='"Camera"'
+                solid='true'>
+              <FontStyle
+                  family='"Ubuntu", "SANS"'
+                  style='BOLD'
+                  size='0.68'
+                  justify='"END"'/>
+            </Text>
+          </Shape>
+        </Transform>
+        <Group DEF='Fields'>
+          <Transform DEF='XSlider'
+              translation='0.275 -0.723 1.66533e-16'
+              center='0 -0.027 0'>
+            <Transform DEF='IndexedLineSet'>
+              <Shape>
+                <Appearance>
+                  <LineProperties
+                      linewidthScaleFactor='2'/>
+                  <Material DEF='Artdeco31_1'
+                      emissiveColor='1 1 1'/>
+                </Appearance>
+                <IndexedLineSet
+                    colorPerVertex='false'
+                    coordIndex='0, 1, -1'>
+                  <Coordinate
+                      point='0 0 0, 1 0 0'/>
+                </IndexedLineSet>
+              </Shape>
+            </Transform>
+            <Transform>
+              <Transform DEF='Rectangle2D_1'
+                  translation='0.240313 0 0'
+                  scale='0.027 0.0267372 0.0267372'>
+                <Shape>
+                  <Appearance>
+                    <Material
+                        emissiveColor='1 1 1'/>
+                  </Appearance>
+                  <Disk2D
+                      solid='false'/>
+                </Shape>
+              </Transform>
+              <PlaneSensor DEF='_2'
+                  offset='0.240313 0 0'
+                  maxPosition='1 0'/>
+            </Transform>
+            <Script DEF='XScript'>
+              <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
+              <field accessType='inputOutput' type='SFString' name='description' value='x'/>
+              <field accessType='inputOutput' type='SFFloat' name='minValue' value='-256'/>
+              <field accessType='inputOutput' type='SFFloat' name='maxValue' value='256'/>
+              <field accessType='outputOnly' type='SFFloat' name='value_changed'/>
+              <field accessType='outputOnly' type='MFString' name='string_changed'/>
+              <field accessType='initializeOnly' type='SFFloat' name='currentValue' value='-132.96'/>
+<![CDATA[ecmascript:
+
+function initialized ()
+{
+	set_value (currentValue);
+}
+
+function set_translation (value)
+{
+	set_value (minValue + (value .x * (maxValue - minValue)));
+}
+
+function set_value (value)
+{
+	var rounded = value .toFixed (2);
+
+	if (rounded == currentValue)
+		return;
+
+	currentValue       = rounded;
+	string_changed [0] = description + " " + rounded;
+	value_changed      = value;
+}
+]]>
+            </Script>
+          </Transform>
+          <Transform DEF='XText'
+              translation='1.675 -0.750004 -2.02108e-06'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material
+                    emissiveColor='1 1 1'/>
+              </Appearance>
+              <Text DEF='_3'
+                  string='"x -132.96"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='YSlider'
+              translation='0.275 -0.823 1.88738e-16'
+              center='0 -0.027 0'>
+            <Transform DEF='IndexedLineSet_1'>
+              <Shape>
+                <Appearance>
+                  <LineProperties
+                      linewidthScaleFactor='2'/>
+                  <Material DEF='Artdeco31_2'
+                      emissiveColor='1 1 1'/>
+                </Appearance>
+                <IndexedLineSet
+                    colorPerVertex='false'
+                    coordIndex='0, 1, -1'>
+                  <Coordinate
+                      point='0 0 0, 1 0 0'/>
+                </IndexedLineSet>
+              </Shape>
+            </Transform>
+            <Transform>
+              <Transform DEF='Rectangle2D_2'
+                  scale='0.027 0.0267372 0.0267372'>
+                <Shape>
+                  <Appearance>
+                    <Material
+                        emissiveColor='1 1 1'/>
+                  </Appearance>
+                  <Disk2D
+                      solid='false'/>
+                </Shape>
+              </Transform>
+              <PlaneSensor DEF='_4'
+                  maxPosition='1 0'/>
+            </Transform>
+            <Script DEF='YScript'>
+              <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
+              <field accessType='inputOutput' type='SFString' name='description' value='y'/>
+              <field accessType='inputOutput' type='SFFloat' name='minValue' value='-100'/>
+              <field accessType='inputOutput' type='SFFloat' name='maxValue' value='100'/>
+              <field accessType='outputOnly' type='SFFloat' name='value_changed'/>
+              <field accessType='outputOnly' type='MFString' name='string_changed'/>
+              <field accessType='initializeOnly' type='SFFloat' name='currentValue' value='-100'/>
+<![CDATA[ecmascript:
+
+function initialized ()
+{
+	set_value (currentValue);
+}
+
+function set_translation (value)
+{
+	set_value (minValue + (value .x * (maxValue - minValue)));
+}
+
+function set_value (value)
+{
+	var rounded = value .toFixed (2);
+
+	if (rounded == currentValue)
+		return;
+
+	currentValue       = rounded;
+	string_changed [0] = description + " " + rounded;
+	value_changed      = value;
+}
+]]>
+            </Script>
+          </Transform>
+          <Transform DEF='YText'
+              translation='1.675 -0.850004 -2.38855e-06'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material
+                    emissiveColor='1 1 1'/>
+              </Appearance>
+              <Text DEF='_5'
+                  string='"y -100.00"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='ZText'
+              translation='1.675 -0.950004 -2.75602e-06'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material
+                    emissiveColor='1 1 1'/>
+              </Appearance>
+              <Text DEF='_6'
+                  string='"z -100.00"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='ZSlider'
+              translation='0.275 -0.923 2.10943e-16'
+              center='0 -0.027 0'>
+            <Transform DEF='IndexedLineSet_2'>
+              <Shape>
+                <Appearance>
+                  <LineProperties
+                      linewidthScaleFactor='2'/>
+                  <Material DEF='Artdeco31_3'
+                      emissiveColor='1 1 1'/>
+                </Appearance>
+                <IndexedLineSet
+                    colorPerVertex='false'
+                    coordIndex='0, 1, -1'>
+                  <Coordinate
+                      point='0 0 0, 1 0 0'/>
+                </IndexedLineSet>
+              </Shape>
+            </Transform>
+            <Transform>
+              <Transform DEF='Rectangle2D_3'
+                  scale='0.027 0.0267372 0.0267372'>
+                <Shape>
+                  <Appearance>
+                    <Material
+                        emissiveColor='1 1 1'/>
+                  </Appearance>
+                  <Disk2D
+                      solid='false'/>
+                </Shape>
+              </Transform>
+              <PlaneSensor DEF='_7'
+                  maxPosition='1 0'/>
+            </Transform>
+            <Script USE='ZScript'/>
+          </Transform>
+        </Group>
+        <Script DEF='CamLookAtScript'>
+          <field accessType='inputOutput' type='SFFloat' name='x' value='-132.96'/>
+          <field accessType='inputOutput' type='SFFloat' name='y' value='-100'/>
+          <field accessType='inputOutput' type='SFFloat' name='z' value='-100'/>
+          <field accessType='outputOnly' type='SFVec3f' name='cameraLookAt_changed'/>
+<![CDATA[ecmascript:
+
+function eventsProcessed ()
+{
+	cameraLookAt_changed = new SFVec3f (x, y, z);
+}]]>
+        </Script>
+      </Layer>
     </LayerSet>
-    <ROUTE fromNode='_2' fromField='value_changed' toNode='WaterShader' toField='set_time'/>
-    <ROUTE fromNode='Timer' fromField='fraction_changed' toNode='_2' toField='set_fraction'/>
+    <ROUTE fromNode='_1' fromField='value_changed' toNode='WaterShader' toField='set_time'/>
+    <ROUTE fromNode='Timer' fromField='fraction_changed' toNode='_1' toField='set_fraction'/>
+    <ROUTE fromNode='_7' fromField='translation_changed' toNode='ZScript' toField='set_translation'/>
+    <ROUTE fromNode='_7' fromField='translation_changed' toNode='Rectangle2D_3' toField='set_translation'/>
+    <ROUTE fromNode='ZScript' fromField='string_changed' toNode='_6' toField='set_string'/>
+    <ROUTE fromNode='YScript' fromField='string_changed' toNode='_5' toField='set_string'/>
+    <ROUTE fromNode='_4' fromField='translation_changed' toNode='YScript' toField='set_translation'/>
+    <ROUTE fromNode='_4' fromField='translation_changed' toNode='Rectangle2D_2' toField='set_translation'/>
+    <ROUTE fromNode='XScript' fromField='string_changed' toNode='_3' toField='set_string'/>
+    <ROUTE fromNode='_2' fromField='translation_changed' toNode='XScript' toField='set_translation'/>
+    <ROUTE fromNode='_2' fromField='translation_changed' toNode='Rectangle2D_1' toField='set_translation'/>
+    <ROUTE fromNode='CamLookAtScript' fromField='cameraLookAt_changed' toNode='WaterShader' toField='set_cameraLookat'/>
+    <ROUTE fromNode='ZScript' fromField='value_changed' toNode='CamLookAtScript' toField='set_z'/>
+    <ROUTE fromNode='YScript' fromField='value_changed' toNode='CamLookAtScript' toField='set_y'/>
+    <ROUTE fromNode='XScript' fromField='value_changed' toNode='CamLookAtScript' toField='set_x'/>
   </Scene>
 </X3D>
