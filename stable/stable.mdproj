@@ -649,5 +649,6 @@
     <Folder Include="2\2.4\" />
     <Folder Include="2\2.5\" />
     <Folder Include="2\2.6\" />
+    <Folder Include="3\" />
   </ItemGroup>
 </Project>
