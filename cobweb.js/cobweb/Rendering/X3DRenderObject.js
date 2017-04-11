@@ -81,6 +81,7 @@ function ($,
 	var
 		DEPTH_BUFFER_WIDTH          = 16,
 		DEPTH_BUFFER_HEIGHT         = DEPTH_BUFFER_WIDTH,
+		viewportArray               = new Int32Array (4),
 		projectionMatrix            = new Matrix4 (),
 		projectionMatrixArray       = new Float32Array (16),
 		modelViewMatrix             = new Matrix4 (),
@@ -725,8 +726,10 @@ function ($,
 
 			shaderNode .useProgram (gl);
 			
+			viewportArray         .set (viewport);
 			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
+			gl .uniformMatrix4iv (shaderNode .x3d_Viewport, viewportArray);
 			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
 			// Configure viewport and background
@@ -832,14 +835,15 @@ function ($,
 
 			// Sorted blend
 
+			viewportArray         .set (viewport);
 			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
-			browser .getPointShader   () .setGlobalUniforms (this, gl, projectionMatrixArray);
-			browser .getLineShader    () .setGlobalUniforms (this, gl, projectionMatrixArray);
-			browser .getDefaultShader () .setGlobalUniforms (this, gl, projectionMatrixArray);
+			browser .getPointShader   () .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
+			browser .getLineShader    () .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
+			browser .getDefaultShader () .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
 
 			for (var id in shaders)
-				shaders [id] .setGlobalUniforms (this, gl, projectionMatrixArray);
+				shaders [id] .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
 
 			// Render opaque objects first
 

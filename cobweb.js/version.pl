@@ -29,7 +29,6 @@ sub cp {
 	system "cp", "-v", "browser.html",                 $VERSION_DIR;
 
 	system "perl", "-pi", "-e", 's|\s*<script src="jam/require\.js"></script>\n||sg', "$VERSION_DIR/browser.html";
-	system "perl", "-pi", "-e", 's|cobweb\.js|cobweb.min.js|sg', "$VERSION_DIR/browser.html";
 }
 
 exit unless -d $VERSION_DIR;

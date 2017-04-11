@@ -21245,48 +21245,48 @@ function ($,
 				{
 					this .primitiveQuality = PrimitiveQuality .LOW;
 				
-					arc .minAngle_      = Math .PI / 10;
-					arcClose .minAngle_ = Math .PI / 10;
-					circle .segments_   = 20;
-					disk .segments_     = 20;
+					arc .dimension_      = 20;
+					arcClose .dimension_ = 20;
+					circle .dimension_   = 20;
+					disk .dimension_     = 20;
 
-					cone     .vDimension_ = 16;
-					cylinder .vDimension_ = 16;
+					cone     .xDimension_ = 16;
+					cylinder .xDimension_ = 16;
 
-					sphere .uDimension_ = 24;
-					sphere .vDimension_ = 12;
+					sphere .xDimension_ = 20;
+					sphere .yDimension_ = 9;
 					break;
 				}
 				case "HIGH":
 				{
 					this .primitiveQuality = PrimitiveQuality .HIGH;
 
-					arc .minAngle_      = Math .PI / 40;
-					arcClose .minAngle_ = Math .PI / 40;
-					circle .segments_   = 80;
-					disk .segments_     = 80;
+					arc .dimension_      = 80;
+					arcClose .dimension_ = 80;
+					circle .dimension_   = 80;
+					disk .dimension_     = 80;
 
-					cone     .vDimension_ = 32;
-					cylinder .vDimension_ = 32;
+					cone     .xDimension_ = 32;
+					cylinder .xDimension_ = 32;
 
-					sphere .uDimension_ = 40;
-					sphere .vDimension_ = 20;
+					sphere .xDimension_ = 64;
+					sphere .yDimension_ = 31;
 					break;
 				}
 				default:
 				{
 					this .primitiveQuality = PrimitiveQuality .MEDIUM;
 
-					arc .minAngle_      = Math .PI / 20;
-					arcClose .minAngle_ = Math .PI / 20;
-					circle .segments_   = 40;
-					disk .segments_     = 40;
+					arc .dimension_      = 40;
+					arcClose .dimension_ = 40;
+					circle .dimension_   = 40;
+					disk .dimension_     = 40;
 
-					cone     .vDimension_ = 20;
-					cylinder .vDimension_ = 20;
+					cone     .xDimension_ = 20;
+					cylinder .xDimension_ = 20;
 
-					sphere .uDimension_ = 32;
-					sphere .vDimension_ = 16;
+					sphere .xDimension_ = 32;
+					sphere .yDimension_ = 15;
 					break;
 				}
 			}
@@ -34838,10 +34838,11 @@ function ($,
 
 			this .x3d_Texture = gl .getUniformLocation (program, "x3d_Texture"); // depreciated
 
-			this .x3d_TextureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
-			this .x3d_NormalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
+			this .x3d_Viewport         = gl .getUniformLocation (program, "x3d_Viewport");
 			this .x3d_ProjectionMatrix = gl .getUniformLocation (program, "x3d_ProjectionMatrix");
 			this .x3d_ModelViewMatrix  = gl .getUniformLocation (program, "x3d_ModelViewMatrix");
+			this .x3d_NormalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
+			this .x3d_TextureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
 			
 			this .x3d_Color    = gl .getAttribLocation (program, "x3d_Color");
 			this .x3d_TexCoord = gl .getAttribLocation (program, "x3d_TexCoord");
@@ -35511,9 +35512,15 @@ function ($,
 			else
 				gl .uniform4fv (this .x3d_ClipPlane [0], this .x3d_NoneClipPlane);
 		},
-		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray)
+		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray, viewportArray)
 		{
 			var globalLights = renderObject .getGlobalLights ();
+
+			// Set viewport
+
+			gl .uniform4iv (this .x3d_Viewport, viewportArray);
+
+			// Set projection matrix
 
 			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
@@ -36083,7 +36090,7 @@ function ($,
 					this .isValid_ = false;
 			}
 		},
-		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray)
+		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray, viewportArray)
 		{
 			if (currentShaderNode !== this)
 			{
@@ -36092,7 +36099,7 @@ function ($,
 				gl .useProgram (this .program);
 			}
 			
-			X3DProgrammableShaderObject .prototype .setGlobalUniforms .call (this, renderObject, gl, projectionMatrixArray);
+			X3DProgrammableShaderObject .prototype .setGlobalUniforms .call (this, renderObject, gl, projectionMatrixArray, viewportArray);
 		},
 		setLocalUniforms: function (gl, context)
 		{
@@ -42171,7 +42178,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("minAngle", new Fields .SFFloat (Math .PI / 20))
+		this .addChildObjects ("dimension", new Fields .SFInt32 (32))
 	}
 
 	ArcClose2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -42258,7 +42265,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("minAngle", new Fields .SFFloat (Math .PI / 20))
+		this .addChildObjects ("dimension", new Fields .SFInt32 (32))
 	}
 
 	Arc2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -42560,7 +42567,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("segments", new Fields .SFInt32 (40))
+		this .addChildObjects ("dimension", new Fields .SFInt32 (40))
 
 		this .vertices = [ ];
 	}
@@ -42593,12 +42600,12 @@ function ($,
 		build: function ()
 		{
 			var
-				segments = this .segments_ .getValue (),
-				angle    = Math .PI * 2 / segments;
+				dimension = this .dimension_ .getValue (),
+				angle     = Math .PI * 2 / dimension;
 		
 			this .vertices .length = 0;
 
-			for (var n = 0; n < segments; ++ n)
+			for (var n = 0; n < dimension; ++ n)
 			{
 				var point = Complex .Polar (1, angle * n);
 		
@@ -42680,7 +42687,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("segments", new Fields .SFInt32 (40))
+		this .addChildObjects ("dimension", new Fields .SFInt32 (40))
 
 		this .circleVertices = [ ];
 		this .diskTexCoords  = [ ];
@@ -42728,15 +42735,15 @@ function ($,
 		build: function ()
 		{
 			var
-				segments = this .segments_ .getValue (),
-				angle    = Math .PI * 2 / segments;
+				dimension = this .dimension_ .getValue (),
+				angle     = Math .PI * 2 / dimension;
 		
 			this .circleVertices .length = 0;
 			this .diskTexCoords  .length = 0;
 			this .diskNormals    .length = 0;
 			this .diskVertices   .length = 0;
 
-			for (var n = 0; n < segments; ++ n)
+			for (var n = 0; n < dimension; ++ n)
 			{
 				var
 					theta1    = angle * n,
@@ -48296,8 +48303,7 @@ function ($,
 				texCoordNode    = this .getTexCoord (),
 				normalNode      = this .getNormal (),
 				coordNode       = this .getCoord (),
-				textCoords      = this .getTexCoords (),
-				face            = 0;
+				textCoords      = this .getTexCoords ();
 
 			if (texCoordNode)
 				texCoordNode .init (textCoords);
@@ -48307,7 +48313,8 @@ function ($,
 				var
 					polygon   = polygons [p],
 					vertices  = polygon .vertices,
-					triangles = polygon .triangles;
+					triangles = polygon .triangles,
+					face      = polygon .face;
 
 				for (var v = 0, numVertices = triangles .length; v < numVertices; ++ v)
 				{
@@ -48374,7 +48381,9 @@ function ($,
 				}
 
 				// Construct triangle array and determine the number of used points.
-				var vertices = [ ];
+				var
+					vertices = [ ],
+					face     = 0;
 
 				for (var i = 0; i < coordLength; ++ i)
 				{
@@ -48407,7 +48416,7 @@ function ($,
 								case 3:
 								{
 									// Add polygon with one triangle.
-									polygons .push ({ vertices: vertices, triangles: Triangle });
+									polygons .push ({ vertices: vertices, triangles: Triangle, face: face });
 									vertices = [ ];
 									break;
 								}
@@ -48416,7 +48425,7 @@ function ($,
 									// Triangulate polygons.
 									var
 										triangles = [ ],
-										polygon   = { vertices: vertices, triangles: triangles };
+										polygon   = { vertices: vertices, triangles: triangles, face: face };
 
 									if (convex)
 										this .triangulateConvexPolygon (polygon);
@@ -48435,6 +48444,8 @@ function ($,
 								}
 							}
 						}
+						
+						++ face;
 					}
 				}
 			}
@@ -49560,8 +49571,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("uDimension", new Fields .SFInt32 (1),
-		                       "vDimension", new Fields .SFInt32 (20))
+		this .addChildObjects ("xDimension", new Fields .SFInt32 (20),
+		                       "yDimension", new Fields .SFInt32 (1))
 	}
 
 	ConeOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -49648,8 +49659,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 			
-		this .addChildObjects ("uDimension", new Fields .SFInt32 (1),
-		                       "vDimension", new Fields .SFInt32 (20))
+		this .addChildObjects ("xDimension", new Fields .SFInt32 (20),
+		                       "yDimension", new Fields .SFInt32 (1))
 	}
 
 	CylinderOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -49748,8 +49759,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("uDimension", new Fields .SFInt32 (32),
-		                       "vDimension", new Fields .SFInt32 (16))
+		this .addChildObjects ("xDimension", new Fields .SFInt32 (32),
+		                       "yDimension", new Fields .SFInt32 (15))
 	}
 
 	QuadSphereOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -49783,29 +49794,29 @@ function ($,
 		createTexCoordIndex: function ()
 		{
 			var
-				uDimension    = this .uDimension_ .getValue () + 1,
-				vDimension    = this .vDimension_ .getValue () + 1,
+				xDimension    = this .xDimension_ .getValue () + 1,
+				yDimension    = this .yDimension_ .getValue (),
 				texCoordIndex = this .geometry .texCoordIndex_;
 
 			// North pole
 			
-			for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u)
+			for (var u = 0, uLength = xDimension - 1; u < uLength; ++ u)
 			{
 				texCoordIndex .push (u);
-				texCoordIndex .push (u + uDimension - 1);
-				texCoordIndex .push (u + uDimension);
+				texCoordIndex .push (u + xDimension - 1);
+				texCoordIndex .push (u + xDimension);
 				texCoordIndex .push (-1);
 			}
 
 			// Sphere segments
 			
-			for (var p = uDimension - 1, v = 0, vLength = vDimension - 3; v < vLength; ++ v, ++ p)
+			for (var p = xDimension - 1, v = 0, vLength = yDimension - 3; v < vLength; ++ v, ++ p)
 			{
-				for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u, ++ p)
+				for (var u = 0, uLength = xDimension - 1; u < uLength; ++ u, ++ p)
 				{
 					texCoordIndex .push (p);
-					texCoordIndex .push (p + uDimension);
-					texCoordIndex .push (p + uDimension + 1);
+					texCoordIndex .push (p + xDimension);
+					texCoordIndex .push (p + xDimension + 1);
 					texCoordIndex .push (p + 1);
 					texCoordIndex .push (-1);
 				}
@@ -49813,11 +49824,11 @@ function ($,
 			
 			// South pole
 
-			var p = (vDimension - 2) * uDimension - 1;
+			var p = (yDimension - 2) * xDimension - 1;
 
-			for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u, ++ p)
+			for (var u = 0, uLength = xDimension - 1; u < uLength; ++ u, ++ p)
 			{
-				texCoordIndex .push (p + uDimension);
+				texCoordIndex .push (p + xDimension);
 				texCoordIndex .push (p + 1);
 				texCoordIndex .push (p);
 				texCoordIndex .push (-1)
@@ -49826,30 +49837,30 @@ function ($,
 		createTexCoord: function ()
 		{
 			var
-				uDimension = this .uDimension_ .getValue () + 1,
-				vDimension = this .vDimension_ .getValue () + 1,
+				xDimension = this .xDimension_ .getValue () + 1,
+				yDimension = this .yDimension_ .getValue (),
 				point      = this .geometry .texCoord_ .getValue () .point_;
 
-				var poleOffset = -0.5 / (uDimension - 1);
+				var poleOffset = -0.5 / (xDimension - 1);
 
 				// North pole
 				
-				for (var u = 1; u < uDimension; ++ u)
+				for (var u = 1; u < xDimension; ++ u)
 				{
-					var x = u / (uDimension - 1) + poleOffset;
+					var x = u / (xDimension - 1) + poleOffset;
 					
 					point .push (new Vector2 (x, 1));
 				}
 
 				// Sphere segments
 				
-				for (var v = 1, vLength = vDimension - 1; v < vLength; ++ v)
+				for (var v = 1, vLength = yDimension - 1; v < vLength; ++ v)
 				{
-					var y = 1 - v / (vDimension - 1);
+					var y = 1 - v / (yDimension - 1);
 					
-					for (var u = 0; u < uDimension; ++ u)
+					for (var u = 0; u < xDimension; ++ u)
 					{
-						var x = u / (uDimension - 1);
+						var x = u / (xDimension - 1);
 						
 						point .push (new Vector2 (x, y));
 					}
@@ -49857,9 +49868,9 @@ function ($,
 
 				// South pole
 				
-				for (var u = 1; u < uDimension; ++ u)
+				for (var u = 1; u < xDimension; ++ u)
 				{
-					var x = u / (uDimension - 1) + poleOffset;
+					var x = u / (xDimension - 1) + poleOffset;
 					
 					point .push (new Vector2 (x, 0));
 				}
@@ -49867,13 +49878,13 @@ function ($,
 		createCoordIndex: function ()
 		{
 			var
-				uDimension = this .uDimension_ .getValue () + 1,
-				vDimension = this .vDimension_ .getValue () + 1,
+				xDimension = this .xDimension_ .getValue () + 1,
+				yDimension = this .yDimension_ .getValue (),
 				coordIndex = this .geometry .coordIndex_;
 
 			// North pole
 			
-			for (var u = 1, uLength = uDimension - 1; u < uLength; ++ u)
+			for (var u = 1, uLength = xDimension - 1; u < uLength; ++ u)
 			{
 				coordIndex .push (0);
 				coordIndex .push (u);
@@ -49890,29 +49901,29 @@ function ($,
 			
 			var p = 1;
 
-			for (var v = 0, vLength = vDimension - 3; v < vLength; ++ v, ++ p)
+			for (var v = 0, vLength = yDimension - 3; v < vLength; ++ v, ++ p)
 			{
-				for (var u = 0, uLength = uDimension - 2; u < uLength; ++ u, ++ p)
+				for (var u = 0, uLength = xDimension - 2; u < uLength; ++ u, ++ p)
 				{
 					coordIndex .push (p);
-					coordIndex .push (p + uDimension - 1);
-					coordIndex .push (p + uDimension);
+					coordIndex .push (p + xDimension - 1);
+					coordIndex .push (p + xDimension);
 					coordIndex .push (p + 1);
 					coordIndex .push (-1);
 				}
 
 				coordIndex .push (p);
-				coordIndex .push (p + uDimension - 1);
+				coordIndex .push (p + xDimension - 1);
 				coordIndex .push (p + 1);
-				coordIndex .push (p - uDimension + 2);
+				coordIndex .push (p - xDimension + 2);
 				coordIndex .push (-1);
 			}
 
 			// South pole
 			
-			var last = p + uDimension - 1;
+			var last = p + xDimension - 1;
 
-			for (var u = 0, uLength = uDimension - 2; u < uLength; ++ u, ++ p)
+			for (var u = 0, uLength = xDimension - 2; u < uLength; ++ u, ++ p)
 			{
 				coordIndex .push (last);
 				coordIndex .push (p + 1);
@@ -49921,26 +49932,26 @@ function ($,
 			}
 
 			coordIndex .push (last);
-			coordIndex .push (last - uDimension + 1);
+			coordIndex .push (last - xDimension + 1);
 			coordIndex .push (p);
 			coordIndex .push (-1);
 		},
 		createPoints: function ()
 		{
 			var
-				uDimension = this .uDimension_ .getValue () + 1,
-				vDimension = this .vDimension_ .getValue () + 1,
+				xDimension = this .xDimension_ .getValue () + 1,
+				yDimension = this .yDimension_ .getValue (),
 				point      = this .geometry .coord_ .getValue () .point_;
 
 			// North pole
 			point .push (new Vector3 (0, 1, 0));
 
 			// Sphere segments
-			for (var v = 1, vLength = vDimension - 1; v < vLength; ++ v)
+			for (var v = 1, vLength = yDimension - 1; v < vLength; ++ v)
 			{
 				var zPlane = Complex .Polar (1, -Math .PI * v / vLength);
 
-				for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u)
+				for (var u = 0, uLength = xDimension - 1; u < uLength; ++ u)
 				{
 					var yPlane = Complex .Polar (zPlane .imag, 2 * Math .PI * u / uLength);
 
@@ -70321,7 +70332,7 @@ define ('cobweb/Rendering/X3DRenderObject',[
 	"cobweb/Rendering/DepthBuffer",
 	"cobweb/Bits/TraverseType",
 	"standard/Math/Algorithm",
-	"standard/Math/Algorithms/QuickSort",
+	"standard/Math/Algorithms/MergeSort",
 	"standard/Math/Geometry/Camera",
 	"standard/Math/Geometry/Box3",
 	"standard/Math/Geometry/ViewVolume",
@@ -70335,7 +70346,7 @@ function ($,
           DepthBuffer,
 	       TraverseType,
           Algorithm,
-          QuickSort,
+          MergeSort,
           Camera,
           Box3,
           ViewVolume,
@@ -70350,6 +70361,7 @@ function ($,
 	var
 		DEPTH_BUFFER_WIDTH          = 16,
 		DEPTH_BUFFER_HEIGHT         = DEPTH_BUFFER_WIDTH,
+		viewportArray               = new Int32Array (4),
 		projectionMatrix            = new Matrix4 (),
 		projectionMatrixArray       = new Float32Array (16),
 		modelViewMatrix             = new Matrix4 (),
@@ -70390,7 +70402,7 @@ function ($,
 		this .numDepthShapes           = 0;
 		this .opaqueShapes             = [ ];
 		this .transparentShapes        = [ ];
-		this .transparencySorter       = new QuickSort (this .transparentShapes, compareDistance);
+		this .transparencySorter       = new MergeSort (this .transparentShapes, compareDistance);
 		this .collisionShapes          = [ ];
 		this .activeCollisions         = { };
 		this .depthShapes              = [ ];
@@ -70994,8 +71006,10 @@ function ($,
 
 			shaderNode .useProgram (gl);
 			
+			viewportArray         .set (viewport);
 			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
+			gl .uniformMatrix4iv (shaderNode .x3d_Viewport, viewportArray);
 			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
 			// Configure viewport and background
@@ -71101,14 +71115,15 @@ function ($,
 
 			// Sorted blend
 
+			viewportArray         .set (viewport);
 			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
-			browser .getPointShader   () .setGlobalUniforms (this, gl, projectionMatrixArray);
-			browser .getLineShader    () .setGlobalUniforms (this, gl, projectionMatrixArray);
-			browser .getDefaultShader () .setGlobalUniforms (this, gl, projectionMatrixArray);
+			browser .getPointShader   () .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
+			browser .getLineShader    () .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
+			browser .getDefaultShader () .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
 
 			for (var id in shaders)
-				shaders [id] .setGlobalUniforms (this, gl, projectionMatrixArray);
+				shaders [id] .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
 
 			// Render opaque objects first
 
@@ -76242,7 +76257,7 @@ function ($,
 			else
 				this .getBrowser () .getArc2DOptions () .removeInterest ("eventsProcessed", this);
 		},
-		getAngle: function ()
+		getSweepAngle: function ()
 		{
 			var
 				start = Algorithm .interval (this .startAngle_ .getValue (), 0, Math .PI * 2),
@@ -76251,13 +76266,13 @@ function ($,
 			if (start === end)
 				return Math .PI * 2;
 		
-			var difference = Math .abs (end - start);
+			var sweepAngle = Math .abs (end - start);
 		
 			if (start > end)
-				return (Math .PI * 2) - difference;
+				return (Math .PI * 2) - sweepAngle;
 		
-			if (! isNaN (difference))
-				return difference;
+			if (! isNaN (sweepAngle))
+				return sweepAngle;
 			
 			// We must test for NAN, as NAN to int is undefined.
 			return 0;
@@ -76267,28 +76282,33 @@ function ($,
 			var
 				gl         = this .getBrowser () .getContext (),
 				options    = this .getBrowser () .getArc2DOptions (),
-				minAngle   = options .minAngle_ .getValue (),
+				dimension  = options .dimension_ .getValue (),
 				startAngle = this .startAngle_ .getValue  (),
 				radius     = Math .abs (this .radius_ .getValue ()),
-				difference = this .getAngle (),
-				segments   = Math .ceil (difference / minAngle),
-				angle      = difference / segments,
+				sweepAngle = this .getSweepAngle (),
+				circle     = sweepAngle == (Math .PI * 2),
+				steps      = Math .floor (sweepAngle * dimension / (Math .PI * 2)),
 				vertices   = this .getVertices ();
 
-			if (difference < (Math .PI * 2))
+			steps = Math .max (3, steps);
+
+			if (! circle)
 			{
-				++ segments;
+				++ steps;
 				this .setPrimitiveMode (gl .LINE_STRIP);
 			}
 			else
 				this .setPrimitiveMode (gl .LINE_LOOP);
 
-			for (var n = 0; n < segments; ++ n)
+			var steps_1 = circle ? steps : steps - 1;
+
+			for (var n = 0; n < steps; ++ n)
 			{
 				var
-					theta = startAngle + angle * n,
+					t     = n / steps_1,
+					theta = startAngle + (sweepAngle * t),
 					point = Complex .Polar (radius, theta);
-		
+
 				vertices .push (point .real, point .imag, 0, 1);
 			}
 
@@ -76420,7 +76440,7 @@ function ($,
 			else
 				this .getBrowser () .getArcClose2DOptions () .removeInterest ("eventsProcessed", this);
 		},
-		getAngle: function ()
+		getSweepAngle: function ()
 		{
 			var
 				start = Algorithm .interval (this .startAngle_ .getValue (), 0, Math .PI * 2),
@@ -76429,13 +76449,13 @@ function ($,
 			if (start === end)
 				return Math .PI * 2;
 		
-			var difference = Math .abs (end - start);
+			var sweepAngle = Math .abs (end - start);
 		
 			if (start > end)
-				return (Math .PI * 2) - difference;
+				return (Math .PI * 2) - sweepAngle;
 		
-			if (! isNaN (difference))
-				return difference;
+			if (! isNaN (sweepAngle))
+				return sweepAngle;
 			
 			// We must test for NAN, as NAN to int is undefined.
 			return 0;
@@ -76445,12 +76465,12 @@ function ($,
 			var
 				options    = this .getBrowser () .getArcClose2DOptions (),
 				chord      = this .closureType_ .getValue () === "CHORD",
-				minAngle   = options .minAngle_ .getValue (),
+				dimension  = options .dimension_ .getValue (),
 				startAngle = this .startAngle_ .getValue  (),
 				radius     = Math .abs (this .radius_ .getValue ()),
-				difference = this .getAngle (),
-				segments   = Math .ceil (difference / minAngle),
-				angle      = difference / segments,
+				sweepAngle = this .getSweepAngle (),
+				circle     = sweepAngle == (Math .PI * 2),
+				steps      = Math .max (4, Math .floor (sweepAngle * dimension / (Math .PI * 2))),
 				texCoords  = [ ],
 				normals    = this .getNormals (),
 				vertices   = this .getVertices (),
@@ -76459,9 +76479,13 @@ function ($,
 
 			this .getTexCoords () .push (texCoords);
 
-			for (var n = 0, length = segments + 1; n < length; ++ n)
+			var steps_1 = steps - 1;
+
+			for (var n = 0; n < steps; ++ n)
 			{
-				var theta = startAngle + angle * n;
+				var
+					t     = n / steps_1,
+					theta = startAngle + (sweepAngle * t);
 
 				texCoord .push (Complex .Polar (0.5, theta) .add (half));
 				points   .push (Complex .Polar (radius, theta));
@@ -76473,7 +76497,7 @@ function ($,
 					t0 = texCoord [0],
 					p0 = points [0];
 
-				for (var i = 1; i < segments; ++ i)
+				for (var i = 1; i < steps_1; ++ i)
 				{
 					var
 						t1 = texCoord [i],
@@ -76496,7 +76520,7 @@ function ($,
 			}
 			else
 			{
-				for (var i = 0; i < segments; ++ i)
+				for (var i = 0; i < steps_1; ++ i)
 				{
 					var
 						t1 = texCoord [i],
@@ -81431,7 +81455,7 @@ function ($,
 		{
 			var
 				options      = this .getBrowser () .getConeOptions (),
-				vDimension   = options .vDimension_ .getValue (),
+				xDimension   = options .xDimension_ .getValue (),
 				height       = this .height_ .getValue (),
 				bottomRadius = this .bottomRadius_ .getValue (),
 				texCoords    = [ ],
@@ -81447,21 +81471,21 @@ function ($,
 
 			if (this .side_ .getValue ())
 			{
-				for (var i = 0; i < vDimension; ++ i)
+				for (var i = 0; i < xDimension; ++ i)
 				{
 					var
-						u1     = (i + 0.5) / vDimension,
+						u1     = (i + 0.5) / xDimension,
 						theta1 = 2 * Math .PI * u1,
 						n1     = Complex .Polar (nz .imag, theta1);
 
 					var
-						u2     = i / vDimension,
+						u2     = i / xDimension,
 						theta2 = 2 * Math .PI * u2,
 						p2     = Complex .Polar (-bottomRadius, theta2),
 						n2     = Complex .Polar (nz .imag, theta2);
 
 					var
-						u3     = (i + 1) / vDimension,
+						u3     = (i + 1) / xDimension,
 						theta3 = 2 * Math .PI * u3,
 						p3     = Complex .Polar (-bottomRadius, theta3),
 						n3     = Complex .Polar (nz .imag, theta3);
@@ -81495,10 +81519,10 @@ function ($,
 					texCoord = [ ],
 					points   = [ ];
 
-				for (var i = vDimension - 1; i > -1; -- i)
+				for (var i = xDimension - 1; i > -1; -- i)
 				{
 					var
-						u     = i / vDimension,
+						u     = i / xDimension,
 						theta = 2 * Math .PI * u,
 						t     = Complex .Polar (-1, theta),
 						p     = Complex .multiply (t, bottomRadius);
@@ -82657,7 +82681,7 @@ function ($,
 		{
 			var
 				options    = this .getBrowser () .getCylinderOptions (),
-				vDimension = options .vDimension_ .getValue (),
+				xDimension = options .xDimension_ .getValue (),
 				texCoords  = [ ],
 				normals    = this .getNormals (),
 				vertices   = this .getVertices ();
@@ -82671,16 +82695,16 @@ function ($,
 
 			if (this .side_ .getValue ())
 			{
-				for (var i = 0; i < vDimension; ++ i)
+				for (var i = 0; i < xDimension; ++ i)
 				{
 					var
-						u1     = i / vDimension,
+						u1     = i / xDimension,
 						theta1 = 2 * Math .PI * u1,
 						n1     = Complex .Polar (-1, theta1),
 						p1     = Complex .multiply (n1, radius);
 
 					var
-						u2     = (i + 1) / vDimension,
+						u2     = (i + 1) / xDimension,
 						theta2 = 2 * Math .PI * u2,
 						n2     = Complex .Polar (-1, theta2),
 						p2     = Complex .multiply (n2, radius);
@@ -82731,10 +82755,10 @@ function ($,
 					texCoord = [ ],
 					points   = [ ];
 
-				for (var i = 0; i < vDimension; ++ i)
+				for (var i = 0; i < xDimension; ++ i)
 				{
 					var
-						u     = i / vDimension,
+						u     = i / xDimension,
 						theta = 2 * Math .PI * u,
 						t     = Complex .Polar (-1, theta);
 
@@ -82774,10 +82798,10 @@ function ($,
 					texCoord = [ ],
 					points   = [ ];
 
-				for (var i = vDimension - 1; i > -1; -- i)
+				for (var i = xDimension - 1; i > -1; -- i)
 				{
 					var
-						u     = i / vDimension,
+						u     = i / xDimension,
 						theta = 2 * Math .PI * u,
 						t     = Complex .Polar (-1, theta);
 
@@ -88849,12 +88873,8 @@ function ($,
 					else
 					{
 						// Negativ index.
-
-						if (polyline .length > 1)
-						{
-							// Add polylines.
-							polylines .push (polyline);
-						}
+						// Add polylines.
+						polylines .push (polyline);
 
 						polyline = [ ];
 					}
@@ -88862,8 +88882,7 @@ function ($,
 
 				if (coordIndex [coordIndex .length - 1] .getValue () >= 0)
 				{
-					if (polyline .length > 1)
-						polylines .push (polyline);
+					polylines .push (polyline);
 				}
 			}
 
@@ -88924,26 +88943,29 @@ function ($,
 			
 				// Create two vertices for each line.
 
-				for (var line = 0, l_end = polyline .length - 1; line < l_end; ++ line)
+				if (polyline .length > 1)
 				{
-					for (var index = line, i_end = line + 2; index < i_end; ++ index)
+					for (var line = 0, l_end = polyline .length - 1; line < l_end; ++ line)
 					{
-						var
-							i  = polyline [index],
-							ci = coordIndex [i] .getValue ();
-
-						for (var a = 0; a < numAttrib; ++ a)
-							attribNodes [a] .addValue (attribs [a], ci);
-
-						if (colorNode)
+						for (var index = line, i_end = line + 2; index < i_end; ++ index)
 						{
-							if (colorPerVertex)
-								this .addColor (colorNode .get1Color (this .getColorPerVertexIndex (i)));
-							else
-								this .addColor (colorNode .get1Color (this .getColorIndex (face)));
-						}
+							var
+								i  = polyline [index],
+								ci = coordIndex [i] .getValue ();
 
-						this .addVertex (coordNode .get1Point (ci));
+							for (var a = 0; a < numAttrib; ++ a)
+								attribNodes [a] .addValue (attribs [a], ci);
+
+							if (colorNode)
+							{
+								if (colorPerVertex)
+									this .addColor (colorNode .get1Color (this .getColorPerVertexIndex (i)));
+								else
+									this .addColor (colorNode .get1Color (this .getColorIndex (face)));
+							}
+
+							this .addVertex (coordNode .get1Point (ci));
+						}
 					}
 				}
 

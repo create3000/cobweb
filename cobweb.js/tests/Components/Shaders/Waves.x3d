@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V3.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Shaders/Waves.x3d'/>
-    <meta name='modified' content='Tue, 11 Apr 2017 02:55:06 GMT'/>
+    <meta name='modified' content='Tue, 11 Apr 2017 03:32:33 GMT'/>
     <meta name='outputStyle' content='Nicest'/>
   </head>
   <Scene>
@@ -61,33 +61,36 @@
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'>
-            <NavigationInfo DEF='_1' containerField='value'
-                type='"NONE"'/>
-          </MetadataSet>
-          <MetadataSet DEF='nodes' containerField='value'
-              name='nodes'
-              reference='http://titania.create3000.de'>
-            <Transform DEF='ElevationGrid' containerField='value'
-                scale='980 540 1'>
-              <Shape>
-                <Appearance>
-                  <Material/>
-                  <ComposedShader DEF='_2'
-                      language='GLSL'>
-                    <field accessType='inputOutput' type='SFFloat' name='time' value='491.363'/>
-                    <field accessType='inputOutput' type='SFVec2f' name='resolution' value='940 510'/>
-                    <field accessType='inputOutput' type='SFColor' name='diffuse' value='0.1 0.1 0.1'/>
-                    <field accessType='inputOutput' type='SFFloat' name='specular' value='8'/>
-                    <field accessType='inputOutput' type='SFFloat' name='specularHardness' value='512'/>
-                    <field accessType='inputOutput' type='SFBool' name='postEffects' value='true'/>
-                    <field accessType='inputOutput' type='SFBool' name='moveCamera' value='true'/>
-                    <field accessType='inputOutput' type='SFBool' name='reflections' value='true'/>
-                    <field accessType='inputOutput' type='SFFloat' name='seaHeight' value='-0.5'/>
-                    <field accessType='inputOutput' type='SFVec3f' name='cameraPos' value='0 5 0'/>
-                    <field accessType='inputOutput' type='SFVec3f' name='cameraLookat' value='-125 -100 -95'/>
-                    <field accessType='inputOutput' type='SFVec3f' name='lightDir' value='-1 0.8 -1'/>
-                    <field accessType='inputOutput' type='SFVec3f' name='lightColour' value='0.7 0.8 0.9'/>
-                    <ShaderPart DEF='WaterVertexShader'>
+            <LayoutLayer DEF='_1' containerField='value'>
+              <Layout
+                  size='1'/>
+              <NavigationInfo
+                  type='"NONE"'/>
+              <TimeSensor DEF='Timer'
+                  cycleInterval='1000'
+                  loop='true'/>
+              <ScalarInterpolator DEF='_2'
+                  key='0, 1'
+                  keyValue='0, 1000'/>
+              <Transform DEF='ElevationGrid'>
+                <Shape>
+                  <Appearance>
+                    <Material/>
+                    <ComposedShader DEF='WaterShader'
+                        language='GLSL'>
+                      <field accessType='inputOutput' type='SFFloat' name='time' value='33.1004'/>
+                      <field accessType='inputOutput' type='SFColor' name='diffuse' value='0.1 0.1 0.1'/>
+                      <field accessType='inputOutput' type='SFFloat' name='specular' value='8'/>
+                      <field accessType='inputOutput' type='SFFloat' name='specularHardness' value='512'/>
+                      <field accessType='inputOutput' type='SFBool' name='postEffects' value='true'/>
+                      <field accessType='inputOutput' type='SFBool' name='moveCamera' value='true'/>
+                      <field accessType='inputOutput' type='SFBool' name='reflections' value='true'/>
+                      <field accessType='inputOutput' type='SFFloat' name='seaHeight' value='-0.5'/>
+                      <field accessType='inputOutput' type='SFVec3f' name='cameraPos' value='0 5 0'/>
+                      <field accessType='inputOutput' type='SFVec3f' name='cameraLookat' value='-125 -100 -95'/>
+                      <field accessType='inputOutput' type='SFVec3f' name='lightDir' value='-1 0.8 -1'/>
+                      <field accessType='inputOutput' type='SFVec3f' name='lightColour' value='0.7 0.8 0.9'/>
+                      <ShaderPart DEF='WaterVertexShader'>
 <![CDATA[data:text/plain,
 
 precision mediump float;
@@ -106,9 +109,9 @@ void main ()
 	gl_Position = x3d_ProjectionMatrix * vertex;
 }
 ]]>
-                    </ShaderPart>
-                    <ShaderPart DEF='WaterFragmentShader'
-                        type='FRAGMENT'>
+                      </ShaderPart>
+                      <ShaderPart DEF='WaterFragmentShader'
+                          type='FRAGMENT'>
 <![CDATA[data:text/plain,
 
 #ifdef GL_ES
@@ -116,7 +119,6 @@ precision highp float;
 #endif
 
 uniform float time;
-uniform vec2 resolution;
 uniform vec3 cameraPos;
 uniform vec3 cameraLookat;
 uniform vec3 lightDir;
@@ -128,6 +130,10 @@ uniform bool postEffects;
 uniform bool moveCamera;
 uniform bool reflections;
 uniform float seaHeight;
+
+uniform ivec4 x3d_Viewport;
+
+vec2 resolution = vec2 (x3d_Viewport .zw);
 
 #define GAMMA 0.8
 #define CONTRAST 1.1
@@ -303,13 +309,20 @@ void main()
    gl_FragColor = vec4(res.rgb, 1.0);
 }
 ]]>
-                    </ShaderPart>
-                  </ComposedShader>
-                </Appearance>
-                <Rectangle2D
-                    size='1 1'/>
-              </Shape>
-            </Transform>
+                      </ShaderPart>
+                    </ComposedShader>
+                  </Appearance>
+                  <Rectangle2D
+                      size='1 1'
+                      solid='false'/>
+                </Shape>
+              </Transform>
+            </LayoutLayer>
+          </MetadataSet>
+          <MetadataSet DEF='nodes' containerField='value'
+              name='nodes'
+              reference='http://titania.create3000.de'>
+            <ComposedShader USE='WaterShader' containerField='value'/>
           </MetadataSet>
         </MetadataSet>
         <MetadataSet DEF='AxonometricGrid' containerField='value'
@@ -320,19 +333,21 @@ void main()
               reference='http://titania.create3000.de'
               value='false'/>
         </MetadataSet>
+        <MetadataSet DEF='LayerSet' containerField='value'
+            name='LayerSet'
+            reference='http://titania.create3000.de'>
+          <MetadataInteger DEF='activeLayer' containerField='value'
+              name='activeLayer'
+              reference='http://titania.create3000.de'
+              value='-1'/>
+        </MetadataSet>
       </MetadataSet>
     </WorldInfo>
-    <TimeSensor DEF='Timer'
-        cycleInterval='1000'
-        loop='true'/>
-    <ScalarInterpolator DEF='_3'
-        key='0, 1'
-        keyValue='0, 1000'/>
-    <Transform USE='ElevationGrid'/>
-    <OrthoViewpoint DEF='_4'
-        fieldOfView='-460, -260, 460, 260'/>
-    <NavigationInfo USE='_1'/>
-    <ROUTE fromNode='_3' fromField='value_changed' toNode='_2' toField='set_time'/>
-    <ROUTE fromNode='Timer' fromField='fraction_changed' toNode='_3' toField='set_fraction'/>
+    <LayerSet
+        order='1'>
+      <LayoutLayer USE='_1'/>
+    </LayerSet>
+    <ROUTE fromNode='_2' fromField='value_changed' toNode='WaterShader' toField='set_time'/>
+    <ROUTE fromNode='Timer' fromField='fraction_changed' toNode='_2' toField='set_fraction'/>
   </Scene>
 </X3D>
