@@ -8,7 +8,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V3.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/water/water2.x3d'/>
-    <meta name='modified' content='Wed, 12 Apr 2017 06:10:27 GMT'/>
+    <meta name='modified' content='Wed, 12 Apr 2017 09:40:11 GMT'/>
     <meta name='outputStyle' content='Nicest'/>
   </head>
   <Scene>
@@ -522,9 +522,9 @@
                   language='GLSL'>
                 <field accessType='inputOnly' type='SFFloat' name='set_time'/>
                 <field accessType='inputOutput' type='SFVec3f' name='position' value='45.9028 5.15364 57.5263'/>
-                <field accessType='inputOutput' type='MFFloat' name='amplitude' value='0.0561423, 0.045134, 0.45134, 0.209158, 1.10083, 0, 0, 0'/>
+                <field accessType='inputOutput' type='MFFloat' name='amplitude' value='0.0279177, 0.0224437, 0.224437, 0.104007, 0.547407'/>
                 <field accessType='inputOutput' type='MFFloat' name='frequency' value='1.81667, 1.29885, 0.276864, 0.686006, 0.120633'/>
-                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.847403 0.0226027, 0.333369 0.864879, 0.608347 0.361379, 0.695084 0.440791, 0.421304 0.503363'/>
+                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.866701 0.698, 0.248786 0.659784, 0.421149 0.701566, 0.847536 0.72928, 0.349659 0.728437'/>
                 <field accessType='inputOutput' type='SFNode' name='texture'>
                   <ComposedCubeMapTexture USE='_12'/>
                 </field>
@@ -568,8 +568,8 @@ float nnoise (in vec2 x)
 	float n   = p.x + p.y * 57.0;
 	float res = mix (mix (hash (n +  0.0), hash (n +  1.0), f.x),
 	                 mix (hash (n + 57.0), hash (n + 58.0), f.x), f.y);
-	            
-	return res;
+
+	return res * 2.0 - 1.0;
 }
 
 float
@@ -795,7 +795,7 @@ main ()
                 scale='0.245 0.040588 0.040588'>
               <Shape>
                 <Appearance DEF='_33'>
-                  <Material DEF='_34'
+                  <Material
                       ambientIntensity='0'
                       diffuseColor='0 0 0'
                       shininess='0'
@@ -910,7 +910,7 @@ main ()
             </Transform>
             <Transform>
               <Transform DEF='Rectangle2D_5'
-                  translation='0.550415 0 0'
+                  translation='0.273703 0 0'
                   scale='0.027 0.0267372 0.0267372'>
                 <Shape>
                   <Appearance USE='_32'/>
@@ -918,8 +918,8 @@ main ()
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_35'
-                  offset='0.550415 0 0'
+              <PlaneSensor DEF='_34'
+                  offset='0.273703 0 0'
                   maxPosition='1 0'/>
             </Transform>
             <Group>
@@ -936,7 +936,7 @@ main ()
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor DEF='_36'
+                <TimeSensor DEF='_35'
                     cycleInterval='6.8'
                     loop='true'
                     startTime='1451028308.5169'
@@ -972,7 +972,7 @@ main ()
                 <field accessType='inputOutput' type='MFFloat' name='keyValue' value='0.051, 0.041, 0.41, 0.19, 1'/>
                 <field accessType='outputOnly' type='MFFloat' name='value_changed'/>
                 <field accessType='outputOnly' type='MFString' name='string_changed'/>
-                <field accessType='initializeOnly' type='SFFloat' name='currentValue' value='1.1'/>
+                <field accessType='initializeOnly' type='SFFloat' name='currentValue' value='0.55'/>
 <![CDATA[ecmascript:
 
 function initialized ()
@@ -1009,12 +1009,12 @@ function set_value (value)
                 <Rectangle2D
                     solid='false'/>
               </Shape>
-              <TouchSensor DEF='_37'
+              <TouchSensor DEF='_36'
                   description='Toggle Animation'/>
               <Script DEF='ToggleAmplitudeAnim'>
                 <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
                 <field accessType='initializeOnly' type='SFNode' name='timer'>
-                  <TimeSensor USE='_36'/>
+                  <TimeSensor USE='_35'/>
                 </field>
 <![CDATA[ecmascript:
 
@@ -1038,8 +1038,8 @@ function set_touchTime (value, time)
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
               <Appearance USE='_32'/>
-              <Text DEF='_38'
-                  string='"amplitude 1.10"'
+              <Text DEF='_37'
+                  string='"amplitude 0.55"'
                   solid='true'>
                 <FontStyle
                     family='"Ubuntu", "SANS"'
@@ -1071,7 +1071,7 @@ function set_touchTime (value, time)
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_39'
+              <PlaneSensor DEF='_38'
                   offset='0.601538 0 0'
                   maxPosition='1 0'/>
             </Transform>
@@ -1089,7 +1089,7 @@ function set_touchTime (value, time)
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor DEF='_40'
+                <TimeSensor DEF='_39'
                     cycleInterval='6.8'
                     loop='true'
                     startTime='1451028308.5169'
@@ -1163,12 +1163,12 @@ function set_value (value)
                   <Rectangle2D
                       solid='false'/>
                 </Shape>
-                <TouchSensor DEF='_41'
+                <TouchSensor DEF='_40'
                     description='Toggle Animation'/>
                 <Script DEF='ToggleFequencyAnim'>
                   <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
                   <field accessType='initializeOnly' type='SFNode' name='timer'>
-                    <TimeSensor USE='_40'/>
+                    <TimeSensor USE='_39'/>
                   </field>
 <![CDATA[ecmascript:
 
@@ -1193,7 +1193,7 @@ function set_touchTime (value, time)
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
               <Appearance USE='_32'/>
-              <Text DEF='_42'
+              <Text DEF='_41'
                   string='"frequency 1.20"'
                   solid='true'>
                 <FontStyle
@@ -1207,7 +1207,7 @@ function set_touchTime (value, time)
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
               <Appearance USE='_32'/>
-              <Text DEF='_43'
+              <Text DEF='_42'
                   string='"speed 1.75"'
                   solid='true'>
                 <FontStyle
@@ -1240,7 +1240,7 @@ function set_touchTime (value, time)
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_44'
+              <PlaneSensor DEF='_43'
                   offset='0.438452 0 0'
                   maxPosition='1 0'/>
             </Transform>
@@ -1258,7 +1258,7 @@ function set_touchTime (value, time)
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor DEF='_45'
+                <TimeSensor DEF='_44'
                     cycleInterval='6.8'
                     loop='true'
                     startTime='1451028308.5169'
@@ -1332,12 +1332,12 @@ function set_value (value)
                   <Rectangle2D
                       solid='false'/>
                 </Shape>
-                <TouchSensor DEF='_46'
+                <TouchSensor DEF='_45'
                     description='Toggle Animation'/>
                 <Script DEF='ToggleSpeedAnim'>
                   <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
                   <field accessType='initializeOnly' type='SFNode' name='timer'>
-                    <TimeSensor USE='_45'/>
+                    <TimeSensor USE='_44'/>
                   </field>
 <![CDATA[ecmascript:
 
@@ -1379,7 +1379,7 @@ function set_touchTime (value, time)
               <Rectangle2D
                   solid='false'/>
             </Shape>
-            <TouchSensor DEF='_47'
+            <TouchSensor DEF='_46'
                 description='Toggle Animation'/>
             <Script DEF='DirectionsScript'>
               <field accessType='inputOnly' type='SFTime' name='set_triggerTime'/>
@@ -1406,7 +1406,7 @@ function set_triggerTime ()
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
               <Appearance USE='_32'/>
-              <Text DEF='_48'
+              <Text DEF='_47'
                   string='"transparency 0.00"'
                   solid='true'>
                 <FontStyle
@@ -1438,7 +1438,7 @@ function set_triggerTime ()
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_49'
+              <PlaneSensor DEF='_48'
                   maxPosition='1 0'/>
             </Transform>
             <Group>
@@ -1455,7 +1455,7 @@ function set_triggerTime ()
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor DEF='_50'
+                <TimeSensor DEF='_49'
                     cycleInterval='6.8'
                     loop='true'
                     startTime='1451028308.5169'
@@ -1526,12 +1526,12 @@ function set_value (value)
                   <Rectangle2D
                       solid='false'/>
                 </Shape>
-                <TouchSensor DEF='_51'
+                <TouchSensor DEF='_50'
                     description='Toggle Animation'/>
                 <Script DEF='ToggleTransparencyAnim'>
                   <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
                   <field accessType='initializeOnly' type='SFNode' name='timer'>
-                    <TimeSensor USE='_50'/>
+                    <TimeSensor USE='_49'/>
                   </field>
 <![CDATA[ecmascript:
 
@@ -1561,32 +1561,32 @@ function set_touchTime (value, time)
     <ROUTE fromNode='_2' fromField='touchTime' toNode='_3' toField='set_triggerTime'/>
     <ROUTE fromNode='_3' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_7' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_35' fromField='translation_changed' toNode='AmplitudeScript' toField='set_translation'/>
+    <ROUTE fromNode='_34' fromField='translation_changed' toNode='AmplitudeScript' toField='set_translation'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='AmplitudeScript' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='_35' toField='set_offset'/>
-    <ROUTE fromNode='_36' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator' toField='set_fraction'/>
-    <ROUTE fromNode='_35' fromField='translation_changed' toNode='Rectangle2D_5' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='_34' toField='set_offset'/>
+    <ROUTE fromNode='_35' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_34' fromField='translation_changed' toNode='Rectangle2D_5' toField='set_translation'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='Rectangle2D_5' toField='set_translation'/>
-    <ROUTE fromNode='AmplitudeScript' fromField='string_changed' toNode='_38' toField='set_string'/>
-    <ROUTE fromNode='_37' fromField='touchTime' toNode='ToggleAmplitudeAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='AmplitudeScript' fromField='string_changed' toNode='_37' toField='set_string'/>
+    <ROUTE fromNode='_36' fromField='touchTime' toNode='ToggleAmplitudeAnim' toField='set_touchTime'/>
     <ROUTE fromNode='AmplitudeScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_amplitude'/>
-    <ROUTE fromNode='_39' fromField='translation_changed' toNode='FequencyScript' toField='set_translation'/>
-    <ROUTE fromNode='_39' fromField='translation_changed' toNode='Rectangle2D_7' toField='set_translation'/>
-    <ROUTE fromNode='_40' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_1' toField='set_fraction'/>
+    <ROUTE fromNode='_38' fromField='translation_changed' toNode='FequencyScript' toField='set_translation'/>
+    <ROUTE fromNode='_38' fromField='translation_changed' toNode='Rectangle2D_7' toField='set_translation'/>
+    <ROUTE fromNode='_39' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_1' toField='set_fraction'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='FequencyScript' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='_39' toField='set_offset'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='_38' toField='set_offset'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='Rectangle2D_7' toField='set_translation'/>
-    <ROUTE fromNode='_41' fromField='touchTime' toNode='ToggleFequencyAnim' toField='set_touchTime'/>
-    <ROUTE fromNode='FequencyScript' fromField='string_changed' toNode='_42' toField='set_string'/>
+    <ROUTE fromNode='_40' fromField='touchTime' toNode='ToggleFequencyAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='FequencyScript' fromField='string_changed' toNode='_41' toField='set_string'/>
     <ROUTE fromNode='FequencyScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_frequency'/>
-    <ROUTE fromNode='_44' fromField='translation_changed' toNode='SpeedScript' toField='set_translation'/>
-    <ROUTE fromNode='_44' fromField='translation_changed' toNode='Rectangle2D_9' toField='set_translation'/>
-    <ROUTE fromNode='_45' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_2' toField='set_fraction'/>
+    <ROUTE fromNode='_43' fromField='translation_changed' toNode='SpeedScript' toField='set_translation'/>
+    <ROUTE fromNode='_43' fromField='translation_changed' toNode='Rectangle2D_9' toField='set_translation'/>
+    <ROUTE fromNode='_44' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_2' toField='set_fraction'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='SpeedScript' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='_44' toField='set_offset'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='_43' toField='set_offset'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='Rectangle2D_9' toField='set_translation'/>
-    <ROUTE fromNode='_46' fromField='touchTime' toNode='ToggleSpeedAnim' toField='set_touchTime'/>
-    <ROUTE fromNode='SpeedScript' fromField='string_changed' toNode='_43' toField='set_string'/>
+    <ROUTE fromNode='_45' fromField='touchTime' toNode='ToggleSpeedAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='SpeedScript' fromField='string_changed' toNode='_42' toField='set_string'/>
     <ROUTE fromNode='SpeedScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_speed'/>
     <ROUTE fromNode='_10' fromField='touchTime' toNode='_11' toField='set_triggerTime'/>
     <ROUTE fromNode='_11' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
@@ -1598,16 +1598,16 @@ function set_touchTime (value, time)
     <ROUTE fromNode='_23' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_15' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_27' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_50' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_3' toField='set_fraction'/>
+    <ROUTE fromNode='_49' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_3' toField='set_fraction'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='Rectangle2D_12' toField='set_translation'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='TransparencyScript' toField='set_translation'/>
-    <ROUTE fromNode='_49' fromField='translation_changed' toNode='Rectangle2D_12' toField='set_translation'/>
-    <ROUTE fromNode='_49' fromField='translation_changed' toNode='TransparencyScript' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='_49' toField='set_offset'/>
-    <ROUTE fromNode='_51' fromField='touchTime' toNode='ToggleTransparencyAnim' toField='set_touchTime'/>
-    <ROUTE fromNode='TransparencyScript' fromField='string_changed' toNode='_48' toField='set_string'/>
+    <ROUTE fromNode='_48' fromField='translation_changed' toNode='Rectangle2D_12' toField='set_translation'/>
+    <ROUTE fromNode='_48' fromField='translation_changed' toNode='TransparencyScript' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='_48' toField='set_offset'/>
+    <ROUTE fromNode='_50' fromField='touchTime' toNode='ToggleTransparencyAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='TransparencyScript' fromField='string_changed' toNode='_47' toField='set_string'/>
     <ROUTE fromNode='TransparencyScript' fromField='value_changed' toNode='_31' toField='set_transparency'/>
     <ROUTE fromNode='DirectionsScript' fromField='directions_changed' toNode='CobwebWaterShader' toField='set_direction'/>
-    <ROUTE fromNode='_47' fromField='touchTime' toNode='DirectionsScript' toField='set_triggerTime'/>
+    <ROUTE fromNode='_46' fromField='touchTime' toNode='DirectionsScript' toField='set_triggerTime'/>
   </Scene>
 </X3D>
