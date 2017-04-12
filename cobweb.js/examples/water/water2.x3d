@@ -8,7 +8,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V3.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/water/water2.x3d'/>
-    <meta name='modified' content='Wed, 12 Apr 2017 05:06:55 GMT'/>
+    <meta name='modified' content='Wed, 12 Apr 2017 05:33:05 GMT'/>
     <meta name='outputStyle' content='Nicest'/>
   </head>
   <Scene>
@@ -528,7 +528,7 @@
                 <field accessType='inputOutput' type='SFNode' name='texture'>
                   <ComposedCubeMapTexture USE='_12'/>
                 </field>
-                <field accessType='inputOutput' type='MFFloat' name='speed' value='1.75265, 1.75265, 1.75265, 1.75265, 1.75265'/>
+                <field accessType='inputOutput' type='MFFloat' name='speed' value='1.75381, 1.75381, 1.75381, 1.75381, 1.75381'/>
                 <ShaderPart DEF='CobwebWaterVertex'>
 <![CDATA[data:text/plain,
 
@@ -1229,7 +1229,7 @@ function set_touchTime (value, time)
             </Transform>
             <Transform>
               <Transform DEF='Rectangle2D_9'
-                  translation='0.0876327 0 0'
+                  translation='0.438452 0 0'
                   scale='0.027 0.0267372 0.0267372'>
                 <Shape>
                   <Appearance USE='_33'/>
@@ -1238,7 +1238,7 @@ function set_touchTime (value, time)
                 </Shape>
               </Transform>
               <PlaneSensor DEF='_45'
-                  offset='0.0876327 0 0'
+                  offset='0.438452 0 0'
                   maxPosition='1 0'/>
             </Transform>
             <Group>
@@ -1287,7 +1287,7 @@ function set_touchTime (value, time)
                 <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
                 <field accessType='inputOutput' type='SFString' name='description' value='speed'/>
                 <field accessType='inputOutput' type='SFFloat' name='minValue'/>
-                <field accessType='inputOutput' type='SFFloat' name='maxValue' value='20'/>
+                <field accessType='inputOutput' type='SFFloat' name='maxValue' value='4'/>
                 <field accessType='inputOutput' type='MFFloat' name='keyValue' value='1, 1, 1, 1, 1'/>
                 <field accessType='outputOnly' type='MFFloat' name='value_changed'/>
                 <field accessType='outputOnly' type='MFString' name='string_changed'/>
