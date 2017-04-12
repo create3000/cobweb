@@ -1298,6 +1298,7 @@
     <None Include="tests\Components\Shaders\Waves.x3d" />
     <None Include="tests\Components\Shaders\ggreynoise512.png" />
     <None Include="tests\Components\Shaders\Mountains.x3d" />
+    <None Include="examples\water\water2.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

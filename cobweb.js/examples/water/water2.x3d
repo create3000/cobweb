@@ -1,0 +1,1684 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.3//EN" "http://www.web3d.org/specifications/x3d-3.3.dtd">
+<X3D profile='Full' version='3.3' xmlns:xsd='http://www.w3.org/2001/XMLSchema-instance' xsd:noNamespaceSchemaLocation='http://www.web3d.org/specifications/x3d-3.3.xsd'>
+  <head>
+    <unit category='angle' name='degree' conversionFactor='0.0174532925199433'/>
+    <meta name='comment' content='World of Titania'/>
+    <meta name='created' content='Thu, 24 Dec 2015 10:40:45 GMT'/>
+    <meta name='creator' content='Holger Seelig'/>
+    <meta name='generator' content='Titania V3.0.1, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/water/water2.x3d'/>
+    <meta name='modified' content='Wed, 12 Apr 2017 03:33:23 GMT'/>
+    <meta name='outputStyle' content='Nicest'/>
+  </head>
+  <Scene>
+    <ExternProtoDeclare name='SFNode' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Fields/SFNode.x3dv"'>
+      <field accessType='inputOnly' type='SFTime' name='set_triggerTime'/>
+      <field accessType='inputOutput' type='SFNode' name='keyValue'/>
+      <field accessType='outputOnly' type='SFNode' name='value_changed'/>
+    </ExternProtoDeclare>
+    <WorldInfo
+        title='water'>
+      <MetadataSet DEF='Titania'
+          name='Titania'
+          reference='http://titania.create3000.de'>
+        <MetadataSet DEF='NavigationInfo' containerField='value'
+            name='NavigationInfo'
+            reference='http://titania.create3000.de'>
+          <MetadataString DEF='type' containerField='value'
+              name='type'
+              reference='http://titania.create3000.de'
+              value='"EXAMINE"'/>
+        </MetadataSet>
+        <MetadataSet DEF='Viewpoint' containerField='value'
+            name='Viewpoint'
+            reference='http://titania.create3000.de'>
+          <MetadataDouble DEF='position' containerField='value'
+              name='position'
+              reference='http://titania.create3000.de'
+              value='50.5648068213039, 46.8888369722646, 83.6825434993135'/>
+          <MetadataDouble DEF='orientation' containerField='value'
+              name='orientation'
+              reference='http://titania.create3000.de'
+              value='-0.893554724245209, 0.442543392036423, 0.0755996094167478, 0.833689455191104'/>
+          <MetadataDouble DEF='centerOfRotation' containerField='value'
+              name='centerOfRotation'
+              reference='http://titania.create3000.de'
+              value='28.2345707707316, -2.26902571692453, 34.4186050802145'/>
+        </MetadataSet>
+        <MetadataSet DEF='AngleGrid' containerField='value'
+            name='AngleGrid'
+            reference='http://titania.create3000.de'>
+          <MetadataBoolean DEF='enabled' containerField='value'
+              name='enabled'
+              reference='http://titania.create3000.de'
+              value='false'/>
+        </MetadataSet>
+        <MetadataSet DEF='Grid' containerField='value'
+            name='Grid'
+            reference='http://titania.create3000.de'>
+          <MetadataBoolean DEF='enabled_1' containerField='value'
+              name='enabled'
+              reference='http://titania.create3000.de'
+              value='false'/>
+          <MetadataFloat DEF='rotation' containerField='value'
+              name='rotation'
+              reference='http://titania.create3000.de'
+              value='1, 0, 0, 1.5708'/>
+          <MetadataFloat DEF='scale' containerField='value'
+              name='scale'
+              reference='http://titania.create3000.de'
+              value='0.2, 0.2, 0.2'/>
+          <MetadataInteger DEF='dimension' containerField='value'
+              name='dimension'
+              reference='http://titania.create3000.de'
+              value='100, 10, 50'/>
+        </MetadataSet>
+        <MetadataSet DEF='LayerSet' containerField='value'
+            name='LayerSet'
+            reference='http://titania.create3000.de'>
+          <MetadataInteger DEF='activeLayer' containerField='value'
+              name='activeLayer'
+              reference='http://titania.create3000.de'
+              value='-1'/>
+        </MetadataSet>
+        <MetadataSet DEF='Selection' containerField='value'
+            name='Selection'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'>
+            <ShaderPart DEF='CobwebWaterVertex' containerField='value'>
+<![CDATA[data:text/plain,
+
+precision mediump float;
+
+uniform mat3 x3d_NormalMatrix;
+uniform mat4 x3d_ProjectionMatrix;
+uniform mat4 x3d_ModelViewMatrix;
+
+attribute vec4 x3d_Vertex;
+
+#define WAVE_MAX 8
+
+uniform float set_time;
+uniform vec3  position;
+uniform float amplitude [WAVE_MAX];
+uniform float frequency [WAVE_MAX];
+uniform float speed [WAVE_MAX];
+uniform vec2  direction [WAVE_MAX];
+
+varying vec3 texCoord;
+
+float hash (in float n)
+{
+	return fract (sin (n) * 43758.5453123);
+}
+
+float nnoise (in vec2 x)
+{
+	vec2 p = floor (x);
+	vec2 f = fract (x);
+
+	f = f * f * (3.0 - 2.0 * f);
+
+	float n   = p.x + p.y * 57.0;
+	float res = mix (mix (hash (n +  0.0), hash (n +  1.0), f.x),
+	                 mix (hash (n + 57.0), hash (n + 58.0), f.x), f.y);
+	            
+	return res;
+}
+
+float
+getHeight (in int i, in vec2 vertex)
+{
+	vec2 d = normalize (direction [i]);
+
+	return amplitude [i] * nnoise (vertex * frequency [i] - d * set_time * speed [i]);
+}
+
+float
+getWaveHeight (in vec2 vertex)
+{
+	float height = 0.0;
+
+	for (int i = 0; i < WAVE_MAX; ++ i)
+	{
+		if (amplitude [i] == 0.0)
+			continue;
+
+		height += getHeight (i, vertex);
+	}
+
+	return height;
+}
+
+#define DISTANCE_MIN 0.01
+
+const vec2 delta = vec2 (DISTANCE_MIN, -DISTANCE_MIN);
+
+vec3 getWaveNormal (vec2 pos)
+{
+	vec2 p1 = pos + delta .xx;
+	vec2 p2 = pos + delta .yy;
+	vec2 p3 = pos + delta .yx;
+	vec2 p4 = pos + delta .xy;
+
+	vec3 n1 = vec3 (p1.x, getWaveHeight (p1), p1.y);
+	vec3 n2 = vec3 (p2.x, getWaveHeight (p2), p2.y);
+	vec3 n3 = vec3 (p3.x, getWaveHeight (p3), p3.y);
+	vec3 n4 = vec3 (p4.x, getWaveHeight (p4), p4.y);
+   
+   vec3 n = cross (n1 - n2, n3 - n4);
+   
+   return normalize (n);
+}
+
+void
+main ()
+{
+	vec4 vertex = x3d_Vertex;
+	vec2 pos    = vec2 (vertex .x, vertex .z);
+	vertex .y   = getWaveHeight (pos);
+	gl_Position = x3d_ProjectionMatrix * x3d_ModelViewMatrix * vertex;
+
+	vec3 eye    = position - vertex .xyz / vertex .w;
+	vec3 normal = getWaveNormal (pos);
+	texCoord    = -reflect (eye, normal);
+}]]>
+            </ShaderPart>
+          </MetadataSet>
+          <MetadataSet DEF='nodes' containerField='value'
+              name='nodes'
+              reference='http://titania.create3000.de'>
+            <Transform DEF='Water' containerField='value'>
+              <TimeSensor DEF='Timer'
+                  cycleInterval='31104000'
+                  loop='true'/>
+              <ScalarInterpolator DEF='ElapsedTime'
+                  key='0, 1'
+                  keyValue='0, 3.1104e+07'/>
+              <ProximitySensor DEF='_1'
+                  size='1000 1000 1000'/>
+              <Shape>
+                <Appearance>
+                  <Material DEF='_2'
+                      ambientIntensity='0'
+                      diffuseColor='0 0 0'
+                      shininess='0'
+                      transparency='0.204778'/>
+                  <ComposedShader DEF='CobwebWaterShader'
+                      language='GLSL'>
+                    <field accessType='inputOnly' type='SFFloat' name='set_time'/>
+                    <field accessType='inputOutput' type='SFVec3f' name='position' value='50.5648 46.8888 83.6825'/>
+                    <field accessType='inputOutput' type='MFFloat' name='amplitude' value='0.0247063, 0.0198619, 0.198619, 0.092043, 0.484437, 0, 0, 0, 0, 0, 0.5, 0.5, 0.5'/>
+                    <field accessType='inputOutput' type='MFFloat' name='frequency' value='2.43952, 1.74417, 0.371787, 0.921205, 0.161992'/>
+                    <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.754423 0.685294, 0.419078 0.245313, 0.905665 0.97855, 0.358896 0.246842, 0.413301 0.474013'/>
+                    <field accessType='inputOutput' type='SFNode' name='texture'>
+                      <ComposedCubeMapTexture DEF='_3'>
+                        <ImageTexture DEF='_4' containerField='front'
+                            url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg"'/>
+                        <ImageTexture containerField='back'
+                            url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg"'/>
+                        <ImageTexture containerField='left'
+                            url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg"'/>
+                        <ImageTexture containerField='right'
+                            url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg"'/>
+                        <ImageTexture containerField='top'
+                            url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg"'/>
+                        <ImageTexture containerField='bottom'
+                            url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg"'/>
+                      </ComposedCubeMapTexture>
+                    </field>
+                    <field accessType='inputOutput' type='MFFloat' name='speed' value='0.703473, 0.703473, 0.703473, 0.703473, 0.703473'/>
+                    <ShaderPart USE='CobwebWaterVertex'/>
+                    <ShaderPart DEF='CobwebWaterFragment'
+                        type='FRAGMENT'>
+<![CDATA[data:text/plain,
+
+precision mediump float;
+
+uniform float       x3d_Transparency;
+uniform samplerCube texture;
+
+varying vec3 texCoord;
+
+void
+main ()
+{
+	vec3 color   = vec3 (textureCube (texture, texCoord));
+	gl_FragColor = vec4 (color, 1.0 - x3d_Transparency);
+}
+]]>
+                    </ShaderPart>
+                  </ComposedShader>
+                </Appearance>
+                <ElevationGrid
+                    xDimension='200'
+                    zDimension='200'
+                    xSpacing='0.3'
+                    zSpacing='0.3'
+                    height='0, 0, 0, 0'/>
+              </Shape>
+            </Transform>
+          </MetadataSet>
+        </MetadataSet>
+      </MetadataSet>
+    </WorldInfo>
+    <LayerSet
+        activeLayer='2'
+        order='1, 2, 3'>
+      <LayoutLayer DEF='Backgound'
+          isPickable='false'>
+        <Layout
+            size='1'/>
+        <Transform DEF='Rectangle2D'>
+          <Shape>
+            <Appearance>
+              <Material/>
+            </Appearance>
+            <IndexedFaceSet
+                colorIndex='0, 0, 1, 1, -1'
+                texCoordIndex='0, 1, 2, 3, -1'
+                coordIndex='0, 1, 2, 3, -1'>
+              <Color
+                  color='0 0 0, 0.3 0.3 0.3'/>
+              <TextureCoordinate
+                  point='0 0, 1 0, 1 1, 0 1'/>
+              <Coordinate
+                  point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+            </IndexedFaceSet>
+          </Shape>
+        </Transform>
+      </LayoutLayer>
+      <Layer DEF='Water_1'
+          isPickable='false'>
+        <MetadataSet DEF='Titania_1'
+            name='Titania'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='AngleGrid_1' containerField='value'
+              name='AngleGrid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean DEF='enabled_2' containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='false'/>
+          </MetadataSet>
+          <MetadataSet DEF='Grid_1' containerField='value'
+              name='Grid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean DEF='enabled_3' containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='false'/>
+            <MetadataInteger DEF='dimension_1' containerField='value'
+                name='dimension'
+                reference='http://titania.create3000.de'
+                value='108, 10, 112'/>
+            <MetadataFloat DEF='scale_1' containerField='value'
+                name='scale'
+                reference='http://titania.create3000.de'
+                value='1.25, 1.25, 1.25'/>
+          </MetadataSet>
+          <MetadataSet DEF='AxonometricGrid' containerField='value'
+              name='AxonometricGrid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean DEF='enabled_4' containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='false'/>
+          </MetadataSet>
+        </MetadataSet>
+        <ViewpointGroup>
+          <Viewpoint DEF='Oblique'
+              description='Oblique View'
+              position='68.8916 46.8921 120.146'
+              orientation='-0.761608797557173 0.627576833184138 0.161552957057695 0.65188'
+              centerOfRotation='28.8467 -7.49611 30'
+              fieldOfView='0.7854'/>
+          <Viewpoint DEF='Front'
+              description='Front'
+              position='31.7947 54.1093 117.689'
+              orientation='0.999609747269474 -0.02793439293737 0.000151178961777545 5.6517'
+              centerOfRotation='30 -10 30'
+              fieldOfView='0.7854'/>
+          <Viewpoint DEF='Top'
+              description='Top'
+              position='30 98.6396 30'
+              orientation='-1 0 0 1.5708'
+              centerOfRotation='30 -10 30'
+              fieldOfView='0.7854'/>
+        </ViewpointGroup>
+        <Transform>
+          <Transform DEF='Box'
+              translation='30 -10 30'
+              scale='30 15 30'>
+            <Shape>
+              <Appearance DEF='_5'>
+                <Material/>
+                <ImageTexture
+                    url='"tiles.jpg"'/>
+              </Appearance>
+              <IndexedFaceSet
+                  solid='false'
+                  ccw='false'
+                  texCoordIndex='0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 7, 6, 5, 4, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1, 5, 4, 7, 6, -1, 4, 5, 1, 0, -1, 4, 0, 3, 7, -1, 1, 5, 6, 2, -1'>
+                <TextureCoordinate
+                    point='0 0, 1 0, 0.999869 0.499728, -0.000131071 0.499728, -4.94719e-06 0.99993, 0.999995 0.99993, 1 0, 0 0'/>
+                <Coordinate
+                    point='-1 -1 1, 1 -1 1, 1 1 1, -1 1 1, -1 -1 -1, 1 -1 -1, 1 1 -1, -1 1 -1'/>
+              </IndexedFaceSet>
+            </Shape>
+          </Transform>
+          <Transform DEF='Box_1'
+              translation='30 -11.25 30'
+              scale='32.5 16.25 32.5'>
+            <Shape>
+              <Appearance USE='_5'/>
+              <IndexedFaceSet
+                  solid='false'
+                  ccw='false'
+                  texCoordIndex='0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 7, 6, 5, 4, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1, 0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1, 5, 4, 7, 6, -1, 4, 5, 1, 0, -1, 4, 0, 3, 7, -1, 1, 5, 6, 2, -1'>
+                <TextureCoordinate
+                    point='-0.0419976 -0.0420284, 1.04183 -0.0420344, 1.04192 0.541744, -0.0419942 0.541728, -0.0421584 1.04183, 1.0419 1.04198, 1.04167 -0.0418491, -0.0422073 -0.0421184'/>
+                <Coordinate
+                    point='-1 -1 1, 1 -1 1, 1 1 1, -1 1 1, -1 -1 -1, 1 -1 -1, 1 1 -1, -1 1 -1'/>
+              </IndexedFaceSet>
+            </Shape>
+          </Transform>
+          <Transform DEF='Rectangle2D_1'
+              translation='30.0042 5.00002 61.25'
+              rotation='-0.577351935847832 0.577345935848499 0.577352935847721 2.09439'
+              scale='1.25 30.0042 1.25'
+              scaleOrientation='1.37573999999847e-06 -0.999999999998891 5.70145999999368e-07 0.785052'>
+            <Shape>
+              <Appearance USE='_5'/>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 0.0419023 2.36034e-05, 0.0419097 0.999995, 7.40585e-06 0.999975'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+          </Transform>
+          <Transform DEF='Rectangle2D_2'
+              translation='30 5 -1.25'
+              rotation='-0.577351935847832 0.577345935848499 0.577352935847721 2.09439'
+              scale='1.25 30.0042 1.25'
+              scaleOrientation='3.78907999999885e-07 0.999999999999697 6.79481999999794e-07 0.553375'>
+            <Shape>
+              <Appearance USE='_5'/>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 0.0419023 2.36034e-05, 0.0419097 0.999995, 7.40585e-06 0.999975'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+          </Transform>
+          <Transform DEF='Rectangle2D_3'
+              translation='61.25 5 30'
+              rotation='0.99999999999273 3.80629999997233e-06 2.27044999998349e-07 4.71239'
+              scale='1.25 32.5084 1.25'>
+            <Shape>
+              <Appearance USE='_5'/>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 0.0419023 2.36034e-05, 0.0418615 1.08298, -4.07547e-05 1.08296'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+          </Transform>
+          <Transform DEF='Rectangle2D_4'
+              translation='-1.24988 5 30.008'
+              rotation='0.99999999999273 3.80629999997233e-06 2.27044999998349e-07 4.71239'
+              scale='1.25 32.5084 1.25'>
+            <Shape>
+              <Appearance USE='_5'/>
+              <IndexedFaceSet
+                  texCoordIndex='0, 1, 2, 3, -1'
+                  coordIndex='0, 1, 2, 3, -1'>
+                <TextureCoordinate
+                    point='0 0, 0.0419023 2.36034e-05, 0.0418615 1.08298, -4.07547e-05 1.08296'/>
+                <Coordinate
+                    point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+              </IndexedFaceSet>
+            </Shape>
+          </Transform>
+        </Transform>
+        <Transform USE='Water'/>
+        <Transform DEF='Sphere'
+            translation='15 -15 15'
+            scale='10 10 10'>
+          <Shape>
+            <Appearance>
+              <Material DEF='Metal30'
+                  ambientIntensity='0.422619'
+                  diffuseColor='0.711188 0.728997 0.729'
+                  specularColor='0.364 0.0319093 0'
+                  shininess='0.0565476'/>
+            </Appearance>
+            <Sphere/>
+          </Shape>
+        </Transform>
+        <DirectionalLight
+            global='false'
+            intensity='0.320482'
+            ambientIntensity='0.563855'
+            direction='0.682878 -0.704064 0.194862'/>
+      </Layer>
+      <Layer DEF='HUD'>
+        <MetadataSet DEF='Titania_2'
+            name='Titania'
+            reference='http://titania.create3000.de'>
+          <MetadataSet DEF='AngleGrid_2' containerField='value'
+              name='AngleGrid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean DEF='enabled_5' containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='false'/>
+          </MetadataSet>
+          <MetadataSet DEF='Grid_2' containerField='value'
+              name='Grid'
+              reference='http://titania.create3000.de'>
+            <MetadataBoolean DEF='enabled_6' containerField='value'
+                name='enabled'
+                reference='http://titania.create3000.de'
+                value='true'/>
+            <MetadataFloat DEF='rotation_1' containerField='value'
+                name='rotation'
+                reference='http://titania.create3000.de'
+                value='1, 0, 0, 1.5708'/>
+            <MetadataFloat DEF='scale_2' containerField='value'
+                name='scale'
+                reference='http://titania.create3000.de'
+                value='0.05, 0.05, 0.05'/>
+            <MetadataInteger DEF='dimension_2' containerField='value'
+                name='dimension'
+                reference='http://titania.create3000.de'
+                value='89, 10, 40'/>
+          </MetadataSet>
+        </MetadataSet>
+        <NavigationInfo
+            type='"NONE"'
+            headlight='false'/>
+        <OrthoViewpoint/>
+        <Group DEF='CubeMapTextures'>
+          <Transform DEF='Sunset'
+              translation='-1.575 -0.35 -1.28614e-06'
+              scale='0.1 0.10535 0.10535'>
+            <Shape>
+              <Appearance>
+                <ImageTexture DEF='_6'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-front.jpg"'/>
+              </Appearance>
+              <Rectangle2D
+                  solid='false'/>
+            </Shape>
+            <TouchSensor DEF='_7'
+                description='Sunset'/>
+            <ProtoInstance name='SFNode' DEF='_8'>
+              <fieldValue name='keyValue'>
+                <ComposedCubeMapTexture DEF='_9' containerField='children'>
+                  <ImageTexture USE='_6' containerField='front'/>
+                  <ImageTexture containerField='back'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-back.jpg"'/>
+                  <ImageTexture containerField='left'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-left.jpg"'/>
+                  <ImageTexture containerField='right'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-right.jpg"'/>
+                  <ImageTexture containerField='top'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-top.jpg"'/>
+                  <ImageTexture containerField='bottom'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-bottom.jpg"'/>
+                </ComposedCubeMapTexture>
+              </fieldValue>
+            </ProtoInstance>
+          </Transform>
+          <Transform DEF='CloudySky'
+              translation='-1.575 0.65 2.38855e-06'
+              scale='0.1 0.10535 0.10535'>
+            <Shape>
+              <Appearance>
+                <ImageTexture USE='_4'/>
+              </Appearance>
+              <Rectangle2D
+                  solid='false'/>
+            </Shape>
+            <TouchSensor DEF='_10'
+                description='Cloudy Sky'/>
+            <ProtoInstance name='SFNode' DEF='_11'>
+              <fieldValue name='keyValue'>
+                <ComposedCubeMapTexture USE='_3' containerField='children'/>
+              </fieldValue>
+            </ProtoInstance>
+          </Transform>
+          <Transform DEF='LostValley'
+              translation='-1.575 0.4 1.46988e-06'
+              scale='0.1 0.10535 0.10535'>
+            <Shape>
+              <Appearance>
+                <ImageTexture DEF='_12'
+                    url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-front.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-front.jpg"'/>
+              </Appearance>
+              <Rectangle2D
+                  solid='false'/>
+            </Shape>
+            <TouchSensor DEF='_13'
+                description='Lost Valley'/>
+            <ProtoInstance name='SFNode' DEF='_14'>
+              <fieldValue name='keyValue'>
+                <ComposedCubeMapTexture DEF='_15' containerField='children'>
+                  <ImageTexture USE='_12' containerField='front'/>
+                  <ImageTexture containerField='back'
+                      url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-back.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-back.jpg"'/>
+                  <ImageTexture containerField='left'
+                      url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-left.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-left.jpg"'/>
+                  <ImageTexture containerField='right'
+                      url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-right.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-right.jpg"'/>
+                  <ImageTexture containerField='top'
+                      url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-top.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-top.jpg"'/>
+                  <ImageTexture containerField='bottom'
+                      url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-bottom.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-bottom.jpg"'/>
+                </ComposedCubeMapTexture>
+              </fieldValue>
+            </ProtoInstance>
+          </Transform>
+          <Transform DEF='WideOcean'
+              translation='-1.575 0.15 5.51205e-07'
+              scale='0.1 0.10535 0.10535'>
+            <Shape>
+              <Appearance>
+                <ImageTexture DEF='_16'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg"'/>
+              </Appearance>
+              <Rectangle2D
+                  solid='false'/>
+            </Shape>
+            <TouchSensor DEF='_17'
+                description='Wide Ocean'/>
+            <ProtoInstance name='SFNode' DEF='_18'>
+              <fieldValue name='keyValue'>
+                <ComposedCubeMapTexture DEF='_19' containerField='children'>
+                  <ImageTexture USE='_16' containerField='front'/>
+                  <ImageTexture containerField='back'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg"'/>
+                  <ImageTexture containerField='left'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg"'/>
+                  <ImageTexture containerField='right'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg"'/>
+                  <ImageTexture containerField='top'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg"'/>
+                  <ImageTexture containerField='bottom'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg"'/>
+                </ComposedCubeMapTexture>
+              </fieldValue>
+            </ProtoInstance>
+          </Transform>
+          <Transform DEF='ViolentDays'
+              translation='-1.575 -0.85 -3.12349e-06'
+              scale='0.1 0.10535 0.10535'>
+            <Shape>
+              <Appearance>
+                <ImageTexture DEF='_20'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-front.jpg"'/>
+              </Appearance>
+              <Rectangle2D
+                  solid='false'/>
+            </Shape>
+            <TouchSensor DEF='_21'
+                description='Violent Days'/>
+            <ProtoInstance name='SFNode' DEF='_22'>
+              <fieldValue name='keyValue'>
+                <ComposedCubeMapTexture DEF='_23' containerField='children'>
+                  <ImageTexture USE='_20' containerField='front'/>
+                  <ImageTexture containerField='back'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-back.jpg"'/>
+                  <ImageTexture containerField='left'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-left.jpg"'/>
+                  <ImageTexture containerField='right'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-right.jpg"'/>
+                  <ImageTexture containerField='top'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-top.jpg"'/>
+                  <ImageTexture containerField='bottom'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-bottom.jpg"'/>
+                </ComposedCubeMapTexture>
+              </fieldValue>
+            </ProtoInstance>
+          </Transform>
+          <Transform DEF='NightSky'
+              translation='-1.575 -0.1 -3.6747e-07'
+              scale='0.1 0.10535 0.10535'>
+            <Shape>
+              <Appearance>
+                <ImageTexture DEF='_24'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-front.jpg"'/>
+              </Appearance>
+              <Rectangle2D
+                  solid='false'/>
+            </Shape>
+            <TouchSensor DEF='_25'
+                description='Night Sky'/>
+            <ProtoInstance name='SFNode' DEF='_26'>
+              <fieldValue name='keyValue'>
+                <ComposedCubeMapTexture DEF='_27' containerField='children'>
+                  <ImageTexture USE='_24' containerField='front'/>
+                  <ImageTexture containerField='back'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-back.jpg"'/>
+                  <ImageTexture containerField='left'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-left.jpg"'/>
+                  <ImageTexture containerField='right'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-right.jpg"'/>
+                  <ImageTexture containerField='top'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-top.jpg"'/>
+                  <ImageTexture containerField='bottom'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-bottom.jpg"'/>
+                </ComposedCubeMapTexture>
+              </fieldValue>
+            </ProtoInstance>
+          </Transform>
+          <Transform DEF='Interstellar'
+              translation='-1.575 -0.6 -2.20482e-06'
+              scale='0.1 0.10535 0.10535'>
+            <Shape>
+              <Appearance>
+                <ImageTexture DEF='_28'
+                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-front.jpg"'/>
+              </Appearance>
+              <Rectangle2D
+                  solid='false'/>
+            </Shape>
+            <TouchSensor DEF='_29'
+                description='Interstellar'/>
+            <ProtoInstance name='SFNode' DEF='_30'>
+              <fieldValue name='keyValue'>
+                <ComposedCubeMapTexture DEF='_31' containerField='children'>
+                  <ImageTexture USE='_28' containerField='front'/>
+                  <ImageTexture containerField='back'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-back.jpg"'/>
+                  <ImageTexture containerField='left'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-left.jpg"'/>
+                  <ImageTexture containerField='right'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-right.jpg"'/>
+                  <ImageTexture containerField='top'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-top.jpg"'/>
+                  <ImageTexture containerField='bottom'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-bottom.jpg"'/>
+                </ComposedCubeMapTexture>
+              </fieldValue>
+            </ProtoInstance>
+          </Transform>
+        </Group>
+        <Transform DEF='Header'
+            translation='-1.6905 0.857504 -1'
+            scale='0.0672307 0.0672307 0.0672307'>
+          <Shape>
+            <Appearance>
+              <Material
+                  emissiveColor='1 1 1'/>
+            </Appearance>
+            <Text
+                string='"Water Quality"'
+                solid='true'>
+              <FontStyle
+                  family='"Ubuntu", "SANS"'
+                  size='1.61'
+                  justify='"BEGIN", "FIRST"'/>
+            </Text>
+          </Shape>
+        </Transform>
+        <Group DEF='Viewpoints'>
+          <Transform DEF='Header_1'
+              translation='1.6905 0.857504 -1'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material DEF='Artdeco31'
+                    ambientIntensity='0'
+                    diffuseColor='0 0 0'
+                    emissiveColor='1 1 1'
+                    shininess='0'/>
+              </Appearance>
+              <Text
+                  string='"Viewpoints"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    style='BOLD'
+                    size='0.68'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Anchor
+              url='"&#35;Oblique"'>
+            <Transform DEF='Text'
+                translation='1.6905 0.759504 -1'
+                scale='0.0672307 0.0672307 0.0672307'>
+              <Shape>
+                <Appearance>
+                  <Material
+                      diffuseColor='0 0 0'
+                      emissiveColor='1 1 1'/>
+                </Appearance>
+                <Text
+                    string='"Oblique View"'
+                    solid='true'>
+                  <FontStyle
+                      family='"Ubuntu", "SANS"'
+                      justify='"END"'/>
+                </Text>
+              </Shape>
+            </Transform>
+            <Transform DEF='InvisiblePlane'
+                translation='1.48177 0.781966 2.87349e-06'
+                scale='0.245 0.040588 0.040588'>
+              <Shape>
+                <Appearance>
+                  <Material
+                      transparency='1'/>
+                </Appearance>
+                <IndexedFaceSet
+                    texCoordIndex='0, 1, 2, 3, -1'
+                    coordIndex='0, 1, 2, 3, -1'>
+                  <TextureCoordinate
+                      point='0 0, 1 0, 1 1, 0 1'/>
+                  <Coordinate
+                      point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+                </IndexedFaceSet>
+              </Shape>
+            </Transform>
+          </Anchor>
+          <Anchor
+              url='"&#35;Front"'>
+            <Transform DEF='Text_1'
+                translation='1.6905 0.661504 -1'
+                scale='0.0672307 0.0672307 0.0672307'>
+              <Shape>
+                <Appearance>
+                  <Material
+                      diffuseColor='0 0 0'
+                      emissiveColor='1 1 1'/>
+                </Appearance>
+                <Text
+                    string='"Front"'
+                    solid='true'>
+                  <FontStyle
+                      family='"Ubuntu", "SANS"'
+                      justify='"END"'/>
+                </Text>
+              </Shape>
+            </Transform>
+            <Transform DEF='InvisiblePlane_1'
+                translation='1.48177 0.68352 2.51173e-06'
+                scale='0.245 0.040588 0.040588'>
+              <Shape>
+                <Appearance>
+                  <Material
+                      transparency='1'/>
+                </Appearance>
+                <IndexedFaceSet
+                    texCoordIndex='0, 1, 2, 3, -1'
+                    coordIndex='0, 1, 2, 3, -1'>
+                  <TextureCoordinate
+                      point='0 0, 1 0, 1 1, 0 1'/>
+                  <Coordinate
+                      point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+                </IndexedFaceSet>
+              </Shape>
+            </Transform>
+          </Anchor>
+          <Anchor
+              url='"&#35;Top"'>
+            <Transform DEF='Text_2'
+                translation='1.6905 0.563504 -1'
+                scale='0.0672307 0.0672307 0.0672307'>
+              <Shape>
+                <Appearance>
+                  <Material
+                      diffuseColor='0 0 0'
+                      emissiveColor='1 1 1'/>
+                </Appearance>
+                <Text
+                    string='"Top"'
+                    solid='true'>
+                  <FontStyle
+                      family='"Ubuntu", "SANS"'
+                      justify='"END"'/>
+                </Text>
+              </Shape>
+            </Transform>
+            <Transform DEF='InvisiblePlane_2'
+                translation='1.48177 0.582484 2.14045e-06'
+                scale='0.245 0.040588 0.040588'>
+              <Shape>
+                <Appearance>
+                  <Material
+                      transparency='1'/>
+                </Appearance>
+                <IndexedFaceSet
+                    texCoordIndex='0, 1, 2, 3, -1'
+                    coordIndex='0, 1, 2, 3, -1'>
+                  <TextureCoordinate
+                      point='0 0, 1 0, 1 1, 0 1'/>
+                  <Coordinate
+                      point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+                </IndexedFaceSet>
+              </Shape>
+            </Transform>
+          </Anchor>
+        </Group>
+        <Transform DEF='Header_2'
+            translation='1.675 -0.449996 -1'
+            scale='0.0672307 0.0672307 0.0672307'>
+          <Shape>
+            <Appearance>
+              <Material DEF='Artdeco31_1'
+                  ambientIntensity='0'
+                  diffuseColor='0 0 0'
+                  emissiveColor='1 1 1'
+                  shininess='0'/>
+            </Appearance>
+            <Text
+                string='"Water"'
+                solid='true'>
+              <FontStyle
+                  family='"Ubuntu", "SANS"'
+                  style='BOLD'
+                  size='0.68'
+                  justify='"END"'/>
+            </Text>
+          </Shape>
+        </Transform>
+        <Group DEF='Fields'>
+          <Transform DEF='AmplitudeSlider'
+              translation='0.125 -0.523 -2.02108e-06'
+              center='0 -0.027 0'>
+            <Transform DEF='IndexedLineSet'>
+              <Shape>
+                <Appearance>
+                  <LineProperties
+                      linewidthScaleFactor='2'/>
+                  <Material DEF='Artdeco31_2'
+                      emissiveColor='1 1 1'/>
+                </Appearance>
+                <IndexedLineSet
+                    colorPerVertex='false'
+                    coordIndex='0, 1, -1'>
+                  <Coordinate
+                      point='0 0 0, 1 0 0'/>
+                </IndexedLineSet>
+              </Shape>
+            </Transform>
+            <Transform>
+              <Transform DEF='Rectangle2D_5'
+                  translation='0.242218 0 0'
+                  scale='0.027 0.0267372 0.0267372'>
+                <Shape>
+                  <Appearance>
+                    <Material
+                        emissiveColor='1 1 1'/>
+                  </Appearance>
+                  <Disk2D
+                      solid='false'/>
+                </Shape>
+              </Transform>
+              <PlaneSensor DEF='_32'
+                  offset='0.242218 0 0'
+                  maxPosition='1 0'/>
+            </Transform>
+            <Group>
+              <Group DEF='Animation'>
+                <MetadataSet DEF='Animation_1'
+                    name='Animation'
+                    reference='http://titania.create3000.de'>
+                  <MetadataInteger DEF='duration' containerField='value'
+                      name='duration'
+                      reference='http://titania.create3000.de'
+                      value='68'/>
+                  <MetadataInteger DEF='framesPerSecond' containerField='value'
+                      name='framesPerSecond'
+                      reference='http://titania.create3000.de'
+                      value='10'/>
+                </MetadataSet>
+                <TimeSensor DEF='_33'
+                    cycleInterval='6.8'
+                    loop='true'
+                    startTime='1451028308.5169'
+                    resumeTime='1451028223.75739'
+                    pauseTime='1451028247.50596'
+                    stopTime='1451028309.80616'/>
+                <PositionInterpolator DEF='pointSizeScriptSet_translationInterpolator'
+                    key='0, 0.0147059, 0.0294118, 0.0441176, 0.0588235, 0.0735294, 0.0882353, 0.102941, 0.117647, 0.132353, 0.147059, 0.161765, 0.176471, 0.191176, 0.205882, 0.220588, 0.235294, 0.25, 0.264706, 0.279412, 0.294118, 0.308824, 0.323529, 0.338235, 0.352941, 0.367647, 0.382353, 0.397059, 0.411765, 0.426471, 0.441176, 0.455882, 0.470588, 0.485294, 0.5, 0.514706, 0.529412, 0.544118, 0.558824, 0.573529, 0.588235, 0.602941, 0.617647, 0.632353, 0.647059, 0.661765, 0.676471, 0.691176, 0.705882, 0.720588, 0.735294, 0.75, 0.764706, 0.779412, 0.794118, 0.808824, 0.823529, 0.838235, 0.852941, 0.867647, 0.882353, 0.897059, 0.911765, 0.926471, 0.941176, 0.955882, 0.970588, 0.985294, 1'
+                    keyValue='0.200605 0 0, 0.202642 0 0, 0.208588 0 0, 0.2182 0 0, 0.231232 0 0, 0.247441 0 0, 0.266581 0 0, 0.288408 0 0, 0.312679 0 0, 0.339147 0 0, 0.367569 0 0, 0.3977 0 0, 0.429295 0 0, 0.462111 0 0, 0.495902 0 0, 0.530424 0 0, 0.565432 0 0, 0.600683 0 0, 0.63593 0 0, 0.670931 0 0, 0.70544 0 0, 0.739212 0 0, 0.772004 0 0, 0.803571 0 0, 0.833668 0 0, 0.86205 0 0, 0.888474 0 0, 0.912694 0 0, 0.934466 0 0, 0.953546 0 0, 0.969689 0 0, 0.98265 0 0, 0.992186 0 0, 0.99805 0 0, 1 0 0, 0.997866 0 0, 0.991808 0 0, 0.982071 0 0, 0.968899 0 0, 0.95254 0 0, 0.933237 0 0, 0.911238 0 0, 0.886786 0 0, 0.860128 0 0, 0.831508 0 0, 0.801174 0 0, 0.769369 0 0, 0.736339 0 0, 0.70233 0 0, 0.667588 0 0, 0.632357 0 0, 0.596883 0 0, 0.561412 0 0, 0.526189 0 0, 0.49146 0 0, 0.457469 0 0, 0.424463 0 0, 0.392687 0 0, 0.362387 0 0, 0.333807 0 0, 0.307193 0 0, 0.282792 0 0, 0.260847 0 0, 0.241605 0 0, 0.225311 0 0, 0.212211 0 0, 0.20255 0 0, 0.196573 0 0, 0.194526 0 0'>
+                  <MetadataSet DEF='Interpolator'
+                      name='Interpolator'
+                      reference='http://titania.create3000.de'>
+                    <MetadataInteger DEF='key' containerField='value'
+                        name='key'
+                        reference='http://titania.create3000.de'
+                        value='0, 34, 68'/>
+                    <MetadataDouble DEF='keyValue' containerField='value'
+                        name='keyValue'
+                        reference='http://titania.create3000.de'
+                        value='0.20060533285141, 0, 0, 1, 0, 0, 0.194526299834251, 0, 0'/>
+                    <MetadataString DEF='keyType' containerField='value'
+                        name='keyType'
+                        reference='http://titania.create3000.de'
+                        value='"SPLINE", "SPLINE", "SPLINE"'/>
+                  </MetadataSet>
+                </PositionInterpolator>
+              </Group>
+              <Script DEF='AmplitudeScript'>
+                <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
+                <field accessType='inputOutput' type='SFString' name='description' value='amplitude'/>
+                <field accessType='inputOutput' type='SFFloat' name='minValue'/>
+                <field accessType='inputOutput' type='SFFloat' name='maxValue' value='2'/>
+                <field accessType='inputOutput' type='MFFloat' name='keyValue' value='0.051, 0.041, 0.41, 0.19, 1'/>
+                <field accessType='outputOnly' type='MFFloat' name='value_changed'/>
+                <field accessType='outputOnly' type='MFString' name='string_changed'/>
+                <field accessType='initializeOnly' type='SFFloat' name='currentValue' value='0.48'/>
+<![CDATA[ecmascript:
+
+function initialized ()
+{
+	set_value (value);
+}
+
+function set_translation (value)
+{
+	set_value (minValue + (value .x * (maxValue - minValue)));
+}
+
+function set_value (value)
+{
+	var rounded = value .toFixed (2);
+
+	if (rounded == currentValue)
+		return;
+
+	currentValue       = rounded;
+	string_changed [0] = description + " " + rounded;
+
+	for (var i = 0, length = keyValue .length; i < length; ++ i)
+		value_changed [i] = keyValue [i] * value;
+}
+]]>
+              </Script>
+            </Group>
+            <Transform DEF='Rectangle2D_6'
+                translation='-0.075 0 0'
+                scale='0.025 0.0247567 0.0247567'>
+              <Shape>
+                <Appearance>
+                  <Material
+                      emissiveColor='1 1 1'/>
+                </Appearance>
+                <Rectangle2D
+                    solid='false'/>
+              </Shape>
+              <TouchSensor DEF='_34'
+                  description='Toggle Animation'/>
+              <Script DEF='ToggleAmplitudeAnim'>
+                <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
+                <field accessType='initializeOnly' type='SFNode' name='timer'>
+                  <TimeSensor USE='_33'/>
+                </field>
+<![CDATA[ecmascript:
+
+function set_touchTime (value, time)
+{
+	if (timer .isActive)
+	{
+		if (timer .isPaused)
+			timer .resumeTime = time;
+		else
+			timer .pauseTime = time;
+	}
+	else
+		timer .startTime = time;
+}]]>
+              </Script>
+            </Transform>
+          </Transform>
+          <Transform DEF='AmplitudeText'
+              translation='1.675 -0.55 -2.02108e-06'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material
+                    emissiveColor='1 1 1'/>
+              </Appearance>
+              <Text DEF='_35'
+                  string='"amplitude 0.48"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='FequencySlider'
+              translation='0.125 -0.623 -2.38855e-06'
+              center='0 -0.027 0'>
+            <Transform DEF='IndexedLineSet_1'>
+              <Shape>
+                <Appearance>
+                  <LineProperties
+                      linewidthScaleFactor='2'/>
+                  <Material DEF='Artdeco31_3'
+                      emissiveColor='1 1 1'/>
+                </Appearance>
+                <IndexedLineSet
+                    colorPerVertex='false'
+                    coordIndex='0, 1, -1'>
+                  <Coordinate
+                      point='0 0 0, 1 0 0'/>
+                </IndexedLineSet>
+              </Shape>
+            </Transform>
+            <Transform>
+              <Transform DEF='Rectangle2D_7'
+                  translation='0.807777 0 0'
+                  scale='0.027 0.0267372 0.0267372'>
+                <Shape>
+                  <Appearance>
+                    <Material
+                        emissiveColor='1 1 1'/>
+                  </Appearance>
+                  <Disk2D
+                      solid='false'/>
+                </Shape>
+              </Transform>
+              <PlaneSensor DEF='_36'
+                  offset='0.807777 0 0'
+                  maxPosition='1 0'/>
+            </Transform>
+            <Group>
+              <Group DEF='Animation_2'>
+                <MetadataSet DEF='Animation_3'
+                    name='Animation'
+                    reference='http://titania.create3000.de'>
+                  <MetadataInteger DEF='duration_1' containerField='value'
+                      name='duration'
+                      reference='http://titania.create3000.de'
+                      value='68'/>
+                  <MetadataInteger DEF='framesPerSecond_1' containerField='value'
+                      name='framesPerSecond'
+                      reference='http://titania.create3000.de'
+                      value='10'/>
+                </MetadataSet>
+                <TimeSensor DEF='_37'
+                    cycleInterval='6.8'
+                    loop='true'
+                    startTime='1451028308.5169'
+                    resumeTime='1451028223.75739'
+                    pauseTime='1451028247.50596'
+                    stopTime='1451028309.80616'/>
+                <PositionInterpolator DEF='pointSizeScriptSet_translationInterpolator_1'
+                    key='0, 0.0147059, 0.0294118, 0.0441176, 0.0588235, 0.0735294, 0.0882353, 0.102941, 0.117647, 0.132353, 0.147059, 0.161765, 0.176471, 0.191176, 0.205882, 0.220588, 0.235294, 0.25, 0.264706, 0.279412, 0.294118, 0.308824, 0.323529, 0.338235, 0.352941, 0.367647, 0.382353, 0.397059, 0.411765, 0.426471, 0.441176, 0.455882, 0.470588, 0.485294, 0.5, 0.514706, 0.529412, 0.544118, 0.558824, 0.573529, 0.588235, 0.602941, 0.617647, 0.632353, 0.647059, 0.661765, 0.676471, 0.691176, 0.705882, 0.720588, 0.735294, 0.75, 0.764706, 0.779412, 0.794118, 0.808824, 0.823529, 0.838235, 0.852941, 0.867647, 0.882353, 0.897059, 0.911765, 0.926471, 0.941176, 0.955882, 0.970588, 0.985294, 1'
+                    keyValue='0.200605 0 0, 0.202642 0 0, 0.208588 0 0, 0.2182 0 0, 0.231232 0 0, 0.247441 0 0, 0.266581 0 0, 0.288408 0 0, 0.312679 0 0, 0.339147 0 0, 0.367569 0 0, 0.3977 0 0, 0.429295 0 0, 0.462111 0 0, 0.495902 0 0, 0.530424 0 0, 0.565432 0 0, 0.600683 0 0, 0.63593 0 0, 0.670931 0 0, 0.70544 0 0, 0.739212 0 0, 0.772004 0 0, 0.803571 0 0, 0.833668 0 0, 0.86205 0 0, 0.888474 0 0, 0.912694 0 0, 0.934466 0 0, 0.953546 0 0, 0.969689 0 0, 0.98265 0 0, 0.992186 0 0, 0.99805 0 0, 1 0 0, 0.997866 0 0, 0.991808 0 0, 0.982071 0 0, 0.968899 0 0, 0.95254 0 0, 0.933237 0 0, 0.911238 0 0, 0.886786 0 0, 0.860128 0 0, 0.831508 0 0, 0.801174 0 0, 0.769369 0 0, 0.736339 0 0, 0.70233 0 0, 0.667588 0 0, 0.632357 0 0, 0.596883 0 0, 0.561412 0 0, 0.526189 0 0, 0.49146 0 0, 0.457469 0 0, 0.424463 0 0, 0.392687 0 0, 0.362387 0 0, 0.333807 0 0, 0.307193 0 0, 0.282792 0 0, 0.260847 0 0, 0.241605 0 0, 0.225311 0 0, 0.212211 0 0, 0.20255 0 0, 0.196573 0 0, 0.194526 0 0'>
+                  <MetadataSet DEF='Interpolator_1'
+                      name='Interpolator'
+                      reference='http://titania.create3000.de'>
+                    <MetadataInteger DEF='key_1' containerField='value'
+                        name='key'
+                        reference='http://titania.create3000.de'
+                        value='0, 34, 68'/>
+                    <MetadataDouble DEF='keyValue_1' containerField='value'
+                        name='keyValue'
+                        reference='http://titania.create3000.de'
+                        value='0.20060533285141, 0, 0, 1, 0, 0, 0.194526299834251, 0, 0'/>
+                    <MetadataString DEF='keyType_1' containerField='value'
+                        name='keyType'
+                        reference='http://titania.create3000.de'
+                        value='"SPLINE", "SPLINE", "SPLINE"'/>
+                  </MetadataSet>
+                </PositionInterpolator>
+              </Group>
+              <Script DEF='FequencyScript'>
+                <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
+                <field accessType='inputOutput' type='SFString' name='description' value='frequency'/>
+                <field accessType='inputOutput' type='SFFloat' name='minValue'/>
+                <field accessType='inputOutput' type='SFFloat' name='maxValue' value='2'/>
+                <field accessType='inputOutput' type='MFFloat' name='keyValue' value='1.51002, 1.07961, 0.23013, 0.57021, 0.10027'/>
+                <field accessType='outputOnly' type='MFFloat' name='value_changed'/>
+                <field accessType='outputOnly' type='MFString' name='string_changed'/>
+                <field accessType='initializeOnly' type='SFFloat' name='currentValue' value='1.62'/>
+<![CDATA[ecmascript:
+
+function initialized ()
+{
+	set_value (value);
+}
+
+function set_translation (value)
+{
+	set_value (minValue + (value .x * (maxValue - minValue)));
+}
+
+function set_value (value)
+{
+	var rounded = value .toFixed (2);
+
+	if (rounded == currentValue)
+		return;
+
+	currentValue       = rounded;
+	string_changed [0] = description + " " + rounded;
+
+	for (var i = 0, length = keyValue .length; i < length; ++ i)
+		value_changed [i] = keyValue [i] * value;
+}
+]]>
+              </Script>
+            </Group>
+            <Switch>
+              <Transform DEF='Rectangle2D_8'
+                  translation='-0.075 0 0'
+                  scale='0.025 0.0247567 0.0247567'>
+                <Shape>
+                  <Appearance>
+                    <Material
+                        emissiveColor='1 1 1'/>
+                  </Appearance>
+                  <Rectangle2D
+                      solid='false'/>
+                </Shape>
+                <TouchSensor DEF='_38'
+                    description='Toggle Animation'/>
+                <Script DEF='ToggleFequencyAnim'>
+                  <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
+                  <field accessType='initializeOnly' type='SFNode' name='timer'>
+                    <TimeSensor USE='_37'/>
+                  </field>
+<![CDATA[ecmascript:
+
+function set_touchTime (value, time)
+{
+	if (timer .isActive)
+	{
+		if (timer .isPaused)
+			timer .resumeTime = time;
+		else
+			timer .pauseTime = time;
+	}
+	else
+		timer .startTime = time;
+}]]>
+                </Script>
+              </Transform>
+            </Switch>
+          </Transform>
+          <Transform DEF='FequencyText'
+              translation='1.675 -0.65 -2.38855e-06'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material
+                    emissiveColor='1 1 1'/>
+              </Appearance>
+              <Text DEF='_39'
+                  string='"frequency 1.62"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='SpeedText'
+              translation='1.675 -0.75 -2.75602e-06'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material
+                    emissiveColor='1 1 1'/>
+              </Appearance>
+              <Text DEF='_40'
+                  string='"speed 0.70"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='SpeedSlider'
+              translation='0.225 -0.723 -2.75602e-06'
+              center='0 -0.027 0'>
+            <Transform DEF='IndexedLineSet_2'>
+              <Shape>
+                <Appearance>
+                  <LineProperties
+                      linewidthScaleFactor='2'/>
+                  <Material DEF='Artdeco31_4'
+                      emissiveColor='1 1 1'/>
+                </Appearance>
+                <IndexedLineSet
+                    colorPerVertex='false'
+                    coordIndex='0, 1, -1'>
+                  <Coordinate
+                      point='0 0 0, 1 0 0'/>
+                </IndexedLineSet>
+              </Shape>
+            </Transform>
+            <Transform>
+              <Transform DEF='Rectangle2D_9'
+                  translation='0.0351737 0 0'
+                  scale='0.027 0.0267372 0.0267372'>
+                <Shape>
+                  <Appearance>
+                    <Material
+                        emissiveColor='1 1 1'/>
+                  </Appearance>
+                  <Disk2D
+                      solid='false'/>
+                </Shape>
+              </Transform>
+              <PlaneSensor DEF='_41'
+                  offset='0.0351737 0 0'
+                  maxPosition='1 0'/>
+            </Transform>
+            <Group>
+              <Group DEF='Animation_4'>
+                <MetadataSet DEF='Animation_5'
+                    name='Animation'
+                    reference='http://titania.create3000.de'>
+                  <MetadataInteger DEF='duration_2' containerField='value'
+                      name='duration'
+                      reference='http://titania.create3000.de'
+                      value='68'/>
+                  <MetadataInteger DEF='framesPerSecond_2' containerField='value'
+                      name='framesPerSecond'
+                      reference='http://titania.create3000.de'
+                      value='10'/>
+                </MetadataSet>
+                <TimeSensor DEF='_42'
+                    cycleInterval='6.8'
+                    loop='true'
+                    startTime='1451028308.5169'
+                    resumeTime='1451028223.75739'
+                    pauseTime='1451028247.50596'
+                    stopTime='1451028309.80616'/>
+                <PositionInterpolator DEF='pointSizeScriptSet_translationInterpolator_2'
+                    key='0, 0.0147059, 0.0294118, 0.0441176, 0.0588235, 0.0735294, 0.0882353, 0.102941, 0.117647, 0.132353, 0.147059, 0.161765, 0.176471, 0.191176, 0.205882, 0.220588, 0.235294, 0.25, 0.264706, 0.279412, 0.294118, 0.308824, 0.323529, 0.338235, 0.352941, 0.367647, 0.382353, 0.397059, 0.411765, 0.426471, 0.441176, 0.455882, 0.470588, 0.485294, 0.5, 0.514706, 0.529412, 0.544118, 0.558824, 0.573529, 0.588235, 0.602941, 0.617647, 0.632353, 0.647059, 0.661765, 0.676471, 0.691176, 0.705882, 0.720588, 0.735294, 0.75, 0.764706, 0.779412, 0.794118, 0.808824, 0.823529, 0.838235, 0.852941, 0.867647, 0.882353, 0.897059, 0.911765, 0.926471, 0.941176, 0.955882, 0.970588, 0.985294, 1'
+                    keyValue='0.200605 0 0, 0.202642 0 0, 0.208588 0 0, 0.2182 0 0, 0.231232 0 0, 0.247441 0 0, 0.266581 0 0, 0.288408 0 0, 0.312679 0 0, 0.339147 0 0, 0.367569 0 0, 0.3977 0 0, 0.429295 0 0, 0.462111 0 0, 0.495902 0 0, 0.530424 0 0, 0.565432 0 0, 0.600683 0 0, 0.63593 0 0, 0.670931 0 0, 0.70544 0 0, 0.739212 0 0, 0.772004 0 0, 0.803571 0 0, 0.833668 0 0, 0.86205 0 0, 0.888474 0 0, 0.912694 0 0, 0.934466 0 0, 0.953546 0 0, 0.969689 0 0, 0.98265 0 0, 0.992186 0 0, 0.99805 0 0, 1 0 0, 0.997866 0 0, 0.991808 0 0, 0.982071 0 0, 0.968899 0 0, 0.95254 0 0, 0.933237 0 0, 0.911238 0 0, 0.886786 0 0, 0.860128 0 0, 0.831508 0 0, 0.801174 0 0, 0.769369 0 0, 0.736339 0 0, 0.70233 0 0, 0.667588 0 0, 0.632357 0 0, 0.596883 0 0, 0.561412 0 0, 0.526189 0 0, 0.49146 0 0, 0.457469 0 0, 0.424463 0 0, 0.392687 0 0, 0.362387 0 0, 0.333807 0 0, 0.307193 0 0, 0.282792 0 0, 0.260847 0 0, 0.241605 0 0, 0.225311 0 0, 0.212211 0 0, 0.20255 0 0, 0.196573 0 0, 0.194526 0 0'>
+                  <MetadataSet DEF='Interpolator_2'
+                      name='Interpolator'
+                      reference='http://titania.create3000.de'>
+                    <MetadataInteger DEF='key_2' containerField='value'
+                        name='key'
+                        reference='http://titania.create3000.de'
+                        value='0, 34, 68'/>
+                    <MetadataDouble DEF='keyValue_2' containerField='value'
+                        name='keyValue'
+                        reference='http://titania.create3000.de'
+                        value='0.20060533285141, 0, 0, 1, 0, 0, 0.194526299834251, 0, 0'/>
+                    <MetadataString DEF='keyType_2' containerField='value'
+                        name='keyType'
+                        reference='http://titania.create3000.de'
+                        value='"SPLINE", "SPLINE", "SPLINE"'/>
+                  </MetadataSet>
+                </PositionInterpolator>
+              </Group>
+              <Script DEF='SpeedScript'>
+                <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
+                <field accessType='inputOutput' type='SFString' name='description' value='speed'/>
+                <field accessType='inputOutput' type='SFFloat' name='minValue'/>
+                <field accessType='inputOutput' type='SFFloat' name='maxValue' value='20'/>
+                <field accessType='inputOutput' type='MFFloat' name='keyValue' value='1, 1, 1, 1, 1'/>
+                <field accessType='outputOnly' type='MFFloat' name='value_changed'/>
+                <field accessType='outputOnly' type='MFString' name='string_changed'/>
+                <field accessType='initializeOnly' type='SFFloat' name='currentValue' value='0.7'/>
+<![CDATA[ecmascript:
+
+function initialized ()
+{
+	set_value (value);
+}
+
+function set_translation (value)
+{
+	set_value (minValue + (value .x * (maxValue - minValue)));
+}
+
+function set_value (value)
+{
+	var rounded = value .toFixed (2);
+
+	if (rounded == currentValue)
+		return;
+
+	currentValue       = rounded;
+	string_changed [0] = description + " " + rounded;
+
+	for (var i = 0, length = keyValue .length; i < length; ++ i)
+		value_changed [i] = keyValue [i] * value;
+}
+]]>
+              </Script>
+            </Group>
+            <Switch>
+              <Transform DEF='Rectangle2D_10'
+                  translation='-0.075 0 0'
+                  scale='0.025 0.0247567 0.0247567'>
+                <Shape>
+                  <Appearance>
+                    <Material
+                        emissiveColor='1 1 1'/>
+                  </Appearance>
+                  <Rectangle2D
+                      solid='false'/>
+                </Shape>
+                <TouchSensor DEF='_43'
+                    description='Toggle Animation'/>
+                <Script DEF='ToggleSpeedAnim'>
+                  <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
+                  <field accessType='initializeOnly' type='SFNode' name='timer'>
+                    <TimeSensor USE='_42'/>
+                  </field>
+<![CDATA[ecmascript:
+
+function set_touchTime (value, time)
+{
+	if (timer .isActive)
+	{
+		if (timer .isPaused)
+			timer .resumeTime = time;
+		else
+			timer .pauseTime = time;
+	}
+	else
+		timer .startTime = time;
+}]]>
+                </Script>
+              </Transform>
+            </Switch>
+          </Transform>
+          <Transform DEF='DirectionsText'
+              translation='1.675 -0.85 -3.12349e-06'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material
+                    emissiveColor='1 1 1'/>
+              </Appearance>
+              <Text
+                  string='"direction"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='Rectangle2D_11'
+              translation='1.3 -0.825 -3.03163e-06'
+              scale='0.025 0.0247567 0.0247567'>
+            <Shape>
+              <Appearance>
+                <Material
+                    emissiveColor='1 1 1'/>
+              </Appearance>
+              <Rectangle2D
+                  solid='false'/>
+            </Shape>
+            <TouchSensor DEF='_44'
+                description='Toggle Animation'/>
+            <Script DEF='DirectionsScript'>
+              <field accessType='inputOnly' type='SFTime' name='set_triggerTime'/>
+              <field accessType='outputOnly' type='MFVec2f' name='directions_changed'/>
+<![CDATA[ecmascript:
+
+function initialize ()
+{
+	set_triggerTime ();
+}
+
+function set_triggerTime ()
+{
+	for (var i = 0; i < 5; ++ i)
+	{
+		directions_changed [i] .x = Math .random ();
+		directions_changed [i] .y = Math .random ();
+	}
+}]]>
+            </Script>
+          </Transform>
+          <Transform DEF='TransparencyText'
+              translation='1.675 -0.95 -3.49096e-06'
+              scale='0.0672307 0.0672307 0.0672307'>
+            <Shape>
+              <Appearance>
+                <Material
+                    emissiveColor='1 1 1'/>
+              </Appearance>
+              <Text DEF='_45'
+                  string='"transparency 0.20"'
+                  solid='true'>
+                <FontStyle
+                    family='"Ubuntu", "SANS"'
+                    justify='"END"'/>
+              </Text>
+            </Shape>
+          </Transform>
+          <Transform DEF='TransparancySlider'
+              translation='0.025 -0.923 -3.49096e-06'
+              center='0 -0.027 0'>
+            <Transform DEF='IndexedLineSet_3'>
+              <Shape>
+                <Appearance>
+                  <LineProperties
+                      linewidthScaleFactor='2'/>
+                  <Material DEF='Artdeco31_5'
+                      emissiveColor='1 1 1'/>
+                </Appearance>
+                <IndexedLineSet
+                    colorPerVertex='false'
+                    coordIndex='0, 1, -1'>
+                  <Coordinate
+                      point='0 0 0, 1 0 0'/>
+                </IndexedLineSet>
+              </Shape>
+            </Transform>
+            <Transform>
+              <Transform DEF='Rectangle2D_12'
+                  translation='0.204778 0 0'
+                  scale='0.027 0.0267372 0.0267372'>
+                <Shape>
+                  <Appearance>
+                    <Material
+                        emissiveColor='1 1 1'/>
+                  </Appearance>
+                  <Disk2D
+                      solid='false'/>
+                </Shape>
+              </Transform>
+              <PlaneSensor DEF='_46'
+                  offset='0.204778 0 0'
+                  maxPosition='1 0'/>
+            </Transform>
+            <Group>
+              <Group DEF='Animation_6'>
+                <MetadataSet DEF='Animation_7'
+                    name='Animation'
+                    reference='http://titania.create3000.de'>
+                  <MetadataInteger DEF='duration_3' containerField='value'
+                      name='duration'
+                      reference='http://titania.create3000.de'
+                      value='68'/>
+                  <MetadataInteger DEF='framesPerSecond_3' containerField='value'
+                      name='framesPerSecond'
+                      reference='http://titania.create3000.de'
+                      value='10'/>
+                </MetadataSet>
+                <TimeSensor DEF='_47'
+                    cycleInterval='6.8'
+                    loop='true'
+                    startTime='1451028308.5169'
+                    resumeTime='1451028223.75739'
+                    pauseTime='1451028247.50596'
+                    stopTime='1451028309.80616'/>
+                <PositionInterpolator DEF='pointSizeScriptSet_translationInterpolator_3'
+                    key='0, 0.0147059, 0.0294118, 0.0441176, 0.0588235, 0.0735294, 0.0882353, 0.102941, 0.117647, 0.132353, 0.147059, 0.161765, 0.176471, 0.191176, 0.205882, 0.220588, 0.235294, 0.25, 0.264706, 0.279412, 0.294118, 0.308824, 0.323529, 0.338235, 0.352941, 0.367647, 0.382353, 0.397059, 0.411765, 0.426471, 0.441176, 0.455882, 0.470588, 0.485294, 0.5, 0.514706, 0.529412, 0.544118, 0.558824, 0.573529, 0.588235, 0.602941, 0.617647, 0.632353, 0.647059, 0.661765, 0.676471, 0.691176, 0.705882, 0.720588, 0.735294, 0.75, 0.764706, 0.779412, 0.794118, 0.808824, 0.823529, 0.838235, 0.852941, 0.867647, 0.882353, 0.897059, 0.911765, 0.926471, 0.941176, 0.955882, 0.970588, 0.985294, 1'
+                    keyValue='0.200605 0 0, 0.202642 0 0, 0.208588 0 0, 0.2182 0 0, 0.231232 0 0, 0.247441 0 0, 0.266581 0 0, 0.288408 0 0, 0.312679 0 0, 0.339147 0 0, 0.367569 0 0, 0.3977 0 0, 0.429295 0 0, 0.462111 0 0, 0.495902 0 0, 0.530424 0 0, 0.565432 0 0, 0.600683 0 0, 0.63593 0 0, 0.670931 0 0, 0.70544 0 0, 0.739212 0 0, 0.772004 0 0, 0.803571 0 0, 0.833668 0 0, 0.86205 0 0, 0.888474 0 0, 0.912694 0 0, 0.934466 0 0, 0.953546 0 0, 0.969689 0 0, 0.98265 0 0, 0.992186 0 0, 0.99805 0 0, 1 0 0, 0.997866 0 0, 0.991808 0 0, 0.982071 0 0, 0.968899 0 0, 0.95254 0 0, 0.933237 0 0, 0.911238 0 0, 0.886786 0 0, 0.860128 0 0, 0.831508 0 0, 0.801174 0 0, 0.769369 0 0, 0.736339 0 0, 0.70233 0 0, 0.667588 0 0, 0.632357 0 0, 0.596883 0 0, 0.561412 0 0, 0.526189 0 0, 0.49146 0 0, 0.457469 0 0, 0.424463 0 0, 0.392687 0 0, 0.362387 0 0, 0.333807 0 0, 0.307193 0 0, 0.282792 0 0, 0.260847 0 0, 0.241605 0 0, 0.225311 0 0, 0.212211 0 0, 0.20255 0 0, 0.196573 0 0, 0.194526 0 0'>
+                  <MetadataSet DEF='Interpolator_3'
+                      name='Interpolator'
+                      reference='http://titania.create3000.de'>
+                    <MetadataInteger DEF='key_3' containerField='value'
+                        name='key'
+                        reference='http://titania.create3000.de'
+                        value='0, 34, 68'/>
+                    <MetadataDouble DEF='keyValue_3' containerField='value'
+                        name='keyValue'
+                        reference='http://titania.create3000.de'
+                        value='0.20060533285141, 0, 0, 1, 0, 0, 0.194526299834251, 0, 0'/>
+                    <MetadataString DEF='keyType_3' containerField='value'
+                        name='keyType'
+                        reference='http://titania.create3000.de'
+                        value='"SPLINE", "SPLINE", "SPLINE"'/>
+                  </MetadataSet>
+                </PositionInterpolator>
+              </Group>
+              <Script DEF='TransparencyScript'>
+                <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
+                <field accessType='inputOutput' type='SFString' name='description' value='transparency'/>
+                <field accessType='inputOutput' type='SFFloat' name='minValue'/>
+                <field accessType='inputOutput' type='SFFloat' name='maxValue' value='1'/>
+                <field accessType='outputOnly' type='SFFloat' name='value_changed'/>
+                <field accessType='outputOnly' type='MFString' name='string_changed'/>
+                <field accessType='initializeOnly' type='SFFloat' name='currentValue' value='0.2'/>
+<![CDATA[ecmascript:
+
+function initialized ()
+{
+	set_value (value);
+}
+
+function set_translation (value)
+{
+	set_value (minValue + (value .x * (maxValue - minValue)));
+}
+
+function set_value (value)
+{
+	var rounded = value .toFixed (2);
+
+	if (rounded == currentValue)
+		return;
+
+	currentValue       = rounded;
+	string_changed [0] = description + " " + rounded;
+	value_changed      = value;
+}
+]]>
+              </Script>
+            </Group>
+            <Switch>
+              <Transform DEF='Rectangle2D_13'
+                  translation='-0.075 0 0'
+                  scale='0.025 0.0247567 0.0247567'>
+                <Shape>
+                  <Appearance>
+                    <Material
+                        emissiveColor='1 1 1'/>
+                  </Appearance>
+                  <Rectangle2D
+                      solid='false'/>
+                </Shape>
+                <TouchSensor DEF='_48'
+                    description='Toggle Animation'/>
+                <Script DEF='ToggleTransparencyAnim'>
+                  <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
+                  <field accessType='initializeOnly' type='SFNode' name='timer'>
+                    <TimeSensor USE='_47'/>
+                  </field>
+<![CDATA[ecmascript:
+
+function set_touchTime (value, time)
+{
+	if (timer .isActive)
+	{
+		if (timer .isPaused)
+			timer .resumeTime = time;
+		else
+			timer .pauseTime = time;
+	}
+	else
+		timer .startTime = time;
+}]]>
+                </Script>
+              </Transform>
+            </Switch>
+          </Transform>
+        </Group>
+      </Layer>
+    </LayerSet>
+    <ROUTE fromNode='Timer' fromField='fraction_changed' toNode='ElapsedTime' toField='set_fraction'/>
+    <ROUTE fromNode='ElapsedTime' fromField='value_changed' toNode='CobwebWaterShader' toField='set_time'/>
+    <ROUTE fromNode='_1' fromField='position_changed' toNode='CobwebWaterShader' toField='set_position'/>
+    <ROUTE fromNode='_13' fromField='touchTime' toNode='_14' toField='set_triggerTime'/>
+    <ROUTE fromNode='_10' fromField='touchTime' toNode='_11' toField='set_triggerTime'/>
+    <ROUTE fromNode='_11' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
+    <ROUTE fromNode='_14' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
+    <ROUTE fromNode='_32' fromField='translation_changed' toNode='AmplitudeScript' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='AmplitudeScript' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='_32' toField='set_offset'/>
+    <ROUTE fromNode='_33' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_32' fromField='translation_changed' toNode='Rectangle2D_5' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='Rectangle2D_5' toField='set_translation'/>
+    <ROUTE fromNode='AmplitudeScript' fromField='string_changed' toNode='_35' toField='set_string'/>
+    <ROUTE fromNode='_34' fromField='touchTime' toNode='ToggleAmplitudeAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='AmplitudeScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_amplitude'/>
+    <ROUTE fromNode='_36' fromField='translation_changed' toNode='FequencyScript' toField='set_translation'/>
+    <ROUTE fromNode='_36' fromField='translation_changed' toNode='Rectangle2D_7' toField='set_translation'/>
+    <ROUTE fromNode='_37' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_1' toField='set_fraction'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='FequencyScript' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='_36' toField='set_offset'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='Rectangle2D_7' toField='set_translation'/>
+    <ROUTE fromNode='_38' fromField='touchTime' toNode='ToggleFequencyAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='FequencyScript' fromField='string_changed' toNode='_39' toField='set_string'/>
+    <ROUTE fromNode='FequencyScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_frequency'/>
+    <ROUTE fromNode='_41' fromField='translation_changed' toNode='SpeedScript' toField='set_translation'/>
+    <ROUTE fromNode='_41' fromField='translation_changed' toNode='Rectangle2D_9' toField='set_translation'/>
+    <ROUTE fromNode='_42' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_2' toField='set_fraction'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='SpeedScript' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='_41' toField='set_offset'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='Rectangle2D_9' toField='set_translation'/>
+    <ROUTE fromNode='_43' fromField='touchTime' toNode='ToggleSpeedAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='SpeedScript' fromField='string_changed' toNode='_40' toField='set_string'/>
+    <ROUTE fromNode='SpeedScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_speed'/>
+    <ROUTE fromNode='_17' fromField='touchTime' toNode='_18' toField='set_triggerTime'/>
+    <ROUTE fromNode='_18' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
+    <ROUTE fromNode='_7' fromField='touchTime' toNode='_8' toField='set_triggerTime'/>
+    <ROUTE fromNode='_29' fromField='touchTime' toNode='_30' toField='set_triggerTime'/>
+    <ROUTE fromNode='_25' fromField='touchTime' toNode='_26' toField='set_triggerTime'/>
+    <ROUTE fromNode='_21' fromField='touchTime' toNode='_22' toField='set_triggerTime'/>
+    <ROUTE fromNode='_8' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
+    <ROUTE fromNode='_30' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
+    <ROUTE fromNode='_26' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
+    <ROUTE fromNode='_22' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
+    <ROUTE fromNode='_47' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_3' toField='set_fraction'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='Rectangle2D_12' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='TransparencyScript' toField='set_translation'/>
+    <ROUTE fromNode='_46' fromField='translation_changed' toNode='Rectangle2D_12' toField='set_translation'/>
+    <ROUTE fromNode='_46' fromField='translation_changed' toNode='TransparencyScript' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='_46' toField='set_offset'/>
+    <ROUTE fromNode='_48' fromField='touchTime' toNode='ToggleTransparencyAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='TransparencyScript' fromField='string_changed' toNode='_45' toField='set_string'/>
+    <ROUTE fromNode='TransparencyScript' fromField='value_changed' toNode='_2' toField='set_transparency'/>
+    <ROUTE fromNode='DirectionsScript' fromField='directions_changed' toNode='CobwebWaterShader' toField='set_direction'/>
+    <ROUTE fromNode='_44' fromField='touchTime' toNode='DirectionsScript' toField='set_triggerTime'/>
+  </Scene>
+</X3D>
