@@ -8,7 +8,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V3.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/water/water2.x3d'/>
-    <meta name='modified' content='Wed, 12 Apr 2017 05:33:05 GMT'/>
+    <meta name='modified' content='Wed, 12 Apr 2017 06:10:27 GMT'/>
     <meta name='outputStyle' content='Nicest'/>
   </head>
   <Scene>
@@ -40,7 +40,7 @@
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.761608797557173, 0.627576833184138, 0.161552957057695, 0.65188'/>
+              value='-0.761608797557173, 0.627576833184138, 0.161552957057695, 0.651879999999999'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
@@ -524,7 +524,7 @@
                 <field accessType='inputOutput' type='SFVec3f' name='position' value='45.9028 5.15364 57.5263'/>
                 <field accessType='inputOutput' type='MFFloat' name='amplitude' value='0.0561423, 0.045134, 0.45134, 0.209158, 1.10083, 0, 0, 0'/>
                 <field accessType='inputOutput' type='MFFloat' name='frequency' value='1.81667, 1.29885, 0.276864, 0.686006, 0.120633'/>
-                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.171921 0.766712, 0.943286 0.338375, 0.192672 0.869837, 0.0129635 0.971308, 0.624717 0.251618'/>
+                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.847403 0.0226027, 0.333369 0.864879, 0.608347 0.361379, 0.695084 0.440791, 0.421304 0.503363'/>
                 <field accessType='inputOutput' type='SFNode' name='texture'>
                   <ComposedCubeMapTexture USE='_12'/>
                 </field>
@@ -551,6 +551,8 @@ uniform vec2  direction [WAVE_MAX];
 
 varying vec3 texCoord;
 
+vec2 offset [WAVE_MAX];
+
 float hash (in float n)
 {
 	return fract (sin (n) * 43758.5453123);
@@ -571,11 +573,9 @@ float nnoise (in vec2 x)
 }
 
 float
-getHeight (in int i, in vec2 vertex)
+getHeight (in int i, in vec2 vertex, in vec2 offset)
 {
-	vec2 d = normalize (direction [i]);
-
-	return amplitude [i] * nnoise (vertex * frequency [i] - d * set_time * speed [i]);
+	return amplitude [i] * nnoise (vertex * frequency [i] - offset);
 }
 
 float
@@ -588,7 +588,7 @@ getWaveHeight (in vec2 vertex)
 		if (amplitude [i] == 0.0)
 			continue;
 
-		height += getHeight (i, vertex);
+		height += getHeight (i, vertex, offset [i]);
 	}
 
 	return height;
@@ -619,6 +619,9 @@ getWaveNormal (in vec2 pos)
 void
 main ()
 {
+	for (int i = 0; i < WAVE_MAX; ++ i)
+		offset [i] = normalize (direction [i]) * set_time * speed [i];
+	
 	vec4 vertex = x3d_Vertex;
 	vec2 pos    = vec2 (vertex .x, vertex .z);
 	vertex .y   = getWaveHeight (pos);
@@ -672,7 +675,7 @@ main ()
             <Sphere/>
           </Shape>
         </Transform>
-        <DirectionalLight DEF='_32'
+        <DirectionalLight
             global='false'
             intensity='0.320482'
             ambientIntensity='0.563855'
@@ -737,7 +740,7 @@ main ()
             translation='-1.6905 0.857504 -1'
             scale='0.0672307 0.0672307 0.0672307'>
           <Shape>
-            <Appearance DEF='_33'>
+            <Appearance DEF='_32'>
               <Material DEF='Artdeco31'
                   ambientIntensity='0.28169'
                   diffuseColor='0 0 0'
@@ -759,7 +762,7 @@ main ()
               translation='1.6905 0.857504 -1'
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
-              <Appearance USE='_33'/>
+              <Appearance USE='_32'/>
               <Text
                   string='"Viewpoints"'
                   solid='true'>
@@ -777,7 +780,7 @@ main ()
                 translation='1.6905 0.759504 -1'
                 scale='0.0672307 0.0672307 0.0672307'>
               <Shape>
-                <Appearance USE='_33'/>
+                <Appearance USE='_32'/>
                 <Text
                     string='"Oblique View"'
                     solid='true'>
@@ -791,8 +794,8 @@ main ()
                 translation='1.48177 0.781966 2.87349e-06'
                 scale='0.245 0.040588 0.040588'>
               <Shape>
-                <Appearance DEF='_34'>
-                  <Material DEF='_35'
+                <Appearance DEF='_33'>
+                  <Material DEF='_34'
                       ambientIntensity='0'
                       diffuseColor='0 0 0'
                       shininess='0'
@@ -815,7 +818,7 @@ main ()
                 translation='1.6905 0.661504 -1'
                 scale='0.0672307 0.0672307 0.0672307'>
               <Shape>
-                <Appearance USE='_33'/>
+                <Appearance USE='_32'/>
                 <Text
                     string='"Front"'
                     solid='true'>
@@ -829,7 +832,7 @@ main ()
                 translation='1.48177 0.68352 2.51173e-06'
                 scale='0.245 0.040588 0.040588'>
               <Shape>
-                <Appearance USE='_34'/>
+                <Appearance USE='_33'/>
                 <IndexedFaceSet
                     texCoordIndex='0, 1, 2, 3, -1'
                     coordIndex='0, 1, 2, 3, -1'>
@@ -847,7 +850,7 @@ main ()
                 translation='1.6905 0.563504 -1'
                 scale='0.0672307 0.0672307 0.0672307'>
               <Shape>
-                <Appearance USE='_33'/>
+                <Appearance USE='_32'/>
                 <Text
                     string='"Top"'
                     solid='true'>
@@ -861,7 +864,7 @@ main ()
                 translation='1.48177 0.582484 2.14045e-06'
                 scale='0.245 0.040588 0.040588'>
               <Shape>
-                <Appearance USE='_34'/>
+                <Appearance USE='_33'/>
                 <IndexedFaceSet
                     texCoordIndex='0, 1, 2, 3, -1'
                     coordIndex='0, 1, 2, 3, -1'>
@@ -878,7 +881,7 @@ main ()
             translation='1.675 -0.449996 -1'
             scale='0.0672307 0.0672307 0.0672307'>
           <Shape>
-            <Appearance USE='_33'/>
+            <Appearance USE='_32'/>
             <Text
                 string='"Water"'
                 solid='true'>
@@ -896,7 +899,7 @@ main ()
               center='0 -0.027 0'>
             <Transform DEF='IndexedLineSet'>
               <Shape>
-                <Appearance USE='_33'/>
+                <Appearance USE='_32'/>
                 <IndexedLineSet
                     colorPerVertex='false'
                     coordIndex='0, 1, -1'>
@@ -910,12 +913,12 @@ main ()
                   translation='0.550415 0 0'
                   scale='0.027 0.0267372 0.0267372'>
                 <Shape>
-                  <Appearance USE='_33'/>
+                  <Appearance USE='_32'/>
                   <Disk2D
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_36'
+              <PlaneSensor DEF='_35'
                   offset='0.550415 0 0'
                   maxPosition='1 0'/>
             </Transform>
@@ -933,7 +936,7 @@ main ()
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor DEF='_37'
+                <TimeSensor DEF='_36'
                     cycleInterval='6.8'
                     loop='true'
                     startTime='1451028308.5169'
@@ -1002,16 +1005,16 @@ function set_value (value)
                 translation='-0.075 0 0'
                 scale='0.025 0.0247567 0.0247567'>
               <Shape>
-                <Appearance USE='_33'/>
+                <Appearance USE='_32'/>
                 <Rectangle2D
                     solid='false'/>
               </Shape>
-              <TouchSensor DEF='_38'
+              <TouchSensor DEF='_37'
                   description='Toggle Animation'/>
               <Script DEF='ToggleAmplitudeAnim'>
                 <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
                 <field accessType='initializeOnly' type='SFNode' name='timer'>
-                  <TimeSensor USE='_37'/>
+                  <TimeSensor USE='_36'/>
                 </field>
 <![CDATA[ecmascript:
 
@@ -1034,8 +1037,8 @@ function set_touchTime (value, time)
               translation='1.675 -0.55 -2.02108e-06'
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
-              <Appearance USE='_33'/>
-              <Text DEF='_39'
+              <Appearance USE='_32'/>
+              <Text DEF='_38'
                   string='"amplitude 1.10"'
                   solid='true'>
                 <FontStyle
@@ -1049,7 +1052,7 @@ function set_touchTime (value, time)
               center='0 -0.027 0'>
             <Transform DEF='IndexedLineSet_1'>
               <Shape>
-                <Appearance USE='_33'/>
+                <Appearance USE='_32'/>
                 <IndexedLineSet
                     colorPerVertex='false'
                     coordIndex='0, 1, -1'>
@@ -1063,12 +1066,12 @@ function set_touchTime (value, time)
                   translation='0.601538 0 0'
                   scale='0.027 0.0267372 0.0267372'>
                 <Shape>
-                  <Appearance USE='_33'/>
+                  <Appearance USE='_32'/>
                   <Disk2D
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_40'
+              <PlaneSensor DEF='_39'
                   offset='0.601538 0 0'
                   maxPosition='1 0'/>
             </Transform>
@@ -1086,7 +1089,7 @@ function set_touchTime (value, time)
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor DEF='_41'
+                <TimeSensor DEF='_40'
                     cycleInterval='6.8'
                     loop='true'
                     startTime='1451028308.5169'
@@ -1156,16 +1159,16 @@ function set_value (value)
                   translation='-0.075 0 0'
                   scale='0.025 0.0247567 0.0247567'>
                 <Shape>
-                  <Appearance USE='_33'/>
+                  <Appearance USE='_32'/>
                   <Rectangle2D
                       solid='false'/>
                 </Shape>
-                <TouchSensor DEF='_42'
+                <TouchSensor DEF='_41'
                     description='Toggle Animation'/>
                 <Script DEF='ToggleFequencyAnim'>
                   <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
                   <field accessType='initializeOnly' type='SFNode' name='timer'>
-                    <TimeSensor USE='_41'/>
+                    <TimeSensor USE='_40'/>
                   </field>
 <![CDATA[ecmascript:
 
@@ -1189,8 +1192,8 @@ function set_touchTime (value, time)
               translation='1.675 -0.65 -2.38855e-06'
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
-              <Appearance USE='_33'/>
-              <Text DEF='_43'
+              <Appearance USE='_32'/>
+              <Text DEF='_42'
                   string='"frequency 1.20"'
                   solid='true'>
                 <FontStyle
@@ -1203,8 +1206,8 @@ function set_touchTime (value, time)
               translation='1.675 -0.75 -2.75602e-06'
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
-              <Appearance USE='_33'/>
-              <Text DEF='_44'
+              <Appearance USE='_32'/>
+              <Text DEF='_43'
                   string='"speed 1.75"'
                   solid='true'>
                 <FontStyle
@@ -1218,7 +1221,7 @@ function set_touchTime (value, time)
               center='0 -0.027 0'>
             <Transform DEF='IndexedLineSet_2'>
               <Shape>
-                <Appearance USE='_33'/>
+                <Appearance USE='_32'/>
                 <IndexedLineSet
                     colorPerVertex='false'
                     coordIndex='0, 1, -1'>
@@ -1232,12 +1235,12 @@ function set_touchTime (value, time)
                   translation='0.438452 0 0'
                   scale='0.027 0.0267372 0.0267372'>
                 <Shape>
-                  <Appearance USE='_33'/>
+                  <Appearance USE='_32'/>
                   <Disk2D
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_45'
+              <PlaneSensor DEF='_44'
                   offset='0.438452 0 0'
                   maxPosition='1 0'/>
             </Transform>
@@ -1255,7 +1258,7 @@ function set_touchTime (value, time)
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor DEF='_46'
+                <TimeSensor DEF='_45'
                     cycleInterval='6.8'
                     loop='true'
                     startTime='1451028308.5169'
@@ -1325,16 +1328,16 @@ function set_value (value)
                   translation='-0.075 0 0'
                   scale='0.025 0.0247567 0.0247567'>
                 <Shape>
-                  <Appearance USE='_33'/>
+                  <Appearance USE='_32'/>
                   <Rectangle2D
                       solid='false'/>
                 </Shape>
-                <TouchSensor DEF='_47'
+                <TouchSensor DEF='_46'
                     description='Toggle Animation'/>
                 <Script DEF='ToggleSpeedAnim'>
                   <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
                   <field accessType='initializeOnly' type='SFNode' name='timer'>
-                    <TimeSensor USE='_46'/>
+                    <TimeSensor USE='_45'/>
                   </field>
 <![CDATA[ecmascript:
 
@@ -1358,7 +1361,7 @@ function set_touchTime (value, time)
               translation='1.675 -0.85 -3.12349e-06'
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
-              <Appearance USE='_33'/>
+              <Appearance USE='_32'/>
               <Text
                   string='"direction"'
                   solid='true'>
@@ -1372,11 +1375,11 @@ function set_touchTime (value, time)
               translation='1.3 -0.825 -3.03163e-06'
               scale='0.025 0.0247567 0.0247567'>
             <Shape>
-              <Appearance USE='_33'/>
+              <Appearance USE='_32'/>
               <Rectangle2D
                   solid='false'/>
             </Shape>
-            <TouchSensor DEF='_48'
+            <TouchSensor DEF='_47'
                 description='Toggle Animation'/>
             <Script DEF='DirectionsScript'>
               <field accessType='inputOnly' type='SFTime' name='set_triggerTime'/>
@@ -1402,8 +1405,8 @@ function set_triggerTime ()
               translation='1.675 -0.95 -3.49096e-06'
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
-              <Appearance USE='_33'/>
-              <Text DEF='_49'
+              <Appearance USE='_32'/>
+              <Text DEF='_48'
                   string='"transparency 0.00"'
                   solid='true'>
                 <FontStyle
@@ -1417,7 +1420,7 @@ function set_triggerTime ()
               center='0 -0.027 0'>
             <Transform DEF='IndexedLineSet_3'>
               <Shape>
-                <Appearance USE='_33'/>
+                <Appearance USE='_32'/>
                 <IndexedLineSet
                     colorPerVertex='false'
                     coordIndex='0, 1, -1'>
@@ -1430,12 +1433,12 @@ function set_triggerTime ()
               <Transform DEF='Rectangle2D_12'
                   scale='0.027 0.0267372 0.0267372'>
                 <Shape>
-                  <Appearance USE='_33'/>
+                  <Appearance USE='_32'/>
                   <Disk2D
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_50'
+              <PlaneSensor DEF='_49'
                   maxPosition='1 0'/>
             </Transform>
             <Group>
@@ -1452,7 +1455,7 @@ function set_triggerTime ()
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor DEF='_51'
+                <TimeSensor DEF='_50'
                     cycleInterval='6.8'
                     loop='true'
                     startTime='1451028308.5169'
@@ -1519,16 +1522,16 @@ function set_value (value)
                   translation='-0.075 0 0'
                   scale='0.025 0.0247567 0.0247567'>
                 <Shape>
-                  <Appearance USE='_33'/>
+                  <Appearance USE='_32'/>
                   <Rectangle2D
                       solid='false'/>
                 </Shape>
-                <TouchSensor DEF='_52'
+                <TouchSensor DEF='_51'
                     description='Toggle Animation'/>
                 <Script DEF='ToggleTransparencyAnim'>
                   <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
                   <field accessType='initializeOnly' type='SFNode' name='timer'>
-                    <TimeSensor USE='_51'/>
+                    <TimeSensor USE='_50'/>
                   </field>
 <![CDATA[ecmascript:
 
@@ -1558,32 +1561,32 @@ function set_touchTime (value, time)
     <ROUTE fromNode='_2' fromField='touchTime' toNode='_3' toField='set_triggerTime'/>
     <ROUTE fromNode='_3' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_7' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_36' fromField='translation_changed' toNode='AmplitudeScript' toField='set_translation'/>
+    <ROUTE fromNode='_35' fromField='translation_changed' toNode='AmplitudeScript' toField='set_translation'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='AmplitudeScript' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='_36' toField='set_offset'/>
-    <ROUTE fromNode='_37' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator' toField='set_fraction'/>
-    <ROUTE fromNode='_36' fromField='translation_changed' toNode='Rectangle2D_5' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='_35' toField='set_offset'/>
+    <ROUTE fromNode='_36' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_35' fromField='translation_changed' toNode='Rectangle2D_5' toField='set_translation'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='Rectangle2D_5' toField='set_translation'/>
-    <ROUTE fromNode='AmplitudeScript' fromField='string_changed' toNode='_39' toField='set_string'/>
-    <ROUTE fromNode='_38' fromField='touchTime' toNode='ToggleAmplitudeAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='AmplitudeScript' fromField='string_changed' toNode='_38' toField='set_string'/>
+    <ROUTE fromNode='_37' fromField='touchTime' toNode='ToggleAmplitudeAnim' toField='set_touchTime'/>
     <ROUTE fromNode='AmplitudeScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_amplitude'/>
-    <ROUTE fromNode='_40' fromField='translation_changed' toNode='FequencyScript' toField='set_translation'/>
-    <ROUTE fromNode='_40' fromField='translation_changed' toNode='Rectangle2D_7' toField='set_translation'/>
-    <ROUTE fromNode='_41' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_1' toField='set_fraction'/>
+    <ROUTE fromNode='_39' fromField='translation_changed' toNode='FequencyScript' toField='set_translation'/>
+    <ROUTE fromNode='_39' fromField='translation_changed' toNode='Rectangle2D_7' toField='set_translation'/>
+    <ROUTE fromNode='_40' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_1' toField='set_fraction'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='FequencyScript' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='_40' toField='set_offset'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='_39' toField='set_offset'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='Rectangle2D_7' toField='set_translation'/>
-    <ROUTE fromNode='_42' fromField='touchTime' toNode='ToggleFequencyAnim' toField='set_touchTime'/>
-    <ROUTE fromNode='FequencyScript' fromField='string_changed' toNode='_43' toField='set_string'/>
+    <ROUTE fromNode='_41' fromField='touchTime' toNode='ToggleFequencyAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='FequencyScript' fromField='string_changed' toNode='_42' toField='set_string'/>
     <ROUTE fromNode='FequencyScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_frequency'/>
-    <ROUTE fromNode='_45' fromField='translation_changed' toNode='SpeedScript' toField='set_translation'/>
-    <ROUTE fromNode='_45' fromField='translation_changed' toNode='Rectangle2D_9' toField='set_translation'/>
-    <ROUTE fromNode='_46' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_2' toField='set_fraction'/>
+    <ROUTE fromNode='_44' fromField='translation_changed' toNode='SpeedScript' toField='set_translation'/>
+    <ROUTE fromNode='_44' fromField='translation_changed' toNode='Rectangle2D_9' toField='set_translation'/>
+    <ROUTE fromNode='_45' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_2' toField='set_fraction'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='SpeedScript' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='_45' toField='set_offset'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='_44' toField='set_offset'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='Rectangle2D_9' toField='set_translation'/>
-    <ROUTE fromNode='_47' fromField='touchTime' toNode='ToggleSpeedAnim' toField='set_touchTime'/>
-    <ROUTE fromNode='SpeedScript' fromField='string_changed' toNode='_44' toField='set_string'/>
+    <ROUTE fromNode='_46' fromField='touchTime' toNode='ToggleSpeedAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='SpeedScript' fromField='string_changed' toNode='_43' toField='set_string'/>
     <ROUTE fromNode='SpeedScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_speed'/>
     <ROUTE fromNode='_10' fromField='touchTime' toNode='_11' toField='set_triggerTime'/>
     <ROUTE fromNode='_11' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
@@ -1595,16 +1598,16 @@ function set_touchTime (value, time)
     <ROUTE fromNode='_23' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_15' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
     <ROUTE fromNode='_27' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_51' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_3' toField='set_fraction'/>
+    <ROUTE fromNode='_50' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_3' toField='set_fraction'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='Rectangle2D_12' toField='set_translation'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='TransparencyScript' toField='set_translation'/>
-    <ROUTE fromNode='_50' fromField='translation_changed' toNode='Rectangle2D_12' toField='set_translation'/>
-    <ROUTE fromNode='_50' fromField='translation_changed' toNode='TransparencyScript' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='_50' toField='set_offset'/>
-    <ROUTE fromNode='_52' fromField='touchTime' toNode='ToggleTransparencyAnim' toField='set_touchTime'/>
-    <ROUTE fromNode='TransparencyScript' fromField='string_changed' toNode='_49' toField='set_string'/>
+    <ROUTE fromNode='_49' fromField='translation_changed' toNode='Rectangle2D_12' toField='set_translation'/>
+    <ROUTE fromNode='_49' fromField='translation_changed' toNode='TransparencyScript' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='_49' toField='set_offset'/>
+    <ROUTE fromNode='_51' fromField='touchTime' toNode='ToggleTransparencyAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='TransparencyScript' fromField='string_changed' toNode='_48' toField='set_string'/>
     <ROUTE fromNode='TransparencyScript' fromField='value_changed' toNode='_31' toField='set_transparency'/>
     <ROUTE fromNode='DirectionsScript' fromField='directions_changed' toNode='CobwebWaterShader' toField='set_direction'/>
-    <ROUTE fromNode='_48' fromField='touchTime' toNode='DirectionsScript' toField='set_triggerTime'/>
+    <ROUTE fromNode='_47' fromField='touchTime' toNode='DirectionsScript' toField='set_triggerTime'/>
   </Scene>
 </X3D>
