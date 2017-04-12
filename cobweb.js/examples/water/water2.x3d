@@ -8,7 +8,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V3.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/water/water2.x3d'/>
-    <meta name='modified' content='Wed, 12 Apr 2017 03:59:41 GMT'/>
+    <meta name='modified' content='Wed, 12 Apr 2017 05:06:55 GMT'/>
     <meta name='outputStyle' content='Nicest'/>
   </head>
   <Scene>
@@ -18,7 +18,7 @@
       <field accessType='outputOnly' type='SFNode' name='value_changed'/>
     </ExternProtoDeclare>
     <WorldInfo
-        title='water'>
+        title='water 2'>
       <MetadataSet DEF='Titania'
           name='Titania'
           reference='http://titania.create3000.de'>
@@ -36,15 +36,15 @@
           <MetadataDouble DEF='position' containerField='value'
               name='position'
               reference='http://titania.create3000.de'
-              value='30.5448951721191, 9.46494293212891, 56.6248397827148'/>
+              value='45.9028091430664, 5.15364408493042, 57.5262985229492'/>
           <MetadataDouble DEF='orientation' containerField='value'
               name='orientation'
               reference='http://titania.create3000.de'
-              value='-0.999609747269474, 0.02793439293737, -0.000151178961777545, 0.631485307179586'/>
+              value='-0.761608797557173, 0.627576833184138, 0.161552957057695, 0.65188'/>
           <MetadataDouble DEF='centerOfRotation' containerField='value'
               name='centerOfRotation'
               reference='http://titania.create3000.de'
-              value='30, -10, 30'/>
+              value='33.7441596984863, -11.3601493835449, 30.1557388305664'/>
         </MetadataSet>
         <MetadataSet DEF='AngleGrid' containerField='value'
             name='AngleGrid'
@@ -88,64 +88,227 @@
           <MetadataSet DEF='previous' containerField='value'
               name='previous'
               reference='http://titania.create3000.de'>
-            <Transform DEF='InvisiblePlane' containerField='value'
-                translation='1.48177 0.582484 2.14045e-06'
-                scale='0.245 0.040588 0.040588'>
+            <Transform DEF='CloudySky' containerField='value'
+                translation='-1.575 0.65 2.38855e-06'
+                scale='0.1 0.10535 0.10535'>
               <Shape>
-                <Appearance DEF='_1'>
-                  <Material DEF='_2'
-                      ambientIntensity='0'
-                      diffuseColor='0 0 0'
-                      shininess='0'
-                      transparency='1'/>
+                <Appearance>
+                  <ImageTexture DEF='_1'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg"'/>
                 </Appearance>
-                <IndexedFaceSet
-                    texCoordIndex='0, 1, 2, 3, -1'
-                    coordIndex='0, 1, 2, 3, -1'>
-                  <TextureCoordinate
-                      point='0 0, 1 0, 1 1, 0 1'/>
-                  <Coordinate
-                      point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-                </IndexedFaceSet>
+                <Rectangle2D
+                    solid='false'/>
               </Shape>
+              <TouchSensor DEF='_2'
+                  description='Cloudy Sky'/>
+              <ProtoInstance name='SFNode' DEF='_3'>
+                <fieldValue name='keyValue'>
+                  <ComposedCubeMapTexture DEF='_4' containerField='children'>
+                    <ImageTexture USE='_1' containerField='front'/>
+                    <ImageTexture containerField='back'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg"'/>
+                    <ImageTexture containerField='left'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg"'/>
+                    <ImageTexture containerField='right'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg"'/>
+                    <ImageTexture containerField='top'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg"'/>
+                    <ImageTexture containerField='bottom'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg"'/>
+                  </ComposedCubeMapTexture>
+                </fieldValue>
+              </ProtoInstance>
             </Transform>
-            <Transform DEF='InvisiblePlane_1' containerField='value'
-                translation='1.48177 0.68352 2.51173e-06'
-                scale='0.245 0.040588 0.040588'>
+            <Transform DEF='LostValley' containerField='value'
+                translation='-1.575 0.4 1.46988e-06'
+                scale='0.1 0.10535 0.10535'>
               <Shape>
-                <Appearance USE='_1'/>
-                <IndexedFaceSet
-                    texCoordIndex='0, 1, 2, 3, -1'
-                    coordIndex='0, 1, 2, 3, -1'>
-                  <TextureCoordinate
-                      point='0 0, 1 0, 1 1, 0 1'/>
-                  <Coordinate
-                      point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-                </IndexedFaceSet>
+                <Appearance>
+                  <ImageTexture DEF='_5'
+                      url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-front.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-front.jpg"'/>
+                </Appearance>
+                <Rectangle2D
+                    solid='false'/>
               </Shape>
+              <TouchSensor DEF='_6'
+                  description='Lost Valley'/>
+              <ProtoInstance name='SFNode' DEF='_7'>
+                <fieldValue name='keyValue'>
+                  <ComposedCubeMapTexture DEF='_8' containerField='children'>
+                    <ImageTexture USE='_5' containerField='front'/>
+                    <ImageTexture containerField='back'
+                        url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-back.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-back.jpg"'/>
+                    <ImageTexture containerField='left'
+                        url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-left.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-left.jpg"'/>
+                    <ImageTexture containerField='right'
+                        url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-right.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-right.jpg"'/>
+                    <ImageTexture containerField='top'
+                        url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-top.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-top.jpg"'/>
+                    <ImageTexture containerField='bottom'
+                        url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-bottom.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-bottom.jpg"'/>
+                  </ComposedCubeMapTexture>
+                </fieldValue>
+              </ProtoInstance>
+            </Transform>
+            <Transform DEF='WideOcean' containerField='value'
+                translation='-1.575 0.15 5.51205e-07'
+                scale='0.1 0.10535 0.10535'>
+              <Shape>
+                <Appearance>
+                  <ImageTexture DEF='_9'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg"'/>
+                </Appearance>
+                <Rectangle2D
+                    solid='false'/>
+              </Shape>
+              <TouchSensor DEF='_10'
+                  description='Wide Ocean'/>
+              <ProtoInstance name='SFNode' DEF='_11'>
+                <fieldValue name='keyValue'>
+                  <ComposedCubeMapTexture DEF='_12' containerField='children'>
+                    <ImageTexture USE='_9' containerField='front'/>
+                    <ImageTexture containerField='back'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg"'/>
+                    <ImageTexture containerField='left'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg"'/>
+                    <ImageTexture containerField='right'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg"'/>
+                    <ImageTexture containerField='top'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg"'/>
+                    <ImageTexture containerField='bottom'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg"'/>
+                  </ComposedCubeMapTexture>
+                </fieldValue>
+              </ProtoInstance>
+            </Transform>
+            <Transform DEF='NightSky' containerField='value'
+                translation='-1.575 -0.1 -3.6747e-07'
+                scale='0.1 0.10535 0.10535'>
+              <Shape>
+                <Appearance>
+                  <ImageTexture DEF='_13'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-front.jpg"'/>
+                </Appearance>
+                <Rectangle2D
+                    solid='false'/>
+              </Shape>
+              <TouchSensor DEF='_14'
+                  description='Night Sky'/>
+              <ProtoInstance name='SFNode' DEF='_15'>
+                <fieldValue name='keyValue'>
+                  <ComposedCubeMapTexture DEF='_16' containerField='children'>
+                    <ImageTexture USE='_13' containerField='front'/>
+                    <ImageTexture containerField='back'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-back.jpg"'/>
+                    <ImageTexture containerField='left'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-left.jpg"'/>
+                    <ImageTexture containerField='right'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-right.jpg"'/>
+                    <ImageTexture containerField='top'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-top.jpg"'/>
+                    <ImageTexture containerField='bottom'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-bottom.jpg"'/>
+                  </ComposedCubeMapTexture>
+                </fieldValue>
+              </ProtoInstance>
+            </Transform>
+            <Transform DEF='Sunset' containerField='value'
+                translation='-1.575 -0.35 -1.28614e-06'
+                scale='0.1 0.10535 0.10535'>
+              <Shape>
+                <Appearance>
+                  <ImageTexture DEF='_17'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-front.jpg"'/>
+                </Appearance>
+                <Rectangle2D
+                    solid='false'/>
+              </Shape>
+              <TouchSensor DEF='_18'
+                  description='Sunset'/>
+              <ProtoInstance name='SFNode' DEF='_19'>
+                <fieldValue name='keyValue'>
+                  <ComposedCubeMapTexture DEF='_20' containerField='children'>
+                    <ImageTexture USE='_17' containerField='front'/>
+                    <ImageTexture containerField='back'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-back.jpg"'/>
+                    <ImageTexture containerField='left'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-left.jpg"'/>
+                    <ImageTexture containerField='right'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-right.jpg"'/>
+                    <ImageTexture containerField='top'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-top.jpg"'/>
+                    <ImageTexture containerField='bottom'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-bottom.jpg"'/>
+                  </ComposedCubeMapTexture>
+                </fieldValue>
+              </ProtoInstance>
+            </Transform>
+            <Transform DEF='Interstellar' containerField='value'
+                translation='-1.575 -0.6 -2.20482e-06'
+                scale='0.1 0.10535 0.10535'>
+              <Shape>
+                <Appearance>
+                  <ImageTexture DEF='_21'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-front.jpg"'/>
+                </Appearance>
+                <Rectangle2D
+                    solid='false'/>
+              </Shape>
+              <TouchSensor DEF='_22'
+                  description='Interstellar'/>
+              <ProtoInstance name='SFNode' DEF='_23'>
+                <fieldValue name='keyValue'>
+                  <ComposedCubeMapTexture DEF='_24' containerField='children'>
+                    <ImageTexture USE='_21' containerField='front'/>
+                    <ImageTexture containerField='back'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-back.jpg"'/>
+                    <ImageTexture containerField='left'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-left.jpg"'/>
+                    <ImageTexture containerField='right'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-right.jpg"'/>
+                    <ImageTexture containerField='top'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-top.jpg"'/>
+                    <ImageTexture containerField='bottom'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-bottom.jpg"'/>
+                  </ComposedCubeMapTexture>
+                </fieldValue>
+              </ProtoInstance>
+            </Transform>
+            <Transform DEF='ViolentDays' containerField='value'
+                translation='-1.575 -0.85 -3.12349e-06'
+                scale='0.1 0.10535 0.10535'>
+              <Shape>
+                <Appearance>
+                  <ImageTexture DEF='_25'
+                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-front.jpg"'/>
+                </Appearance>
+                <Rectangle2D
+                    solid='false'/>
+              </Shape>
+              <TouchSensor DEF='_26'
+                  description='Violent Days'/>
+              <ProtoInstance name='SFNode' DEF='_27'>
+                <fieldValue name='keyValue'>
+                  <ComposedCubeMapTexture DEF='_28' containerField='children'>
+                    <ImageTexture USE='_25' containerField='front'/>
+                    <ImageTexture containerField='back'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-back.jpg"'/>
+                    <ImageTexture containerField='left'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-left.jpg"'/>
+                    <ImageTexture containerField='right'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-right.jpg"'/>
+                    <ImageTexture containerField='top'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-top.jpg"'/>
+                    <ImageTexture containerField='bottom'
+                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-bottom.jpg"'/>
+                  </ComposedCubeMapTexture>
+                </fieldValue>
+              </ProtoInstance>
             </Transform>
           </MetadataSet>
           <MetadataSet DEF='nodes' containerField='value'
               name='nodes'
-              reference='http://titania.create3000.de'>
-            <Transform USE='InvisiblePlane' containerField='value'/>
-            <Transform USE='InvisiblePlane_1' containerField='value'/>
-            <Transform DEF='InvisiblePlane_2' containerField='value'
-                translation='1.48177 0.781966 2.87349e-06'
-                scale='0.245 0.040588 0.040588'>
-              <Shape>
-                <Appearance USE='_1'/>
-                <IndexedFaceSet
-                    texCoordIndex='0, 1, 2, 3, -1'
-                    coordIndex='0, 1, 2, 3, -1'>
-                  <TextureCoordinate
-                      point='0 0, 1 0, 1 1, 0 1'/>
-                  <Coordinate
-                      point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
-                </IndexedFaceSet>
-              </Shape>
-            </Transform>
-          </MetadataSet>
+              reference='http://titania.create3000.de'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -238,7 +401,7 @@
               translation='30 -10 30'
               scale='30 15 30'>
             <Shape>
-              <Appearance DEF='_3'>
+              <Appearance DEF='_29'>
                 <Material/>
                 <ImageTexture
                     url='"tiles.jpg"'/>
@@ -259,7 +422,7 @@
               translation='30 -11.25 30'
               scale='32.5 16.25 32.5'>
             <Shape>
-              <Appearance USE='_3'/>
+              <Appearance USE='_29'/>
               <IndexedFaceSet
                   solid='false'
                   ccw='false'
@@ -278,7 +441,7 @@
               scale='1.25 30.0042 1.25'
               scaleOrientation='1.37573999999847e-06 -0.999999999998891 5.70145999999368e-07 0.785052'>
             <Shape>
-              <Appearance USE='_3'/>
+              <Appearance USE='_29'/>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
                   coordIndex='0, 1, 2, 3, -1'>
@@ -295,7 +458,7 @@
               scale='1.25 30.0042 1.25'
               scaleOrientation='3.78907999999885e-07 0.999999999999697 6.79481999999794e-07 0.553375'>
             <Shape>
-              <Appearance USE='_3'/>
+              <Appearance USE='_29'/>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
                   coordIndex='0, 1, 2, 3, -1'>
@@ -311,7 +474,7 @@
               rotation='0.99999999999273 3.80629999997233e-06 2.27044999998349e-07 4.71239'
               scale='1.25 32.5084 1.25'>
             <Shape>
-              <Appearance USE='_3'/>
+              <Appearance USE='_29'/>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
                   coordIndex='0, 1, 2, 3, -1'>
@@ -327,7 +490,7 @@
               rotation='0.99999999999273 3.80629999997233e-06 2.27044999998349e-07 4.71239'
               scale='1.25 32.5084 1.25'>
             <Shape>
-              <Appearance USE='_3'/>
+              <Appearance USE='_29'/>
               <IndexedFaceSet
                   texCoordIndex='0, 1, 2, 3, -1'
                   coordIndex='0, 1, 2, 3, -1'>
@@ -346,11 +509,11 @@
           <ScalarInterpolator DEF='ElapsedTime'
               key='0, 1'
               keyValue='0, 3.1104e+07'/>
-          <ProximitySensor DEF='_4'
+          <ProximitySensor DEF='_30'
               size='1000 1000 1000'/>
           <Shape>
             <Appearance>
-              <Material DEF='_5'
+              <Material DEF='_31'
                   ambientIntensity='0'
                   diffuseColor='0 0 0'
                   shininess='0'
@@ -358,25 +521,12 @@
               <ComposedShader DEF='CobwebWaterShader'
                   language='GLSL'>
                 <field accessType='inputOnly' type='SFFloat' name='set_time'/>
-                <field accessType='inputOutput' type='SFVec3f' name='position' value='30.5449 9.46494 56.6248'/>
-                <field accessType='inputOutput' type='MFFloat' name='amplitude' value='0.0561423, 0.045134, 0.45134, 0.209158, 1.10083, 0, 0, 0, 0, 0, 0.5, 0.5, 0.5'/>
-                <field accessType='inputOutput' type='MFFloat' name='frequency' value='1.8058, 1.29109, 0.275208, 0.681903, 0.119911'/>
-                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.194332 0.00143626, 0.962492 0.836971, 0.609332 0.35244, 0.4503 0.280744, 0.542212 0.593624'/>
+                <field accessType='inputOutput' type='SFVec3f' name='position' value='45.9028 5.15364 57.5263'/>
+                <field accessType='inputOutput' type='MFFloat' name='amplitude' value='0.0561423, 0.045134, 0.45134, 0.209158, 1.10083, 0, 0, 0'/>
+                <field accessType='inputOutput' type='MFFloat' name='frequency' value='1.81667, 1.29885, 0.276864, 0.686006, 0.120633'/>
+                <field accessType='inputOutput' type='MFVec2f' name='direction' value='0.171921 0.766712, 0.943286 0.338375, 0.192672 0.869837, 0.0129635 0.971308, 0.624717 0.251618'/>
                 <field accessType='inputOutput' type='SFNode' name='texture'>
-                  <ComposedCubeMapTexture DEF='_6'>
-                    <ImageTexture DEF='_7' containerField='front'
-                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-front.jpg"'/>
-                    <ImageTexture containerField='back'
-                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-back.jpg"'/>
-                    <ImageTexture containerField='left'
-                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-left.jpg"'/>
-                    <ImageTexture containerField='right'
-                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-right.jpg"'/>
-                    <ImageTexture containerField='top'
-                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-top.jpg"'/>
-                    <ImageTexture containerField='bottom'
-                        url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/WideOcean/WideOcean-bottom.jpg"'/>
-                  </ComposedCubeMapTexture>
+                  <ComposedCubeMapTexture USE='_12'/>
                 </field>
                 <field accessType='inputOutput' type='MFFloat' name='speed' value='1.75265, 1.75265, 1.75265, 1.75265, 1.75265'/>
                 <ShaderPart DEF='CobwebWaterVertex'>
@@ -448,7 +598,8 @@ getWaveHeight (in vec2 vertex)
 
 const vec2 delta = vec2 (DISTANCE_MIN, -DISTANCE_MIN);
 
-vec3 getWaveNormal (vec2 pos)
+vec3
+getWaveNormal (in vec2 pos)
 {
 	vec2 p1 = pos + delta .xx;
 	vec2 p2 = pos + delta .yy;
@@ -521,11 +672,20 @@ main ()
             <Sphere/>
           </Shape>
         </Transform>
-        <DirectionalLight
+        <DirectionalLight DEF='_32'
             global='false'
             intensity='0.320482'
             ambientIntensity='0.563855'
-            direction='0.682878 -0.704064 0.194862'/>
+            direction='0.682878 -0.704064 0.194862'>
+          <MetadataSet DEF='DirectionalLight'
+              name='DirectionalLight'
+              reference='http://titania.create3000.de'>
+            <MetadataFloat DEF='location' containerField='value'
+                name='location'
+                reference='http://titania.create3000.de'
+                value='0, 0, 0'/>
+          </MetadataSet>
+        </DirectionalLight>
       </Layer>
       <Layer DEF='HUD'>
         <MetadataSet DEF='Titania_2'
@@ -565,217 +725,20 @@ main ()
             headlight='false'/>
         <OrthoViewpoint/>
         <Group DEF='CubeMapTextures'>
-          <Transform DEF='Sunset'
-              translation='-1.575 -0.35 -1.28614e-06'
-              scale='0.1 0.10535 0.10535'>
-            <Shape>
-              <Appearance>
-                <ImageTexture DEF='_8'
-                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-front.jpg"'/>
-              </Appearance>
-              <Rectangle2D
-                  solid='false'/>
-            </Shape>
-            <TouchSensor DEF='_9'
-                description='Sunset'/>
-            <ProtoInstance name='SFNode' DEF='_10'>
-              <fieldValue name='keyValue'>
-                <ComposedCubeMapTexture DEF='_11' containerField='children'>
-                  <ImageTexture USE='_8' containerField='front'/>
-                  <ImageTexture containerField='back'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-back.jpg"'/>
-                  <ImageTexture containerField='left'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-left.jpg"'/>
-                  <ImageTexture containerField='right'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-right.jpg"'/>
-                  <ImageTexture containerField='top'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-top.jpg"'/>
-                  <ImageTexture containerField='bottom'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Sunset/Sunset-bottom.jpg"'/>
-                </ComposedCubeMapTexture>
-              </fieldValue>
-            </ProtoInstance>
-          </Transform>
-          <Transform DEF='CloudySky'
-              translation='-1.575 0.65 2.38855e-06'
-              scale='0.1 0.10535 0.10535'>
-            <Shape>
-              <Appearance>
-                <ImageTexture DEF='_12'
-                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-front.jpg"'/>
-              </Appearance>
-              <Rectangle2D
-                  solid='false'/>
-            </Shape>
-            <TouchSensor DEF='_13'
-                description='Cloudy Sky'/>
-            <ProtoInstance name='SFNode' DEF='_14'>
-              <fieldValue name='keyValue'>
-                <ComposedCubeMapTexture DEF='_15' containerField='children'>
-                  <ImageTexture USE='_12' containerField='front'/>
-                  <ImageTexture containerField='back'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-back.jpg"'/>
-                  <ImageTexture containerField='left'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-left.jpg"'/>
-                  <ImageTexture containerField='right'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-right.jpg"'/>
-                  <ImageTexture containerField='top'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-top.jpg"'/>
-                  <ImageTexture containerField='bottom'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/CloudySky/CloudySky-bottom.jpg"'/>
-                </ComposedCubeMapTexture>
-              </fieldValue>
-            </ProtoInstance>
-          </Transform>
-          <Transform DEF='LostValley'
-              translation='-1.575 0.4 1.46988e-06'
-              scale='0.1 0.10535 0.10535'>
-            <Shape>
-              <Appearance>
-                <ImageTexture DEF='_16'
-                    url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-front.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-front.jpg"'/>
-              </Appearance>
-              <Rectangle2D
-                  solid='false'/>
-            </Shape>
-            <TouchSensor DEF='_17'
-                description='Lost Valley'/>
-            <ProtoInstance name='SFNode' DEF='_18'>
-              <fieldValue name='keyValue'>
-                <ComposedCubeMapTexture DEF='_19' containerField='children'>
-                  <ImageTexture USE='_16' containerField='front'/>
-                  <ImageTexture containerField='back'
-                      url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-back.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-back.jpg"'/>
-                  <ImageTexture containerField='left'
-                      url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-left.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-left.jpg"'/>
-                  <ImageTexture containerField='right'
-                      url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-right.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-right.jpg"'/>
-                  <ImageTexture containerField='top'
-                      url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-top.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-top.jpg"'/>
-                  <ImageTexture containerField='bottom'
-                      url='"http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-bottom.jpg", "http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/LostValley/LostValley-bottom.jpg"'/>
-                </ComposedCubeMapTexture>
-              </fieldValue>
-            </ProtoInstance>
-          </Transform>
-          <Transform DEF='WideOcean'
-              translation='-1.575 0.15 5.51205e-07'
-              scale='0.1 0.10535 0.10535'>
-            <Shape>
-              <Appearance>
-                <ImageTexture USE='_7'/>
-              </Appearance>
-              <Rectangle2D
-                  solid='false'/>
-            </Shape>
-            <TouchSensor DEF='_20'
-                description='Wide Ocean'/>
-            <ProtoInstance name='SFNode' DEF='_21'>
-              <fieldValue name='keyValue'>
-                <ComposedCubeMapTexture USE='_6' containerField='children'/>
-              </fieldValue>
-            </ProtoInstance>
-          </Transform>
-          <Transform DEF='ViolentDays'
-              translation='-1.575 -0.85 -3.12349e-06'
-              scale='0.1 0.10535 0.10535'>
-            <Shape>
-              <Appearance>
-                <ImageTexture DEF='_22'
-                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-front.jpg"'/>
-              </Appearance>
-              <Rectangle2D
-                  solid='false'/>
-            </Shape>
-            <TouchSensor DEF='_23'
-                description='Violent Days'/>
-            <ProtoInstance name='SFNode' DEF='_24'>
-              <fieldValue name='keyValue'>
-                <ComposedCubeMapTexture DEF='_25' containerField='children'>
-                  <ImageTexture USE='_22' containerField='front'/>
-                  <ImageTexture containerField='back'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-back.jpg"'/>
-                  <ImageTexture containerField='left'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-left.jpg"'/>
-                  <ImageTexture containerField='right'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-right.jpg"'/>
-                  <ImageTexture containerField='top'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-top.jpg"'/>
-                  <ImageTexture containerField='bottom'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/ViolentDays/ViolentDays-bottom.jpg"'/>
-                </ComposedCubeMapTexture>
-              </fieldValue>
-            </ProtoInstance>
-          </Transform>
-          <Transform DEF='NightSky'
-              translation='-1.575 -0.1 -3.6747e-07'
-              scale='0.1 0.10535 0.10535'>
-            <Shape>
-              <Appearance>
-                <ImageTexture DEF='_26'
-                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-front.jpg"'/>
-              </Appearance>
-              <Rectangle2D
-                  solid='false'/>
-            </Shape>
-            <TouchSensor DEF='_27'
-                description='Night Sky'/>
-            <ProtoInstance name='SFNode' DEF='_28'>
-              <fieldValue name='keyValue'>
-                <ComposedCubeMapTexture DEF='_29' containerField='children'>
-                  <ImageTexture USE='_26' containerField='front'/>
-                  <ImageTexture containerField='back'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-back.jpg"'/>
-                  <ImageTexture containerField='left'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-left.jpg"'/>
-                  <ImageTexture containerField='right'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-right.jpg"'/>
-                  <ImageTexture containerField='top'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-top.jpg"'/>
-                  <ImageTexture containerField='bottom'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/NightSky/NightSky-bottom.jpg"'/>
-                </ComposedCubeMapTexture>
-              </fieldValue>
-            </ProtoInstance>
-          </Transform>
-          <Transform DEF='Interstellar'
-              translation='-1.575 -0.6 -2.20482e-06'
-              scale='0.1 0.10535 0.10535'>
-            <Shape>
-              <Appearance>
-                <ImageTexture DEF='_30'
-                    url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-front.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-front.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-front.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-front.jpg"'/>
-              </Appearance>
-              <Rectangle2D
-                  solid='false'/>
-            </Shape>
-            <TouchSensor DEF='_31'
-                description='Interstellar'/>
-            <ProtoInstance name='SFNode' DEF='_32'>
-              <fieldValue name='keyValue'>
-                <ComposedCubeMapTexture DEF='_33' containerField='children'>
-                  <ImageTexture USE='_30' containerField='front'/>
-                  <ImageTexture containerField='back'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-back.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-back.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-back.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-back.jpg"'/>
-                  <ImageTexture containerField='left'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-left.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-left.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-left.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-left.jpg"'/>
-                  <ImageTexture containerField='right'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-right.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-right.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-right.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-right.jpg"'/>
-                  <ImageTexture containerField='top'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-top.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-top.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-top.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-top.jpg"'/>
-                  <ImageTexture containerField='bottom'
-                      url='"http://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-bottom.jpg", "https://cdn.rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-bottom.jpg", "http://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-bottom.jpg", "https://rawgit.com/create3000/Library/master/Textures/CubeMapTextures/Interstellar/Interstellar-bottom.jpg"'/>
-                </ComposedCubeMapTexture>
-              </fieldValue>
-            </ProtoInstance>
-          </Transform>
+          <Transform USE='Sunset'/>
+          <Transform USE='CloudySky'/>
+          <Transform USE='LostValley'/>
+          <Transform USE='WideOcean'/>
+          <Transform USE='ViolentDays'/>
+          <Transform USE='NightSky'/>
+          <Transform USE='Interstellar'/>
         </Group>
         <Transform DEF='Header'
             translation='-1.6905 0.857504 -1'
             scale='0.0672307 0.0672307 0.0672307'>
           <Shape>
-            <Appearance>
-              <Material
+            <Appearance DEF='_33'>
+              <Material DEF='Artdeco31'
                   ambientIntensity='0.28169'
                   diffuseColor='0 0 0'
                   specularColor='0.199 0.049781 0.049781'
@@ -796,13 +759,7 @@ main ()
               translation='1.6905 0.857504 -1'
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
-              <Appearance>
-                <Material DEF='Artdeco31'
-                    ambientIntensity='0.28169'
-                    diffuseColor='0 0 0'
-                    specularColor='0.199 0.049781 0.049781'
-                    shininess='0.194444'/>
-              </Appearance>
+              <Appearance USE='_33'/>
               <Text
                   string='"Viewpoints"'
                   solid='true'>
@@ -820,13 +777,7 @@ main ()
                 translation='1.6905 0.759504 -1'
                 scale='0.0672307 0.0672307 0.0672307'>
               <Shape>
-                <Appearance>
-                  <Material
-                      ambientIntensity='0.28169'
-                      diffuseColor='0 0 0'
-                      specularColor='0.199 0.049781 0.049781'
-                      shininess='0.194444'/>
-                </Appearance>
+                <Appearance USE='_33'/>
                 <Text
                     string='"Oblique View"'
                     solid='true'>
@@ -836,7 +787,27 @@ main ()
                 </Text>
               </Shape>
             </Transform>
-            <Transform USE='InvisiblePlane_2'/>
+            <Transform DEF='InvisiblePlane'
+                translation='1.48177 0.781966 2.87349e-06'
+                scale='0.245 0.040588 0.040588'>
+              <Shape>
+                <Appearance DEF='_34'>
+                  <Material DEF='_35'
+                      ambientIntensity='0'
+                      diffuseColor='0 0 0'
+                      shininess='0'
+                      transparency='1'/>
+                </Appearance>
+                <IndexedFaceSet
+                    texCoordIndex='0, 1, 2, 3, -1'
+                    coordIndex='0, 1, 2, 3, -1'>
+                  <TextureCoordinate
+                      point='0 0, 1 0, 1 1, 0 1'/>
+                  <Coordinate
+                      point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+                </IndexedFaceSet>
+              </Shape>
+            </Transform>
           </Anchor>
           <Anchor
               url='"&#35;Front"'>
@@ -844,13 +815,7 @@ main ()
                 translation='1.6905 0.661504 -1'
                 scale='0.0672307 0.0672307 0.0672307'>
               <Shape>
-                <Appearance>
-                  <Material
-                      ambientIntensity='0.28169'
-                      diffuseColor='0 0 0'
-                      specularColor='0.199 0.049781 0.049781'
-                      shininess='0.194444'/>
-                </Appearance>
+                <Appearance USE='_33'/>
                 <Text
                     string='"Front"'
                     solid='true'>
@@ -860,7 +825,21 @@ main ()
                 </Text>
               </Shape>
             </Transform>
-            <Transform USE='InvisiblePlane_1'/>
+            <Transform DEF='InvisiblePlane_1'
+                translation='1.48177 0.68352 2.51173e-06'
+                scale='0.245 0.040588 0.040588'>
+              <Shape>
+                <Appearance USE='_34'/>
+                <IndexedFaceSet
+                    texCoordIndex='0, 1, 2, 3, -1'
+                    coordIndex='0, 1, 2, 3, -1'>
+                  <TextureCoordinate
+                      point='0 0, 1 0, 1 1, 0 1'/>
+                  <Coordinate
+                      point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+                </IndexedFaceSet>
+              </Shape>
+            </Transform>
           </Anchor>
           <Anchor
               url='"&#35;Top"'>
@@ -868,13 +847,7 @@ main ()
                 translation='1.6905 0.563504 -1'
                 scale='0.0672307 0.0672307 0.0672307'>
               <Shape>
-                <Appearance>
-                  <Material
-                      ambientIntensity='0.28169'
-                      diffuseColor='0 0 0'
-                      specularColor='0.199 0.049781 0.049781'
-                      shininess='0.194444'/>
-                </Appearance>
+                <Appearance USE='_33'/>
                 <Text
                     string='"Top"'
                     solid='true'>
@@ -884,20 +857,28 @@ main ()
                 </Text>
               </Shape>
             </Transform>
-            <Transform USE='InvisiblePlane'/>
+            <Transform DEF='InvisiblePlane_2'
+                translation='1.48177 0.582484 2.14045e-06'
+                scale='0.245 0.040588 0.040588'>
+              <Shape>
+                <Appearance USE='_34'/>
+                <IndexedFaceSet
+                    texCoordIndex='0, 1, 2, 3, -1'
+                    coordIndex='0, 1, 2, 3, -1'>
+                  <TextureCoordinate
+                      point='0 0, 1 0, 1 1, 0 1'/>
+                  <Coordinate
+                      point='-1 -1 0, 1 -1 0, 1 1 0, -1 1 0'/>
+                </IndexedFaceSet>
+              </Shape>
+            </Transform>
           </Anchor>
         </Group>
         <Transform DEF='Header_2'
             translation='1.675 -0.449996 -1'
             scale='0.0672307 0.0672307 0.0672307'>
           <Shape>
-            <Appearance>
-              <Material DEF='Artdeco31_1'
-                  ambientIntensity='0.28169'
-                  diffuseColor='0 0 0'
-                  specularColor='0.199 0.049781 0.049781'
-                  shininess='0.194444'/>
-            </Appearance>
+            <Appearance USE='_33'/>
             <Text
                 string='"Water"'
                 solid='true'>
@@ -915,15 +896,7 @@ main ()
               center='0 -0.027 0'>
             <Transform DEF='IndexedLineSet'>
               <Shape>
-                <Appearance>
-                  <LineProperties
-                      linewidthScaleFactor='2'/>
-                  <Material DEF='Artdeco31_2'
-                      ambientIntensity='0.28169'
-                      diffuseColor='0 0 0'
-                      specularColor='0.199 0.049781 0.049781'
-                      shininess='0.194444'/>
-                </Appearance>
+                <Appearance USE='_33'/>
                 <IndexedLineSet
                     colorPerVertex='false'
                     coordIndex='0, 1, -1'>
@@ -937,18 +910,12 @@ main ()
                   translation='0.550415 0 0'
                   scale='0.027 0.0267372 0.0267372'>
                 <Shape>
-                  <Appearance>
-                    <Material
-                        ambientIntensity='0.28169'
-                        diffuseColor='0 0 0'
-                        specularColor='0.199 0.049781 0.049781'
-                        shininess='0.194444'/>
-                  </Appearance>
+                  <Appearance USE='_33'/>
                   <Disk2D
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_34'
+              <PlaneSensor DEF='_36'
                   offset='0.550415 0 0'
                   maxPosition='1 0'/>
             </Transform>
@@ -966,7 +933,7 @@ main ()
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor DEF='_35'
+                <TimeSensor DEF='_37'
                     cycleInterval='6.8'
                     loop='true'
                     startTime='1451028308.5169'
@@ -1035,22 +1002,16 @@ function set_value (value)
                 translation='-0.075 0 0'
                 scale='0.025 0.0247567 0.0247567'>
               <Shape>
-                <Appearance>
-                  <Material
-                      ambientIntensity='0.28169'
-                      diffuseColor='0 0 0'
-                      specularColor='0.199 0.049781 0.049781'
-                      shininess='0.194444'/>
-                </Appearance>
+                <Appearance USE='_33'/>
                 <Rectangle2D
                     solid='false'/>
               </Shape>
-              <TouchSensor DEF='_36'
+              <TouchSensor DEF='_38'
                   description='Toggle Animation'/>
               <Script DEF='ToggleAmplitudeAnim'>
                 <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
                 <field accessType='initializeOnly' type='SFNode' name='timer'>
-                  <TimeSensor USE='_35'/>
+                  <TimeSensor USE='_37'/>
                 </field>
 <![CDATA[ecmascript:
 
@@ -1073,14 +1034,8 @@ function set_touchTime (value, time)
               translation='1.675 -0.55 -2.02108e-06'
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
-              <Appearance>
-                <Material
-                    ambientIntensity='0.28169'
-                    diffuseColor='0 0 0'
-                    specularColor='0.199 0.049781 0.049781'
-                    shininess='0.194444'/>
-              </Appearance>
-              <Text DEF='_37'
+              <Appearance USE='_33'/>
+              <Text DEF='_39'
                   string='"amplitude 1.10"'
                   solid='true'>
                 <FontStyle
@@ -1094,15 +1049,7 @@ function set_touchTime (value, time)
               center='0 -0.027 0'>
             <Transform DEF='IndexedLineSet_1'>
               <Shape>
-                <Appearance>
-                  <LineProperties
-                      linewidthScaleFactor='2'/>
-                  <Material DEF='Artdeco31_3'
-                      ambientIntensity='0.28169'
-                      diffuseColor='0 0 0'
-                      specularColor='0.199 0.049781 0.049781'
-                      shininess='0.194444'/>
-                </Appearance>
+                <Appearance USE='_33'/>
                 <IndexedLineSet
                     colorPerVertex='false'
                     coordIndex='0, 1, -1'>
@@ -1113,22 +1060,16 @@ function set_touchTime (value, time)
             </Transform>
             <Transform>
               <Transform DEF='Rectangle2D_7'
-                  translation='0.597941 0 0'
+                  translation='0.601538 0 0'
                   scale='0.027 0.0267372 0.0267372'>
                 <Shape>
-                  <Appearance>
-                    <Material
-                        ambientIntensity='0.28169'
-                        diffuseColor='0 0 0'
-                        specularColor='0.199 0.049781 0.049781'
-                        shininess='0.194444'/>
-                  </Appearance>
+                  <Appearance USE='_33'/>
                   <Disk2D
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_38'
-                  offset='0.597941 0 0'
+              <PlaneSensor DEF='_40'
+                  offset='0.601538 0 0'
                   maxPosition='1 0'/>
             </Transform>
             <Group>
@@ -1145,7 +1086,7 @@ function set_touchTime (value, time)
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor DEF='_39'
+                <TimeSensor DEF='_41'
                     cycleInterval='6.8'
                     loop='true'
                     startTime='1451028308.5169'
@@ -1215,22 +1156,16 @@ function set_value (value)
                   translation='-0.075 0 0'
                   scale='0.025 0.0247567 0.0247567'>
                 <Shape>
-                  <Appearance>
-                    <Material
-                        ambientIntensity='0.28169'
-                        diffuseColor='0 0 0'
-                        specularColor='0.199 0.049781 0.049781'
-                        shininess='0.194444'/>
-                  </Appearance>
+                  <Appearance USE='_33'/>
                   <Rectangle2D
                       solid='false'/>
                 </Shape>
-                <TouchSensor DEF='_40'
+                <TouchSensor DEF='_42'
                     description='Toggle Animation'/>
                 <Script DEF='ToggleFequencyAnim'>
                   <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
                   <field accessType='initializeOnly' type='SFNode' name='timer'>
-                    <TimeSensor USE='_39'/>
+                    <TimeSensor USE='_41'/>
                   </field>
 <![CDATA[ecmascript:
 
@@ -1254,14 +1189,8 @@ function set_touchTime (value, time)
               translation='1.675 -0.65 -2.38855e-06'
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
-              <Appearance>
-                <Material
-                    ambientIntensity='0.28169'
-                    diffuseColor='0 0 0'
-                    specularColor='0.199 0.049781 0.049781'
-                    shininess='0.194444'/>
-              </Appearance>
-              <Text DEF='_41'
+              <Appearance USE='_33'/>
+              <Text DEF='_43'
                   string='"frequency 1.20"'
                   solid='true'>
                 <FontStyle
@@ -1274,14 +1203,8 @@ function set_touchTime (value, time)
               translation='1.675 -0.75 -2.75602e-06'
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
-              <Appearance>
-                <Material
-                    ambientIntensity='0.28169'
-                    diffuseColor='0 0 0'
-                    specularColor='0.199 0.049781 0.049781'
-                    shininess='0.194444'/>
-              </Appearance>
-              <Text DEF='_42'
+              <Appearance USE='_33'/>
+              <Text DEF='_44'
                   string='"speed 1.75"'
                   solid='true'>
                 <FontStyle
@@ -1295,15 +1218,7 @@ function set_touchTime (value, time)
               center='0 -0.027 0'>
             <Transform DEF='IndexedLineSet_2'>
               <Shape>
-                <Appearance>
-                  <LineProperties
-                      linewidthScaleFactor='2'/>
-                  <Material DEF='Artdeco31_4'
-                      ambientIntensity='0.28169'
-                      diffuseColor='0 0 0'
-                      specularColor='0.199 0.049781 0.049781'
-                      shininess='0.194444'/>
-                </Appearance>
+                <Appearance USE='_33'/>
                 <IndexedLineSet
                     colorPerVertex='false'
                     coordIndex='0, 1, -1'>
@@ -1317,18 +1232,12 @@ function set_touchTime (value, time)
                   translation='0.0876327 0 0'
                   scale='0.027 0.0267372 0.0267372'>
                 <Shape>
-                  <Appearance>
-                    <Material
-                        ambientIntensity='0.28169'
-                        diffuseColor='0 0 0'
-                        specularColor='0.199 0.049781 0.049781'
-                        shininess='0.194444'/>
-                  </Appearance>
+                  <Appearance USE='_33'/>
                   <Disk2D
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_43'
+              <PlaneSensor DEF='_45'
                   offset='0.0876327 0 0'
                   maxPosition='1 0'/>
             </Transform>
@@ -1346,7 +1255,7 @@ function set_touchTime (value, time)
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor DEF='_44'
+                <TimeSensor DEF='_46'
                     cycleInterval='6.8'
                     loop='true'
                     startTime='1451028308.5169'
@@ -1416,22 +1325,16 @@ function set_value (value)
                   translation='-0.075 0 0'
                   scale='0.025 0.0247567 0.0247567'>
                 <Shape>
-                  <Appearance>
-                    <Material
-                        ambientIntensity='0.28169'
-                        diffuseColor='0 0 0'
-                        specularColor='0.199 0.049781 0.049781'
-                        shininess='0.194444'/>
-                  </Appearance>
+                  <Appearance USE='_33'/>
                   <Rectangle2D
                       solid='false'/>
                 </Shape>
-                <TouchSensor DEF='_45'
+                <TouchSensor DEF='_47'
                     description='Toggle Animation'/>
                 <Script DEF='ToggleSpeedAnim'>
                   <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
                   <field accessType='initializeOnly' type='SFNode' name='timer'>
-                    <TimeSensor USE='_44'/>
+                    <TimeSensor USE='_46'/>
                   </field>
 <![CDATA[ecmascript:
 
@@ -1455,13 +1358,7 @@ function set_touchTime (value, time)
               translation='1.675 -0.85 -3.12349e-06'
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
-              <Appearance>
-                <Material
-                    ambientIntensity='0.28169'
-                    diffuseColor='0 0 0'
-                    specularColor='0.199 0.049781 0.049781'
-                    shininess='0.194444'/>
-              </Appearance>
+              <Appearance USE='_33'/>
               <Text
                   string='"direction"'
                   solid='true'>
@@ -1475,17 +1372,11 @@ function set_touchTime (value, time)
               translation='1.3 -0.825 -3.03163e-06'
               scale='0.025 0.0247567 0.0247567'>
             <Shape>
-              <Appearance>
-                <Material
-                    ambientIntensity='0.28169'
-                    diffuseColor='0 0 0'
-                    specularColor='0.199 0.049781 0.049781'
-                    shininess='0.194444'/>
-              </Appearance>
+              <Appearance USE='_33'/>
               <Rectangle2D
                   solid='false'/>
             </Shape>
-            <TouchSensor DEF='_46'
+            <TouchSensor DEF='_48'
                 description='Toggle Animation'/>
             <Script DEF='DirectionsScript'>
               <field accessType='inputOnly' type='SFTime' name='set_triggerTime'/>
@@ -1511,14 +1402,8 @@ function set_triggerTime ()
               translation='1.675 -0.95 -3.49096e-06'
               scale='0.0672307 0.0672307 0.0672307'>
             <Shape>
-              <Appearance>
-                <Material
-                    ambientIntensity='0.28169'
-                    diffuseColor='0 0 0'
-                    specularColor='0.199 0.049781 0.049781'
-                    shininess='0.194444'/>
-              </Appearance>
-              <Text DEF='_47'
+              <Appearance USE='_33'/>
+              <Text DEF='_49'
                   string='"transparency 0.00"'
                   solid='true'>
                 <FontStyle
@@ -1532,15 +1417,7 @@ function set_triggerTime ()
               center='0 -0.027 0'>
             <Transform DEF='IndexedLineSet_3'>
               <Shape>
-                <Appearance>
-                  <LineProperties
-                      linewidthScaleFactor='2'/>
-                  <Material DEF='Artdeco31_5'
-                      ambientIntensity='0.28169'
-                      diffuseColor='0 0 0'
-                      specularColor='0.199 0.049781 0.049781'
-                      shininess='0.194444'/>
-                </Appearance>
+                <Appearance USE='_33'/>
                 <IndexedLineSet
                     colorPerVertex='false'
                     coordIndex='0, 1, -1'>
@@ -1553,18 +1430,12 @@ function set_triggerTime ()
               <Transform DEF='Rectangle2D_12'
                   scale='0.027 0.0267372 0.0267372'>
                 <Shape>
-                  <Appearance>
-                    <Material
-                        ambientIntensity='0.28169'
-                        diffuseColor='0 0 0'
-                        specularColor='0.199 0.049781 0.049781'
-                        shininess='0.194444'/>
-                  </Appearance>
+                  <Appearance USE='_33'/>
                   <Disk2D
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_48'
+              <PlaneSensor DEF='_50'
                   maxPosition='1 0'/>
             </Transform>
             <Group>
@@ -1581,7 +1452,7 @@ function set_triggerTime ()
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor DEF='_49'
+                <TimeSensor DEF='_51'
                     cycleInterval='6.8'
                     loop='true'
                     startTime='1451028308.5169'
@@ -1648,22 +1519,16 @@ function set_value (value)
                   translation='-0.075 0 0'
                   scale='0.025 0.0247567 0.0247567'>
                 <Shape>
-                  <Appearance>
-                    <Material
-                        ambientIntensity='0.28169'
-                        diffuseColor='0 0 0'
-                        specularColor='0.199 0.049781 0.049781'
-                        shininess='0.194444'/>
-                  </Appearance>
+                  <Appearance USE='_33'/>
                   <Rectangle2D
                       solid='false'/>
                 </Shape>
-                <TouchSensor DEF='_50'
+                <TouchSensor DEF='_52'
                     description='Toggle Animation'/>
                 <Script DEF='ToggleTransparencyAnim'>
                   <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
                   <field accessType='initializeOnly' type='SFNode' name='timer'>
-                    <TimeSensor USE='_49'/>
+                    <TimeSensor USE='_51'/>
                   </field>
 <![CDATA[ecmascript:
 
@@ -1688,58 +1553,58 @@ function set_touchTime (value, time)
     </LayerSet>
     <ROUTE fromNode='Timer' fromField='fraction_changed' toNode='ElapsedTime' toField='set_fraction'/>
     <ROUTE fromNode='ElapsedTime' fromField='value_changed' toNode='CobwebWaterShader' toField='set_time'/>
-    <ROUTE fromNode='_4' fromField='position_changed' toNode='CobwebWaterShader' toField='set_position'/>
-    <ROUTE fromNode='_17' fromField='touchTime' toNode='_18' toField='set_triggerTime'/>
-    <ROUTE fromNode='_13' fromField='touchTime' toNode='_14' toField='set_triggerTime'/>
-    <ROUTE fromNode='_14' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_18' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_34' fromField='translation_changed' toNode='AmplitudeScript' toField='set_translation'/>
+    <ROUTE fromNode='_30' fromField='position_changed' toNode='CobwebWaterShader' toField='set_position'/>
+    <ROUTE fromNode='_6' fromField='touchTime' toNode='_7' toField='set_triggerTime'/>
+    <ROUTE fromNode='_2' fromField='touchTime' toNode='_3' toField='set_triggerTime'/>
+    <ROUTE fromNode='_3' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
+    <ROUTE fromNode='_7' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
+    <ROUTE fromNode='_36' fromField='translation_changed' toNode='AmplitudeScript' toField='set_translation'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='AmplitudeScript' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='_34' toField='set_offset'/>
-    <ROUTE fromNode='_35' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator' toField='set_fraction'/>
-    <ROUTE fromNode='_34' fromField='translation_changed' toNode='Rectangle2D_5' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='_36' toField='set_offset'/>
+    <ROUTE fromNode='_37' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_36' fromField='translation_changed' toNode='Rectangle2D_5' toField='set_translation'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='Rectangle2D_5' toField='set_translation'/>
-    <ROUTE fromNode='AmplitudeScript' fromField='string_changed' toNode='_37' toField='set_string'/>
-    <ROUTE fromNode='_36' fromField='touchTime' toNode='ToggleAmplitudeAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='AmplitudeScript' fromField='string_changed' toNode='_39' toField='set_string'/>
+    <ROUTE fromNode='_38' fromField='touchTime' toNode='ToggleAmplitudeAnim' toField='set_touchTime'/>
     <ROUTE fromNode='AmplitudeScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_amplitude'/>
-    <ROUTE fromNode='_38' fromField='translation_changed' toNode='FequencyScript' toField='set_translation'/>
-    <ROUTE fromNode='_38' fromField='translation_changed' toNode='Rectangle2D_7' toField='set_translation'/>
-    <ROUTE fromNode='_39' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_1' toField='set_fraction'/>
+    <ROUTE fromNode='_40' fromField='translation_changed' toNode='FequencyScript' toField='set_translation'/>
+    <ROUTE fromNode='_40' fromField='translation_changed' toNode='Rectangle2D_7' toField='set_translation'/>
+    <ROUTE fromNode='_41' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_1' toField='set_fraction'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='FequencyScript' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='_38' toField='set_offset'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='_40' toField='set_offset'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_1' fromField='value_changed' toNode='Rectangle2D_7' toField='set_translation'/>
-    <ROUTE fromNode='_40' fromField='touchTime' toNode='ToggleFequencyAnim' toField='set_touchTime'/>
-    <ROUTE fromNode='FequencyScript' fromField='string_changed' toNode='_41' toField='set_string'/>
+    <ROUTE fromNode='_42' fromField='touchTime' toNode='ToggleFequencyAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='FequencyScript' fromField='string_changed' toNode='_43' toField='set_string'/>
     <ROUTE fromNode='FequencyScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_frequency'/>
-    <ROUTE fromNode='_43' fromField='translation_changed' toNode='SpeedScript' toField='set_translation'/>
-    <ROUTE fromNode='_43' fromField='translation_changed' toNode='Rectangle2D_9' toField='set_translation'/>
-    <ROUTE fromNode='_44' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_2' toField='set_fraction'/>
+    <ROUTE fromNode='_45' fromField='translation_changed' toNode='SpeedScript' toField='set_translation'/>
+    <ROUTE fromNode='_45' fromField='translation_changed' toNode='Rectangle2D_9' toField='set_translation'/>
+    <ROUTE fromNode='_46' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_2' toField='set_fraction'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='SpeedScript' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='_43' toField='set_offset'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='_45' toField='set_offset'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_2' fromField='value_changed' toNode='Rectangle2D_9' toField='set_translation'/>
-    <ROUTE fromNode='_45' fromField='touchTime' toNode='ToggleSpeedAnim' toField='set_touchTime'/>
-    <ROUTE fromNode='SpeedScript' fromField='string_changed' toNode='_42' toField='set_string'/>
+    <ROUTE fromNode='_47' fromField='touchTime' toNode='ToggleSpeedAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='SpeedScript' fromField='string_changed' toNode='_44' toField='set_string'/>
     <ROUTE fromNode='SpeedScript' fromField='value_changed' toNode='CobwebWaterShader' toField='set_speed'/>
-    <ROUTE fromNode='_20' fromField='touchTime' toNode='_21' toField='set_triggerTime'/>
-    <ROUTE fromNode='_21' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_9' fromField='touchTime' toNode='_10' toField='set_triggerTime'/>
-    <ROUTE fromNode='_31' fromField='touchTime' toNode='_32' toField='set_triggerTime'/>
-    <ROUTE fromNode='_27' fromField='touchTime' toNode='_28' toField='set_triggerTime'/>
-    <ROUTE fromNode='_23' fromField='touchTime' toNode='_24' toField='set_triggerTime'/>
-    <ROUTE fromNode='_10' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_32' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_28' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_24' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
-    <ROUTE fromNode='_49' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_3' toField='set_fraction'/>
+    <ROUTE fromNode='_10' fromField='touchTime' toNode='_11' toField='set_triggerTime'/>
+    <ROUTE fromNode='_11' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
+    <ROUTE fromNode='_18' fromField='touchTime' toNode='_19' toField='set_triggerTime'/>
+    <ROUTE fromNode='_22' fromField='touchTime' toNode='_23' toField='set_triggerTime'/>
+    <ROUTE fromNode='_14' fromField='touchTime' toNode='_15' toField='set_triggerTime'/>
+    <ROUTE fromNode='_26' fromField='touchTime' toNode='_27' toField='set_triggerTime'/>
+    <ROUTE fromNode='_19' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
+    <ROUTE fromNode='_23' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
+    <ROUTE fromNode='_15' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
+    <ROUTE fromNode='_27' fromField='value_changed' toNode='CobwebWaterShader' toField='set_texture'/>
+    <ROUTE fromNode='_51' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator_3' toField='set_fraction'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='Rectangle2D_12' toField='set_translation'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='TransparencyScript' toField='set_translation'/>
-    <ROUTE fromNode='_48' fromField='translation_changed' toNode='Rectangle2D_12' toField='set_translation'/>
-    <ROUTE fromNode='_48' fromField='translation_changed' toNode='TransparencyScript' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='_48' toField='set_offset'/>
-    <ROUTE fromNode='_50' fromField='touchTime' toNode='ToggleTransparencyAnim' toField='set_touchTime'/>
-    <ROUTE fromNode='TransparencyScript' fromField='string_changed' toNode='_47' toField='set_string'/>
-    <ROUTE fromNode='TransparencyScript' fromField='value_changed' toNode='_5' toField='set_transparency'/>
+    <ROUTE fromNode='_50' fromField='translation_changed' toNode='Rectangle2D_12' toField='set_translation'/>
+    <ROUTE fromNode='_50' fromField='translation_changed' toNode='TransparencyScript' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator_3' fromField='value_changed' toNode='_50' toField='set_offset'/>
+    <ROUTE fromNode='_52' fromField='touchTime' toNode='ToggleTransparencyAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='TransparencyScript' fromField='string_changed' toNode='_49' toField='set_string'/>
+    <ROUTE fromNode='TransparencyScript' fromField='value_changed' toNode='_31' toField='set_transparency'/>
     <ROUTE fromNode='DirectionsScript' fromField='directions_changed' toNode='CobwebWaterShader' toField='set_direction'/>
-    <ROUTE fromNode='_46' fromField='touchTime' toNode='DirectionsScript' toField='set_triggerTime'/>
+    <ROUTE fromNode='_48' fromField='touchTime' toNode='DirectionsScript' toField='set_triggerTime'/>
   </Scene>
 </X3D>
