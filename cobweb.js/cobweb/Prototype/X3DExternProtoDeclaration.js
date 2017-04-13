@@ -68,6 +68,9 @@ function ($,
 {
 "use strict";
 
+	// Dummy callback function
+	function loadNowCallback () { }
+
 	function X3DExternProtoDeclaration (executionContext)
 	{
 		X3DProtoDeclarationNode .call (this, executionContext);
@@ -142,6 +145,11 @@ function ($,
 		{
 			return this .proto;
 		},
+		loadNow: function (callback)
+		{
+			// 7.73 — ExternProtoDeclaration function, added callback argument.
+			this .requestAsyncLoad (callback || loadNowCallback);
+		},
 		requestAsyncLoad: function (callback)
 		{
 			this .deferred .done (callback);
@@ -151,8 +159,8 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 			this .getScene () .addInitLoadCount (this);
-			
-			// Don't create scene cache, as of possible default nodes and complete scenes.
+
+			// Don't create scene cache, due to possible default nodes in proto SFNode fields and complete scenes.
 
 			var Loader = require ("cobweb/InputOutput/Loader");
 

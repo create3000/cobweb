@@ -19807,7 +19807,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "3.0";
+	return "3.1";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -28753,6 +28753,9 @@ function ($,
 {
 
 
+	// Dummy callback function
+	function loadNowCallback () { }
+
 	function X3DExternProtoDeclaration (executionContext)
 	{
 		X3DProtoDeclarationNode .call (this, executionContext);
@@ -28827,6 +28830,11 @@ function ($,
 		{
 			return this .proto;
 		},
+		loadNow: function (callback)
+		{
+			// 7.73 — ExternProtoDeclaration function, added callback argument.
+			this .requestAsyncLoad (callback || loadNowCallback);
+		},
 		requestAsyncLoad: function (callback)
 		{
 			this .deferred .done (callback);
@@ -28836,8 +28844,8 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 			this .getScene () .addInitLoadCount (this);
-			
-			// Don't create scene cache, as of possible default nodes and complete scenes.
+
+			// Don't create scene cache, due to possible default nodes in proto SFNode fields and complete scenes.
 
 			var Loader = require ("cobweb/InputOutput/Loader");
 
@@ -71004,14 +71012,12 @@ function ($,
 				viewport   = this .getViewVolume () .getViewport (),
 				shaderNode = browser .getDepthShader ();
 
-			// Configure shader
+			// Configure depth shader.
 
 			shaderNode .useProgram (gl);
-			
-			viewportArray         .set (viewport);
+
 			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
-			gl .uniformMatrix4iv (shaderNode .x3d_Viewport, viewportArray);
 			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
 			// Configure viewport and background

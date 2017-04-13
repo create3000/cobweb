@@ -722,14 +722,12 @@ function ($,
 				viewport   = this .getViewVolume () .getViewport (),
 				shaderNode = browser .getDepthShader ();
 
-			// Configure shader
+			// Configure depth shader.
 
 			shaderNode .useProgram (gl);
-			
-			viewportArray         .set (viewport);
+
 			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
-			gl .uniform4iv (shaderNode .x3d_Viewport, viewportArray);
 			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
 			// Configure viewport and background

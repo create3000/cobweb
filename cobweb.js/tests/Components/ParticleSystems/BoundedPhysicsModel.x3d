@@ -5,12 +5,13 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Mon, 02 May 2016 10:03:35 GMT'/>
     <meta name='creator' content='holger'/>
-    <meta name='generator' content='Titania V1.4.2, http://titania.create3000.de'/>
-    <meta name='identifier' content='file:///home/holger/Projekte/Titania/Library/Tests/ParticleSystems/BoundedPhysicsModel.wrl'/>
-    <meta name='modified' content='Mon, 02 May 2016 10:03:35 GMT'/>
+    <meta name='generator' content='Titania V3.0.1, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/ParticleSystems/BoundedPhysicsModel.x3d'/>
+    <meta name='modified' content='Thu, 13 Apr 2017 15:30:26 GMT'/>
+    <meta name='outputStyle' content='nicest'/>
   </head>
   <Scene>
-    <ExternProtoDeclare name='IcoSphere' url='"../../../../../Titania/Titania/share/titania/Prototypes/0.1/Geometry3D/IcoSphere.x3dv", "file:///usr/share/titania/Prototypes/0.1/Geometry3D/IcoSphere.x3dv"'>
+    <ExternProtoDeclare name='IcoSphere' url='"https://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/IcoSphere.x3d", "http://cdn.rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/IcoSphere.x3d", "https://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/IcoSphere.x3d", "http://rawgit.com/create3000/Library/master/Prototypes/1/1.0/Geometry3D/IcoSphere.x3d"'>
       <field accessType='inputOutput' type='SFString' name='type'/>
       <field accessType='inputOutput' type='SFInt32' name='order'/>
       <field accessType='inputOutput' type='SFFloat' name='radius'/>
@@ -48,12 +49,20 @@
         <MetadataSet DEF='Selection' containerField='value'
             name='Selection'
             reference='http://titania.create3000.de'>
-          <MetadataSet DEF='children' containerField='value'
-              name='children'
-              reference='http://titania.create3000.de'/>
-          <MetadataSet DEF='previous' containerField='value'
-              name='previous'
-              reference='http://titania.create3000.de'/>
+          <MetadataSet DEF='nodes' containerField='value'
+              name='nodes'
+              reference='http://titania.create3000.de'>
+            <Transform DEF='Icosahedron' containerField='value'>
+              <Shape>
+                <Appearance>
+                  <Material/>
+                </Appearance>
+                <ProtoInstance name='IcoSphere' DEF='_1' containerField='geometry'>
+                  <fieldValue name='order' value='3'/>
+                </ProtoInstance>
+              </Shape>
+            </Transform>
+          </MetadataSet>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -61,27 +70,19 @@
         skyColor='0.2 0.2 0.2'/>
     <Viewpoint
         description='Viewpoint'
-        position='0 0 15'/>
+        position='0 0 15'
+        fieldOfView='0.7854'/>
     <Transform DEF='Box'>
       <Shape>
         <Appearance>
           <Material
               transparency='0.49'/>
         </Appearance>
-        <Box DEF='_1'
+        <Box DEF='_2'
             size='7 7 7'/>
       </Shape>
     </Transform>
-    <Transform DEF='Icosahedron'>
-      <Shape>
-        <Appearance>
-          <Material/>
-        </Appearance>
-        <ProtoInstance name='IcoSphere' DEF='_2' containerField='geometry'>
-          <fieldValue name='order' value='3'/>
-        </ProtoInstance>
-      </Shape>
-    </Transform>
+    <Transform USE='Icosahedron'/>
     <TimeSensor DEF='_3'
         cycleInterval='20'
         loop='true'/>
@@ -102,10 +103,10 @@
           speed='0.2'
           mass='3200'/>
       <BoundedPhysicsModel DEF='BoundedSphere'>
-        <ProtoInstance name='IcoSphere' USE='_2' containerField='geometry'/>
+        <ProtoInstance name='IcoSphere' USE='_1' containerField='geometry'/>
       </BoundedPhysicsModel>
       <BoundedPhysicsModel DEF='BoundedBox'>
-        <Box USE='_1'/>
+        <Box USE='_2'/>
       </BoundedPhysicsModel>
       <ForcePhysicsModel
           force='0 -0.098 0'/>
