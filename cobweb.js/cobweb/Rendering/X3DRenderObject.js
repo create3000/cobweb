@@ -729,7 +729,7 @@ function ($,
 			viewportArray         .set (viewport);
 			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
-			gl .uniformMatrix4iv (shaderNode .x3d_Viewport, viewportArray);
+			gl .uniform4iv (shaderNode .x3d_Viewport, viewportArray);
 			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
 			// Configure viewport and background
