@@ -2,12 +2,13 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
   <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="440" Column="10" />
-      <File FileName="cobweb.js/cobweb/Components/Shaders/X3DProgrammableShaderObject.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Rendering/X3DRenderObject.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Shaders/ComposedShader.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/VERSION.js" Line="44" Column="3" />
-      <File FileName="cobweb.js/cobweb.release.html" Line="14" Column="15" />
+      <File FileName="cobweb.js/cobweb.html" Line="438" Column="16" />
+      <File FileName="cobweb.js/cobweb.release.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/VERSION.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/Bookmarks.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Shaders/Phong.fs" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Shaders/Phong.vs" Line="76" Column="19" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

@@ -5,9 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Tue, 11 Apr 2017 00:24:19 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V3.0.1, http://titania.create3000.de'/>
+    <meta name='generator' content='Titania V3.0.2, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Shaders/Waves.x3d'/>
-    <meta name='modified' content='Tue, 11 Apr 2017 17:16:20 GMT'/>
+    <meta name='modified' content='Sun, 16 Apr 2017 03:33:15 GMT'/>
     <meta name='outputStyle' content='Nicest'/>
   </head>
   <Scene>
@@ -90,7 +90,7 @@ uniform float seaHeight;
 
 uniform ivec4 x3d_Viewport;
 
-vec2 resolution = vec2 (x3d_Viewport .zw);
+vec2 resolution = vec2 (0.0);
 
 #define GAMMA 0.8
 #define CONTRAST 1.1
@@ -251,6 +251,8 @@ vec4 March(vec3 ro, vec3 rd)
 
 void main()
 {
+   resolution = vec2 (x3d_Viewport .zw);
+
    vec3 off = vec3(0.0);
    if (moveCamera) off.z -= time*0.5;
    
@@ -306,7 +308,7 @@ void main()
               <Material/>
               <ComposedShader DEF='WaterShader'
                   language='GLSL'>
-                <field accessType='inputOutput' type='SFFloat' name='time' value='10.7339'/>
+                <field accessType='inputOutput' type='SFFloat' name='time'/>
                 <field accessType='inputOutput' type='SFColor' name='diffuse' value='0.1 0.1 0.1'/>
                 <field accessType='inputOutput' type='SFFloat' name='specular' value='8'/>
                 <field accessType='inputOutput' type='SFFloat' name='specularHardness' value='512'/>

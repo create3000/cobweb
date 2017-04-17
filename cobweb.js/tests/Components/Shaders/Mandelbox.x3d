@@ -5,9 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Tue, 11 Apr 2017 00:24:19 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V3.0.1, http://titania.create3000.de'/>
+    <meta name='generator' content='Titania V3.0.2, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Shaders/Mandelbox.x3d'/>
-    <meta name='modified' content='Thu, 13 Apr 2017 18:03:26 GMT'/>
+    <meta name='modified' content='Sun, 16 Apr 2017 03:38:30 GMT'/>
     <meta name='outputStyle' content='Nicest'/>
   </head>
   <Scene>
@@ -127,7 +127,7 @@
               <Material/>
               <ComposedShader DEF='WaterShader'
                   language='GLSL'>
-                <field accessType='inputOutput' type='SFFloat' name='time' value='318.205'/>
+                <field accessType='inputOutput' type='SFFloat' name='time' value='2.2309'/>
                 <field accessType='inputOutput' type='SFVec3f' name='cameraPos' value='1 1 -2'/>
                 <field accessType='inputOutput' type='SFVec3f' name='cameraLookat'/>
                 <field accessType='inputOutput' type='SFVec3f' name='lightDir' value='2 4.5 -1.5'/>
@@ -460,7 +460,7 @@ void main()
             <Text
                 string='"Mandelbox"'
                 solid='true'>
-              <FontStyle DEF='_2'
+              <FontStyle
                   family='"Ubuntu", "SANS"'
                   size='1.61'
                   justify='"BEGIN", "FIRST"'/>
@@ -502,7 +502,7 @@ void main()
                         solid='false'/>
                   </Shape>
                 </Transform>
-                <PlaneSensor DEF='_3'
+                <PlaneSensor DEF='_2'
                     offset='0.196969 0 0'
                     maxPosition='1 0'/>
               </Transform>
@@ -548,7 +548,7 @@ function set_value (value)
                   <Material
                       emissiveColor='1 1 1'/>
                 </Appearance>
-                <Text DEF='_4'
+                <Text DEF='_3'
                     string='"x -155.15"'
                     solid='true'>
                   <FontStyle
@@ -588,7 +588,7 @@ function set_value (value)
                         solid='false'/>
                   </Shape>
                 </Transform>
-                <PlaneSensor DEF='_5'
+                <PlaneSensor DEF='_4'
                     maxPosition='1 0'/>
               </Transform>
               <Script DEF='YScript'>
@@ -633,7 +633,7 @@ function set_value (value)
                   <Material
                       emissiveColor='1 1 1'/>
                 </Appearance>
-                <Text DEF='_6'
+                <Text DEF='_5'
                     string='"y -100.00"'
                     solid='true'>
                   <FontStyle
@@ -650,7 +650,7 @@ function set_value (value)
                   <Material
                       emissiveColor='1 1 1'/>
                 </Appearance>
-                <Text DEF='_7'
+                <Text DEF='_6'
                     string='"z -100.00"'
                     solid='true'>
                   <FontStyle
@@ -690,7 +690,7 @@ function set_value (value)
                         solid='false'/>
                   </Shape>
                 </Transform>
-                <PlaneSensor DEF='_8'
+                <PlaneSensor DEF='_7'
                     maxPosition='1 0'/>
               </Transform>
               <Script DEF='ZScript'>
@@ -745,15 +745,15 @@ function eventsProcessed ()
     </LayerSet>
     <ROUTE fromNode='_1' fromField='value_changed' toNode='WaterShader' toField='set_time'/>
     <ROUTE fromNode='Timer' fromField='fraction_changed' toNode='_1' toField='set_fraction'/>
-    <ROUTE fromNode='_8' fromField='translation_changed' toNode='ZScript' toField='set_translation'/>
-    <ROUTE fromNode='_8' fromField='translation_changed' toNode='Rectangle2D_3' toField='set_translation'/>
-    <ROUTE fromNode='ZScript' fromField='string_changed' toNode='_7' toField='set_string'/>
-    <ROUTE fromNode='YScript' fromField='string_changed' toNode='_6' toField='set_string'/>
-    <ROUTE fromNode='_5' fromField='translation_changed' toNode='YScript' toField='set_translation'/>
-    <ROUTE fromNode='_5' fromField='translation_changed' toNode='Rectangle2D_2' toField='set_translation'/>
-    <ROUTE fromNode='XScript' fromField='string_changed' toNode='_4' toField='set_string'/>
-    <ROUTE fromNode='_3' fromField='translation_changed' toNode='XScript' toField='set_translation'/>
-    <ROUTE fromNode='_3' fromField='translation_changed' toNode='Rectangle2D_1' toField='set_translation'/>
+    <ROUTE fromNode='_7' fromField='translation_changed' toNode='ZScript' toField='set_translation'/>
+    <ROUTE fromNode='_7' fromField='translation_changed' toNode='Rectangle2D_3' toField='set_translation'/>
+    <ROUTE fromNode='ZScript' fromField='string_changed' toNode='_6' toField='set_string'/>
+    <ROUTE fromNode='YScript' fromField='string_changed' toNode='_5' toField='set_string'/>
+    <ROUTE fromNode='_4' fromField='translation_changed' toNode='YScript' toField='set_translation'/>
+    <ROUTE fromNode='_4' fromField='translation_changed' toNode='Rectangle2D_2' toField='set_translation'/>
+    <ROUTE fromNode='XScript' fromField='string_changed' toNode='_3' toField='set_string'/>
+    <ROUTE fromNode='_2' fromField='translation_changed' toNode='XScript' toField='set_translation'/>
+    <ROUTE fromNode='_2' fromField='translation_changed' toNode='Rectangle2D_1' toField='set_translation'/>
     <ROUTE fromNode='ZScript' fromField='value_changed' toNode='CamLookAtScript' toField='set_z'/>
     <ROUTE fromNode='YScript' fromField='value_changed' toNode='CamLookAtScript' toField='set_y'/>
     <ROUTE fromNode='XScript' fromField='value_changed' toNode='CamLookAtScript' toField='set_x'/>

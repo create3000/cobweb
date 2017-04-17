@@ -5,9 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Tue, 11 Apr 2017 00:24:19 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V3.0.1, http://titania.create3000.de'/>
+    <meta name='generator' content='Titania V3.0.2, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Shaders/Mountains.x3d'/>
-    <meta name='modified' content='Tue, 11 Apr 2017 15:57:44 GMT'/>
+    <meta name='modified' content='Sun, 16 Apr 2017 03:38:37 GMT'/>
     <meta name='outputStyle' content='Nicest'/>
   </head>
   <Scene>
@@ -77,7 +77,7 @@
                 <Text
                     string='"Mountains"'
                     solid='true'>
-                  <FontStyle DEF='_1'
+                  <FontStyle
                       family='"Ubuntu", "SANS"'
                       size='1.61'
                       justify='"BEGIN", "FIRST"'/>
@@ -117,7 +117,7 @@
         <TimeSensor DEF='Timer'
             cycleInterval='10000'
             loop='true'/>
-        <ScalarInterpolator DEF='_2'
+        <ScalarInterpolator DEF='_1'
             key='0, 1'
             keyValue='0, 10000'/>
         <Transform DEF='Rectangle2D'>
@@ -126,7 +126,7 @@
               <Material/>
               <ComposedShader DEF='WaterShader'
                   language='GLSL'>
-                <field accessType='inputOutput' type='SFFloat' name='time' value='393.501'/>
+                <field accessType='inputOutput' type='SFFloat' name='time'/>
                 <field accessType='inputOutput' type='SFBool' name='postEffects' value='true'/>
                 <field accessType='inputOutput' type='SFBool' name='moveCamera' value='true'/>
                 <field accessType='inputOutput' type='SFVec3f' name='cameraPos' value='0 2 0'/>
@@ -194,7 +194,7 @@ uniform sampler2D texture0;
 
 uniform ivec4 x3d_Viewport;
 
-vec2 resolution = vec2 (x3d_Viewport .zw);
+vec2 resolution = vec2 (0.0);
 
 //#define AA
 
@@ -443,6 +443,8 @@ vec3 GetRay(vec3 dir, vec2 pos)
 #define ANTIALIAS_SAMPLES 8
 void main()
 {
+   resolution = vec2 (x3d_Viewport .zw);
+
    vec3 off = vec3(0.0);
    if (moveCamera) {
       off.z -= time*1.0;
@@ -638,7 +640,7 @@ void main()
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_3'
+              <PlaneSensor DEF='_2'
                   offset='0.276017 0 0'
                   maxPosition='1 0'/>
             </Transform>
@@ -684,7 +686,7 @@ function set_value (value)
                 <Material
                     emissiveColor='1 1 1'/>
               </Appearance>
-              <Text DEF='_4'
+              <Text DEF='_3'
                   string='"snow 0.28"'
                   solid='true'>
                 <FontStyle
@@ -725,7 +727,7 @@ function set_value (value)
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_5'
+              <PlaneSensor DEF='_4'
                   offset='0.234662 0 0'
                   maxPosition='1 0'/>
             </Transform>
@@ -771,7 +773,7 @@ function set_value (value)
                 <Material
                     emissiveColor='1 1 1'/>
               </Appearance>
-              <Text DEF='_6'
+              <Text DEF='_5'
                   string='"grass 0.23"'
                   solid='true'>
                 <FontStyle
@@ -788,7 +790,7 @@ function set_value (value)
                 <Material
                     emissiveColor='1 1 1'/>
               </Appearance>
-              <Text DEF='_7'
+              <Text DEF='_6'
                   string='"noise 2.16"'
                   solid='true'>
                 <FontStyle
@@ -829,7 +831,7 @@ function set_value (value)
                       solid='false'/>
                 </Shape>
               </Transform>
-              <PlaneSensor DEF='_8'
+              <PlaneSensor DEF='_7'
                   offset='0.759294 0 0'
                   maxPosition='1 0'/>
             </Transform>
@@ -870,17 +872,17 @@ function set_value (value)
         </Group>
       </Layer>
     </LayerSet>
-    <ROUTE fromNode='_2' fromField='value_changed' toNode='WaterShader' toField='set_time'/>
-    <ROUTE fromNode='Timer' fromField='fraction_changed' toNode='_2' toField='set_fraction'/>
-    <ROUTE fromNode='_8' fromField='translation_changed' toNode='ZScript' toField='set_translation'/>
-    <ROUTE fromNode='_8' fromField='translation_changed' toNode='Rectangle2D_3' toField='set_translation'/>
-    <ROUTE fromNode='ZScript' fromField='string_changed' toNode='_7' toField='set_string'/>
-    <ROUTE fromNode='YScript' fromField='string_changed' toNode='_6' toField='set_string'/>
-    <ROUTE fromNode='_5' fromField='translation_changed' toNode='YScript' toField='set_translation'/>
-    <ROUTE fromNode='_5' fromField='translation_changed' toNode='Rectangle2D_2' toField='set_translation'/>
-    <ROUTE fromNode='XScript' fromField='string_changed' toNode='_4' toField='set_string'/>
-    <ROUTE fromNode='_3' fromField='translation_changed' toNode='XScript' toField='set_translation'/>
-    <ROUTE fromNode='_3' fromField='translation_changed' toNode='Rectangle2D_1' toField='set_translation'/>
+    <ROUTE fromNode='_1' fromField='value_changed' toNode='WaterShader' toField='set_time'/>
+    <ROUTE fromNode='Timer' fromField='fraction_changed' toNode='_1' toField='set_fraction'/>
+    <ROUTE fromNode='_7' fromField='translation_changed' toNode='ZScript' toField='set_translation'/>
+    <ROUTE fromNode='_7' fromField='translation_changed' toNode='Rectangle2D_3' toField='set_translation'/>
+    <ROUTE fromNode='ZScript' fromField='string_changed' toNode='_6' toField='set_string'/>
+    <ROUTE fromNode='YScript' fromField='string_changed' toNode='_5' toField='set_string'/>
+    <ROUTE fromNode='_4' fromField='translation_changed' toNode='YScript' toField='set_translation'/>
+    <ROUTE fromNode='_4' fromField='translation_changed' toNode='Rectangle2D_2' toField='set_translation'/>
+    <ROUTE fromNode='XScript' fromField='string_changed' toNode='_3' toField='set_string'/>
+    <ROUTE fromNode='_2' fromField='translation_changed' toNode='XScript' toField='set_translation'/>
+    <ROUTE fromNode='_2' fromField='translation_changed' toNode='Rectangle2D_1' toField='set_translation'/>
     <ROUTE fromNode='XScript' fromField='value_changed' toNode='WaterShader' toField='set_snowLevel'/>
     <ROUTE fromNode='YScript' fromField='value_changed' toNode='WaterShader' toField='set_grassLevel'/>
     <ROUTE fromNode='ZScript' fromField='value_changed' toNode='WaterShader' toField='set_offset'/>
