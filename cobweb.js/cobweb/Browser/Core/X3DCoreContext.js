@@ -107,7 +107,7 @@ function (Fields,
 		// Get canvas & context.
 
 		var browser  = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
-		var loading  = $("<div></div>") .addClass ("cobweb-loading")  .appendTo (browser);
+		var loading  = $("<div></div>") .addClass ("cobweb-splash-screen")  .appendTo (browser);
 		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
 		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
 		var surface  = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);

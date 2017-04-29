@@ -82,7 +82,7 @@ function (Fields,
 
 	function X3DRenderingContext ()
 	{
-		this .addChildObjects ("viewport", new Fields .MFInt32 (0, 0, 100, 100));
+		this .addChildObjects ("viewport", new Fields .MFInt32 (0, 0, 300, 150));
 
 		this .clipPlanes = [ ]; // Clip planes dumpster
 	}

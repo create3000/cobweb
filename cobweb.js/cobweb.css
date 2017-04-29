@@ -6,13 +6,13 @@
 
 X3DCanvas {
 	position: relative;
-	display: block;
+	display: inline-block;
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
 	overflow: hidden;
-	width: 100px;
-	height: 100px;
+	width: 300px;
+	height: 150px;
 }
 
 X3DCanvas.cobweb-fullscreen {
@@ -31,12 +31,12 @@ X3DCanvas > *:not(.cobweb-fallback) {
 
 X3DCanvas .cobweb-browser {
 	z-index: 0;
+	display: block;
 	position: absolute;
 	top: 0;
 	right: 0;
 	bottom: 0;
 	left: 0;
-	display: block;
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
@@ -60,8 +60,8 @@ X3DCanvas canvas {
 }
 
 X3DCanvas .cobweb-notification {
-	padding: 2px 5px 5px 5px;
 	display: none;
+	padding: 2px 5px 5px 5px;
 	position: absolute;
 	top: 20px;
 	right: -4px;

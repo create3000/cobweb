@@ -117,8 +117,6 @@ function ($,
 			this .Shading_                   .addInterest ("set_shading__", this);
 			this .getBrowser () .shutdown () .addInterest ("configure", this);
 
-			this .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
-
 			this .configure ();
 		},
 		configure: function ()
@@ -142,6 +140,8 @@ function ($,
 				rubberband       = this .getBrowser () .getDataStorage () ["BrowserOptions.Rubberband"],
 				primitiveQuality = this .getBrowser () .getDataStorage () ["BrowserOptions.PrimitiveQuality"],
 				textureQuality   = this .getBrowser () .getDataStorage () ["BrowserOptions.TextureQuality"];
+
+			this .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
 				
 			if (rubberband       !== undefined && rubberband       !== this .Rubberband_       .getValue ()) this .Rubberband_       = rubberband;
 			if (primitiveQuality !== undefined && primitiveQuality !== this .PrimitiveQuality_ .getValue ()) this .PrimitiveQuality_ = primitiveQuality;
