@@ -133,6 +133,8 @@ function (Fields,
 
 		this .dataStorage = new DataStorage ("X3DBrowser(" + this .number + ").");
 		this .mobile      = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
+
+		$(".cobweb-console") .empty ();
 	}
 
 	X3DCoreContext .prototype =
