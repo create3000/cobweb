@@ -110,21 +110,21 @@ function ($,
 		},
 		set_enabled__: function (enabled)
 		{
-			if (this .getBrowser () .getElement () .attr ("timings") === "false")
-				return;
-
-			this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
-
-			if (enabled .getValue ())
+			if (this .getBrowser () .getElement () .attr ("timings") !== "false")
 			{
-				this .element .fadeIn ();
-				this .getBrowser () .prepareEvents () .addInterest ("update", this);
-				this .update ();
-			}
-			else
-			{
-				this .element .fadeOut ();
-				this .getBrowser () .prepareEvents () .removeInterest ("update", this);
+				this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
+	
+				if (enabled .getValue ())
+				{
+					this .element .fadeIn ();
+					this .getBrowser () .prepareEvents () .addInterest ("update", this);
+					this .update ();
+				}
+				else
+				{
+					this .element .fadeOut ();
+					this .getBrowser () .prepareEvents () .removeInterest ("update", this);
+				}
 			}
 		},
 		set_type__: function ()

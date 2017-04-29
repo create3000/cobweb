@@ -86,13 +86,13 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			if (this .getBrowser () .getElement () .attr ("contextMenu") === "false")
-				return;
-
-			$.contextMenu ({
-				selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
-				build: this .build .bind (this),
-			});
+			if (this .getBrowser () .getElement () .attr ("contextMenu") !== "false")
+			{
+				$.contextMenu ({
+					selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
+					build: this .build .bind (this),
+				});
+			}
 		},
 		build: function (trigger, event)
 		{
@@ -139,139 +139,134 @@ function ($,
 						items: this .getAvailableViewers (),
 					},
 					"separator2": "--------",
-					//"view": {
-						//name: _("View"),
-						//items : {
-							"primitive-quality": {
-								name: _("Primitive Quality"),
-								className: "context-menu-icon cobweb-icon-primitive-quality",
-								items: {
-									"high": {
-										name: _("High"),
-										type: "radio",
-										radio: "primitive-quality",
-										selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "HIGH",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "HIGH");
-												this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("high");
-											}
-											.bind (this),
-										},
-									},
-									"medium": {
-										name: _("Medium"),
-										type: "radio",
-										radio: "primitive-quality",
-										selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "MEDIUM",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "MEDIUM");
-												this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("medium");
-											}
-											.bind (this),
-										},
-									},
-									"low": {
-										name: _("Low"),
-										type: "radio",
-										radio: "primitive-quality",
-										selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "LOW",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "LOW");
-												this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("low");
-											}
-											.bind (this),
-										},
-									},
-								},
-							},
-							"texture-quality": {
-								name: _("Texture Quality"),
-								className: "context-menu-icon cobweb-icon-texture-quality",
-								items: {
-									"high": {
-										name: _("High"),
-										type: "radio",
-										radio: "texture-quality",
-										selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "HIGH",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("TextureQuality", "HIGH");
-												this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("high");
-											}
-											.bind (this),
-										},
-									},
-									"medium": {
-										name: _("Medium"),
-										type: "radio",
-										radio: "texture-quality",
-										selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "MEDIUM",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("TextureQuality", "MEDIUM");
-												this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("medium");
-											}
-											.bind (this),
-										},
-									},
-									"low": {
-										name: _("Low"),
-										type: "radio",
-										radio: "texture-quality",
-										selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "LOW",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("TextureQuality", "LOW");
-												this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("low");
-											}
-											.bind (this),
-										},
-									},
-								},
-							},
-							"display-rubberband": {
-								name: _("Display Rubberband"),
-								type: "checkbox",
-								selected: this .getBrowser () .getBrowserOption ("Rubberband"),
+					"primitive-quality": {
+						name: _("Primitive Quality"),
+						className: "context-menu-icon cobweb-icon-primitive-quality",
+						items: {
+							"high": {
+								name: _("High"),
+								type: "radio",
+								radio: "primitive-quality",
+								selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "HIGH",
 								events: {
 									click: function ()
 									{
-									   var rubberband = ! this .getBrowser () .getBrowserOption ("Rubberband");
-
-										this .getBrowser () .setBrowserOption ("Rubberband", rubberband);
-
-										if (rubberband)
-											this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("on");
-										else
-											this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("off");
+										this .getBrowser () .setBrowserOption ("PrimitiveQuality", "HIGH");
+										this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("high");
 									}
 									.bind (this),
 								},
 							},
-							"browser-timings": {
-								name: _("Browser Timings"),
-								type: "checkbox",
-								selected: this .getBrowser () .getBrowserTimings () .enabled_ .getValue (),
+							"medium": {
+								name: _("Medium"),
+								type: "radio",
+								radio: "primitive-quality",
+								selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "MEDIUM",
 								events: {
 									click: function ()
 									{
-										this .getBrowser () .getBrowserTimings () .enabled_ = ! this .getBrowser () .getBrowserTimings () .enabled_ .getValue ();
-										this .getBrowser () .getCanvas () .focus ();
+										this .getBrowser () .setBrowserOption ("PrimitiveQuality", "MEDIUM");
+										this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("medium");
 									}
 									.bind (this),
 								},
 							},
-						//},
-					//},
+							"low": {
+								name: _("Low"),
+								type: "radio",
+								radio: "primitive-quality",
+								selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "LOW",
+								events: {
+									click: function ()
+									{
+										this .getBrowser () .setBrowserOption ("PrimitiveQuality", "LOW");
+										this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("low");
+									}
+									.bind (this),
+								},
+							},
+						},
+					},
+					"texture-quality": {
+						name: _("Texture Quality"),
+						className: "context-menu-icon cobweb-icon-texture-quality",
+						items: {
+							"high": {
+								name: _("High"),
+								type: "radio",
+								radio: "texture-quality",
+								selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "HIGH",
+								events: {
+									click: function ()
+									{
+										this .getBrowser () .setBrowserOption ("TextureQuality", "HIGH");
+										this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("high");
+									}
+									.bind (this),
+								},
+							},
+							"medium": {
+								name: _("Medium"),
+								type: "radio",
+								radio: "texture-quality",
+								selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "MEDIUM",
+								events: {
+									click: function ()
+									{
+										this .getBrowser () .setBrowserOption ("TextureQuality", "MEDIUM");
+										this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("medium");
+									}
+									.bind (this),
+								},
+							},
+							"low": {
+								name: _("Low"),
+								type: "radio",
+								radio: "texture-quality",
+								selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "LOW",
+								events: {
+									click: function ()
+									{
+										this .getBrowser () .setBrowserOption ("TextureQuality", "LOW");
+										this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("low");
+									}
+									.bind (this),
+								},
+							},
+						},
+					},
+					"display-rubberband": {
+						name: _("Display Rubberband"),
+						type: "checkbox",
+						selected: this .getBrowser () .getBrowserOption ("Rubberband"),
+						events: {
+							click: function ()
+							{
+							   var rubberband = ! this .getBrowser () .getBrowserOption ("Rubberband");
+
+								this .getBrowser () .setBrowserOption ("Rubberband", rubberband);
+
+								if (rubberband)
+									this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("on");
+								else
+									this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("off");
+							}
+							.bind (this),
+						},
+					},
+					"browser-timings": this .getBrowser () .getElement () .attr ("timings") !== "false" ? {
+						name: _("Browser Timings"),
+						type: "checkbox",
+						selected: this .getBrowser () .getBrowserTimings () .enabled_ .getValue (),
+						events: {
+							click: function ()
+							{
+								this .getBrowser () .getBrowserTimings () .enabled_ = ! this .getBrowser () .getBrowserTimings () .enabled_ .getValue ();
+								this .getBrowser () .getCanvas () .focus ();
+							}
+							.bind (this),
+						},
+					} : undefined,
 					"mute-browser": {
 						name: _("Mute Browser"),
 						type: "checkbox",
