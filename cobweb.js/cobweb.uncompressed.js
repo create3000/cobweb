@@ -21204,8 +21204,6 @@ function ($,
 			this .Shading_                   .addInterest ("set_shading__", this);
 			this .getBrowser () .shutdown () .addInterest ("configure", this);
 
-			this .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
-
 			this .configure ();
 		},
 		configure: function ()
@@ -21229,6 +21227,8 @@ function ($,
 				rubberband       = this .getBrowser () .getDataStorage () ["BrowserOptions.Rubberband"],
 				primitiveQuality = this .getBrowser () .getDataStorage () ["BrowserOptions.PrimitiveQuality"],
 				textureQuality   = this .getBrowser () .getDataStorage () ["BrowserOptions.TextureQuality"];
+
+			this .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
 				
 			if (rubberband       !== undefined && rubberband       !== this .Rubberband_       .getValue ()) this .Rubberband_       = rubberband;
 			if (primitiveQuality !== undefined && primitiveQuality !== this .PrimitiveQuality_ .getValue ()) this .PrimitiveQuality_ = primitiveQuality;
@@ -32477,7 +32477,7 @@ function (Fields,
 		// Get canvas & context.
 
 		var browser  = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
-		var loading  = $("<div></div>") .addClass ("cobweb-loading")  .appendTo (browser);
+		var loading  = $("<div></div>") .addClass ("cobweb-splash-screen")  .appendTo (browser);
 		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
 		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
 		var surface  = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
@@ -41970,7 +41970,7 @@ function (Fields,
 
 	function X3DRenderingContext ()
 	{
-		this .addChildObjects ("viewport", new Fields .MFInt32 (0, 0, 100, 100));
+		this .addChildObjects ("viewport", new Fields .MFInt32 (0, 0, 300, 150));
 
 		this .clipPlanes = [ ]; // Clip planes dumpster
 	}

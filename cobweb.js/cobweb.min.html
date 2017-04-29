@@ -112,13 +112,9 @@ li + .bookmark-section {
 }
 
 .browser {
+	display: block;
 	width: auto;
 	height: 100%;
-}
-
-.second-browser {
-	float: left;
-	margin-right: 20px;
 }
 
 .fallback {
@@ -516,7 +512,7 @@ function loadURL ()
 		<div class="content">
 			<div class="tests">
 				<div class="bookmarks"></div>
-				<X3DCanvas class="browser" cache="false" xsrc="https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationChaser.wrl" splashScreen="false" timings="false" notification="false" contextMenu="true">
+				<X3DCanvas class="browser" cache="false" xsrc="https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationChaser.wrl">
 					<p class="fallback">Sorry,<br/>
 						it wasn't me!<br/>
 						<br/>
@@ -534,7 +530,10 @@ function loadURL ()
 					</tr>
 				</table>
 				<div class="toggle"><a href="cobweb.html">cobweb.html</a> | <a href="http://rawgit.com/create3000/cobweb/master/cobweb.js/cobweb.min.html">github</a></div>
-				<xX3DCanvas class="second-browser" cache="false" src="tests/Components/Rendering/IndexedLineSet.x3d"></xX3DCanvas>
+				<p>Second
+					<X3DCanvas splashScreen="false" timings="false" notification="false" contextMenu="false" cache="false" src="tests/Components/Rendering/IndexedLineSet.x3d"></X3DCanvas>
+					<canvas style="background: red;"></canvas>
+					Browser</p>
 				<p class="version cobweb-min"></p>
 				<p class="-cobweb-console"></p>
 			</div>
