@@ -1,20 +1,10 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="stable/3/3.1/spinner.css">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.html">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="438" Column="16" />
-      <File FileName="cobweb.js/cobweb.release.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/VERSION.js" Line="49" Column="2" />
-      <File FileName="cobweb.js/Bookmarks.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Shaders/Phong.fs" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Shaders/Phong.vs" Line="1" Column="1" />
-      <File FileName="cobweb.js/standard/Math/Numbers/Color3.js" Line="106" Column="27" />
-      <File FileName="cobweb.js/standard/Math/Numbers/Color4.js" Line="124" Column="1" />
-      <File FileName="cobweb.js/cobweb/Fields/SFColor.js" Line="115" Column="22" />
-      <File FileName="cobweb.js/cobweb/Fields/SFColorRGBA.js" Line="187" Column="1" />
-      <File FileName="stable/3/3.1/spinner.css" Line="241" Column="1" />
-      <File FileName="cobweb.js/spinner.css" Line="241" Column="1" />
+      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb.release.html" Line="9" Column="115" />
+      <File FileName="cobweb.js/cobweb/Browser/X3DBrowser.js" Line="469" Column="17" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

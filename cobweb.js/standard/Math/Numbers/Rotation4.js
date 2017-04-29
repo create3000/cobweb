@@ -236,6 +236,10 @@ function ($,
 			this .value .setMatrix (matrix);
 			return this;
 		},
+		getMatrix: function (matrix)
+		{
+			return this .value .getMatrix (matrix);
+		},
 		equals: function (rot)
 		{
 			return this .value .equals (rot .value);
