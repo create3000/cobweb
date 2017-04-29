@@ -239,7 +239,7 @@ function (Fields,
 		{
 			var attributeName = mutation .attributeName;
 
-			switch (attributeName)
+			switch (attributeName .toLowerCase())
 			{
 				case "src":
 					var urlCharacters = this .getElement () .attr ("src");
@@ -251,8 +251,11 @@ function (Fields,
 				case "url":
 					this .load (this .getElement () .attr ("url"));
 					break;
+				case "splashscreen":
+					this .getBrowserOptions () .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
+					break;
 				case "cache":
-					this .setCaching (this .getElement () .attr ("cache") != "false");
+					this .setCaching (this .getElement () .attr ("cache") !== "false");
 					break;
 			}
 		},
