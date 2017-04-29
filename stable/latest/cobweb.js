@@ -12330,8 +12330,20 @@ function ($, Color3, Algorithm)
 			       this .b_ === color .b_ &&
 			       this .a_ === color .a_;
 		},
-		getHSV: Color3 .getHSV,
-		setHSV: Color3 .setHSV,
+		getHSVA: function (result)
+		{
+			Color3 .prototype .getHSV .call (this, result);
+
+			result [3] = this .a_;
+
+			return result;
+		},
+		setHSVA: function (h, s, v, a)
+		{
+			Color3 .prototype .setHSV .call (this, h, s, v);
+
+			this .a_ = clamp (a, 0, 1);
+		},
 		toString: function ()
 		{
 			return this .r_ + " " +
@@ -12497,8 +12509,15 @@ function ($, X3DField, SFColor, X3DConstants, Color4)
 				this .getValue () .a === 0);
 		},
 		set: SFColor .prototype .set,
-		getHSV: SFColor .prototype .getHSV,
-		setHSV: SFColor .prototype .setHSV,
+		getHSVA: function ()
+		{
+			return this .getValue () .getHSVA ([ ]);
+		},
+		setHSVA: function (h, s, v, a)
+		{
+			this .getValue () .setHSVA (h, s, v, a);
+			this .addEvent ();
+		},
 		toString: SFColor .prototype .toString,
 		toXMLStream: SFColor .prototype .toXMLStream,
 	});
@@ -14831,8 +14850,8 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 			var det      = a .determinant ();
 			var det_sign = det < 0 ? -1 : 1;
 
-			if (det_sign * det === 0)
-				return false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             // singular
+			if (det === 0)
+				return false; // singular
 
 			// (4) B = A * !A  (here !A means A transpose)
 			b .assign (a) .transpose () .multLeft (a);
@@ -17404,8 +17423,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			var det      = a .determinant ();
 			var det_sign = det < 0 ? -1 : 1;
 
-			if (det_sign * det === 0)
-				return false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             // singular
+			if (det === 0)
+				return false; // singular
 
 			// (4) B = A * !A  (here !A means A transpose)
 			b .assign (a) .transpose () .multLeft (a);
@@ -19807,7 +19826,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "3.1";
+	return "3.2";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -21178,6 +21197,7 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 			
+			this .SplashScreen_              .addInterest ("set_splashScreen__", this);
 			this .Rubberband_                .addInterest ("set_rubberband__", this);
 			this .PrimitiveQuality_          .addInterest ("set_primitiveQuality__", this);
 			this .TextureQuality_            .addInterest ("set_textureQuality__", this);
@@ -21207,6 +21227,8 @@ function ($,
 				rubberband       = this .getBrowser () .getDataStorage () ["BrowserOptions.Rubberband"],
 				primitiveQuality = this .getBrowser () .getDataStorage () ["BrowserOptions.PrimitiveQuality"],
 				textureQuality   = this .getBrowser () .getDataStorage () ["BrowserOptions.TextureQuality"];
+
+			this .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
 				
 			if (rubberband       !== undefined && rubberband       !== this .Rubberband_       .getValue ()) this .Rubberband_       = rubberband;
 			if (primitiveQuality !== undefined && primitiveQuality !== this .PrimitiveQuality_ .getValue ()) this .PrimitiveQuality_ = primitiveQuality;
@@ -21223,6 +21245,10 @@ function ($,
 		getShading: function ()
 		{
 			return this .Shading_ .getValue ();
+		},
+		set_splashScreen__: function (splashScreen)
+		{
+			this .getBrowser () .getElement () .attr ("splashScreen", splashScreen .getValue () ? "true" : "false");
 		},
 		set_rubberband__: function (rubberband)
 		{
@@ -21671,25 +21697,28 @@ function ($,
 		},
 		set_string__: function ()
 		{
-			if (this .string_ .length === 0)
-				return;
-
-			//this .element
-			//	.text (this .string_ .getValue ())
-			//	.stop (true, true)
-			//	.fadeIn ()
-			//	.animate ({ "delay": 1 }, 4000)
-			//	.fadeOut ();
-
-			this .element .children () .text (this .string_ .getValue ());
-
-			this .element 
-				.stop (true, true)
-				.fadeIn (0)
-				.animate ({ width: this .element .textWidth () })
-				.animate ({ "delay": 1 }, 5000)
-				.animate ({ width: 0 })
-				.fadeOut (0);
+			if (this .getBrowser () .getElement () .attr ("notifications") !== "false")
+			{
+				if (this .string_ .length === 0)
+					return;
+	
+				//this .element
+				//	.text (this .string_ .getValue ())
+				//	.stop (true, true)
+				//	.fadeIn ()
+				//	.animate ({ "delay": 1 }, 4000)
+				//	.fadeOut ();
+	
+				this .element .children () .text (this .string_ .getValue ());
+	
+				this .element 
+					.stop (true, true)
+					.fadeIn (0)
+					.animate ({ width: this .element .textWidth () })
+					.animate ({ "delay": 1 }, 5000)
+					.animate ({ width: 0 })
+					.fadeOut (0);
+			}
 		},
 	});
 
@@ -22251,18 +22280,21 @@ function ($,
 		},
 		set_enabled__: function (enabled)
 		{
-			this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
-
-			if (enabled .getValue ())
+			if (this .getBrowser () .getElement () .attr ("timings") !== "false")
 			{
-				this .element .fadeIn ();
-				this .getBrowser () .prepareEvents () .addInterest ("update", this);
-				this .update ();
-			}
-			else
-			{
-				this .element .fadeOut ();
-				this .getBrowser () .prepareEvents () .removeInterest ("update", this);
+				this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
+	
+				if (enabled .getValue ())
+				{
+					this .element .fadeIn ();
+					this .getBrowser () .prepareEvents () .addInterest ("update", this);
+					this .update ();
+				}
+				else
+				{
+					this .element .fadeOut ();
+					this .getBrowser () .prepareEvents () .removeInterest ("update", this);
+				}
 			}
 		},
 		set_type__: function ()
@@ -24287,10 +24319,13 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			$.contextMenu ({
-				selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
-				build: this .build .bind (this),
-			});
+			if (this .getBrowser () .getElement () .attr ("contextMenu") !== "false")
+			{
+				$.contextMenu ({
+					selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
+					build: this .build .bind (this),
+				});
+			}
 		},
 		build: function (trigger, event)
 		{
@@ -24337,139 +24372,134 @@ function ($,
 						items: this .getAvailableViewers (),
 					},
 					"separator2": "--------",
-					//"view": {
-						//name: _("View"),
-						//items : {
-							"primitive-quality": {
-								name: _("Primitive Quality"),
-								className: "context-menu-icon cobweb-icon-primitive-quality",
-								items: {
-									"high": {
-										name: _("High"),
-										type: "radio",
-										radio: "primitive-quality",
-										selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "HIGH",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "HIGH");
-												this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("high");
-											}
-											.bind (this),
-										},
-									},
-									"medium": {
-										name: _("Medium"),
-										type: "radio",
-										radio: "primitive-quality",
-										selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "MEDIUM",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "MEDIUM");
-												this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("medium");
-											}
-											.bind (this),
-										},
-									},
-									"low": {
-										name: _("Low"),
-										type: "radio",
-										radio: "primitive-quality",
-										selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "LOW",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "LOW");
-												this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("low");
-											}
-											.bind (this),
-										},
-									},
-								},
-							},
-							"texture-quality": {
-								name: _("Texture Quality"),
-								className: "context-menu-icon cobweb-icon-texture-quality",
-								items: {
-									"high": {
-										name: _("High"),
-										type: "radio",
-										radio: "texture-quality",
-										selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "HIGH",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("TextureQuality", "HIGH");
-												this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("high");
-											}
-											.bind (this),
-										},
-									},
-									"medium": {
-										name: _("Medium"),
-										type: "radio",
-										radio: "texture-quality",
-										selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "MEDIUM",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("TextureQuality", "MEDIUM");
-												this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("medium");
-											}
-											.bind (this),
-										},
-									},
-									"low": {
-										name: _("Low"),
-										type: "radio",
-										radio: "texture-quality",
-										selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "LOW",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("TextureQuality", "LOW");
-												this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("low");
-											}
-											.bind (this),
-										},
-									},
-								},
-							},
-							"display-rubberband": {
-								name: _("Display Rubberband"),
-								type: "checkbox",
-								selected: this .getBrowser () .getBrowserOption ("Rubberband"),
+					"primitive-quality": {
+						name: _("Primitive Quality"),
+						className: "context-menu-icon cobweb-icon-primitive-quality",
+						items: {
+							"high": {
+								name: _("High"),
+								type: "radio",
+								radio: "primitive-quality",
+								selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "HIGH",
 								events: {
 									click: function ()
 									{
-									   var rubberband = ! this .getBrowser () .getBrowserOption ("Rubberband");
-
-										this .getBrowser () .setBrowserOption ("Rubberband", rubberband);
-
-										if (rubberband)
-											this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("on");
-										else
-											this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("off");
+										this .getBrowser () .setBrowserOption ("PrimitiveQuality", "HIGH");
+										this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("high");
 									}
 									.bind (this),
 								},
 							},
-							"browser-timings": {
-								name: _("Browser Timings"),
-								type: "checkbox",
-								selected: this .getBrowser () .getBrowserTimings () .enabled_ .getValue (),
+							"medium": {
+								name: _("Medium"),
+								type: "radio",
+								radio: "primitive-quality",
+								selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "MEDIUM",
 								events: {
 									click: function ()
 									{
-										this .getBrowser () .getBrowserTimings () .enabled_ = ! this .getBrowser () .getBrowserTimings () .enabled_ .getValue ();
-										this .getBrowser () .getCanvas () .focus ();
+										this .getBrowser () .setBrowserOption ("PrimitiveQuality", "MEDIUM");
+										this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("medium");
 									}
 									.bind (this),
 								},
 							},
-						//},
-					//},
+							"low": {
+								name: _("Low"),
+								type: "radio",
+								radio: "primitive-quality",
+								selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "LOW",
+								events: {
+									click: function ()
+									{
+										this .getBrowser () .setBrowserOption ("PrimitiveQuality", "LOW");
+										this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("low");
+									}
+									.bind (this),
+								},
+							},
+						},
+					},
+					"texture-quality": {
+						name: _("Texture Quality"),
+						className: "context-menu-icon cobweb-icon-texture-quality",
+						items: {
+							"high": {
+								name: _("High"),
+								type: "radio",
+								radio: "texture-quality",
+								selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "HIGH",
+								events: {
+									click: function ()
+									{
+										this .getBrowser () .setBrowserOption ("TextureQuality", "HIGH");
+										this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("high");
+									}
+									.bind (this),
+								},
+							},
+							"medium": {
+								name: _("Medium"),
+								type: "radio",
+								radio: "texture-quality",
+								selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "MEDIUM",
+								events: {
+									click: function ()
+									{
+										this .getBrowser () .setBrowserOption ("TextureQuality", "MEDIUM");
+										this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("medium");
+									}
+									.bind (this),
+								},
+							},
+							"low": {
+								name: _("Low"),
+								type: "radio",
+								radio: "texture-quality",
+								selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "LOW",
+								events: {
+									click: function ()
+									{
+										this .getBrowser () .setBrowserOption ("TextureQuality", "LOW");
+										this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("low");
+									}
+									.bind (this),
+								},
+							},
+						},
+					},
+					"display-rubberband": {
+						name: _("Display Rubberband"),
+						type: "checkbox",
+						selected: this .getBrowser () .getBrowserOption ("Rubberband"),
+						events: {
+							click: function ()
+							{
+							   var rubberband = ! this .getBrowser () .getBrowserOption ("Rubberband");
+
+								this .getBrowser () .setBrowserOption ("Rubberband", rubberband);
+
+								if (rubberband)
+									this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("on");
+								else
+									this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("off");
+							}
+							.bind (this),
+						},
+					},
+					"browser-timings": this .getBrowser () .getElement () .attr ("timings") !== "false" ? {
+						name: _("Browser Timings"),
+						type: "checkbox",
+						selected: this .getBrowser () .getBrowserTimings () .enabled_ .getValue (),
+						events: {
+							click: function ()
+							{
+								this .getBrowser () .getBrowserTimings () .enabled_ = ! this .getBrowser () .getBrowserTimings () .enabled_ .getValue ();
+								this .getBrowser () .getCanvas () .focus ();
+							}
+							.bind (this),
+						},
+					} : undefined,
 					"mute-browser": {
 						name: _("Mute Browser"),
 						type: "checkbox",
@@ -32447,7 +32477,7 @@ function (Fields,
 		// Get canvas & context.
 
 		var browser  = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
-		var loading  = $("<div></div>") .addClass ("cobweb-loading")  .appendTo (browser);
+		var loading  = $("<div></div>") .addClass ("cobweb-splash-screen")  .appendTo (browser);
 		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
 		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
 		var surface  = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
@@ -32473,6 +32503,8 @@ function (Fields,
 
 		this .dataStorage = new DataStorage ("X3DBrowser(" + this .number + ").");
 		this .mobile      = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
+
+		$(".cobweb-console") .empty ();
 	}
 
 	X3DCoreContext .prototype =
@@ -32577,7 +32609,7 @@ function (Fields,
 		{
 			var attributeName = mutation .attributeName;
 
-			switch (attributeName)
+			switch (attributeName .toLowerCase())
 			{
 				case "src":
 					var urlCharacters = this .getElement () .attr ("src");
@@ -32589,8 +32621,11 @@ function (Fields,
 				case "url":
 					this .load (this .getElement () .attr ("url"));
 					break;
+				case "splashscreen":
+					this .getBrowserOptions () .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
+					break;
 				case "cache":
-					this .setCaching (this .getElement () .attr ("cache") != "false");
+					this .setCaching (this .getElement () .attr ("cache") !== "false");
 					break;
 			}
 		},
@@ -33726,13 +33761,20 @@ function (Fields,
 			if (value)
 			{
 				this .resetLoadCount ();
-				this .getCanvas ()         .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
-				this .getLoadingElement () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
+
+				if (this .getElement () .attr ("splashScreen") !== "false")
+				{
+					this .getCanvas ()         .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
+					this .getLoadingElement () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
+				}
 			}
 			else
 			{
-				this .getLoadingElement () .stop (true, true) .fadeOut (2000);
-				this .getCanvas ()         .stop (true, true) .fadeIn (2000);
+				if (this .getElement () .attr ("splashScreen") !== "false")
+				{
+					this .getLoadingElement () .stop (true, true) .fadeOut (2000);
+					this .getCanvas ()         .stop (true, true) .fadeIn (2000);
+				}
 			}
 		},
 		addLoadCount: function (object)
@@ -41928,7 +41970,7 @@ function (Fields,
 
 	function X3DRenderingContext ()
 	{
-		this .addChildObjects ("viewport", new Fields .MFInt32 (0, 0, 100, 100));
+		this .addChildObjects ("viewport", new Fields .MFInt32 (0, 0, 300, 150));
 
 		this .clipPlanes = [ ]; // Clip planes dumpster
 	}
