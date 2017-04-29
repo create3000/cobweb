@@ -16142,6 +16142,39 @@ function ($, Vector3, Algorithm)
 
 			return this;
 		},
+		getMatrix: function (matrix)
+		{
+			var
+				x = this .x,
+				y = this .y,
+				z = this .z,
+				w = this .w;
+
+			var
+				a = x * x,
+				b = x * y,
+				c = y * y,
+				d = y * z,
+				e = z * x,
+				f = z * z,
+				g = w * x,
+				h = w * y,
+				i = w * z;
+		
+			matrix [0] = 1 - 2 * (c + f);
+			matrix [1] =     2 * (b + i);
+			matrix [2] =     2 * (e - h);
+
+			matrix [3] =     2 * (b - i);
+			matrix [4] = 1 - 2 * (f + a);
+			matrix [5] =     2 * (d + g);
+
+			matrix [6] =     2 * (e + h);
+			matrix [7] =     2 * (d - g);
+			matrix [8] = 1 - 2 * (c + a);
+
+			return matrix;
+		},
 		isReal: function ()
 		{
 			return ! (this .x || this .y || this .z);
@@ -16846,6 +16879,10 @@ function ($,
 		{
 			this .value .setMatrix (matrix);
 			return this;
+		},
+		getMatrix: function (matrix)
+		{
+			return this .value .getMatrix (matrix);
 		},
 		equals: function (rot)
 		{
@@ -34773,7 +34810,9 @@ function ($,
 {
 
 
-	var NULL = Fields .SFNode ();
+	var
+		matrix3 = new Matrix3 (),
+		NULL    = new Fields .SFNode ();
 
 	function X3DProgrammableShaderObject (executionContext)
 	{
@@ -34975,6 +35014,7 @@ function ($,
 						}
 						case X3DConstants .SFMatrix3d:
 						case X3DConstants .SFMatrix3f:
+						case X3DConstants .SFRotation:
 						{
 							location .array = new Float32Array (9);
 							break;
@@ -35005,6 +35045,7 @@ function ($,
 						}
 						case X3DConstants .MFMatrix3d:
 						case X3DConstants .MFMatrix3f:
+						case X3DConstants .MFRotation:
 						{
 							location .array = new Float32Array (9 * this .getLocationLength (gl, program, field));
 							break;
@@ -35047,7 +35088,6 @@ function ($,
 						case X3DConstants .MFVec4d:
 						case X3DConstants .MFVec4f:
 						case X3DConstants .MFColorRGBA:
-						case X3DConstants .MFRotation:
 						{
 							location .array = new Float32Array (4 * this .getLocationLength (gl, program, field));
 							break;
@@ -35182,8 +35222,9 @@ function ($,
 					}
 					case X3DConstants .SFRotation:
 					{
-						var quat = field .getValue () .value;
-						gl .uniform4f (location, quat .x, quat .y, quat .z, quat .w);
+						field .getValue () .getMatrix (location .array);
+
+						gl .uniformMatrix3fv (location, false, location .array);
 						return;
 					}
 					case X3DConstants .SFString:
@@ -35394,21 +35435,26 @@ function ($,
 						var
 							value = field .getValue (),
 							array = location .array;
-	
+
 						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 						{
-							var quat = value [i] .getValue () .value;
+							var matrix = value [i] .getValue () .getMatrix (matrix3);
 	
-							array [k++] = quat .x;
-							array [k++] = quat .y;
-							array [k++] = quat .z;
-							array [k++] = quat .w;
+							array [k++] = matrix [0];
+							array [k++] = matrix [1];
+							array [k++] = matrix [2];
+							array [k++] = matrix [3];
+							array [k++] = matrix [4];
+							array [k++] = matrix [5];
+							array [k++] = matrix [6];
+							array [k++] = matrix [7];
+							array [k++] = matrix [8];
 						}
 	
 						for (var length = array .length; k < length; ++ k)
 							array [k] = 0;
 	
-						gl .uniform4fv (location, array);
+						gl .uniformMatrix3fv (location, false, array);
 						return;
 					}
 					case X3DConstants .MFString:
