@@ -21197,11 +21197,14 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 			
+			this .SplashScreen_              .addInterest ("set_splashScreen__", this);
 			this .Rubberband_                .addInterest ("set_rubberband__", this);
 			this .PrimitiveQuality_          .addInterest ("set_primitiveQuality__", this);
 			this .TextureQuality_            .addInterest ("set_textureQuality__", this);
 			this .Shading_                   .addInterest ("set_shading__", this);
 			this .getBrowser () .shutdown () .addInterest ("configure", this);
+
+			this .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
 
 			this .configure ();
 		},
@@ -21242,6 +21245,10 @@ function ($,
 		getShading: function ()
 		{
 			return this .Shading_ .getValue ();
+		},
+		set_splashScreen__: function (splashScreen)
+		{
+			this .getBrowser () .getElement () .attr ("splashScreen", splashScreen .getValue () ? "true" : "false");
 		},
 		set_rubberband__: function (rubberband)
 		{
@@ -32602,7 +32609,7 @@ function (Fields,
 		{
 			var attributeName = mutation .attributeName;
 
-			switch (attributeName)
+			switch (attributeName .toLowerCase())
 			{
 				case "src":
 					var urlCharacters = this .getElement () .attr ("src");
@@ -32614,8 +32621,11 @@ function (Fields,
 				case "url":
 					this .load (this .getElement () .attr ("url"));
 					break;
+				case "splashscreen":
+					this .getBrowserOptions () .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
+					break;
 				case "cache":
-					this .setCaching (this .getElement () .attr ("cache") != "false");
+					this .setCaching (this .getElement () .attr ("cache") !== "false");
 					break;
 			}
 		},
