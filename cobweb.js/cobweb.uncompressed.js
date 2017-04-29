@@ -12330,8 +12330,20 @@ function ($, Color3, Algorithm)
 			       this .b_ === color .b_ &&
 			       this .a_ === color .a_;
 		},
-		getHSV: Color3 .getHSV,
-		setHSV: Color3 .setHSV,
+		getHSVA: function (result)
+		{
+			Color3 .prototype .getHSV .call (this, result);
+
+			result [3] = this .a_;
+
+			return result;
+		},
+		setHSVA: function (h, s, v, a)
+		{
+			Color3 .prototype .setHSV .call (this, h, s, v);
+
+			this .a_ = clamp (a, 0, 1);
+		},
 		toString: function ()
 		{
 			return this .r_ + " " +
@@ -12497,8 +12509,15 @@ function ($, X3DField, SFColor, X3DConstants, Color4)
 				this .getValue () .a === 0);
 		},
 		set: SFColor .prototype .set,
-		getHSV: SFColor .prototype .getHSV,
-		setHSV: SFColor .prototype .setHSV,
+		getHSVA: function ()
+		{
+			return this .getValue () .getHSVA ([ ]);
+		},
+		setHSVA: function (h, s, v, a)
+		{
+			this .getValue () .setHSVA (h, s, v, a);
+			this .addEvent ();
+		},
 		toString: SFColor .prototype .toString,
 		toXMLStream: SFColor .prototype .toXMLStream,
 	});
@@ -14831,8 +14850,8 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 			var det      = a .determinant ();
 			var det_sign = det < 0 ? -1 : 1;
 
-			if (det_sign * det === 0)
-				return false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             // singular
+			if (det === 0)
+				return false; // singular
 
 			// (4) B = A * !A  (here !A means A transpose)
 			b .assign (a) .transpose () .multLeft (a);
@@ -17404,8 +17423,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			var det      = a .determinant ();
 			var det_sign = det < 0 ? -1 : 1;
 
-			if (det_sign * det === 0)
-				return false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             // singular
+			if (det === 0)
+				return false; // singular
 
 			// (4) B = A * !A  (here !A means A transpose)
 			b .assign (a) .transpose () .multLeft (a);
@@ -19807,7 +19826,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "3.1";
+	return "3.2a";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -21671,6 +21690,9 @@ function ($,
 		},
 		set_string__: function ()
 		{
+			if (this .getBrowser () .getElement () .attr ("notification") === "false")
+				return;
+
 			if (this .string_ .length === 0)
 				return;
 
@@ -22251,6 +22273,9 @@ function ($,
 		},
 		set_enabled__: function (enabled)
 		{
+			if (this .getBrowser () .getElement () .attr ("timings") === "false")
+				return;
+
 			this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
 
 			if (enabled .getValue ())
@@ -24286,6 +24311,9 @@ function ($,
 		initialize: function ()
 		{
 			X3DBaseNode .prototype .initialize .call (this);
+
+			if (this .getBrowser () .getElement () .attr ("contextMenu") === "false")
+				return;
 
 			$.contextMenu ({
 				selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
@@ -32473,6 +32501,8 @@ function (Fields,
 
 		this .dataStorage = new DataStorage ("X3DBrowser(" + this .number + ").");
 		this .mobile      = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
+
+		$(".cobweb-console") .empty ();
 	}
 
 	X3DCoreContext .prototype =
@@ -33726,13 +33756,20 @@ function (Fields,
 			if (value)
 			{
 				this .resetLoadCount ();
-				this .getCanvas ()         .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
-				this .getLoadingElement () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
+
+				if (this .getElement () .attr ("splashScreen") !== "false")
+				{
+					this .getCanvas ()         .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
+					this .getLoadingElement () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
+				}
 			}
 			else
 			{
-				this .getLoadingElement () .stop (true, true) .fadeOut (2000);
-				this .getCanvas ()         .stop (true, true) .fadeIn (2000);
+				if (this .getElement () .attr ("splashScreen") !== "false")
+				{
+					this .getLoadingElement () .stop (true, true) .fadeOut (2000);
+					this .getCanvas ()         .stop (true, true) .fadeIn (2000);
+				}
 			}
 		},
 		addLoadCount: function (object)

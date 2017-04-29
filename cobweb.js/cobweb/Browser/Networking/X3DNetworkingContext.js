@@ -132,13 +132,20 @@ function (Fields,
 			if (value)
 			{
 				this .resetLoadCount ();
-				this .getCanvas ()         .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
-				this .getLoadingElement () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
+
+				if (this .getElement () .attr ("splashScreen") !== "false")
+				{
+					this .getCanvas ()         .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
+					this .getLoadingElement () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
+				}
 			}
 			else
 			{
-				this .getLoadingElement () .stop (true, true) .fadeOut (2000);
-				this .getCanvas ()         .stop (true, true) .fadeIn (2000);
+				if (this .getElement () .attr ("splashScreen") !== "false")
+				{
+					this .getLoadingElement () .stop (true, true) .fadeOut (2000);
+					this .getCanvas ()         .stop (true, true) .fadeIn (2000);
+				}
 			}
 		},
 		addLoadCount: function (object)

@@ -86,6 +86,9 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
+			if (this .getBrowser () .getElement () .attr ("contextMenu") === "false")
+				return;
+
 			$.contextMenu ({
 				selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
 				build: this .build .bind (this),
