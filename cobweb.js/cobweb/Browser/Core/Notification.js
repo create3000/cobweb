@@ -95,7 +95,7 @@ function ($,
 		},
 		set_string__: function ()
 		{
-			if (this .getBrowser () .getElement () .attr ("notifications") !== "false")
+			if (this .getBrowser () .getBrowserOptions () .getNotifications ())
 			{
 				if (this .string_ .length === 0)
 					return;

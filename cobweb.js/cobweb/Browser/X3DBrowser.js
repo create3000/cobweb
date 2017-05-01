@@ -392,7 +392,7 @@ function ($,
 			this .loader .createX3DFromURL (url, parameter,
 			function (scene)
 			{
-				if (this .getElement () .attr ("splashScreen") === "false")
+				if (this .getBrowserOptions () .getSplashScreen ())
 					this .getCanvas () .fadeIn (0);
 
 				if (scene)
@@ -406,9 +406,6 @@ function ($,
 			.bind (this),
 			function (fragment)
 			{
-				if (this .getElement () .attr ("splashScreen") === "false")
-					this .getCanvas () .fadeIn (0);
-
 				this .currentScene .changeViewpoint (fragment);
 				this .removeLoadCount (id);
 				this .setBrowserLoading (false);
@@ -416,9 +413,6 @@ function ($,
 			.bind (this),
 			function (url, target)
 			{
-				if (this .getElement () .attr ("splashScreen") === "false")
-					this .getCanvas () .fadeIn (0);
-
 				if (target)
 					window .open (url, target);
 				else

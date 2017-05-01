@@ -136,7 +136,7 @@ function (Fields,
 
 		this .getCanvas () .fadeOut (0);
 
-		if (this .getElement () .attr ("splashScreen") !== "false")
+		if (this .getBrowserOptions () .getSplashScreen ())
 			this .getSplashScreen () .fadeIn (0);
 
 		$(".cobweb-console") .empty ();
@@ -257,10 +257,7 @@ function (Fields,
 					this .load (this .getElement () .attr ("url"));
 					break;
 				case "splashscreen":
-					this .getBrowserOptions () .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
-					break;
-				case "cache":
-					this .setCaching (this .getElement () .attr ("cache") !== "false");
+					this .getBrowserOptions () .setAttributeSplashScreen ();
 					break;
 			}
 		},
@@ -281,7 +278,7 @@ function (Fields,
 			}
 			else
 			{
-				if (! this .getBrowserLoading ())
+				if (! this .getLoading ())
 					this .getCanvas () .fadeIn (0);
 			}
 		},

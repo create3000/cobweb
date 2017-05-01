@@ -19863,7 +19863,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "3.2";
+	return "3.3a";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -21171,7 +21171,7 @@ define ('cobweb/Browser/Core/TextureQuality',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Core/BrowserOptions',[
+define ([
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -21197,6 +21197,8 @@ function ($,
 		X3DBaseNode .call (this, executionContext);
 
 		this .addAlias ("AntiAliased", this .Antialiased_);
+
+		this .setAttributeSplashScreen ();
 
 		this .primitiveQuality = PrimitiveQuality .MEDIUM;
 		this .textureQuality   = TextureQuality   .MEDIUM;
@@ -21265,11 +21267,39 @@ function ($,
 				primitiveQuality = this .getBrowser () .getDataStorage () ["BrowserOptions.PrimitiveQuality"],
 				textureQuality   = this .getBrowser () .getDataStorage () ["BrowserOptions.TextureQuality"];
 
-			this .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
-				
+			this .setAttributeSplashScreen ();
+
 			if (rubberband       !== undefined && rubberband       !== this .Rubberband_       .getValue ()) this .Rubberband_       = rubberband;
 			if (primitiveQuality !== undefined && primitiveQuality !== this .PrimitiveQuality_ .getValue ()) this .PrimitiveQuality_ = primitiveQuality;
 			if (textureQuality   !== undefined && textureQuality   !== this .TextureQuality_   .getValue ()) this .TextureQuality_   = textureQuality;
+		},
+		setAttributeSplashScreen: function ()
+		{
+			this .SplashScreen_ .set (this .getSplashScreen ());
+		},
+		getSplashScreen: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("splashScreen") !== "false";
+		},
+		getNotifications: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("notifications") !== "false";
+		},
+		getTimings: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("timings") !== "false";
+		},
+		getTimings: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("timings") !== "false";
+		},
+		getContextMenu: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("contextMenu") !== "false";
+		},
+		getCache: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("cache") !== "false";
 		},
 		getPrimitiveQuality: function ()
 		{
@@ -21734,7 +21764,7 @@ function ($,
 		},
 		set_string__: function ()
 		{
-			if (this .getBrowser () .getElement () .attr ("notifications") !== "false")
+			if (this .getBrowser () .getBrowserOptions () .getNotifications ())
 			{
 				if (this .string_ .length === 0)
 					return;
@@ -22317,7 +22347,7 @@ function ($,
 		},
 		set_enabled__: function (enabled)
 		{
-			if (this .getBrowser () .getElement () .attr ("timings") !== "false")
+			if (this .getBrowser () .getBrowserOptions () .getTimings ())
 			{
 				this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
 	
@@ -24356,7 +24386,7 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			if (this .getBrowser () .getElement () .attr ("contextMenu") !== "false")
+			if (this .getBrowser () .getBrowserOptions () .getContextMenu ())
 			{
 				$.contextMenu ({
 					selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
@@ -24524,7 +24554,7 @@ function ($,
 							.bind (this),
 						},
 					},
-					"browser-timings": this .getBrowser () .getElement () .attr ("timings") !== "false" ? {
+					"browser-timings": this .getBrowser () .getBrowserOptions () .getTimings () ? {
 						name: _("Browser Timings"),
 						type: "checkbox",
 						selected: this .getBrowser () .getBrowserTimings () .enabled_ .getValue (),
@@ -32543,7 +32573,7 @@ function (Fields,
 
 		this .getCanvas () .fadeOut (0);
 
-		if (this .getElement () .attr ("splashScreen") !== "false")
+		if (this .getBrowserOptions () .getSplashScreen ())
 			this .getSplashScreen () .fadeIn (0);
 
 		$(".cobweb-console") .empty ();
@@ -32664,10 +32694,7 @@ function (Fields,
 					this .load (this .getElement () .attr ("url"));
 					break;
 				case "splashscreen":
-					this .getBrowserOptions () .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
-					break;
-				case "cache":
-					this .setCaching (this .getElement () .attr ("cache") !== "false");
+					this .getBrowserOptions () .setAttributeSplashScreen ();
 					break;
 			}
 		},
@@ -32688,7 +32715,7 @@ function (Fields,
 			}
 			else
 			{
-				if (! this .getBrowserLoading ())
+				if (! this .getLoading ())
 					this .getCanvas () .fadeIn (0);
 			}
 		},
@@ -33753,16 +33780,14 @@ function (Fields,
 
 	function X3DNetworkingContext ()
 	{
-		this .cache = this .getElement () [0] .getAttribute ("cache") != "false";
-
 		this .addChildObjects ("loadCount", new Fields .SFInt32 ());
 
 		this .loadSensor     = new LoadSensor (this .getPrivateScene ());
 		this .loadingTotal   = 0;
 		this .loadingObjects = { };
+		this .loading        = false;
 		this .location       = getBaseURI (this .getElement () [0]);
 		this .defaultScene   = this .createScene (); // Inline node's empty scene.
-		this .browserLoading = false;
 	}
 
 	X3DNetworkingContext .prototype =
@@ -33781,14 +33806,6 @@ function (Fields,
 		{
 			return urls .providerUrl;
 		},
-		setCaching: function (value)
-		{
-		   this .cache = value;
-		},
-		doCaching: function ()
-		{
-		   return this .cache;
-		},
 		getLocation: function ()
 		{
 			return this .location;
@@ -33803,13 +33820,13 @@ function (Fields,
 		},
 		setBrowserLoading: function (value)
 		{
-			this .browserLoading = value;
+			this .loading = value;
 
 			if (value)
 			{
 				this .resetLoadCount ();
 
-				if (this .getElement () .attr ("splashScreen") !== "false")
+				if (this .getBrowserOptions () .getSplashScreen ())
 				{
 					this .getCanvas ()       .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
 					this .getSplashScreen () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
@@ -33817,7 +33834,7 @@ function (Fields,
 			}
 			else
 			{
-				if (this .getElement () .attr ("splashScreen") !== "false")
+				if (this .getBrowserOptions () .getSplashScreen ())
 				{
 					this .getSplashScreen () .stop (true, true) .fadeOut (2000);
 					this .getCanvas ()       .stop (true, true) .fadeIn (2000);
@@ -33826,9 +33843,9 @@ function (Fields,
 					this .getCanvas () .fadeIn (0);
 			}
 		},
-		getBrowserLoading: function ()
+		getLoading: function ()
 		{
-			return this .browserLoading;
+			return this .loading;
 		},
 		addLoadCount: function (object)
 		{
@@ -33865,7 +33882,7 @@ function (Fields,
 				this .setCursor ("DEFAULT");
 			}
 
-			if (! this .browserLoading)
+			if (! this .loading)
 				this .getNotification () .string_ = string;
 
 			this .getSplashScreen () .find (".cobweb-spinner-text") .text (string);
@@ -41477,7 +41494,7 @@ function ($,
 					url: this .URL,
 					dataType: "text",
 					async: false,
-					cache: this .browser .doCaching (),
+					cache: this .browser .getBrowserOptions () .getCache (),
 					//timeout: 15000,
 					global: false,
 					context: this,
@@ -41632,7 +41649,7 @@ function ($,
 				url: this .URL,
 				dataType: "binary",
 				async: true,
-				cache: this .browser .doCaching (),
+				cache: this .browser .getBrowserOptions () .getCache (),
 				//timeout: 15000,
 				global: false,
 				context: this,
@@ -108063,7 +108080,7 @@ function ($,
 			this .loader .createX3DFromURL (url, parameter,
 			function (scene)
 			{
-				if (this .getElement () .attr ("splashScreen") === "false")
+				if (this .getBrowserOptions () .getSplashScreen ())
 					this .getCanvas () .fadeIn (0);
 
 				if (scene)
@@ -108077,9 +108094,6 @@ function ($,
 			.bind (this),
 			function (fragment)
 			{
-				if (this .getElement () .attr ("splashScreen") === "false")
-					this .getCanvas () .fadeIn (0);
-
 				this .currentScene .changeViewpoint (fragment);
 				this .removeLoadCount (id);
 				this .setBrowserLoading (false);
@@ -108087,9 +108101,6 @@ function ($,
 			.bind (this),
 			function (url, target)
 			{
-				if (this .getElement () .attr ("splashScreen") === "false")
-					this .getCanvas () .fadeIn (0);
-
 				if (target)
 					window .open (url, target);
 				else

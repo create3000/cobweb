@@ -110,7 +110,7 @@ function ($,
 		},
 		set_enabled__: function (enabled)
 		{
-			if (this .getBrowser () .getElement () .attr ("timings") !== "false")
+			if (this .getBrowser () .getBrowserOptions () .getTimings ())
 			{
 				this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
 	

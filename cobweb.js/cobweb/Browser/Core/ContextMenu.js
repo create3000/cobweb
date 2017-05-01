@@ -86,7 +86,7 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			if (this .getBrowser () .getElement () .attr ("contextMenu") !== "false")
+			if (this .getBrowser () .getBrowserOptions () .getContextMenu ())
 			{
 				$.contextMenu ({
 					selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
@@ -254,7 +254,7 @@ function ($,
 							.bind (this),
 						},
 					},
-					"browser-timings": this .getBrowser () .getElement () .attr ("timings") !== "false" ? {
+					"browser-timings": this .getBrowser () .getBrowserOptions () .getTimings () ? {
 						name: _("Browser Timings"),
 						type: "checkbox",
 						selected: this .getBrowser () .getBrowserTimings () .enabled_ .getValue (),

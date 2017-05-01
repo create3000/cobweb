@@ -77,16 +77,14 @@ function (Fields,
 
 	function X3DNetworkingContext ()
 	{
-		this .cache = this .getElement () [0] .getAttribute ("cache") != "false";
-
 		this .addChildObjects ("loadCount", new Fields .SFInt32 ());
 
 		this .loadSensor     = new LoadSensor (this .getPrivateScene ());
 		this .loadingTotal   = 0;
 		this .loadingObjects = { };
+		this .loading        = false;
 		this .location       = getBaseURI (this .getElement () [0]);
 		this .defaultScene   = this .createScene (); // Inline node's empty scene.
-		this .browserLoading = false;
 	}
 
 	X3DNetworkingContext .prototype =
@@ -105,14 +103,6 @@ function (Fields,
 		{
 			return urls .providerUrl;
 		},
-		setCaching: function (value)
-		{
-		   this .cache = value;
-		},
-		doCaching: function ()
-		{
-		   return this .cache;
-		},
 		getLocation: function ()
 		{
 			return this .location;
@@ -127,13 +117,13 @@ function (Fields,
 		},
 		setBrowserLoading: function (value)
 		{
-			this .browserLoading = value;
+			this .loading = value;
 
 			if (value)
 			{
 				this .resetLoadCount ();
 
-				if (this .getElement () .attr ("splashScreen") !== "false")
+				if (this .getBrowserOptions () .getSplashScreen ())
 				{
 					this .getCanvas ()       .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
 					this .getSplashScreen () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
@@ -141,7 +131,7 @@ function (Fields,
 			}
 			else
 			{
-				if (this .getElement () .attr ("splashScreen") !== "false")
+				if (this .getBrowserOptions () .getSplashScreen ())
 				{
 					this .getSplashScreen () .stop (true, true) .fadeOut (2000);
 					this .getCanvas ()       .stop (true, true) .fadeIn (2000);
@@ -150,9 +140,9 @@ function (Fields,
 					this .getCanvas () .fadeIn (0);
 			}
 		},
-		getBrowserLoading: function ()
+		getLoading: function ()
 		{
-			return this .browserLoading;
+			return this .loading;
 		},
 		addLoadCount: function (object)
 		{
@@ -189,7 +179,7 @@ function (Fields,
 				this .setCursor ("DEFAULT");
 			}
 
-			if (! this .browserLoading)
+			if (! this .loading)
 				this .getNotification () .string_ = string;
 
 			this .getSplashScreen () .find (".cobweb-spinner-text") .text (string);
