@@ -329,7 +329,7 @@ function ($,
 					description = viewpoint .description_ .getValue ();
 
 				if (description === "")
-				   continue;
+					continue;
 
 				var item = {
 					name: description,
