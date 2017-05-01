@@ -7,7 +7,7 @@
     <meta name='creator' content='Holger Seelig'/>
     <meta name='generator' content='Titania V3.0.3, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Shaders/ComposedShaderUniformRotation.x3d'/>
-    <meta name='modified' content='Sat, 29 Apr 2017 22:54:44 GMT'/>
+    <meta name='modified' content='Sat, 29 Apr 2017 23:18:47 GMT'/>
     <meta name='titania-add-world-info' content='true'/>
   </head>
   <Scene>
@@ -265,7 +265,7 @@ function isMajor (i, dimension, majorLineEvery, majorLineOffset)
           <MetadataBoolean DEF='enabled_1' containerField='value'
               name='enabled'
               reference='http://titania.create3000.de'
-              value='false'/>
+              value='true'/>
         </MetadataSet>
         <MetadataSet DEF='NavigationInfo' containerField='value'
             name='NavigationInfo'
@@ -297,25 +297,29 @@ function isMajor (i, dimension, majorLineEvery, majorLineOffset)
           <MetadataSet DEF='nodes' containerField='value'
               name='nodes'
               reference='http://titania.create3000.de'>
-            <ShaderPart DEF='_1' containerField='value'>
-<![CDATA[data:text/plain,
-
-uniform mat4 x3d_ProjectionMatrix;
-uniform mat4 x3d_ModelViewMatrix;
-
-uniform mat3 rotation [1];
-
-attribute vec4 x3d_Vertex;
-
-void
-main ()
-{
-	vec4 vertex = vec4 (rotation [0] * vec3 (x3d_Vertex), 1.0);
-
-	gl_Position = x3d_ProjectionMatrix * x3d_ModelViewMatrix * vertex;
-}]]>
-            </ShaderPart>
+            <Transform DEF='Text' containerField='value'
+                translation='-5.01454 -2.98505 0'>
+              <Shape>
+                <Appearance>
+                  <Material/>
+                </Appearance>
+                <Text
+                    string='"Must show two 2x2 rectangles."'
+                    solid='true'>
+                  <FontStyle DEF='_1'
+                      size='0.39'/>
+                </Text>
+              </Shape>
+            </Transform>
           </MetadataSet>
+        </MetadataSet>
+        <MetadataSet DEF='AxonometricGrid' containerField='value'
+            name='AxonometricGrid'
+            reference='http://titania.create3000.de'>
+          <MetadataBoolean DEF='enabled_2' containerField='value'
+              name='enabled'
+              reference='http://titania.create3000.de'
+              value='false'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
@@ -325,13 +329,31 @@ main ()
       <fieldValue name='rotation' value='1 0 0 1.5707963267949'/>
       <fieldValue name='transparency' value='0.8'/>
     </ProtoInstance>
-    <Transform DEF='Rectangle2D'>
+    <Transform DEF='Rectangle2D'
+        translation='-2 0 0'>
       <Shape>
         <Appearance>
           <Material/>
           <ComposedShader>
-            <field accessType='inputOutput' type='MFRotation' name='rotation' value='0 1 0 1.5707963'/>
-            <ShaderPart USE='_1'/>
+            <field accessType='inputOutput' type='SFRotation' name='rotation' value='0 1 0 1.5707963'/>
+            <ShaderPart>
+<![CDATA[data:text/plain,
+
+uniform mat4 x3d_ProjectionMatrix;
+uniform mat4 x3d_ModelViewMatrix;
+
+uniform mat3 rotation;
+
+attribute vec4 x3d_Vertex;
+
+void
+main ()
+{
+	vec4 vertex = vec4 (rotation * vec3 (x3d_Vertex), 1.0);
+
+	gl_Position = x3d_ProjectionMatrix * x3d_ModelViewMatrix * vertex;
+}]]>
+            </ShaderPart>
             <ShaderPart
                 type='FRAGMENT'>
 <![CDATA[data:text/plain,
@@ -351,18 +373,49 @@ main ()
         </IndexedLineSet>
       </Shape>
     </Transform>
-    <Transform DEF='Text'
-        translation='-5.01454 -2.98505 0'>
+    <Transform USE='Text'/>
+    <Transform DEF='Rectangle2D_1'
+        translation='2 0 0'>
       <Shape>
         <Appearance>
           <Material/>
+          <ComposedShader>
+            <field accessType='inputOutput' type='MFRotation' name='rotation' value='0 1 0 1.5707963'/>
+            <ShaderPart>
+<![CDATA[data:text/plain,
+
+uniform mat4 x3d_ProjectionMatrix;
+uniform mat4 x3d_ModelViewMatrix;
+
+uniform mat3 rotation [1];
+
+attribute vec4 x3d_Vertex;
+
+void
+main ()
+{
+	vec4 vertex = vec4 (rotation [0] * vec3 (x3d_Vertex), 1.0);
+
+	gl_Position = x3d_ProjectionMatrix * x3d_ModelViewMatrix * vertex;
+}]]>
+            </ShaderPart>
+            <ShaderPart
+                type='FRAGMENT'>
+<![CDATA[data:text/plain,
+
+void
+main ()
+{
+	gl_FragColor = vec4 (1.0, 0.0, 0.0, 1.0);
+}]]>
+            </ShaderPart>
+          </ComposedShader>
         </Appearance>
-        <Text
-            string='"Must show a 2x2 rectangle."'
-            solid='true'>
-          <FontStyle
-              size='0.39'/>
-        </Text>
+        <IndexedLineSet
+            coordIndex='0, 1, 2, 0, -1, 2, 3, 0'>
+          <Coordinate
+              point='0 -1 -1, 0 -1 1, 0 1 1, 0 1 -1'/>
+        </IndexedLineSet>
       </Shape>
     </Transform>
   </Scene>

@@ -392,10 +392,13 @@ function ($,
 			this .loader .createX3DFromURL (url, parameter,
 			function (scene)
 			{
+				if (this .getElement () .attr ("splashScreen") === "false")
+					this .getCanvas () .fadeIn (0);
+
 				if (scene)
 					this .replaceWorld (scene);
 				else
-					setTimeout (function () { this .getLoadingElement () .find (".cobweb-spinner-text") .text (_ ("Failed loading world.")); } .bind (this), 31);
+					setTimeout (function () { this .getSplashScreen () .find (".cobweb-spinner-text") .text (_ ("Failed loading world.")); } .bind (this), 31);
 
 				// Must not remove load count, replaceWorld does a resetLoadCount when it sets setBrowserLoading to true.
 				// Don't set browser loading to false.
@@ -403,6 +406,9 @@ function ($,
 			.bind (this),
 			function (fragment)
 			{
+				if (this .getElement () .attr ("splashScreen") === "false")
+					this .getCanvas () .fadeIn (0);
+
 				this .currentScene .changeViewpoint (fragment);
 				this .removeLoadCount (id);
 				this .setBrowserLoading (false);
@@ -410,6 +416,9 @@ function ($,
 			.bind (this),
 			function (url, target)
 			{
+				if (this .getElement () .attr ("splashScreen") === "false")
+					this .getCanvas () .fadeIn (0);
+
 				if (target)
 					window .open (url, target);
 				else

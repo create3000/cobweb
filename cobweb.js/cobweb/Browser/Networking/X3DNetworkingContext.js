@@ -135,17 +135,19 @@ function (Fields,
 
 				if (this .getElement () .attr ("splashScreen") !== "false")
 				{
-					this .getCanvas ()         .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
-					this .getLoadingElement () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
+					this .getCanvas ()       .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
+					this .getSplashScreen () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
 				}
 			}
 			else
 			{
 				if (this .getElement () .attr ("splashScreen") !== "false")
 				{
-					this .getLoadingElement () .stop (true, true) .fadeOut (2000);
-					this .getCanvas ()         .stop (true, true) .fadeIn (2000);
+					this .getSplashScreen () .stop (true, true) .fadeOut (2000);
+					this .getCanvas ()       .stop (true, true) .fadeIn (2000);
 				}
+				else
+					this .getCanvas () .fadeIn (0);
 			}
 		},
 		addLoadCount: function (object)
@@ -186,9 +188,8 @@ function (Fields,
 			if (! this .browserLoading)
 				this .getNotification () .string_ = string;
 
-			this .getLoadingElement () .find (".cobweb-spinner-text") .text (string);
-
-			this .getLoadingElement () .find (".cobweb-progressbar div") .css ("width", ((this .loadingTotal - value) * 100 / this .loadingTotal) + "%");
+			this .getSplashScreen () .find (".cobweb-spinner-text") .text (string);
+			this .getSplashScreen () .find (".cobweb-progressbar div") .css ("width", ((this .loadingTotal - value) * 100 / this .loadingTotal) + "%");
 		},
 		resetLoadCount: function ()
 		{
