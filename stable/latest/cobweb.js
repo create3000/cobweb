@@ -32514,7 +32514,7 @@ function (Fields,
 		// Get canvas & context.
 
 		var browser      = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
-		var splashScreen = $("<div></div>") .addClass ("cobweb-splash-screen")  .appendTo (browser);
+		var splashScreen = $("<div></div>") .addClass ("cobweb-splash-screen") .appendTo (browser);
 		var spinner      = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (splashScreen);
 		var progress     = $("<div></div>") .addClass ("cobweb-progress") .appendTo (splashScreen);
 		var surface      = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
@@ -32543,8 +32543,8 @@ function (Fields,
 
 		this .getCanvas () .fadeOut (0);
 
-		if (this .getElement () .attr ("splashScreen") === "false")
-			this .getSplashScreen () .fadeOut (0);
+		if (this .getElement () .attr ("splashScreen") !== "false")
+			this .getSplashScreen () .fadeIn (0);
 
 		$(".cobweb-console") .empty ();
 	}
@@ -32687,7 +32687,10 @@ function (Fields,
 					this .loadURL (url, parameter);
 			}
 			else
-				this .getCanvas () .fadeIn (0);
+			{
+				if (! this .getBrowserLoading ())
+					this .getCanvas () .fadeIn (0);
+			}
 		},
 		getPrivateScene: function ()
 		{
@@ -33822,6 +33825,10 @@ function (Fields,
 				else
 					this .getCanvas () .fadeIn (0);
 			}
+		},
+		getBrowserLoading: function ()
+		{
+			return this .browserLoading;
 		},
 		addLoadCount: function (object)
 		{

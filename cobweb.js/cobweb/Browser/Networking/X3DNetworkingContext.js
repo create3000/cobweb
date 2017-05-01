@@ -150,6 +150,10 @@ function (Fields,
 					this .getCanvas () .fadeIn (0);
 			}
 		},
+		getBrowserLoading: function ()
+		{
+			return this .browserLoading;
+		},
 		addLoadCount: function (object)
 		{
 		   var id = object .getId ();

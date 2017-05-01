@@ -1,7 +1,7 @@
 
 X3DCanvas .cobweb-splash-screen {
+	display: none;
 	z-index: -100;
-	display: block;
 	position: absolute;
 	top: 0;
 	right: 0;
