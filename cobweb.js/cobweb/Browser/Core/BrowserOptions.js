@@ -165,10 +165,6 @@ function ($,
 		{
 			return this .getBrowser () .getElement () .attr ("timings") !== "false";
 		},
-		getTimings: function ()
-		{
-			return this .getBrowser () .getElement () .attr ("timings") !== "false";
-		},
 		getContextMenu: function ()
 		{
 			return this .getBrowser () .getElement () .attr ("contextMenu") !== "false";

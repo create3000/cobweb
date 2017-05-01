@@ -21171,7 +21171,7 @@ define ('cobweb/Browser/Core/TextureQuality',[],function ()
  ******************************************************************************/
 
 
-define ([
+define ('cobweb/Browser/Core/BrowserOptions',[
 	"jquery",
 	"cobweb/Fields",
 	"cobweb/Basic/X3DFieldDefinition",
@@ -21284,10 +21284,6 @@ function ($,
 		getNotifications: function ()
 		{
 			return this .getBrowser () .getElement () .attr ("notifications") !== "false";
-		},
-		getTimings: function ()
-		{
-			return this .getBrowser () .getElement () .attr ("timings") !== "false";
 		},
 		getTimings: function ()
 		{
@@ -21764,28 +21760,21 @@ function ($,
 		},
 		set_string__: function ()
 		{
-			if (this .getBrowser () .getBrowserOptions () .getNotifications ())
-			{
-				if (this .string_ .length === 0)
-					return;
-	
-				//this .element
-				//	.text (this .string_ .getValue ())
-				//	.stop (true, true)
-				//	.fadeIn ()
-				//	.animate ({ "delay": 1 }, 4000)
-				//	.fadeOut ();
-	
-				this .element .children () .text (this .string_ .getValue ());
-	
-				this .element 
-					.stop (true, true)
-					.fadeIn (0)
-					.animate ({ width: this .element .textWidth () })
-					.animate ({ "delay": 1 }, 5000)
-					.animate ({ width: 0 })
-					.fadeOut (0);
-			}
+			if (! this .getBrowser () .getBrowserOptions () .getNotifications ())
+				return;
+
+			if (this .string_ .length === 0)
+				return;
+
+			this .element .children () .text (this .string_ .getValue ());
+
+			this .element 
+				.stop (true, true)
+				.fadeIn (0)
+				.animate ({ width: this .element .textWidth () })
+				.animate ({ "delay": 1 }, 5000)
+				.animate ({ width: 0 })
+				.fadeOut (0);
 		},
 	});
 
@@ -22347,21 +22336,21 @@ function ($,
 		},
 		set_enabled__: function (enabled)
 		{
-			if (this .getBrowser () .getBrowserOptions () .getTimings ())
+			if (! this .getBrowser () .getBrowserOptions () .getTimings ())
+				return;
+
+			this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
+
+			if (enabled .getValue ())
 			{
-				this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
-	
-				if (enabled .getValue ())
-				{
-					this .element .fadeIn ();
-					this .getBrowser () .prepareEvents () .addInterest ("update", this);
-					this .update ();
-				}
-				else
-				{
-					this .element .fadeOut ();
-					this .getBrowser () .prepareEvents () .removeInterest ("update", this);
-				}
+				this .element .fadeIn ();
+				this .getBrowser () .prepareEvents () .addInterest ("update", this);
+				this .update ();
+			}
+			else
+			{
+				this .element .fadeOut ();
+				this .getBrowser () .prepareEvents () .removeInterest ("update", this);
 			}
 		},
 		set_type__: function ()
@@ -24386,13 +24375,13 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			if (this .getBrowser () .getBrowserOptions () .getContextMenu ())
-			{
-				$.contextMenu ({
-					selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
-					build: this .build .bind (this),
-				});
-			}
+			if (! this .getBrowser () .getBrowserOptions () .getContextMenu ())
+				return;
+
+			$.contextMenu ({
+				selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
+				build: this .build .bind (this),
+			});
 		},
 		build: function (trigger, event)
 		{
@@ -108080,7 +108069,7 @@ function ($,
 			this .loader .createX3DFromURL (url, parameter,
 			function (scene)
 			{
-				if (this .getBrowserOptions () .getSplashScreen ())
+				if (! this .getBrowserOptions () .getSplashScreen ())
 					this .getCanvas () .fadeIn (0);
 
 				if (scene)
