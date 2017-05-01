@@ -392,7 +392,7 @@ function ($,
 			this .loader .createX3DFromURL (url, parameter,
 			function (scene)
 			{
-				if (this .getBrowserOptions () .getSplashScreen ())
+				if (! this .getBrowserOptions () .getSplashScreen ())
 					this .getCanvas () .fadeIn (0);
 
 				if (scene)

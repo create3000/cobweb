@@ -110,21 +110,21 @@ function ($,
 		},
 		set_enabled__: function (enabled)
 		{
-			if (this .getBrowser () .getBrowserOptions () .getTimings ())
+			if (! this .getBrowser () .getBrowserOptions () .getTimings ())
+				return;
+
+			this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
+
+			if (enabled .getValue ())
 			{
-				this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
-	
-				if (enabled .getValue ())
-				{
-					this .element .fadeIn ();
-					this .getBrowser () .prepareEvents () .addInterest ("update", this);
-					this .update ();
-				}
-				else
-				{
-					this .element .fadeOut ();
-					this .getBrowser () .prepareEvents () .removeInterest ("update", this);
-				}
+				this .element .fadeIn ();
+				this .getBrowser () .prepareEvents () .addInterest ("update", this);
+				this .update ();
+			}
+			else
+			{
+				this .element .fadeOut ();
+				this .getBrowser () .prepareEvents () .removeInterest ("update", this);
 			}
 		},
 		set_type__: function ()

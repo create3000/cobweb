@@ -86,13 +86,13 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			if (this .getBrowser () .getBrowserOptions () .getContextMenu ())
-			{
-				$.contextMenu ({
-					selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
-					build: this .build .bind (this),
-				});
-			}
+			if (! this .getBrowser () .getBrowserOptions () .getContextMenu ())
+				return;
+
+			$.contextMenu ({
+				selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
+				build: this .build .bind (this),
+			});
 		},
 		build: function (trigger, event)
 		{
