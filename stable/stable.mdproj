@@ -684,6 +684,7 @@
     <None Include="3\3.2\images\Time.png" />
     <None Include="3\3.2\images\Viewpoint.png" />
     <None Include="3\3.2\images\WalkViewer.png" />
+    <None Include="3\3.2\cobweb-3.2.zip" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />
