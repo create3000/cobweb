@@ -150,7 +150,6 @@ function ($,
 		dom .data ("browser", browser);
 
 		browser .setup ();
-		browser .getCanvas () .fadeOut (0);
 
 		return browser;
 	}

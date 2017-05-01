@@ -134,6 +134,11 @@ function (Fields,
 		this .dataStorage = new DataStorage ("X3DBrowser(" + this .number + ").");
 		this .mobile      = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
 
+		this .getCanvas () .fadeOut (0);
+
+		if (this .getElement () .attr ("splashScreen") === "false")
+			this .getSplashScreen () .fadeOut (0);
+
 		$(".cobweb-console") .empty ();
 	}
 
