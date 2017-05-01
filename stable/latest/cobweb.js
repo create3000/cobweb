@@ -16142,6 +16142,39 @@ function ($, Vector3, Algorithm)
 
 			return this;
 		},
+		getMatrix: function (matrix)
+		{
+			var
+				x = this .x,
+				y = this .y,
+				z = this .z,
+				w = this .w;
+
+			var
+				a = x * x,
+				b = x * y,
+				c = y * y,
+				d = y * z,
+				e = z * x,
+				f = z * z,
+				g = w * x,
+				h = w * y,
+				i = w * z;
+		
+			matrix [0] = 1 - 2 * (c + f);
+			matrix [1] =     2 * (b + i);
+			matrix [2] =     2 * (e - h);
+
+			matrix [3] =     2 * (b - i);
+			matrix [4] = 1 - 2 * (f + a);
+			matrix [5] =     2 * (d + g);
+
+			matrix [6] =     2 * (e + h);
+			matrix [7] =     2 * (d - g);
+			matrix [8] = 1 - 2 * (c + a);
+
+			return matrix;
+		},
 		isReal: function ()
 		{
 			return ! (this .x || this .y || this .z);
@@ -16844,8 +16877,12 @@ function ($,
 		},
 		setMatrix: function (matrix)
 		{
-			this .value .setMatrix (matrix);
+			this .value .setMatrix (matrix) .normalize ();
 			return this;
+		},
+		getMatrix: function (matrix)
+		{
+			return this .value .getMatrix (matrix);
 		},
 		equals: function (rot)
 		{
@@ -32476,11 +32513,11 @@ function (Fields,
 
 		// Get canvas & context.
 
-		var browser  = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
-		var loading  = $("<div></div>") .addClass ("cobweb-splash-screen")  .appendTo (browser);
-		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
-		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
-		var surface  = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
+		var browser      = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
+		var splashScreen = $("<div></div>") .addClass ("cobweb-splash-screen")  .appendTo (browser);
+		var spinner      = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (splashScreen);
+		var progress     = $("<div></div>") .addClass ("cobweb-progress") .appendTo (splashScreen);
+		var surface      = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
 
 		$("<div></div>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
 		$("<div></div>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
@@ -32488,9 +32525,9 @@ function (Fields,
 		$("<div></div>") .addClass ("cobweb-spinner-text")  .appendTo (progress) .text ("Lade 0 Dateien");
 		$("<div></div>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div></div>"));
 
-		this .loading = loading;
-		this .canvas  = $("<canvas></canvas>") .prependTo (surface);
-		this .context = getContext (this .canvas [0]);
+		this .splashScreen = splashScreen;
+		this .canvas       = $("<canvas></canvas>") .prependTo (surface);
+		this .context      = getContext (this .canvas [0]);
 
 		this .privateScene = new Scene (this); // Scene for default nodes.
 
@@ -32544,9 +32581,9 @@ function (Fields,
 		{
 			return this .element;
 		},
-		getLoadingElement: function ()
+		getSplashScreen: function ()
 		{
-			return this .loading;
+			return this .splashScreen;
 		},
 		getCanvas: function ()
 		{
@@ -32644,6 +32681,8 @@ function (Fields,
 				if (url .length)
 					this .loadURL (url, parameter);
 			}
+			else
+				this .getCanvas () .fadeIn (0);
 		},
 		getPrivateScene: function ()
 		{
@@ -33764,17 +33803,19 @@ function (Fields,
 
 				if (this .getElement () .attr ("splashScreen") !== "false")
 				{
-					this .getCanvas ()         .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
-					this .getLoadingElement () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
+					this .getCanvas ()       .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
+					this .getSplashScreen () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
 				}
 			}
 			else
 			{
 				if (this .getElement () .attr ("splashScreen") !== "false")
 				{
-					this .getLoadingElement () .stop (true, true) .fadeOut (2000);
-					this .getCanvas ()         .stop (true, true) .fadeIn (2000);
+					this .getSplashScreen () .stop (true, true) .fadeOut (2000);
+					this .getCanvas ()       .stop (true, true) .fadeIn (2000);
 				}
+				else
+					this .getCanvas () .fadeIn (0);
 			}
 		},
 		addLoadCount: function (object)
@@ -33815,9 +33856,8 @@ function (Fields,
 			if (! this .browserLoading)
 				this .getNotification () .string_ = string;
 
-			this .getLoadingElement () .find (".cobweb-spinner-text") .text (string);
-
-			this .getLoadingElement () .find (".cobweb-progressbar div") .css ("width", ((this .loadingTotal - value) * 100 / this .loadingTotal) + "%");
+			this .getSplashScreen () .find (".cobweb-spinner-text") .text (string);
+			this .getSplashScreen () .find (".cobweb-progressbar div") .css ("width", ((this .loadingTotal - value) * 100 / this .loadingTotal) + "%");
 		},
 		resetLoadCount: function ()
 		{
@@ -34773,7 +34813,9 @@ function ($,
 {
 
 
-	var NULL = Fields .SFNode ();
+	var
+		matrix3 = new Matrix3 (),
+		NULL    = new Fields .SFNode ();
 
 	function X3DProgrammableShaderObject (executionContext)
 	{
@@ -34975,6 +35017,7 @@ function ($,
 						}
 						case X3DConstants .SFMatrix3d:
 						case X3DConstants .SFMatrix3f:
+						case X3DConstants .SFRotation:
 						{
 							location .array = new Float32Array (9);
 							break;
@@ -35005,6 +35048,7 @@ function ($,
 						}
 						case X3DConstants .MFMatrix3d:
 						case X3DConstants .MFMatrix3f:
+						case X3DConstants .MFRotation:
 						{
 							location .array = new Float32Array (9 * this .getLocationLength (gl, program, field));
 							break;
@@ -35047,7 +35091,6 @@ function ($,
 						case X3DConstants .MFVec4d:
 						case X3DConstants .MFVec4f:
 						case X3DConstants .MFColorRGBA:
-						case X3DConstants .MFRotation:
 						{
 							location .array = new Float32Array (4 * this .getLocationLength (gl, program, field));
 							break;
@@ -35182,8 +35225,9 @@ function ($,
 					}
 					case X3DConstants .SFRotation:
 					{
-						var quat = field .getValue () .value;
-						gl .uniform4f (location, quat .x, quat .y, quat .z, quat .w);
+						field .getValue () .getMatrix (location .array);
+
+						gl .uniformMatrix3fv (location, false, location .array);
 						return;
 					}
 					case X3DConstants .SFString:
@@ -35394,21 +35438,26 @@ function ($,
 						var
 							value = field .getValue (),
 							array = location .array;
-	
+
 						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 						{
-							var quat = value [i] .getValue () .value;
+							var matrix = value [i] .getValue () .getMatrix (matrix3);
 	
-							array [k++] = quat .x;
-							array [k++] = quat .y;
-							array [k++] = quat .z;
-							array [k++] = quat .w;
+							array [k++] = matrix [0];
+							array [k++] = matrix [1];
+							array [k++] = matrix [2];
+							array [k++] = matrix [3];
+							array [k++] = matrix [4];
+							array [k++] = matrix [5];
+							array [k++] = matrix [6];
+							array [k++] = matrix [7];
+							array [k++] = matrix [8];
 						}
 	
 						for (var length = array .length; k < length; ++ k)
 							array [k] = 0;
 	
-						gl .uniform4fv (location, array);
+						gl .uniformMatrix3fv (location, false, array);
 						return;
 					}
 					case X3DConstants .MFString:
@@ -108002,10 +108051,13 @@ function ($,
 			this .loader .createX3DFromURL (url, parameter,
 			function (scene)
 			{
+				if (this .getElement () .attr ("splashScreen") === "false")
+					this .getCanvas () .fadeIn (0);
+
 				if (scene)
 					this .replaceWorld (scene);
 				else
-					setTimeout (function () { this .getLoadingElement () .find (".cobweb-spinner-text") .text (_ ("Failed loading world.")); } .bind (this), 31);
+					setTimeout (function () { this .getSplashScreen () .find (".cobweb-spinner-text") .text (_ ("Failed loading world.")); } .bind (this), 31);
 
 				// Must not remove load count, replaceWorld does a resetLoadCount when it sets setBrowserLoading to true.
 				// Don't set browser loading to false.
@@ -108013,6 +108065,9 @@ function ($,
 			.bind (this),
 			function (fragment)
 			{
+				if (this .getElement () .attr ("splashScreen") === "false")
+					this .getCanvas () .fadeIn (0);
+
 				this .currentScene .changeViewpoint (fragment);
 				this .removeLoadCount (id);
 				this .setBrowserLoading (false);
@@ -108020,6 +108075,9 @@ function ($,
 			.bind (this),
 			function (url, target)
 			{
+				if (this .getElement () .attr ("splashScreen") === "false")
+					this .getCanvas () .fadeIn (0);
+
 				if (target)
 					window .open (url, target);
 				else
@@ -108441,10 +108499,8 @@ function ($,
 		dom .data ("browser", browser);
 
 		browser .setup ();
+		browser .getCanvas () .fadeOut (0);
 
-		if (dom .attr ("splashScreen") !== "false")
-			browser .getCanvas () .fadeOut (0);
-		
 		return browser;
 	}
 

@@ -16877,7 +16877,7 @@ function ($,
 		},
 		setMatrix: function (matrix)
 		{
-			this .value .setMatrix (matrix);
+			this .value .setMatrix (matrix) .normalize ();
 			return this;
 		},
 		getMatrix: function (matrix)
@@ -32513,11 +32513,11 @@ function (Fields,
 
 		// Get canvas & context.
 
-		var browser  = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
-		var loading  = $("<div></div>") .addClass ("cobweb-splash-screen")  .appendTo (browser);
-		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
-		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
-		var surface  = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
+		var browser      = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
+		var splashScreen = $("<div></div>") .addClass ("cobweb-splash-screen")  .appendTo (browser);
+		var spinner      = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (splashScreen);
+		var progress     = $("<div></div>") .addClass ("cobweb-progress") .appendTo (splashScreen);
+		var surface      = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
 
 		$("<div></div>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
 		$("<div></div>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
@@ -32525,9 +32525,9 @@ function (Fields,
 		$("<div></div>") .addClass ("cobweb-spinner-text")  .appendTo (progress) .text ("Lade 0 Dateien");
 		$("<div></div>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div></div>"));
 
-		this .loading = loading;
-		this .canvas  = $("<canvas></canvas>") .prependTo (surface);
-		this .context = getContext (this .canvas [0]);
+		this .splashScreen = splashScreen;
+		this .canvas       = $("<canvas></canvas>") .prependTo (surface);
+		this .context      = getContext (this .canvas [0]);
 
 		this .privateScene = new Scene (this); // Scene for default nodes.
 
@@ -32581,9 +32581,9 @@ function (Fields,
 		{
 			return this .element;
 		},
-		getLoadingElement: function ()
+		getSplashScreen: function ()
 		{
-			return this .loading;
+			return this .splashScreen;
 		},
 		getCanvas: function ()
 		{
@@ -32681,6 +32681,8 @@ function (Fields,
 				if (url .length)
 					this .loadURL (url, parameter);
 			}
+			else
+				this .getCanvas () .fadeIn (0);
 		},
 		getPrivateScene: function ()
 		{
@@ -33801,17 +33803,19 @@ function (Fields,
 
 				if (this .getElement () .attr ("splashScreen") !== "false")
 				{
-					this .getCanvas ()         .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
-					this .getLoadingElement () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
+					this .getCanvas ()       .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
+					this .getSplashScreen () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
 				}
 			}
 			else
 			{
 				if (this .getElement () .attr ("splashScreen") !== "false")
 				{
-					this .getLoadingElement () .stop (true, true) .fadeOut (2000);
-					this .getCanvas ()         .stop (true, true) .fadeIn (2000);
+					this .getSplashScreen () .stop (true, true) .fadeOut (2000);
+					this .getCanvas ()       .stop (true, true) .fadeIn (2000);
 				}
+				else
+					this .getCanvas () .fadeIn (0);
 			}
 		},
 		addLoadCount: function (object)
@@ -33852,9 +33856,8 @@ function (Fields,
 			if (! this .browserLoading)
 				this .getNotification () .string_ = string;
 
-			this .getLoadingElement () .find (".cobweb-spinner-text") .text (string);
-
-			this .getLoadingElement () .find (".cobweb-progressbar div") .css ("width", ((this .loadingTotal - value) * 100 / this .loadingTotal) + "%");
+			this .getSplashScreen () .find (".cobweb-spinner-text") .text (string);
+			this .getSplashScreen () .find (".cobweb-progressbar div") .css ("width", ((this .loadingTotal - value) * 100 / this .loadingTotal) + "%");
 		},
 		resetLoadCount: function ()
 		{
@@ -108048,10 +108051,13 @@ function ($,
 			this .loader .createX3DFromURL (url, parameter,
 			function (scene)
 			{
+				if (this .getElement () .attr ("splashScreen") === "false")
+					this .getCanvas () .fadeIn (0);
+
 				if (scene)
 					this .replaceWorld (scene);
 				else
-					setTimeout (function () { this .getLoadingElement () .find (".cobweb-spinner-text") .text (_ ("Failed loading world.")); } .bind (this), 31);
+					setTimeout (function () { this .getSplashScreen () .find (".cobweb-spinner-text") .text (_ ("Failed loading world.")); } .bind (this), 31);
 
 				// Must not remove load count, replaceWorld does a resetLoadCount when it sets setBrowserLoading to true.
 				// Don't set browser loading to false.
@@ -108059,6 +108065,9 @@ function ($,
 			.bind (this),
 			function (fragment)
 			{
+				if (this .getElement () .attr ("splashScreen") === "false")
+					this .getCanvas () .fadeIn (0);
+
 				this .currentScene .changeViewpoint (fragment);
 				this .removeLoadCount (id);
 				this .setBrowserLoading (false);
@@ -108066,6 +108075,9 @@ function ($,
 			.bind (this),
 			function (url, target)
 			{
+				if (this .getElement () .attr ("splashScreen") === "false")
+					this .getCanvas () .fadeIn (0);
+
 				if (target)
 					window .open (url, target);
 				else
@@ -108487,10 +108499,8 @@ function ($,
 		dom .data ("browser", browser);
 
 		browser .setup ();
+		browser .getCanvas () .fadeOut (0);
 
-		if (dom .attr ("splashScreen") !== "false")
-			browser .getCanvas () .fadeOut (0);
-		
 		return browser;
 	}
 
