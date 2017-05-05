@@ -24618,7 +24618,7 @@ function ($,
 					description = viewpoint .description_ .getValue ();
 
 				if (description === "")
-				   continue;
+					continue;
 
 				var item = {
 					name: description,
@@ -28933,9 +28933,9 @@ function ($,
 
 			// Don't create scene cache, due to possible default nodes in proto SFNode fields and complete scenes.
 
-			var Loader = require ("cobweb/InputOutput/Loader");
+			var FileLoader = require ("cobweb/InputOutput/FileLoader");
 
-			new Loader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
+			new FileLoader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
 		},
 		setInternalSceneAsync: function (value)
 		{
@@ -41304,7 +41304,7 @@ function (VERSION)
  ******************************************************************************/
 
 
-define ('cobweb/InputOutput/Loader',[
+define ('cobweb/InputOutput/FileLoader',[
 	"jquery",
 	"cobweb/Base/X3DObject",
 	"cobweb/Fields",
@@ -41344,7 +41344,7 @@ function ($,
 
 	var defaultParameter = new Fields .MFString ();
 
-	function Loader (node, external)
+	function FileLoader (node, external)
 	{
 		X3DObject .call (this);
 
@@ -41357,9 +41357,9 @@ function ($,
 		this .fileReader       = new FileReader ();
 	}
 
-	Loader .prototype = $.extend (Object .create (X3DObject .prototype),
+	FileLoader .prototype = $.extend (Object .create (X3DObject .prototype),
 	{
-		constructor: Loader,
+		constructor: FileLoader,
 		abort: function ()
 		{
 			this .callback      = Function .prototype;
@@ -41747,7 +41747,7 @@ function ($,
 		},
 	});
 
-	return Loader;
+	return FileLoader;
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -41807,7 +41807,7 @@ define ('cobweb/Components/Shaders/ShaderPart',[
 	"cobweb/Browser/Shaders/Shader",
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Components/Networking/X3DUrlObject",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -41817,7 +41817,7 @@ function ($,
           Shader,
           X3DNode, 
           X3DUrlObject,
-          Loader,
+          FileLoader,
           X3DConstants)
 {
 
@@ -41904,7 +41904,7 @@ function ($,
 			
 			this .valid = false;
 
-			new Loader (this) .loadDocument (this .url_, null,
+			new FileLoader (this) .loadDocument (this .url_, null,
 			function (data, URL)
 			{
 				if (data === null)
@@ -60230,7 +60230,7 @@ define ('cobweb/Components/Text/X3DFontStyleNode',[
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Components/Networking/X3DUrlObject",
 	"cobweb/Browser/Text/TextAlignment",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
@@ -60240,7 +60240,7 @@ function ($,
           X3DNode,
           X3DUrlObject,
           TextAlignment,
-          Loader,
+          FileLoader,
           X3DConstants,
           urls,
           URI)
@@ -60291,7 +60291,7 @@ function ($,
 
 		this .familyStack = [ ];
 		this .alignments  = [ ];
-		this .loader      = new Loader (this);
+		this .loader      = new FileLoader (this);
 	}
 
 	X3DFontStyleNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -75925,7 +75925,7 @@ define ('cobweb/Components/Networking/Anchor',[
 	"cobweb/Components/PointingDeviceSensor/TouchSensor",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 ],
 function ($,
           Fields,
@@ -75936,7 +75936,7 @@ function ($,
           TouchSensor,
           TraverseType,
           X3DConstants,
-          Loader)
+          FileLoader)
 {
 
 
@@ -76005,7 +76005,7 @@ function ($,
 		{
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE, false);
 
-			new Loader (this) .createX3DFromURL (this .url_, this .parameter_,
+			new FileLoader (this) .createX3DFromURL (this .url_, this .parameter_,
 			function (scene)
 			{
 				if (scene)
@@ -86450,7 +86450,7 @@ define ('cobweb/Components/Networking/Inline',[
 	"cobweb/Components/Grouping/X3DBoundedObject",
 	"cobweb/Components/Grouping/Group",
 	"cobweb/Bits/X3DConstants",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 ],
 function ($,
           Fields,
@@ -86461,7 +86461,7 @@ function ($,
           X3DBoundedObject,
           Group,
           X3DConstants,
-          Loader)
+          FileLoader)
 {
 
 
@@ -86561,7 +86561,7 @@ function ($,
 
 				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_, null));
+				this .setInternalScene (new FileLoader (this) .createX3DFromURL (this .url_, null));
 			}
 			catch (error)
 			{
@@ -86576,7 +86576,7 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-			new Loader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
+			new FileLoader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
 		},
 		requestUnload: function ()
 		{
@@ -99858,7 +99858,7 @@ define ("cobweb/Components/Scripting/Script",
 	"cobweb/Routing/X3DRoute",
 	"cobweb/Browser/Scripting/evaluate",
 	"cobweb/Components/Scripting/X3DScriptNode",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -99884,7 +99884,7 @@ function ($,
           X3DRoute,
           evaluate,
           X3DScriptNode, 
-          Loader,
+          FileLoader,
           X3DConstants)
 {
 	function Script (executionContext)
@@ -99946,7 +99946,7 @@ function ($,
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 			this .getScene () .addInitLoadCount (this);
 
-			new Loader (this) .loadScript (this .url_,
+			new FileLoader (this) .loadScript (this .url_,
 			function (data)
 			{
 				this .getScene () .removeInitLoadCount (this);
@@ -107735,7 +107735,7 @@ define ('cobweb/Browser/X3DBrowser',[
 	"cobweb/Configuration/SupportedComponents",
 	"cobweb/Configuration/SupportedNodes",
 	"cobweb/Execution/Scene",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 	"cobweb/Parser/XMLParser",
 	"cobweb/Bits/X3DConstants",
 	"lib/gettext",
@@ -107750,7 +107750,7 @@ function ($,
           SupportedComponents,
           SupportedNodes,
           Scene,
-          Loader,
+          FileLoader,
           XMLParser,
           X3DConstants,
           _)
@@ -107962,7 +107962,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				scene        = new Loader (this .getWorld ()) .createX3DFromString (this .currentScene .getURL (), x3dSyntax);
+				scene        = new FileLoader (this .getWorld ()) .createX3DFromString (this .currentScene .getURL (), x3dSyntax);
 
 			if (! external)
 			{
@@ -107996,7 +107996,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				loader       = new Loader (this .getWorld ());
+				loader       = new FileLoader (this .getWorld ());
 
 			this .addLoadCount (loader);
 
@@ -108034,7 +108034,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				scene        = new Loader (this .getWorld ()) .createX3DFromURL (url, null);
+				scene        = new FileLoader (this .getWorld ()) .createX3DFromURL (url, null);
 
 			if (! external)
 			{
@@ -108064,7 +108064,7 @@ function ($,
 			this .setBrowserLoading (true);
 			this .addLoadCount (this);
 
-			this .loader = new Loader (this .getWorld ());
+			this .loader = new FileLoader (this .getWorld ());
 
 			this .loader .createX3DFromURL (url, parameter,
 			function (scene)
