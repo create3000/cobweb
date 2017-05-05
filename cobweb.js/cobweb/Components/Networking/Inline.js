@@ -57,7 +57,7 @@ define ([
 	"cobweb/Components/Grouping/X3DBoundedObject",
 	"cobweb/Components/Grouping/Group",
 	"cobweb/Bits/X3DConstants",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 ],
 function ($,
           Fields,
@@ -68,7 +68,7 @@ function ($,
           X3DBoundedObject,
           Group,
           X3DConstants,
-          Loader)
+          FileLoader)
 {
 "use strict";
 
@@ -168,7 +168,7 @@ function ($,
 
 				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_, null));
+				this .setInternalScene (new FileLoader (this) .createX3DFromURL (this .url_, null));
 			}
 			catch (error)
 			{
@@ -183,7 +183,7 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-			new Loader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
+			new FileLoader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
 		},
 		requestUnload: function ()
 		{

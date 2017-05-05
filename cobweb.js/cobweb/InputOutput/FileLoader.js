@@ -87,7 +87,7 @@ function ($,
 
 	var defaultParameter = new Fields .MFString ();
 
-	function Loader (node, external)
+	function FileLoader (node, external)
 	{
 		X3DObject .call (this);
 
@@ -100,9 +100,9 @@ function ($,
 		this .fileReader       = new FileReader ();
 	}
 
-	Loader .prototype = $.extend (Object .create (X3DObject .prototype),
+	FileLoader .prototype = $.extend (Object .create (X3DObject .prototype),
 	{
-		constructor: Loader,
+		constructor: FileLoader,
 		abort: function ()
 		{
 			this .callback      = Function .prototype;
@@ -490,5 +490,5 @@ function ($,
 		},
 	});
 
-	return Loader;
+	return FileLoader;
 });

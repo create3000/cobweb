@@ -53,7 +53,7 @@ define ([
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Components/Networking/X3DUrlObject",
 	"cobweb/Browser/Text/TextAlignment",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
@@ -63,7 +63,7 @@ function ($,
           X3DNode,
           X3DUrlObject,
           TextAlignment,
-          Loader,
+          FileLoader,
           X3DConstants,
           urls,
           URI)
@@ -114,7 +114,7 @@ function ($,
 
 		this .familyStack = [ ];
 		this .alignments  = [ ];
-		this .loader      = new Loader (this);
+		this .loader      = new FileLoader (this);
 	}
 
 	X3DFontStyleNode .prototype = $.extend (Object .create (X3DNode .prototype),

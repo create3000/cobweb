@@ -58,7 +58,7 @@ define ([
 	"cobweb/Configuration/SupportedComponents",
 	"cobweb/Configuration/SupportedNodes",
 	"cobweb/Execution/Scene",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 	"cobweb/Parser/XMLParser",
 	"cobweb/Bits/X3DConstants",
 	"lib/gettext",
@@ -73,7 +73,7 @@ function ($,
           SupportedComponents,
           SupportedNodes,
           Scene,
-          Loader,
+          FileLoader,
           XMLParser,
           X3DConstants,
           _)
@@ -285,7 +285,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				scene        = new Loader (this .getWorld ()) .createX3DFromString (this .currentScene .getURL (), x3dSyntax);
+				scene        = new FileLoader (this .getWorld ()) .createX3DFromString (this .currentScene .getURL (), x3dSyntax);
 
 			if (! external)
 			{
@@ -319,7 +319,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				loader       = new Loader (this .getWorld ());
+				loader       = new FileLoader (this .getWorld ());
 
 			this .addLoadCount (loader);
 
@@ -357,7 +357,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				scene        = new Loader (this .getWorld ()) .createX3DFromURL (url, null);
+				scene        = new FileLoader (this .getWorld ()) .createX3DFromURL (url, null);
 
 			if (! external)
 			{
@@ -387,7 +387,7 @@ function ($,
 			this .setBrowserLoading (true);
 			this .addLoadCount (this);
 
-			this .loader = new Loader (this .getWorld ());
+			this .loader = new FileLoader (this .getWorld ());
 
 			this .loader .createX3DFromURL (url, parameter,
 			function (scene)

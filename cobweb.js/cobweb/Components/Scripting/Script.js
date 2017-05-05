@@ -72,7 +72,7 @@ define ("cobweb/Components/Scripting/Script",
 	"cobweb/Routing/X3DRoute",
 	"cobweb/Browser/Scripting/evaluate",
 	"cobweb/Components/Scripting/X3DScriptNode",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -98,7 +98,7 @@ function ($,
           X3DRoute,
           evaluate,
           X3DScriptNode, 
-          Loader,
+          FileLoader,
           X3DConstants)
 {
 	function Script (executionContext)
@@ -160,7 +160,7 @@ function ($,
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 			this .getScene () .addInitLoadCount (this);
 
-			new Loader (this) .loadScript (this .url_,
+			new FileLoader (this) .loadScript (this .url_,
 			function (data)
 			{
 				this .getScene () .removeInitLoadCount (this);

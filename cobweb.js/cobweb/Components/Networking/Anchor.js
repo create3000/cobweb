@@ -57,7 +57,7 @@ define ([
 	"cobweb/Components/PointingDeviceSensor/TouchSensor",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 ],
 function ($,
           Fields,
@@ -68,7 +68,7 @@ function ($,
           TouchSensor,
           TraverseType,
           X3DConstants,
-          Loader)
+          FileLoader)
 {
 "use strict";
 
@@ -137,7 +137,7 @@ function ($,
 		{
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE, false);
 
-			new Loader (this) .createX3DFromURL (this .url_, this .parameter_,
+			new FileLoader (this) .createX3DFromURL (this .url_, this .parameter_,
 			function (scene)
 			{
 				if (scene)

@@ -414,7 +414,6 @@
     <None Include="cobweb\Browser\Lighting\X3DLightingContext.js" />
     <None Include="tests\Components\Geometry3D\Beethoven.x3d" />
     <None Include="tests\Components\Lighting\PointLight.x3d" />
-    <None Include="cobweb\InputOutput\Loader.js" />
     <None Include="standard\Math\Geometry\Plane3.js" />
     <None Include="tests\Components\Lighting\SpotLight.x3d" />
     <None Include="standard\Math\Geometry\Triangle3.js" />
@@ -1301,6 +1300,7 @@
     <None Include="examples\water\water2.x3d" />
     <None Include="tests\Components\Shaders\Mandelbox.x3d" />
     <None Include="tests\Components\Shaders\ComposedShaderUniformRotation.x3d" />
+    <None Include="cobweb\InputOutput\FileLoader.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
