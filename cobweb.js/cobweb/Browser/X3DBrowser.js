@@ -436,6 +436,27 @@ function ($,
 		{	
 			// Probably to be implemented like removeFieldCallback.
 		},
+		importJS: function (jsobj) {
+			var
+				currentScene = this .currentScene,
+				external     = this .isExternal (),
+				scene        = this .createScene ();
+
+			new JSONParser (scene) .parseJavaScript (json);
+
+			if (! external)
+			{
+				scene .setExecutionContext (currentScene);
+				currentScene .isLive () .addInterest (scene, "setLive");
+						
+				if (currentScene .isLive () .getValue ())
+					scene .setLive (true);
+			}
+
+			scene .setup ();
+
+			return scene;
+		},
 		importDocument: function (dom)
 		{
 			if (! dom) return;

@@ -133,7 +133,7 @@ function ($,
 					try
 					{
 
-						new JSONParser (scene) .parseIntoScene (string);
+						new JSONParser (scene) .parseJavaScript (JSON.parse(string));
 
 					}
 					catch (exceptionParseJSON)
@@ -159,8 +159,7 @@ function ($,
 					try
 					{
 						// If we cannot parse XML we try to parse X3D JSON Encoding.	
-
-						new JSONParser (scene) .parseIntoScene (string);
+						new JSONParser (scene) .parseJavaScript (JSON.parse(string));
 						return scene;
 					}
 					catch (exceptionParseJSON)
@@ -170,6 +169,22 @@ function ($,
 						return scene;
 					}
 				}
+			}
+		},
+		importJS: function (scene, jsobj, success, error) {
+			try
+			{
+				//AP: add reference to dom for later access
+				this.node.dom = new JSONParser (scene) .parseJavaScript (json);
+				if (success)
+					this .setScene (scene, success);
+			}
+			catch (exception)
+			{
+				if (error)
+					error (exception);
+				else
+					throw exception;
 			}
 		},
 		importDocument: function (scene, dom, success, error)
