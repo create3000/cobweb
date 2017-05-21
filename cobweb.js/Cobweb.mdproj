@@ -41,6 +41,7 @@
     <None Include="cobweb\Basic\X3DArrayField.js" />
     <None Include="cobweb\Fields\ArrayFields.js" />
     <None Include="cobweb\Parser\XMLParser.js" />
+    <None Include="cobweb\Parser\JSONParser.js" />
     <None Include="cobweb\Fields.js" />
     <None Include="cobweb\Execution\X3DExecutionContext.js" />
     <None Include="cobweb\Execution\X3DScene.js" />

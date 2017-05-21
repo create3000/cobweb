@@ -53,8 +53,8 @@ define ([
 	"cobweb/Fields",
 	"cobweb/Browser/Networking/urls",
 	"cobweb/Parser/Parser",
-	"cobweb/Parser/JSONParser",
 	"cobweb/Parser/XMLParser",
+	"cobweb/Parser/JSONParser",
 	"standard/Networking/URI",
 	"lib/BinaryTransport",
 	"lib/pako/dist/pako_inflate",
@@ -65,8 +65,8 @@ function ($,
           Fields,
           urls,
           Parser,
-          JSONParser,
           XMLParser,
+          JSONParser,
           URI,
           BinaryTransport,
           pako,
@@ -133,7 +133,7 @@ function ($,
 					try
 					{
 
-						new JSONParser (scene) .parseJavaScript (JSON.parse(string));
+						setTimeout (this .importJS .bind (this, scene, JSON.parse (string), success, error), TIMEOUT);
 
 					}
 					catch (exceptionParseJSON)
@@ -159,7 +159,7 @@ function ($,
 					try
 					{
 						// If we cannot parse XML we try to parse X3D JSON Encoding.	
-						new JSONParser (scene) .parseJavaScript (JSON.parse(string));
+						this .importJS (scene, JSON.parse (string));
 						return scene;
 					}
 					catch (exceptionParseJSON)
@@ -175,7 +175,7 @@ function ($,
 			try
 			{
 				//AP: add reference to dom for later access
-				this.node.dom = new JSONParser (scene) .parseJavaScript (json);
+				this.node.dom = new JSONParser (scene) .parseJavaScript (jsobj);
 				if (success)
 					this .setScene (scene, success);
 			}

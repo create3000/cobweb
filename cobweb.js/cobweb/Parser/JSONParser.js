@@ -50,9 +50,13 @@
 
 
 define ([
+	"cobweb/Fields",
+	"cobweb/Parser/Parser",
 	"cobweb/Parser/XMLParser"
 ],
 function (
+          Fields,
+          Parser,
           XMLParser
           )
 {
@@ -69,23 +73,23 @@ function (
 		this.x3djsonNS = "http://www.web3d.org/specifications/x3d-namespace";
 	}
 
-	JSONParser.inherits(XMLParser);
+	JSONParser.prototype = Object.create(XMLParser.prototype);
 
-	JSONParser .prototype =
-	{
-		constructor: JSONParser,
+	JSONParser .prototype.
+		 constructor = JSONParser;
 
 		/**
 		 * Load X3D JSON into an element.
 		 * jsobj - the JavaScript object to convert to DOM.
 		 */
-		parseJavaScript : function(jsobj) {
+	JSONParser .prototype.
+		parseJavaScript = function(jsobj) {
 			var child = this.CreateElement('X3D');
 			this.ConvertToX3DOM(jsobj, "", child);
 			// call the DOM parser
 			this.parseIntoScene(child);
 			return child;
-		},
+		};
 
 		// 'http://www.web3d.org/specifications/x3d-namespace'
 
@@ -95,7 +99,8 @@ function (
 		 * Yet another way to set an attribute on an element.  does not allow you to
 		 * set JSON schema or encoding.
 		 */
-		elementSetAttribute : function(element, key, value) {
+	JSONParser .prototype.
+		elementSetAttribute = function(element, key, value) {
 			if (key === 'SON schema') {
 				// JSON Schema
 			} else if (key === 'ncoding') {
@@ -105,12 +110,13 @@ function (
 					element.setAttribute(key, value);
 				}
 			}
-		},
+		};
 
 		/**
 		 * converts children of object to DOM.
 		 */
-		ConvertChildren : function(parentkey, object, element) {
+	JSONParser .prototype.
+		ConvertChildren = function(parentkey, object, element) {
 			var key;
 
 			for (key in object) {
@@ -122,13 +128,14 @@ function (
 					}
 				}
 			}
-		},
+		};
 
 		/**
 		 * a method to create and element with tagnam key to DOM in a namespace.  If
 		 * containerField is set, then the containerField is set in the elemetn.
 		 */
-		CreateElement : function(key, containerField) {
+	JSONParser .prototype.
+		CreateElement = function(key, containerField) {
 			var child = null;
 			if (typeof this.x3djsonNS === 'undefined') {
 				child = document.createElement(key);
@@ -143,12 +150,13 @@ function (
 				this.elementSetAttribute(child, 'containerField', containerField);
 			}
 			return child;
-		},
+		};
 
 		/**
 		 * a way to create a CDATA function or script in HTML, by using a DOM parser.
 		 */
-		CDATACreateFunction : function(document, element, str) {
+	JSONParser .prototype.
+		CDATACreateFunction = function(document, element, str) {
 			var y = str
 				.replace(/'([^'\r]*)\n([^']*)'/g, "'$1\\n$2'")
 				.replace(/\\"/g, "\\\"")
@@ -164,12 +172,13 @@ function (
 			var scriptDoc = domParser .parseFromString (cdataStr, 'application/xml');
 			var cdata = scriptDoc .children[0] .childNodes[1]; // space after script is childNode[0]
 			element .appendChild(cdata);
-		},
+		};
 
 		/**
 		 * convert the object at object[key] to DOM.
 		 */
-		ConvertObject : function(key, object, element, containerField) {
+	JSONParser .prototype.
+		ConvertObject = function(key, object, element, containerField) {
 			var child;
 			if (object !== null && typeof object[key] === 'object') {
 				if (key.substr(0,1) === '@') {
@@ -201,24 +210,26 @@ function (
 					}
 				}
 			}
-		},
+		};
 
 		/**
 		 * convert a comment string in JavaScript to XML.  Pass the string
 		 */
-		CommentStringToXML : function(str) {
+	JSONParser .prototype.
+		CommentStringToXML = function(str) {
 			var y = str;
 			str = str.replace(/\\\\/g, '\\');
 			if (y !== str) {
 				console.log("X3DJSONLD <!-> replacing", y, "with", str);
 			}
 			return str;
-		},
+		};
 
 		/**
 		 * convert an SFString to XML.
 		 */
-		SFStringToXML : function(str) {
+	JSONParser .prototype.
+		SFStringToXML = function(str) {
 			var y = str;
 			/*
 			str = (""+str).replace(/\\\\/g, '\\\\');
@@ -231,12 +242,13 @@ function (
 				console.log("X3DJSONLD [] replacing", y, "with", str);
 			}
 			return str;
-		},
+		};
 
 		/**
 		 * convert a JSON String to XML.
 		 */
-		JSONStringToXML : function(str) {
+	JSONParser .prototype.
+		JSONStringToXML = function(str) {
 			var y = str;
 			// str = str.replace(/\\/g, '\\\\');
 			str = str.replace(/\n/g, '\\n');
@@ -244,7 +256,7 @@ function (
 				console.log("X3DJSONLD replacing", y, "with", str);
 			}
 			return str;
-		},
+		};
 
 		/**
 		 * main routine for converting a JavaScript object to DOM.
@@ -253,7 +265,8 @@ function (
 		 * element is the parent element.
 		 * containerField is a possible containerField.
 		 */
-		ConvertToX3DOM : function(object, parentkey, element, containerField) {
+	JSONParser .prototype.
+		ConvertToX3DOM = function(object, parentkey, element, containerField) {
 			var key;
 			var localArray = [];
 			var isArray = false;
@@ -324,8 +337,6 @@ function (
 				isArray = false;
 			}
 			return element;
-		}
-
-	};
+		};
 	return JSONParser;
 });

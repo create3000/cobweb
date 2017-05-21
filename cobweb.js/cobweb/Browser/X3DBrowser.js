@@ -60,6 +60,7 @@ define ([
 	"cobweb/Execution/Scene",
 	"cobweb/InputOutput/Loader",
 	"cobweb/Parser/XMLParser",
+	"cobweb/Parser/JSONParser",
 	"cobweb/Bits/X3DConstants",
 	"lib/gettext",
 ],
@@ -75,6 +76,7 @@ function ($,
           Scene,
           Loader,
           XMLParser,
+          JSONParser,
           X3DConstants,
           _)
 {
@@ -442,7 +444,7 @@ function ($,
 				external     = this .isExternal (),
 				scene        = this .createScene ();
 
-			new JSONParser (scene) .parseJavaScript (json);
+			new JSONParser (scene) .parseJavaScript (jsobj);
 
 			if (! external)
 			{
