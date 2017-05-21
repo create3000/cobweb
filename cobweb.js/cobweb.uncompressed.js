@@ -37886,6 +37886,7 @@ function ($,
 					containerField = node .getContainerField ();
 				
 				var field = parent .getField (containerField);
+<<<<<<< HEAD
 
 				switch (field .getType ())
 				{
@@ -37894,6 +37895,16 @@ function ($,
 						field .setSet (true);
 						return;
 
+=======
+
+				switch (field .getType ())
+				{
+					case X3DConstants .SFNode:
+						field .setValue (node);
+						field .setSet (true);
+						return;
+
+>>>>>>> cd685539af29d8e684b1833b95b2e30da92518ec
 					case X3DConstants .MFNode:
 						field .push (node);
 						field .setSet (true);
