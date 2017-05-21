@@ -106,7 +106,7 @@ function ($,
 		{
 			X3DComposedGeometryNode .prototype .initialize .call (this);
 		
-			this .index_ .addInterest (this, "set_index__");
+			this .index_ .addInterest ("set_index__", this);
 		
 			this .set_index__ ();
 		},

@@ -101,8 +101,15 @@ function ($, X3DField, SFColor, X3DConstants, Color4)
 				this .getValue () .a === 0);
 		},
 		set: SFColor .prototype .set,
-		getHSV: SFColor .prototype .getHSV,
-		setHSV: SFColor .prototype .setHSV,
+		getHSVA: function ()
+		{
+			return this .getValue () .getHSVA ([ ]);
+		},
+		setHSVA: function (h, s, v, a)
+		{
+			this .getValue () .setHSVA (h, s, v, a);
+			this .addEvent ();
+		},
 		toString: SFColor .prototype .toString,
 		toXMLStream: SFColor .prototype .toXMLStream,
 	});

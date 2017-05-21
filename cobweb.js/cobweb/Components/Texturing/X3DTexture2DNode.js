@@ -87,9 +87,9 @@ function ($,
 			
 			this .target = gl .TEXTURE_2D;
 
-			this .repeatS_           .addInterest (this, "updateTextureProperties");
-			this .repeatT_           .addInterest (this, "updateTextureProperties");
-			this .textureProperties_ .addInterest (this, "set_textureProperties__");
+			this .repeatS_           .addInterest ("updateTextureProperties", this);
+			this .repeatT_           .addInterest ("updateTextureProperties", this);
+			this .textureProperties_ .addInterest ("set_textureProperties__", this);
 
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
 			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
@@ -99,14 +99,14 @@ function ($,
 		set_textureProperties__: function ()
 		{
 			if (this .texturePropertiesNode)
-				this .texturePropertiesNode .removeInterest (this, "updateTextureProperties");
+				this .texturePropertiesNode .removeInterest ("updateTextureProperties", this);
 
 			this .texturePropertiesNode = X3DCast (X3DConstants .TextureProperties, this .textureProperties_);
 
 			if (! this .texturePropertiesNode)
 				this .texturePropertiesNode = this .getBrowser () .getDefaultTextureProperties ();
 
-			this .texturePropertiesNode .addInterest (this, "updateTextureProperties");
+			this .texturePropertiesNode .addInterest ("updateTextureProperties", this);
 
 			this .updateTextureProperties ();
 		},

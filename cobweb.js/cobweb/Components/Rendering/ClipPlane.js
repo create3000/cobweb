@@ -153,8 +153,8 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .enabled_ .addInterest (this, "set_enabled__");
-			this .plane_   .addInterest (this, "set_enabled__");
+			this .enabled_ .addInterest ("set_enabled__", this);
+			this .plane_   .addInterest ("set_enabled__", this);
 
 			this .set_enabled__ ();
 		},

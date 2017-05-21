@@ -139,6 +139,10 @@ function ($,
 		{
 			return this .specificationVersion;
 		},
+		setEncoding: function (value)
+		{
+			this .encoding = value;
+		},
 		getEncoding: function ()
 		{
 			return this .encoding;
@@ -184,6 +188,7 @@ function ($,
 				return node;
 
 			node .setup ();
+
 			return new Fields .SFNode (node);
 		},
 		createProto: function (name, setup)

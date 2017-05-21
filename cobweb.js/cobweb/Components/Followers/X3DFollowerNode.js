@@ -79,7 +79,7 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 		},
 		duplicate: function (value)
 		{
@@ -125,11 +125,11 @@ function ($,
 		{
 			if (this .isLive () .getValue () && this .isActive_ .getValue ())
 			{
-				this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+				this .getBrowser () .prepareEvents () .addInterest ("prepareEvents", this);
 				this .getBrowser () .addBrowserEvent ();
 			}
 			else
-				this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+				this .getBrowser () .prepareEvents () .removeInterest ("prepareEvents", this);
 		},
 		set_active: function (value)
 		{

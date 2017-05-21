@@ -58,7 +58,7 @@ define ([
 	"cobweb/Configuration/SupportedComponents",
 	"cobweb/Configuration/SupportedNodes",
 	"cobweb/Execution/Scene",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 	"cobweb/Parser/XMLParser",
 	"cobweb/Parser/JSONParser",
 	"cobweb/Bits/X3DConstants",
@@ -74,7 +74,7 @@ function ($,
           SupportedComponents,
           SupportedNodes,
           Scene,
-          Loader,
+          FileLoader,
           XMLParser,
           JSONParser,
           X3DConstants,
@@ -116,7 +116,7 @@ function ($,
 
 			X3DBrowserContext .prototype .initialize .call (this);
 
-			this .getLoadSensor () .loadTime_ .addInterest (this, "realize");
+			this .getLoadSensor () .loadTime_ .addInterest ("realize", this);
 
 			this .print ("Welcome to " + this .name + " X3D Browser " + this .version + ":\n" +
 			                "        Current Graphics Renderer\n" +
@@ -139,7 +139,7 @@ function ($,
 		},
 		realize: function ()
 		{
-			this .getLoadSensor () .loadTime_ .removeInterest (this, "realize");
+			this .getLoadSensor () .loadTime_ .removeInterest ("realize", this);
 
 			var urlCharacters = this .getElement () [0] .getAttribute ("src");
 
@@ -220,8 +220,8 @@ function ($,
 		{
 			// Cancel any loading.
 
-			this .loadCount_       .removeInterest (this, "set_loadCount__");
-			this .prepareEvents () .removeInterest (this, "bind");
+			this .loadCount_       .removeInterest ("set_loadCount__", this);
+			this .prepareEvents () .removeInterest ("bind", this);
 
 			if (this .loader)
 				this .loader .abort ();
@@ -246,7 +246,7 @@ function ($,
 			this .description = "";
 
 			this .setBrowserLoading (true);
-			this .loadCount_ .addInterest (this, "set_loadCount__");
+			this .loadCount_ .addInterest ("set_loadCount__", this);
 	
 			for (var id in scene .getLoadingObjects ())
 				this .addLoadCount (scene .getLoadingObjects () [id]);
@@ -262,14 +262,14 @@ function ($,
 			if (loadCount .getValue ())
 				return;
 
-			this .loadCount_ .removeInterest (this, "set_loadCount__");
+			this .loadCount_ .removeInterest ("set_loadCount__", this);
 
-			this .prepareEvents () .addInterest (this, "bind");
+			this .prepareEvents () .addInterest ("bind", this);
 			this .addBrowserEvent ();
 		},
 		bind: function ()
 		{
-			this .prepareEvents () .removeInterest (this, "bind");
+			this .prepareEvents () .removeInterest ("bind", this);
 
 			this .getWorld () .bind ();
 			this .setBrowserLoading (false);
@@ -287,12 +287,12 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				scene        = new Loader (this .getWorld ()) .createX3DFromString (this .currentScene .getURL (), x3dSyntax);
+				scene        = new FileLoader (this .getWorld ()) .createX3DFromString (this .currentScene .getURL (), x3dSyntax);
 
 			if (! external)
 			{
 				scene .setExecutionContext (currentScene);
-				currentScene .isLive () .addInterest (scene, "setLive");
+				currentScene .isLive () .addInterest ("setLive", scene);
 
 				if (currentScene .isLive () .getValue ())
 					scene .setLive (true);
@@ -321,7 +321,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				loader       = new Loader (this .getWorld ());
+				loader       = new FileLoader (this .getWorld ());
 
 			this .addLoadCount (loader);
 
@@ -337,7 +337,7 @@ function ($,
 				   if (! external)
 				   {
 						scene .setExecutionContext (currentScene);
-				      currentScene .isLive () .addInterest (scene, "setLive");
+				      currentScene .isLive () .addInterest ("setLive", scene);
 
 						if (currentScene .isLive () .getValue ())
 						   scene .setLive (true);
@@ -359,12 +359,12 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				scene        = new Loader (this .getWorld ()) .createX3DFromURL (url, null);
+				scene        = new FileLoader (this .getWorld ()) .createX3DFromURL (url, null);
 
 			if (! external)
 			{
 				scene .setExecutionContext (currentScene);
-				currentScene .isLive () .addInterest (scene, "setLive");
+				currentScene .isLive () .addInterest ("setLive", scene);
 						
 				if (currentScene .isLive () .getValue ())
 					scene .setLive (true);
@@ -378,8 +378,8 @@ function ($,
 		{
 			// Cancel any loading.
 
-			this .loadCount_       .removeInterest (this, "set_loadCount__");
-			this .prepareEvents () .removeInterest (this, "bind");
+			this .loadCount_       .removeInterest ("set_loadCount__", this);
+			this .prepareEvents () .removeInterest ("bind", this);
 
 			if (this .loader)
 				this .loader .abort ();
@@ -389,15 +389,18 @@ function ($,
 			this .setBrowserLoading (true);
 			this .addLoadCount (this);
 
-			this .loader = new Loader (this .getWorld ());
+			this .loader = new FileLoader (this .getWorld ());
 
 			this .loader .createX3DFromURL (url, parameter,
 			function (scene)
 			{
+				if (! this .getBrowserOptions () .getSplashScreen ())
+					this .getCanvas () .fadeIn (0);
+
 				if (scene)
 					this .replaceWorld (scene);
 				else
-					setTimeout (function () { this .getLoadingElement () .find (".cobweb-spinner-text") .text (_ ("Failed loading world.")); } .bind (this), 31);
+					setTimeout (function () { this .getSplashScreen () .find (".cobweb-spinner-text") .text (_ ("Failed loading world.")); } .bind (this), 31);
 
 				// Must not remove load count, replaceWorld does a resetLoadCount when it sets setBrowserLoading to true.
 				// Don't set browser loading to false.
@@ -473,7 +476,7 @@ function ($,
 			if (! external)
 			{
 				scene .setExecutionContext (currentScene);
-				currentScene .isLive () .addInterest (scene, "setLive");
+				currentScene .isLive () .addInterest ("setLive", scene);
 						
 				if (currentScene .isLive () .getValue ())
 					scene .setLive (true);

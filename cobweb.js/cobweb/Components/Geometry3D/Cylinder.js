@@ -107,15 +107,15 @@ function ($,
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getCylinderOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getCylinderOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getCylinderOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getCylinderOptions () .removeInterest ("eventsProcessed", this);
 		},
 		build: function ()
 		{
 			var
 				options    = this .getBrowser () .getCylinderOptions (),
-				vDimension = options .vDimension_ .getValue (),
+				xDimension = options .xDimension_ .getValue (),
 				texCoords  = [ ],
 				normals    = this .getNormals (),
 				vertices   = this .getVertices ();
@@ -129,16 +129,16 @@ function ($,
 
 			if (this .side_ .getValue ())
 			{
-				for (var i = 0; i < vDimension; ++ i)
+				for (var i = 0; i < xDimension; ++ i)
 				{
 					var
-						u1     = i / vDimension,
+						u1     = i / xDimension,
 						theta1 = 2 * Math .PI * u1,
 						n1     = Complex .Polar (-1, theta1),
 						p1     = Complex .multiply (n1, radius);
 
 					var
-						u2     = (i + 1) / vDimension,
+						u2     = (i + 1) / xDimension,
 						theta2 = 2 * Math .PI * u2,
 						n2     = Complex .Polar (-1, theta2),
 						p2     = Complex .multiply (n2, radius);
@@ -189,10 +189,10 @@ function ($,
 					texCoord = [ ],
 					points   = [ ];
 
-				for (var i = 0; i < vDimension; ++ i)
+				for (var i = 0; i < xDimension; ++ i)
 				{
 					var
-						u     = i / vDimension,
+						u     = i / xDimension,
 						theta = 2 * Math .PI * u,
 						t     = Complex .Polar (-1, theta);
 
@@ -232,10 +232,10 @@ function ($,
 					texCoord = [ ],
 					points   = [ ];
 
-				for (var i = vDimension - 1; i > -1; -- i)
+				for (var i = xDimension - 1; i > -1; -- i)
 				{
 					var
-						u     = i / vDimension,
+						u     = i / xDimension,
 						theta = 2 * Math .PI * u,
 						t     = Complex .Polar (-1, theta);
 

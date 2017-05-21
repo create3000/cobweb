@@ -77,16 +77,14 @@ function (Fields,
 
 	function X3DNetworkingContext ()
 	{
-		this .cache = this .getElement () [0] .getAttribute ("cache") != "false";
-
 		this .addChildObjects ("loadCount", new Fields .SFInt32 ());
 
 		this .loadSensor     = new LoadSensor (this .getPrivateScene ());
 		this .loadingTotal   = 0;
 		this .loadingObjects = { };
+		this .loading        = false;
 		this .location       = getBaseURI (this .getElement () [0]);
 		this .defaultScene   = this .createScene (); // Inline node's empty scene.
-		this .browserLoading = false;
 	}
 
 	X3DNetworkingContext .prototype =
@@ -105,14 +103,6 @@ function (Fields,
 		{
 			return urls .providerUrl;
 		},
-		setCaching: function (value)
-		{
-		   this .cache = value;
-		},
-		doCaching: function ()
-		{
-		   return this .cache;
-		},
 		getLocation: function ()
 		{
 			return this .location;
@@ -127,19 +117,32 @@ function (Fields,
 		},
 		setBrowserLoading: function (value)
 		{
-			this .browserLoading = value;
+			this .loading = value;
 
 			if (value)
 			{
 				this .resetLoadCount ();
-				this .getCanvas ()         .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
-				this .getLoadingElement () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
+
+				if (this .getBrowserOptions () .getSplashScreen ())
+				{
+					this .getCanvas ()       .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
+					this .getSplashScreen () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
+				}
 			}
 			else
 			{
-				this .getLoadingElement () .stop (true, true) .fadeOut (2000);
-				this .getCanvas ()         .stop (true, true) .fadeIn (2000);
+				if (this .getBrowserOptions () .getSplashScreen ())
+				{
+					this .getSplashScreen () .stop (true, true) .fadeOut (2000);
+					this .getCanvas ()       .stop (true, true) .fadeIn (2000);
+				}
+				else
+					this .getCanvas () .fadeIn (0);
 			}
+		},
+		getLoading: function ()
+		{
+			return this .loading;
 		},
 		addLoadCount: function (object)
 		{
@@ -176,12 +179,11 @@ function (Fields,
 				this .setCursor ("DEFAULT");
 			}
 
-			if (! this .browserLoading)
+			if (! this .loading)
 				this .getNotification () .string_ = string;
 
-			this .getLoadingElement () .find (".cobweb-spinner-text") .text (string);
-
-			this .getLoadingElement () .find (".cobweb-progressbar div") .css ("width", ((this .loadingTotal - value) * 100 / this .loadingTotal) + "%");
+			this .getSplashScreen () .find (".cobweb-spinner-text") .text (string);
+			this .getSplashScreen () .find (".cobweb-progressbar div") .css ("width", ((this .loadingTotal - value) * 100 / this .loadingTotal) + "%");
 		},
 		resetLoadCount: function ()
 		{

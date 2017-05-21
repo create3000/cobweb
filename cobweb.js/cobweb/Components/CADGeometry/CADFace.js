@@ -108,7 +108,7 @@ function ($,
 			X3DProductStructureChildNode .prototype .initialize .call (this);
 			X3DBoundedObject             .prototype .initialize .call (this);
 
-			this .shape_ .addInterest (this, "set_shape__");
+			this .shape_ .addInterest ("set_shape__", this);
 
 			this .set_shape__ ();
 		},

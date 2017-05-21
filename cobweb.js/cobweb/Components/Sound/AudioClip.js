@@ -121,7 +121,7 @@ function ($,
 			X3DSoundSourceNode .prototype .initialize .call (this);
 			X3DUrlObject       .prototype .initialize .call (this);
 
-			this .url_ .addInterest (this, "set_url__");
+			this .url_ .addInterest ("set_url__", this);
 
 			this .audio = $("<audio></audio>");
 			this .audio .error (this .setError .bind (this));

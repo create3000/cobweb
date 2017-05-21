@@ -214,7 +214,10 @@ var Bookmarks = (function ()
 					var page = this .pages [p];
 	
 					for (var w = 0; w < page .length; ++ w)
-						this .randomBookmarks .push (page [w]);
+					{
+						if (page [w] .url)
+							this .randomBookmarks .push (page [w]);
+					}
 				}
 	
 				shuffle (this .randomBookmarks);

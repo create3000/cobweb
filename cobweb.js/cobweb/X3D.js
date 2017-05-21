@@ -151,9 +151,6 @@ function ($,
 
 		browser .setup ();
 
-		if (dom .attr ("splashScreen") !== "false")
-			browser .getCanvas () .fadeOut (0);
-		
 		return browser;
 	}
 

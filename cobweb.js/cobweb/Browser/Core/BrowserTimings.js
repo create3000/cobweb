@@ -88,7 +88,7 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			this .enabled_ .addInterest (this, "set_enabled__");
+			this .enabled_ .addInterest ("set_enabled__", this);
 
 			this .localeOptions = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
 			this .type          = this .getBrowser () .getDataStorage () ["BrowserTimings.type"] || "LESS";
@@ -110,18 +110,21 @@ function ($,
 		},
 		set_enabled__: function (enabled)
 		{
+			if (! this .getBrowser () .getBrowserOptions () .getTimings ())
+				return;
+
 			this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
 
 			if (enabled .getValue ())
 			{
 				this .element .fadeIn ();
-				this .getBrowser () .prepareEvents () .addInterest (this, "update");
+				this .getBrowser () .prepareEvents () .addInterest ("update", this);
 				this .update ();
 			}
 			else
 			{
 				this .element .fadeOut ();
-				this .getBrowser () .prepareEvents () .removeInterest (this, "update");
+				this .getBrowser () .prepareEvents () .removeInterest ("update", this);
 			}
 		},
 		set_type__: function ()

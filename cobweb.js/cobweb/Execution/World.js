@@ -91,9 +91,9 @@ function ($,
 			this .layerSet .setPrivate (true);
 			this .layerSet .setup ();
 			this .layerSet .setLayer0 (this .layer0);
-			this .layerSet .activeLayer_ .addInterest (this, "set_activeLayer");
+			this .layerSet .activeLayer_ .addInterest ("set_activeLayer", this);
 
-			this .getExecutionContext () .getRootNodes () .addInterest (this, "set_rootNodes");
+			this .getExecutionContext () .getRootNodes () .addInterest ("set_rootNodes", this);
 			this .getExecutionContext () .setup ();
 
 			this .set_rootNodes ();
@@ -134,8 +134,8 @@ function ($,
 
 			if (this .layerSet !== oldLayerSet)
 			{
-				oldLayerSet    .activeLayer_ .removeInterest (this, "set_activeLayer");
-				this .layerSet .activeLayer_ .addInterest    (this, "set_activeLayer");
+				oldLayerSet    .activeLayer_ .removeInterest ("set_activeLayer", this);
+				this .layerSet .activeLayer_ .addInterest ("set_activeLayer", this);
 
 				this .set_activeLayer ();
 			}

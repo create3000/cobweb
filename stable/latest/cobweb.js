@@ -9582,18 +9582,19 @@ function ()
 		{
 			return this ._tainted;
 		},
-		addInterest: function (object, callback)
+		addInterest: function (callback, object)
 		{
 			if (! this .hasOwnProperty ("_interests"))
 				this ._interests = { };
 
 			var args = Array .prototype .slice .call (arguments, 0);
-	
+
+			args [0] = arguments [1];
 			args [1] = this;
 
 			this ._interests [object .getId () + callback] = Function .prototype .bind .apply (object [callback], args);
 		},
-		removeInterest: function (object, callback)
+		removeInterest: function (callback, object)
 		{
 			delete this ._interests [object .getId () + callback];
 		},
@@ -11079,8 +11080,7 @@ function ($,
 		if (value [0] instanceof Array)
 			value = value [0];
 
-		for (var i = 0, length = value .length; i < length; ++ i)
-			this .push (value [i]);
+		X3DArrayField .prototype .push .apply (this, value);
 
 		return new Proxy (this, handler);
 	}
@@ -11094,8 +11094,7 @@ function ($,
 				copy  = new (this .constructor) (),
 				array = this .getValue ();
 
-			for (var i = 0, length = array .length; i < length; ++ i)
-				copy .push (array [i]);
+			X3DArrayField .prototype .push .apply (copy, array);
 
 			return copy;
 		},
@@ -11138,16 +11137,22 @@ function ($,
 		},
 		unshift: function (value)
 		{
-			var
-				array = this .getValue (),
-				field = new (this ._valueType) ();
+			var array = this .getValue ();
 
-			field .setValue (value);
+			for (var i = arguments .length - 1; i >= 0; -- i)
+			{
+				var field = new (this ._valueType) ();
 
-			this .addChildObject (field);
+				field .setValue (arguments [i]);
+	
+				this .addChildObject (field);
+
+				array .unshift (field);
+			}
+
 			this .addEvent ();
 
-			return array .unshift (field);
+			return array .length;
 		},
 		shift: function ()
 		{
@@ -11163,16 +11168,22 @@ function ($,
 		},
 		push: function (value)
 		{
-			var
-				array = this .getValue (),
-				field = new (this ._valueType) ();
+			var array = this .getValue ();
 
-			field .setValue (value);
+			for (var i = 0, length = arguments .length; i < length; ++ i)
+			{
+				var field = new (this ._valueType) ();
 
-			this .addChildObject (field);
+				field .setValue (arguments [i]);
+
+				this .addChildObject (field);
+
+				array .push (field);
+			}
+
 			this .addEvent ();
 
-			return array .push (field);
+			return array .length;
 		},
 		pop: function ()
 		{
@@ -12319,8 +12330,20 @@ function ($, Color3, Algorithm)
 			       this .b_ === color .b_ &&
 			       this .a_ === color .a_;
 		},
-		getHSV: Color3 .getHSV,
-		setHSV: Color3 .setHSV,
+		getHSVA: function (result)
+		{
+			Color3 .prototype .getHSV .call (this, result);
+
+			result [3] = this .a_;
+
+			return result;
+		},
+		setHSVA: function (h, s, v, a)
+		{
+			Color3 .prototype .setHSV .call (this, h, s, v);
+
+			this .a_ = clamp (a, 0, 1);
+		},
 		toString: function ()
 		{
 			return this .r_ + " " +
@@ -12486,8 +12509,15 @@ function ($, X3DField, SFColor, X3DConstants, Color4)
 				this .getValue () .a === 0);
 		},
 		set: SFColor .prototype .set,
-		getHSV: SFColor .prototype .getHSV,
-		setHSV: SFColor .prototype .setHSV,
+		getHSVA: function ()
+		{
+			return this .getValue () .getHSVA ([ ]);
+		},
+		setHSVA: function (h, s, v, a)
+		{
+			this .getValue () .setHSVA (h, s, v, a);
+			this .addEvent ();
+		},
 		toString: SFColor .prototype .toString,
 		toXMLStream: SFColor .prototype .toXMLStream,
 	});
@@ -14820,8 +14850,8 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 			var det      = a .determinant ();
 			var det_sign = det < 0 ? -1 : 1;
 
-			if (det_sign * det === 0)
-				return false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             // singular
+			if (det === 0)
+				return false; // singular
 
 			// (4) B = A * !A  (here !A means A transpose)
 			b .assign (a) .transpose () .multLeft (a);
@@ -16112,6 +16142,39 @@ function ($, Vector3, Algorithm)
 
 			return this;
 		},
+		getMatrix: function (matrix)
+		{
+			var
+				x = this .x,
+				y = this .y,
+				z = this .z,
+				w = this .w;
+
+			var
+				a = x * x,
+				b = x * y,
+				c = y * y,
+				d = y * z,
+				e = z * x,
+				f = z * z,
+				g = w * x,
+				h = w * y,
+				i = w * z;
+		
+			matrix [0] = 1 - 2 * (c + f);
+			matrix [1] =     2 * (b + i);
+			matrix [2] =     2 * (e - h);
+
+			matrix [3] =     2 * (b - i);
+			matrix [4] = 1 - 2 * (f + a);
+			matrix [5] =     2 * (d + g);
+
+			matrix [6] =     2 * (e + h);
+			matrix [7] =     2 * (d - g);
+			matrix [8] = 1 - 2 * (c + a);
+
+			return matrix;
+		},
 		isReal: function ()
 		{
 			return ! (this .x || this .y || this .z);
@@ -16814,8 +16877,12 @@ function ($,
 		},
 		setMatrix: function (matrix)
 		{
-			this .value .setMatrix (matrix);
+			this .value .setMatrix (matrix) .normalize ();
 			return this;
+		},
+		getMatrix: function (matrix)
+		{
+			return this .value .getMatrix (matrix);
 		},
 		equals: function (rot)
 		{
@@ -17393,8 +17460,8 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 			var det      = a .determinant ();
 			var det_sign = det < 0 ? -1 : 1;
 
-			if (det_sign * det === 0)
-				return false;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             // singular
+			if (det === 0)
+				return false; // singular
 
 			// (4) B = A * !A  (here !A means A transpose)
 			b .assign (a) .transpose () .multLeft (a);
@@ -18268,7 +18335,10 @@ function ($, X3DField, X3DConstants)
 		},
 		equals: function (node)
 		{
-			return this .getValue () === node .getValue ();
+			if (node)
+				return this .getValue () === node .getValue ();
+
+			return this .getValue () === null;
 		},
 		isDefaultValue: function ()
 		{
@@ -19491,7 +19561,7 @@ function ($, X3DField, ArrayFields, X3DConstants)
 				X3DField .call (this, new Image (0, 0, 0, new MFInt32 ()));
 
 			this .getValue () .getArray () .addParent (this);
-			this .addInterest (this, "set_size__");
+			this .addInterest ("set_size__", this);
 			return this;
 		}
 
@@ -19793,7 +19863,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "2.6";
+	return "3.2";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -19876,6 +19946,8 @@ function ($,
 		},
 		addEvent: function (field)
 		{
+			field .setSet (true);
+
 			if (field .getTainted ())
 				return;
 
@@ -20077,7 +20149,7 @@ function ($,
 			// Connect to execution context.
 
 			if (this ._executionContext !== this)
-				this ._executionContext .isLive () .addInterest (this, "_set_live__");
+				this ._executionContext .isLive () .addInterest ("_set_live__", this);
 
 			// Return field
 
@@ -21162,11 +21234,12 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 			
-			this .Rubberband_                .addInterest (this, "set_rubberband__");
-			this .PrimitiveQuality_          .addInterest (this, "set_primitiveQuality__");
-			this .TextureQuality_            .addInterest (this, "set_textureQuality__");
-			this .Shading_                   .addInterest (this, "set_shading__");
-			this .getBrowser () .shutdown () .addInterest (this, "configure");
+			this .SplashScreen_              .addInterest ("set_splashScreen__", this);
+			this .Rubberband_                .addInterest ("set_rubberband__", this);
+			this .PrimitiveQuality_          .addInterest ("set_primitiveQuality__", this);
+			this .TextureQuality_            .addInterest ("set_textureQuality__", this);
+			this .Shading_                   .addInterest ("set_shading__", this);
+			this .getBrowser () .shutdown () .addInterest ("configure", this);
 
 			this .configure ();
 		},
@@ -21191,6 +21264,8 @@ function ($,
 				rubberband       = this .getBrowser () .getDataStorage () ["BrowserOptions.Rubberband"],
 				primitiveQuality = this .getBrowser () .getDataStorage () ["BrowserOptions.PrimitiveQuality"],
 				textureQuality   = this .getBrowser () .getDataStorage () ["BrowserOptions.TextureQuality"];
+
+			this .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
 				
 			if (rubberband       !== undefined && rubberband       !== this .Rubberband_       .getValue ()) this .Rubberband_       = rubberband;
 			if (primitiveQuality !== undefined && primitiveQuality !== this .PrimitiveQuality_ .getValue ()) this .PrimitiveQuality_ = primitiveQuality;
@@ -21207,6 +21282,10 @@ function ($,
 		getShading: function ()
 		{
 			return this .Shading_ .getValue ();
+		},
+		set_splashScreen__: function (splashScreen)
+		{
+			this .getBrowser () .getElement () .attr ("splashScreen", splashScreen .getValue () ? "true" : "false");
 		},
 		set_rubberband__: function (rubberband)
 		{
@@ -21231,48 +21310,48 @@ function ($,
 				{
 					this .primitiveQuality = PrimitiveQuality .LOW;
 				
-					arc .minAngle_      = Math .PI / 10;
-					arcClose .minAngle_ = Math .PI / 10;
-					circle .segments_   = 20;
-					disk .segments_     = 20;
+					arc .dimension_      = 20;
+					arcClose .dimension_ = 20;
+					circle .dimension_   = 20;
+					disk .dimension_     = 20;
 
-					cone     .vDimension_ = 16;
-					cylinder .vDimension_ = 16;
+					cone     .xDimension_ = 16;
+					cylinder .xDimension_ = 16;
 
-					sphere .uDimension_ = 24;
-					sphere .vDimension_ = 12;
+					sphere .xDimension_ = 20;
+					sphere .yDimension_ = 9;
 					break;
 				}
 				case "HIGH":
 				{
 					this .primitiveQuality = PrimitiveQuality .HIGH;
 
-					arc .minAngle_      = Math .PI / 40;
-					arcClose .minAngle_ = Math .PI / 40;
-					circle .segments_   = 80;
-					disk .segments_     = 80;
+					arc .dimension_      = 80;
+					arcClose .dimension_ = 80;
+					circle .dimension_   = 80;
+					disk .dimension_     = 80;
 
-					cone     .vDimension_ = 32;
-					cylinder .vDimension_ = 32;
+					cone     .xDimension_ = 32;
+					cylinder .xDimension_ = 32;
 
-					sphere .uDimension_ = 40;
-					sphere .vDimension_ = 20;
+					sphere .xDimension_ = 64;
+					sphere .yDimension_ = 31;
 					break;
 				}
 				default:
 				{
 					this .primitiveQuality = PrimitiveQuality .MEDIUM;
 
-					arc .minAngle_      = Math .PI / 20;
-					arcClose .minAngle_ = Math .PI / 20;
-					circle .segments_   = 40;
-					disk .segments_     = 40;
+					arc .dimension_      = 40;
+					arcClose .dimension_ = 40;
+					circle .dimension_   = 40;
+					disk .dimension_     = 40;
 
-					cone     .vDimension_ = 20;
-					cylinder .vDimension_ = 20;
+					cone     .xDimension_ = 20;
+					cylinder .xDimension_ = 20;
 
-					sphere .uDimension_ = 32;
-					sphere .vDimension_ = 16;
+					sphere .xDimension_ = 32;
+					sphere .yDimension_ = 15;
 					break;
 				}
 			}
@@ -21545,7 +21624,7 @@ function ($,
 			this .ColorDepth_     = browser .getColorDepth ();
 			this .TextureMemory_  = browser .getTextureMemory ();
 
-			browser .getBrowserOptions () .Shading_ .addInterest (this, "set_shading__");
+			browser .getBrowserOptions () .Shading_ .addInterest ("set_shading__", this);
 
 			this .set_shading__ (browser .getBrowserOptions () .Shading_);
 		},
@@ -21651,29 +21730,32 @@ function ($,
 
 			$("<span></span>") .appendTo (this .element);
 
-			this .string_ .addInterest (this, "set_string__");
+			this .string_ .addInterest ("set_string__", this);
 		},
 		set_string__: function ()
 		{
-			if (this .string_ .length === 0)
-				return;
-
-			//this .element
-			//	.text (this .string_ .getValue ())
-			//	.stop (true, true)
-			//	.fadeIn ()
-			//	.animate ({ "delay": 1 }, 4000)
-			//	.fadeOut ();
-
-			this .element .children () .text (this .string_ .getValue ());
-
-			this .element 
-				.stop (true, true)
-				.fadeIn (0)
-				.animate ({ width: this .element .textWidth () })
-				.animate ({ "delay": 1 }, 5000)
-				.animate ({ width: 0 })
-				.fadeOut (0);
+			if (this .getBrowser () .getElement () .attr ("notifications") !== "false")
+			{
+				if (this .string_ .length === 0)
+					return;
+	
+				//this .element
+				//	.text (this .string_ .getValue ())
+				//	.stop (true, true)
+				//	.fadeIn ()
+				//	.animate ({ "delay": 1 }, 4000)
+				//	.fadeOut ();
+	
+				this .element .children () .text (this .string_ .getValue ());
+	
+				this .element 
+					.stop (true, true)
+					.fadeIn (0)
+					.animate ({ width: this .element .textWidth () })
+					.animate ({ "delay": 1 }, 5000)
+					.animate ({ width: 0 })
+					.fadeOut (0);
+			}
 		},
 	});
 
@@ -22213,7 +22295,7 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			this .enabled_ .addInterest (this, "set_enabled__");
+			this .enabled_ .addInterest ("set_enabled__", this);
 
 			this .localeOptions = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
 			this .type          = this .getBrowser () .getDataStorage () ["BrowserTimings.type"] || "LESS";
@@ -22235,18 +22317,21 @@ function ($,
 		},
 		set_enabled__: function (enabled)
 		{
-			this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
-
-			if (enabled .getValue ())
+			if (this .getBrowser () .getElement () .attr ("timings") !== "false")
 			{
-				this .element .fadeIn ();
-				this .getBrowser () .prepareEvents () .addInterest (this, "update");
-				this .update ();
-			}
-			else
-			{
-				this .element .fadeOut ();
-				this .getBrowser () .prepareEvents () .removeInterest (this, "update");
+				this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
+	
+				if (enabled .getValue ())
+				{
+					this .element .fadeIn ();
+					this .getBrowser () .prepareEvents () .addInterest ("update", this);
+					this .update ();
+				}
+				else
+				{
+					this .element .fadeOut ();
+					this .getBrowser () .prepareEvents () .removeInterest ("update", this);
+				}
 			}
 		},
 		set_type__: function ()
@@ -24271,10 +24356,13 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			$.contextMenu ({
-				selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
-				build: this .build .bind (this),
-			});
+			if (this .getBrowser () .getElement () .attr ("contextMenu") !== "false")
+			{
+				$.contextMenu ({
+					selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
+					build: this .build .bind (this),
+				});
+			}
 		},
 		build: function (trigger, event)
 		{
@@ -24321,139 +24409,134 @@ function ($,
 						items: this .getAvailableViewers (),
 					},
 					"separator2": "--------",
-					//"view": {
-						//name: _("View"),
-						//items : {
-							"primitive-quality": {
-								name: _("Primitive Quality"),
-								className: "context-menu-icon cobweb-icon-primitive-quality",
-								items: {
-									"high": {
-										name: _("High"),
-										type: "radio",
-										radio: "primitive-quality",
-										selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "HIGH",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "HIGH");
-												this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("high");
-											}
-											.bind (this),
-										},
-									},
-									"medium": {
-										name: _("Medium"),
-										type: "radio",
-										radio: "primitive-quality",
-										selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "MEDIUM",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "MEDIUM");
-												this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("medium");
-											}
-											.bind (this),
-										},
-									},
-									"low": {
-										name: _("Low"),
-										type: "radio",
-										radio: "primitive-quality",
-										selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "LOW",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("PrimitiveQuality", "LOW");
-												this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("low");
-											}
-											.bind (this),
-										},
-									},
-								},
-							},
-							"texture-quality": {
-								name: _("Texture Quality"),
-								className: "context-menu-icon cobweb-icon-texture-quality",
-								items: {
-									"high": {
-										name: _("High"),
-										type: "radio",
-										radio: "texture-quality",
-										selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "HIGH",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("TextureQuality", "HIGH");
-												this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("high");
-											}
-											.bind (this),
-										},
-									},
-									"medium": {
-										name: _("Medium"),
-										type: "radio",
-										radio: "texture-quality",
-										selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "MEDIUM",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("TextureQuality", "MEDIUM");
-												this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("medium");
-											}
-											.bind (this),
-										},
-									},
-									"low": {
-										name: _("Low"),
-										type: "radio",
-										radio: "texture-quality",
-										selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "LOW",
-										events: {
-											click: function ()
-											{
-												this .getBrowser () .setBrowserOption ("TextureQuality", "LOW");
-												this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("low");
-											}
-											.bind (this),
-										},
-									},
-								},
-							},
-							"display-rubberband": {
-								name: _("Display Rubberband"),
-								type: "checkbox",
-								selected: this .getBrowser () .getBrowserOption ("Rubberband"),
+					"primitive-quality": {
+						name: _("Primitive Quality"),
+						className: "context-menu-icon cobweb-icon-primitive-quality",
+						items: {
+							"high": {
+								name: _("High"),
+								type: "radio",
+								radio: "primitive-quality",
+								selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "HIGH",
 								events: {
 									click: function ()
 									{
-									   var rubberband = ! this .getBrowser () .getBrowserOption ("Rubberband");
-
-										this .getBrowser () .setBrowserOption ("Rubberband", rubberband);
-
-										if (rubberband)
-											this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("on");
-										else
-											this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("off");
+										this .getBrowser () .setBrowserOption ("PrimitiveQuality", "HIGH");
+										this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("high");
 									}
 									.bind (this),
 								},
 							},
-							"browser-timings": {
-								name: _("Browser Timings"),
-								type: "checkbox",
-								selected: this .getBrowser () .getBrowserTimings () .enabled_ .getValue (),
+							"medium": {
+								name: _("Medium"),
+								type: "radio",
+								radio: "primitive-quality",
+								selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "MEDIUM",
 								events: {
 									click: function ()
 									{
-										this .getBrowser () .getBrowserTimings () .enabled_ = ! this .getBrowser () .getBrowserTimings () .enabled_ .getValue ();
-										this .getBrowser () .getCanvas () .focus ();
+										this .getBrowser () .setBrowserOption ("PrimitiveQuality", "MEDIUM");
+										this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("medium");
 									}
 									.bind (this),
 								},
 							},
-						//},
-					//},
+							"low": {
+								name: _("Low"),
+								type: "radio",
+								radio: "primitive-quality",
+								selected: this .getBrowser () .getBrowserOption ("PrimitiveQuality") === "LOW",
+								events: {
+									click: function ()
+									{
+										this .getBrowser () .setBrowserOption ("PrimitiveQuality", "LOW");
+										this .getBrowser () .getNotification () .string_ = _("Primitive Quality") + ": " + _("low");
+									}
+									.bind (this),
+								},
+							},
+						},
+					},
+					"texture-quality": {
+						name: _("Texture Quality"),
+						className: "context-menu-icon cobweb-icon-texture-quality",
+						items: {
+							"high": {
+								name: _("High"),
+								type: "radio",
+								radio: "texture-quality",
+								selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "HIGH",
+								events: {
+									click: function ()
+									{
+										this .getBrowser () .setBrowserOption ("TextureQuality", "HIGH");
+										this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("high");
+									}
+									.bind (this),
+								},
+							},
+							"medium": {
+								name: _("Medium"),
+								type: "radio",
+								radio: "texture-quality",
+								selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "MEDIUM",
+								events: {
+									click: function ()
+									{
+										this .getBrowser () .setBrowserOption ("TextureQuality", "MEDIUM");
+										this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("medium");
+									}
+									.bind (this),
+								},
+							},
+							"low": {
+								name: _("Low"),
+								type: "radio",
+								radio: "texture-quality",
+								selected: this .getBrowser () .getBrowserOption ("TextureQuality") === "LOW",
+								events: {
+									click: function ()
+									{
+										this .getBrowser () .setBrowserOption ("TextureQuality", "LOW");
+										this .getBrowser () .getNotification () .string_ = _("Texture Quality") + ": " + _("low");
+									}
+									.bind (this),
+								},
+							},
+						},
+					},
+					"display-rubberband": {
+						name: _("Display Rubberband"),
+						type: "checkbox",
+						selected: this .getBrowser () .getBrowserOption ("Rubberband"),
+						events: {
+							click: function ()
+							{
+							   var rubberband = ! this .getBrowser () .getBrowserOption ("Rubberband");
+
+								this .getBrowser () .setBrowserOption ("Rubberband", rubberband);
+
+								if (rubberband)
+									this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("on");
+								else
+									this .getBrowser () .getNotification () .string_ = _("Rubberband") + ": " + _("off");
+							}
+							.bind (this),
+						},
+					},
+					"browser-timings": this .getBrowser () .getElement () .attr ("timings") !== "false" ? {
+						name: _("Browser Timings"),
+						type: "checkbox",
+						selected: this .getBrowser () .getBrowserTimings () .enabled_ .getValue (),
+						events: {
+							click: function ()
+							{
+								this .getBrowser () .getBrowserTimings () .enabled_ = ! this .getBrowser () .getBrowserTimings () .enabled_ .getValue ();
+								this .getBrowser () .getCanvas () .focus ();
+							}
+							.bind (this),
+						},
+					} : undefined,
 					"mute-browser": {
 						name: _("Mute Browser"),
 						type: "checkbox",
@@ -24970,7 +25053,7 @@ function ($,
 		this .importedName = importedName;
 		this .routes       = { };
 
-		this .inlineNode .loadState_ .addInterest (this, "set_loadState__");
+		this .inlineNode .loadState_ .addInterest ("set_loadState__", this);
 	}
 
 	ImportedNode .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -25181,7 +25264,7 @@ function ($,
 		},
 		dispose: function ()
 		{
-			this .inlineNode .loadState_ .removeInterest (this, "set_loadState__");
+			this .inlineNode .loadState_ .removeInterest ("set_loadState__", this);
 
 			this .deleteRoutes ();
 
@@ -25539,8 +25622,8 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			this .sourceNode_      .addInterest (this, "set_node");
-			this .destinationNode_ .addInterest (this, "set_node");
+			this .sourceNode_      .addInterest ("set_node", this);
+			this .destinationNode_ .addInterest ("set_node", this);
 
 //			Object .preventExtensions (this);
 //			Object .freeze (this);
@@ -25559,10 +25642,10 @@ function ($,
 			this ._destinationField .removeInputRoute (this);
 
 			if (this .sourceNode_ .getValue ())
-				this .sourceNode_ .removeInterest (this, "set_node");
+				this .sourceNode_ .removeInterest ("set_node", this);
 
 			if (this .destinationNode_ .getValue ())
-				this .destinationNode_ .removeInterest (this, "set_node");
+				this .destinationNode_ .removeInterest ("set_node", this);
 		},
 		getSourceNode: function ()
 		{
@@ -26583,6 +26666,10 @@ function ($,
 		{
 			return this .specificationVersion;
 		},
+		setEncoding: function (value)
+		{
+			this .encoding = value;
+		},
 		getEncoding: function ()
 		{
 			return this .encoding;
@@ -26628,6 +26715,7 @@ function ($,
 				return node;
 
 			node .setup ();
+
 			return new Fields .SFNode (node);
 		},
 		createProto: function (name, setup)
@@ -28124,7 +28212,8 @@ function ($,
 			{
 				// If there is a proto the externproto is completely loaded.
 			
-				this .metadata_ = proto .metadata_;
+				if (! this .metadata_ .getSet ())
+					this .metadata_ = proto .metadata_;
 
 				if (this .protoNode .isExternProto)
 				{
@@ -28159,7 +28248,7 @@ function ($,
 							if (field .hasReferences ())
 								continue;
 
-							field .set (protoField .getValue ());
+							field .setValue (protoField .getValue ());
 						}
 						catch (error)
 						{
@@ -28200,6 +28289,8 @@ function ($,
 					//this .copyImportedNodes (proto);
 					this .copyRoutes (proto .routes);
 				}
+
+				// TODO: connect getRootNodes () to X3DChildObject .prototype .addEvent .call (this);
 
 				// Now initialize bases.
 	
@@ -28350,9 +28441,23 @@ function ($,
 				}
 			}
 		
-			var fields = this .getChangedFields ();
-		
-			if (fields .length === 0)
+			var
+				fields   = this .getChangedFields (),
+				metadata = this .metadata_;
+
+			try
+			{
+				metadata = this .getField ("metadata");
+			}
+			catch (error)
+			{ }
+
+			if (metadata === this .metadata_)
+			{
+				fields = fields .filter (function (value) { return value !== this .metadata_; } .bind (this));
+			}
+
+			if (fields .length === 0 && (metadata === this .metadata_ ? true || ! metadata .getValue () : true))
 			{
 				stream .string += "/>";
 			}
@@ -28379,11 +28484,11 @@ function ($,
 						{
 							var
 								initializableReference = false,
-								references             = field .getReferences ();
+								fieldReferences        = field .getReferences ();
 
-							for (var id in references)
+							for (var id in fieldReferences)
 							{
-								initializableReference |= references [id] .isInitializable ();
+								initializableReference |= fieldReferences [id] .isInitializable ();
 							}
 
 							if (! initializableReference)
@@ -28492,10 +28597,10 @@ function ($,
 
 					Generator .IncIndent ();
 		
-					for (var i = 0, length = reference .length; i < length; ++ i)
+					for (var i = 0, length = references .length; i < length; ++ i)
 					{
 						var
-							field       = reference [i],
+							field       = references [i],
 							protoFields = field .getReferences ()
 
 						for (var id in protoFields)
@@ -28520,6 +28625,16 @@ function ($,
 
 					stream .string += Generator .Indent ();
 					stream .string += "</IS>\n";
+				}
+
+				if (metadata === this .metadata_)
+				{
+					if (metadata .getValue ())
+					{
+						metadata .toXMLStream (stream);
+
+						stream .string += "\n";
+					}
 				}
 
 				Generator .DecIndent ();
@@ -28705,6 +28820,9 @@ function ($,
 {
 
 
+	// Dummy callback function
+	function loadNowCallback () { }
+
 	function X3DExternProtoDeclaration (executionContext)
 	{
 		X3DProtoDeclarationNode .call (this, executionContext);
@@ -28741,7 +28859,7 @@ function ($,
 			X3DProtoDeclarationNode .prototype .initialize .call (this);
 			X3DUrlObject            .prototype .initialize .call (this);
 				
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 		},
 		set_live__: function ()
 		{
@@ -28758,23 +28876,31 @@ function ($,
 		{
 			this .proto = proto;
 
-			var
-				fieldDefinitions      = this .getFieldDefinitions (),
-				protoFieldDefinitions = proto .getFieldDefinitions ();
-
-			for (var i = 0, length = protoFieldDefinitions .length; i < length; ++ i)
+			if (this .proto)
 			{
 				var
-					protoFieldDefinition = protoFieldDefinitions [i],
-					fieldDefinition      = fieldDefinitions .get (protoFieldDefinition .name);
-
-				if (fieldDefinition)
-					fieldDefinition .value .setValue (protoFieldDefinition .value);
+					fieldDefinitions      = this .getFieldDefinitions (),
+					protoFieldDefinitions = proto .getFieldDefinitions ();
+	
+				for (var i = 0, length = protoFieldDefinitions .length; i < length; ++ i)
+				{
+					var
+						protoFieldDefinition = protoFieldDefinitions [i],
+						fieldDefinition      = fieldDefinitions .get (protoFieldDefinition .name);
+	
+					if (fieldDefinition)
+						fieldDefinition .value .setValue (protoFieldDefinition .value);
+				}
 			}
 		},
 		getProtoDeclaration: function ()
 		{
 			return this .proto;
+		},
+		loadNow: function (callback)
+		{
+			// 7.73 — ExternProtoDeclaration function, added callback argument.
+			this .requestAsyncLoad (callback || loadNowCallback);
 		},
 		requestAsyncLoad: function (callback)
 		{
@@ -28785,8 +28911,8 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 			this .getScene () .addInitLoadCount (this);
-			
-			// Don't create scene cache, as of possible default nodes and complete scenes.
+
+			// Don't create scene cache, due to possible default nodes in proto SFNode fields and complete scenes.
 
 			var Loader = require ("cobweb/InputOutput/Loader");
 
@@ -29561,6 +29687,9 @@ function ($,
 		{
 			try
 			{
+				this .scene .setEncoding ("VRML");
+				this .scene .setProfile (this .getBrowser () .getProfile ("Full"));
+
 				this .setInput (input);
 				this .x3dScene ();
 				return;
@@ -29792,6 +29921,7 @@ function ($,
 							catch (error)
 							{
 							   console .log (error .message);
+							   return true;
 							}
 						}
 		
@@ -32383,11 +32513,11 @@ function (Fields,
 
 		// Get canvas & context.
 
-		var browser  = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
-		var loading  = $("<div></div>") .addClass ("cobweb-loading")  .appendTo (browser);
-		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
-		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
-		var surface  = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
+		var browser      = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
+		var splashScreen = $("<div></div>") .addClass ("cobweb-splash-screen") .appendTo (browser);
+		var spinner      = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (splashScreen);
+		var progress     = $("<div></div>") .addClass ("cobweb-progress") .appendTo (splashScreen);
+		var surface      = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
 
 		$("<div></div>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
 		$("<div></div>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
@@ -32395,9 +32525,9 @@ function (Fields,
 		$("<div></div>") .addClass ("cobweb-spinner-text")  .appendTo (progress) .text ("Lade 0 Dateien");
 		$("<div></div>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div></div>"));
 
-		this .loading = loading;
-		this .canvas  = $("<canvas></canvas>") .prependTo (surface);
-		this .context = getContext (this .canvas [0]);
+		this .splashScreen = splashScreen;
+		this .canvas       = $("<canvas></canvas>") .prependTo (surface);
+		this .context      = getContext (this .canvas [0]);
 
 		this .privateScene = new Scene (this); // Scene for default nodes.
 
@@ -32410,6 +32540,13 @@ function (Fields,
 
 		this .dataStorage = new DataStorage ("X3DBrowser(" + this .number + ").");
 		this .mobile      = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
+
+		this .getCanvas () .fadeOut (0);
+
+		if (this .getElement () .attr ("splashScreen") !== "false")
+			this .getSplashScreen () .fadeIn (0);
+
+		$(".cobweb-console") .empty ();
 	}
 
 	X3DCoreContext .prototype =
@@ -32449,9 +32586,9 @@ function (Fields,
 		{
 			return this .element;
 		},
-		getLoadingElement: function ()
+		getSplashScreen: function ()
 		{
-			return this .loading;
+			return this .splashScreen;
 		},
 		getCanvas: function ()
 		{
@@ -32514,7 +32651,7 @@ function (Fields,
 		{
 			var attributeName = mutation .attributeName;
 
-			switch (attributeName)
+			switch (attributeName .toLowerCase())
 			{
 				case "src":
 					var urlCharacters = this .getElement () .attr ("src");
@@ -32526,8 +32663,11 @@ function (Fields,
 				case "url":
 					this .load (this .getElement () .attr ("url"));
 					break;
+				case "splashscreen":
+					this .getBrowserOptions () .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
+					break;
 				case "cache":
-					this .setCaching (this .getElement () .attr ("cache") != "false");
+					this .setCaching (this .getElement () .attr ("cache") !== "false");
 					break;
 			}
 		},
@@ -32545,6 +32685,11 @@ function (Fields,
 
 				if (url .length)
 					this .loadURL (url, parameter);
+			}
+			else
+			{
+				if (! this .getBrowserLoading ())
+					this .getCanvas () .fadeIn (0);
 			}
 		},
 		getPrivateScene: function ()
@@ -33109,9 +33254,9 @@ function ($,
 		{
 			X3DNetworkSensorNode .prototype .initialize .call (this);
 
-			this .enabled_   .addInterest (this,"set_enabled__");
-			this .timeOut_   .addInterest (this,"set_timeOut__");
-			this .watchList_ .addInterest (this,"set_watchList__");
+			this .enabled_   .addInterest ("set_enabled__", this);
+			this .timeOut_   .addInterest ("set_timeOut__", this);
+			this .watchList_ .addInterest ("set_watchList__", this);
 
 			this .watchList_ .addEvent ();
 		},
@@ -33230,7 +33375,7 @@ function ($,
 					{
 						urlObjects .push (urlObject);
 		
-						urlObject .loadState_ .addInterest (this, "set_loadState__", urlObject);
+						urlObject .loadState_ .addInterest ("set_loadState__", this, urlObject);
 					}
 				}
 
@@ -33244,7 +33389,7 @@ function ($,
 			var urlObjects = this .urlObjects;
 
 			for (var i = 0, length = urlObjects .length; i < length; ++ i)
-				urlObjects [i] .loadState_ .removeInterest (this, "set_loadState__");
+				urlObjects [i] .loadState_ .removeInterest ("set_loadState__", this);
 
 			urlObjects .length = 0;
 		},
@@ -33663,14 +33808,27 @@ function (Fields,
 			if (value)
 			{
 				this .resetLoadCount ();
-				this .getCanvas ()         .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
-				this .getLoadingElement () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
+
+				if (this .getElement () .attr ("splashScreen") !== "false")
+				{
+					this .getCanvas ()       .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
+					this .getSplashScreen () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
+				}
 			}
 			else
 			{
-				this .getLoadingElement () .stop (true, true) .fadeOut (2000);
-				this .getCanvas ()         .stop (true, true) .fadeIn (2000);
+				if (this .getElement () .attr ("splashScreen") !== "false")
+				{
+					this .getSplashScreen () .stop (true, true) .fadeOut (2000);
+					this .getCanvas ()       .stop (true, true) .fadeIn (2000);
+				}
+				else
+					this .getCanvas () .fadeIn (0);
 			}
+		},
+		getBrowserLoading: function ()
+		{
+			return this .browserLoading;
 		},
 		addLoadCount: function (object)
 		{
@@ -33710,9 +33868,8 @@ function (Fields,
 			if (! this .browserLoading)
 				this .getNotification () .string_ = string;
 
-			this .getLoadingElement () .find (".cobweb-spinner-text") .text (string);
-
-			this .getLoadingElement () .find (".cobweb-progressbar div") .css ("width", ((this .loadingTotal - value) * 100 / this .loadingTotal) + "%");
+			this .getSplashScreen () .find (".cobweb-spinner-text") .text (string);
+			this .getSplashScreen () .find (".cobweb-progressbar div") .css ("width", ((this .loadingTotal - value) * 100 / this .loadingTotal) + "%");
 		},
 		resetLoadCount: function ()
 		{
@@ -34015,13 +34172,13 @@ function ($,
 		{
 			X3DAppearanceNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .lineProperties_   .addInterest (this, "set_lineProperties__");
-			this .material_         .addInterest (this, "set_material__");
-			this .texture_          .addInterest (this, "set_texture__");
-			this .textureTransform_ .addInterest (this, "set_textureTransform__");
-			this .shaders_          .addInterest (this, "set_shaders__");
+			this .lineProperties_   .addInterest ("set_lineProperties__", this);
+			this .material_         .addInterest ("set_material__", this);
+			this .texture_          .addInterest ("set_texture__", this);
+			this .textureTransform_ .addInterest ("set_textureTransform__", this);
+			this .shaders_          .addInterest ("set_shaders__", this);
 
 			this .set_lineProperties__ ();
 			this .set_material__ ();
@@ -34065,24 +34222,24 @@ function ($,
 		set_material__: function ()
 		{
 			if (this .materialNode)
-				this .materialNode .transparent_ .removeInterest (this, "set_transparent__");
+				this .materialNode .transparent_ .removeInterest ("set_transparent__", this);
 
 			this .materialNode = X3DCast (X3DConstants .X3DMaterialNode, this .material_);
 
 			if (this .materialNode)
-				this .materialNode .transparent_ .addInterest (this, "set_transparent__");
+				this .materialNode .transparent_ .addInterest ("set_transparent__", this);
 			
 			this .set_transparent__ ();
 		},
 		set_texture__: function ()
 		{
 			if (this .textureNode)
-				this .textureNode .transparent_ .removeInterest (this, "set_transparent__");
+				this .textureNode .transparent_ .removeInterest ("set_transparent__", this);
 
 			this .textureNode = X3DCast (X3DConstants .X3DTextureNode, this .texture_);
 
 			if (this .textureNode)
-				this .textureNode .transparent_ .addInterest (this, "set_transparent__");
+				this .textureNode .transparent_ .addInterest ("set_transparent__", this);
 
 			this .generatedCubeMapTexture = X3DCast (X3DConstants .GeneratedCubeMapTexture, this .texture_);
 
@@ -34104,7 +34261,7 @@ function ($,
 				shaderNodes = this .shaderNodes;
 
 			for (var i = 0, length = shaderNodes .length; i < length; ++ i)
-				shaderNodes [i] .isValid_ .removeInterest (this, "set_shader__");
+				shaderNodes [i] .isValid_ .removeInterest ("set_shader__", this);
 		
 			shaderNodes .length = 0;
 		
@@ -34115,7 +34272,7 @@ function ($,
 				if (shaderNode)
 				{
 					shaderNodes .push (shaderNode);
-					shaderNode .isValid_ .addInterest (this, "set_shader__");
+					shaderNode .isValid_ .addInterest ("set_shader__", this);
 				}
 			}
 
@@ -34668,7 +34825,9 @@ function ($,
 {
 
 
-	var NULL = Fields .SFNode ();
+	var
+		matrix3 = new Matrix3 (),
+		NULL    = new Fields .SFNode ();
 
 	function X3DProgrammableShaderObject (executionContext)
 	{
@@ -34785,10 +34944,11 @@ function ($,
 
 			this .x3d_Texture = gl .getUniformLocation (program, "x3d_Texture"); // depreciated
 
-			this .x3d_TextureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
-			this .x3d_NormalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
+			this .x3d_Viewport         = gl .getUniformLocation (program, "x3d_Viewport");
 			this .x3d_ProjectionMatrix = gl .getUniformLocation (program, "x3d_ProjectionMatrix");
 			this .x3d_ModelViewMatrix  = gl .getUniformLocation (program, "x3d_ModelViewMatrix");
+			this .x3d_NormalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
+			this .x3d_TextureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
 			
 			this .x3d_Color    = gl .getAttribLocation (program, "x3d_Color");
 			this .x3d_TexCoord = gl .getAttribLocation (program, "x3d_TexCoord");
@@ -34858,7 +35018,7 @@ function ($,
 				{
 					field ._uniformLocation = location;
 
-					field .addInterest (this, "set_field__");
+					field .addInterest ("set_field__", this);
 
 					switch (field .getType ())
 					{
@@ -34869,6 +35029,7 @@ function ($,
 						}
 						case X3DConstants .SFMatrix3d:
 						case X3DConstants .SFMatrix3f:
+						case X3DConstants .SFRotation:
 						{
 							location .array = new Float32Array (9);
 							break;
@@ -34899,6 +35060,7 @@ function ($,
 						}
 						case X3DConstants .MFMatrix3d:
 						case X3DConstants .MFMatrix3f:
+						case X3DConstants .MFRotation:
 						{
 							location .array = new Float32Array (9 * this .getLocationLength (gl, program, field));
 							break;
@@ -34941,7 +35103,6 @@ function ($,
 						case X3DConstants .MFVec4d:
 						case X3DConstants .MFVec4f:
 						case X3DConstants .MFColorRGBA:
-						case X3DConstants .MFRotation:
 						{
 							location .array = new Float32Array (4 * this .getLocationLength (gl, program, field));
 							break;
@@ -34963,7 +35124,7 @@ function ($,
 			{
 				var field = userDefinedFields [name];
 
-				field .removeInterest (this, "set_field__");
+				field .removeInterest ("set_field__", this);
 
 				switch (field .getType ())
 				{
@@ -35076,8 +35237,9 @@ function ($,
 					}
 					case X3DConstants .SFRotation:
 					{
-						var quat = field .getValue () .value;
-						gl .uniform4f (location, quat .x, quat .y, quat .z, quat .w);
+						field .getValue () .getMatrix (location .array);
+
+						gl .uniformMatrix3fv (location, false, location .array);
 						return;
 					}
 					case X3DConstants .SFString:
@@ -35288,21 +35450,26 @@ function ($,
 						var
 							value = field .getValue (),
 							array = location .array;
-	
+
 						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 						{
-							var quat = value [i] .getValue () .value;
+							var matrix = value [i] .getValue () .getMatrix (matrix3);
 	
-							array [k++] = quat .x;
-							array [k++] = quat .y;
-							array [k++] = quat .z;
-							array [k++] = quat .w;
+							array [k++] = matrix [0];
+							array [k++] = matrix [1];
+							array [k++] = matrix [2];
+							array [k++] = matrix [3];
+							array [k++] = matrix [4];
+							array [k++] = matrix [5];
+							array [k++] = matrix [6];
+							array [k++] = matrix [7];
+							array [k++] = matrix [8];
 						}
 	
 						for (var length = array .length; k < length; ++ k)
 							array [k] = 0;
 	
-						gl .uniform4fv (location, array);
+						gl .uniformMatrix3fv (location, false, array);
 						return;
 					}
 					case X3DConstants .MFString:
@@ -35458,9 +35625,15 @@ function ($,
 			else
 				gl .uniform4fv (this .x3d_ClipPlane [0], this .x3d_NoneClipPlane);
 		},
-		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray)
+		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray, viewportArray)
 		{
 			var globalLights = renderObject .getGlobalLights ();
+
+			// Set viewport
+
+			gl .uniform4iv (this .x3d_Viewport, viewportArray);
+
+			// Set projection matrix
 
 			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, projectionMatrixArray);
 
@@ -35927,12 +36100,12 @@ function ($,
 
 			this .primitiveMode = gl .TRIANGLES;
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .activate_ .addInterest (this, "set_activate__");
+			this .activate_ .addInterest ("set_activate__", this);
 			this .parts_    .addFieldInterest (this .loadSensor .watchList_);
 
-			this .loadSensor .isLoaded_ .addInterest (this, "set_loaded__");
+			this .loadSensor .isLoaded_ .addInterest ("set_loaded__", this);
 			this .loadSensor .watchList_ = this .parts_;
 			this .loadSensor .setPrivate (true);
 			this .loadSensor .setup ();
@@ -36030,7 +36203,7 @@ function ($,
 					this .isValid_ = false;
 			}
 		},
-		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray)
+		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray, viewportArray)
 		{
 			if (currentShaderNode !== this)
 			{
@@ -36039,7 +36212,7 @@ function ($,
 				gl .useProgram (this .program);
 			}
 			
-			X3DProgrammableShaderObject .prototype .setGlobalUniforms .call (this, renderObject, gl, projectionMatrixArray);
+			X3DProgrammableShaderObject .prototype .setGlobalUniforms .call (this, renderObject, gl, projectionMatrixArray, viewportArray);
 		},
 		setLocalUniforms: function (gl, context)
 		{
@@ -36886,6 +37059,8 @@ define ('cobweb/Parser/XMLParser',[
 	"jquery",
 	"cobweb/Basic/X3DField",
 	"cobweb/Basic/X3DArrayField",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Components/Core/X3DPrototypeInstance",
 	"cobweb/Fields",
 	"cobweb/Parser/Parser",
 	"cobweb/Parser/HTMLSupport",
@@ -36896,9 +37071,11 @@ define ('cobweb/Parser/XMLParser',[
 function ($,
           X3DField,
           X3DArrayField,
+          X3DBaseNode,
+          X3DPrototypeInstance,
           Fields,
           Parser,
-	  HTMLSupport,   
+          HTMLSupport,   
           X3DExternProtoDeclaration,
           X3DProtoDeclaration,
           X3DConstants)
@@ -36926,112 +37103,61 @@ function ($,
 	XMLParser .prototype =
 	{
 		constructor: XMLParser,
-		getBrowser: function ()
+		parseIntoScene: function (xmlElement)
 		{
-			return this .scene .getBrowser ();
+			this .scene .setEncoding ("XML");
+			this .scene .setProfile (this .getBrowser () .getProfile ("Full"));
+
+			this .xmlElement (xmlElement);
 		},
-		getExecutionContext: function ()
-		{
-			return this .executionContexts [this .executionContexts .length - 1];
-		},
-		pushExecutionContext: function (executionContext)
-		{
-			return this .executionContexts .push (executionContext);
-		},
-		popExecutionContext: function ()
-		{
-			this .executionContexts .pop ();
-		},
-		getParent: function ()
-		{
-			return this .parents [this .parents .length - 1];
-		},
-		pushParent: function (parent)
-		{
-			return this .parents .push (parent);
-		},
-		popParent: function ()
-		{
-			this .parents .pop ();
-		},
-		parseIntoNode: function (node, xml)
+		parseIntoNode: function (node, xmlElement)
 		{
 			this .pushExecutionContext (node .getExecutionContext ());
 			this .pushParent (node);
 
-			this .statement (xml);
+			this .childElement (xmlElement);
 
 			this .popParent ();
 			this .popExecutionContext ();
 		},
-		parseIntoScene: function (xml)
+		xmlElement: function (xmlElement)
 		{
-			switch (xml .nodeName)
+			switch (xmlElement .nodeName)
 			{
 				case "#document":
 				{
-					var X3D = $(xml) .children ("X3D");
+					var X3D = $(xmlElement) .children ("X3D");
 
 					if (X3D .length)
 					{
 						for (var i = 0; i < X3D .length; ++ i)
-							this .X3D (X3D [i]);
+							this .x3dElement (X3D [i]);
 					}
 					else
-						this .Scene (xml);
+						this .childrenElements (xmlElement);
 
 					break;
 				}
 				case "X3D":
-					this .X3D (xml);
+					this .x3dElement (xmlElement);
 					break;
 				case "Scene":
 				case "SCENE":
-					this .Scene (xml);
+					this .sceneElement (xmlElement);
 					break;
 				default:
-					this .statement (xml);
+					this .childElement (xmlElement);
 					break;
 			}
 		},
-		X3D: function (element)
+		x3dElement: function (xmlElement)
 		{
-			this .profile (element);
+			// Profile
 
-			var specificationVersion = element .getAttribute ("version");
-
-			if (specificationVersion)
-				this .scene .specificationVersion = specificationVersion;
-
-			this .scene .encoding = "XML";
-
-			// Process child nodes
-
-			var childNodes = element .childNodes;
-	
-			for (var i = 0; i < childNodes .length; ++ i)
-			{
-				var element = childNodes [i];
-			
-				switch (element .nodeName)
-				{
-					case "head":
-					case "HEAD":
-						this .head (element);
-						continue;
-					case "Scene":
-					case "SCENE":
-						this .Scene (element);
-						continue;
-				}
-			}
-		},
-		profile: function (element)
-		{
 			try
 			{
 				var
-					profileNameId = element .getAttribute ("profile"),
+					profileNameId = xmlElement .getAttribute ("profile"),
 					profile       = this .getBrowser () .getProfile (profileNameId || "Full");
 
 				this .scene .setProfile (profile);
@@ -37040,44 +37166,72 @@ function ($,
 			{
 				console .log (error);
 			}
-		},
-		head: function (element)
-		{
-			var childNodes = element .childNodes;
-	
+
+			// Specification version
+
+			var specificationVersion = xmlElement .getAttribute ("version");
+
+			if (specificationVersion)
+				this .scene .specificationVersion = specificationVersion;
+
+			// Process child nodes
+
+			var childNodes = xmlElement .childNodes;
+
 			for (var i = 0; i < childNodes .length; ++ i)
+				this .x3dElementChild (childNodes [i])
+		},
+		x3dElementChild: function (xmlElement)
+		{
+			switch (xmlElement .nodeName)
 			{
-				var element = childNodes [i];
-			
-				switch (element .nodeName)
-				{
-					case "component":
-					case "COMPONENT":
-						this .component (element);
-						continue;
-					case "unit":
-					case "UNIT":
-						this .unit (element);
-						continue;
-					case "meta":
-					case "META":
-						this .meta (element);
-						continue;
-				}
+				case "head":
+				case "HEAD":
+					this .headElement (xmlElement);
+					return;
+				case "Scene":
+				case "SCENE":
+					this .sceneElement (xmlElement);
+					return;
 			}
 		},
-		component: function (element)
+		headElement: function (xmlElement)
+		{
+			var childNodes = xmlElement .childNodes;
+	
+			for (var i = 0; i < childNodes .length; ++ i)
+				this .headElementChild (childNodes [i]);
+		},
+		headElementChild: function (xmlElement)
+		{
+			switch (xmlElement .nodeName)
+			{
+				case "component":
+				case "COMPONENT":
+					this .componentElement (xmlElement);
+					return;
+				case "unit":
+				case "UNIT":
+					this .unitElement (xmlElement);
+					return;
+				case "meta":
+				case "META":
+					this .metaElement (xmlElement);
+					return;
+			}
+		},
+		componentElement: function (xmlElement)
 		{
 			try
 			{
 				var
-					componentNameIdCharacters = element .getAttribute ("name"),
-					componentSupportLevel = parseInt (element .getAttribute ("level"));
+					componentNameIdCharacters = xmlElement .getAttribute ("name"),
+					componentSupportLevel = parseInt (xmlElement .getAttribute ("level"));
 	
-				if (componentNameIdCharacters == null)
+				if (componentNameIdCharacters === null)
 					return console .warn ("XML Parser Error: Bad component statement: Expected name attribute.");
 	
-				if (componentSupportLevel == null)
+				if (componentSupportLevel === null)
 					return console .warn ("XML Parser Error: Bad component statement: Expected level attribute.");
 
 				var component = this .getBrowser () .getComponent (componentNameIdCharacters, componentSupportLevel);
@@ -37089,31 +37243,31 @@ function ($,
 				console .log (error .message);
 			}
 		},
-		unit: function (element)
+		unitElement: function (xmlElement)
 		{
 			var
-				category         = element .getAttribute ("category"),
-				name             = element .getAttribute ("name"),
-				conversionFactor = element .getAttribute ("conversionFactor"); //works for html5 as well
+				category         = xmlElement .getAttribute ("category"),
+				name             = xmlElement .getAttribute ("name"),
+				conversionFactor = xmlElement .getAttribute ("conversionFactor"); //works for html5 as well
 
-			if (category == null)
+			if (category === null)
 				return console .warn ("XML Parser Error: Bad unit statement: Expected category attribute.");
 
-			if (name == null)
+			if (name === null)
 				return console .warn ("XML Parser Error: Bad unit statement: Expected name attribute.");
 
-			if (conversionFactor == null)
+			if (conversionFactor === null)
 				return console .warn ("XML Parser Error: Bad unit statement: Expected conversionFactor attribute.");
 
 			this .scene .updateUnit (category, name, parseFloat (conversionFactor));
 		},
-		meta: function (element)
+		metaElement: function (xmlElement)
 		{
 			var
-				metakey   = element .getAttribute ("name"),
-				metavalue = element .getAttribute ("content");
+				metakey   = xmlElement .getAttribute ("name"),
+				metavalue = xmlElement .getAttribute ("content");
 
-			if (metakey == null)
+			if (metakey === null)
 				return console .warn ("XML Parser Error: Bad meta statement: Expected name attribute.");	
 
 			if (metavalue === null)
@@ -37121,103 +37275,319 @@ function ($,
 
 			this .scene .setMetaData (metakey, metavalue);
 		},
-		Scene: function (element)
+		sceneElement: function (xmlElement)
 		{
-			this .statements (element .childNodes);
+			this .childrenElements (xmlElement);
 		},
-		statements: function (childNodes)
+		childrenElements: function (xmlElement)
 		{
+			var childNodes = xmlElement .childNodes;
+
 			for (var i = 0; i < childNodes .length; ++ i)
-				this .statement (childNodes [i]);
+				this .childElement (childNodes [i]);
 		},
-		statement: function (child)
+		childElement: function (xmlElement)
 		{
-			switch (child .nodeName)
+			switch (xmlElement .nodeName)
 			{
 				case "#comment":
 				case "#text":
+					return;
+
 				case "#cdata-section":
+					this .cdataNode (xmlElement);
 					return;
 				
 				case "ExternProtoDeclare":
 				case "EXTERNPROTODECLARE":
-					this .ExternProtoDeclare (child);
+					this .externProtoDeclareElement (xmlElement);
 					return;
 
 				case "ProtoDeclare":
 				case "PROTODECLARE":
-					this .ProtoDeclare (child);
+					this .protoDeclareElement (xmlElement);
+					return;
+
+				case "IS":
+					this .isElement (xmlElement);
 					return;
 
 				case "ProtoInstance":
 				case "PROTOINSTANCE":
-					this .ProtoInstance (child);
+					this .protoInstanceElement (xmlElement);
 					return;
 
-				case "IMPORT":
-					this .IMPORT (child);
+				case "fieldValue":
+				case "FIELDVALUE":
+					this .fieldValueElement (xmlElement);
+					return;
+
+				case "field":
+				case "FIELD":
+					this .fieldElement (xmlElement);
 					return;
 
 				case "ROUTE":
-					this .ROUTE (child);
+					this .routeElement (xmlElement);
+					return;
+
+				case "IMPORT":
+					this .importElement (xmlElement);
 					return;
 
 				case "EXPORT":
-					this .EXPORT (child);
+					this .exportElement (xmlElement);
 					return;
 
 				default:
-					this .node (child);
+					this .nodeElement (xmlElement);
 					return;
 			}
 		},
-		node: function (element)
+		externProtoDeclareElement: function (xmlElement)
+		{
+			var name = xmlElement .getAttribute ("name");
+
+			if (this .id (name))
+			{
+				var url = xmlElement .getAttribute ("url");
+
+				if (url === null)
+					return console .warn ("XML Parser Error: Bad ExternProtoDeclare statement: Expected url attribute.");
+				
+				if (url !== null)
+				{
+					this .parser .setInput (url);
+					Parser .prototype .sfstringValues .call (this .parser, this .url);
+				}
+				else
+					this .url .length = 0;
+
+				var externproto = new X3DExternProtoDeclaration (this .getExecutionContext ());
+							
+				this .pushParent (externproto);
+				this .protoInterfaceElement (xmlElement); // parse fields
+				this .popParent ();
+
+				externproto .setName (name);
+				externproto .url_ = this .url;
+				externproto .setup ();
+
+				this .getExecutionContext () .externprotos .add (name, externproto);	
+			}
+		},
+		protoDeclareElement: function (xmlElement)
+		{
+			var name = xmlElement .getAttribute ("name");
+
+			if (this .id (name))
+			{
+				var
+					proto      = new X3DProtoDeclaration (this .getExecutionContext ()),
+					childNodes = xmlElement .childNodes;
+
+				for (var i = 0; i < childNodes .length; ++ i)
+				{
+					var child = childNodes [i];
+
+					switch (child .nodeName)
+					{
+						case "ProtoInterface":
+						case "PROTOINTERFACE":
+						{
+							this .pushParent (proto);
+							this .protoInterfaceElement (child);
+							this .popParent ();
+							break;
+						}
+						default:
+							continue;
+					}
+
+					break;
+				}
+
+				for (var i = 0; i < childNodes .length; ++ i)
+				{
+					var child = childNodes [i];
+
+					switch (child .nodeName)
+					{
+						case "ProtoBody":
+						case "PROTOBODY":
+						{
+							this .pushExecutionContext (proto);
+							this .pushParent (proto);
+							this .protoBodyElement (child);
+							this .popParent ();
+							this .popExecutionContext ();
+							break;
+						}
+						default:
+							continue;
+					}
+
+					break;
+				}
+
+				proto .setName (name);
+				proto .setup ();
+
+				this .getExecutionContext () .protos .add (name, proto);
+			}
+		},
+		protoInterfaceElement: function (xmlElement)
+		{
+			var childNodes = xmlElement .childNodes;
+
+			for (var i = 0; i < childNodes .length; ++ i)
+				this .protoInterfaceElementChild (childNodes [i]);
+		},
+		protoInterfaceElementChild: function (xmlElement)
+		{
+			switch (xmlElement .nodeName)
+			{
+				case "field": // User-defined field
+				case "FIELD": // User-defined field
+					this .fieldElement (xmlElement);
+					return;
+			}
+		},
+		fieldElement: function (xmlElement)
 		{
 			try
 			{
-				if (this .USE (element))
+				if (this .getParents () .length === 0)
 					return;
 
-				var node = this .getExecutionContext () .createNode (element .nodeName, false);
+				var node = this .getParent ();
+	
+				if (! (node instanceof X3DBaseNode))
+					return;
 
-				//AP: attach node to DOM element for access from DOM.
-				element .x3d = node;
-
-				this .DEF (element, node);
-				this .addNode (element, node);
-				this .pushParent (node);
-				this .attributes (element .attributes, node);
-				this .children (element .childNodes, false);
-				this .getExecutionContext () .addUninitializedNode (node);
-				this .popParent ();
+				if (! node .hasUserDefinedFields ())
+					return;
+	
+				var accessType = AccessType [xmlElement .getAttribute ("accessType")];
+	
+				if (accessType === undefined)
+					accessType = X3DConstants .initializeOnly;
+	
+				var type = Fields [xmlElement .getAttribute ("type")];
+	
+				if (type === undefined)
+					return;
+	
+				var name = xmlElement .getAttribute ("name");
+	
+				if (! this .id (name))
+					return;
+	
+				var field = new type ();
+	
+				if (accessType & X3DConstants .initializeOnly)
+				{
+					this .fieldValue (field, xmlElement .getAttribute ("value"));
+	
+					this .pushParent (field);
+					this .childrenElements (xmlElement);
+					this .popParent ();
+				}
+	
+				node .addUserDefinedField (accessType, name, field);
 			}
 			catch (error)
 			{
-				//console .error (error);
-
-				console .error ("XML Parser Error: " + error .message);
+				//console .log (error);
 			}
 		},
-		ProtoInstance: function (element)
+		protoBodyElement: function (xmlElement)
+		{
+			this .childrenElements (xmlElement);
+		},
+		isElement: function (xmlElement)
+		{
+			if (this .getExecutionContext () instanceof X3DProtoDeclaration)
+			{
+				var childNodes = xmlElement .childNodes;
+
+				for (var i = 0; i < childNodes .length; ++ i)
+					this .isElementChild (childNodes [i]);
+			}
+		},
+		isElementChild: function (xmlElement)
+		{
+			switch (xmlElement .nodeName)
+			{
+				case "connect":
+				case "CONNECT":
+					this .connectElement (xmlElement);
+					return;
+			}
+		},
+		connectElement: function (xmlElement)
+		{
+			var
+				nodeFieldName  = xmlElement .getAttribute ("nodeField"),
+				protoFieldName = xmlElement .getAttribute ("protoField");
+
+			if (nodeFieldName === null)
+				return console .warn ("XML Parser Error: Bad connect statement: Expected nodeField attribute.");
+
+			if (protoFieldName === null)
+				return console .warn ("XML Parser Error: Bad connect statement: Expected protoField attribute.");
+
+			try
+			{
+				if (this .getParents () .length === 0)
+					return;
+
+				var
+					node  = this .getParent (),
+					proto = this .getExecutionContext ();
+
+				if (! (node instanceof X3DBaseNode))
+					return;
+
+				var
+					nodeField  = node .getField (nodeFieldName),
+					protoField = proto .getField (protoFieldName);
+
+				if (nodeField .getType () === protoField .getType ())
+				{
+					if (protoField .isReference (nodeField .getAccessType ()))
+						nodeField .addReference (protoField);
+					else
+						throw new Error ("Field '" + nodeField .getName () + "' and '" + protoField .getName () + "' in PROTO " + this .getExecutionContext () . getName () + " are incompatible as an IS mapping.");
+				}
+				else
+					throw new Error ("Field '" + nodeField .getName () + "' and '" + protoField .getName () + "' in PROTO " + this .getExecutionContext () .getName () + " have different types.");
+			}
+			catch (error)
+			{
+				console .warn ("XML Parser Error: Couldn't create IS reference: " + error .message);
+			}
+		},
+		protoInstanceElement: function (xmlElement)
 		{
 			try
 			{
-				if (this .USE (element))
+				if (this .useAttribute (xmlElement))
 					return;
 
-				var name = element .getAttribute ("name");
+				var name = xmlElement .getAttribute ("name");
 
 				if (this .id (name))
 				{
 					var node = this .getExecutionContext () .createProto (name, false);
 
-					//AP: attach node to DOM element for access from DOM.
-					element .x3d = node;
+					//AP: attach node to DOM xmlElement for access from DOM.
+					xmlElement .x3d = node;
 
-					this .DEF (element, node);
-					this .addNode (element, node);
+					this .defAttribute (xmlElement, node);
+					this .addNode (xmlElement, node);
 					this .pushParent (node);
-					this .children (element .childNodes, true);
+					this .childrenElements (xmlElement);
 					this .getExecutionContext () .addUninitializedNode (node);
 					this .popParent ();
 				}
@@ -37228,75 +37598,200 @@ function ($,
 				//console .warn (error);
 			}
 		},
-		children: function (childNodes, protoInstance)
-		{
-			for (var i = 0; i < childNodes .length; ++ i)
-				this .child (childNodes [i], protoInstance);
-		},
-		child: function (child, protoInstance)
-		{
-			switch (child .nodeName)
-			{
-				case "#comment":
-				case "#text":
-					return;
-
-				case "#cdata-section":
-					this .cdata (child);
-					return;
-				
-				case "IS":
-					this .IS (child);
-					return;
-
-				case "field":
-				case "FIELD":
-					this .field (child);
-					return;
-
-				case "fieldValue":
-				case "FIELDVALUE":
-					if (protoInstance)
-						this .fieldValue (child);
-					return;
-						
-				case "ExternProtoDeclare":
-				case "EXTERNPROTODECLARE":
-					this .ExternProtoDeclare (child);
-					return;
-
-				case "ProtoDeclare":
-				case "PROTODECLARE":
-					this .ProtoDeclare (child);
-					return;
-
-				case "ProtoInstance":
-				case "PROTOINSTANCE":
-					this .ProtoInstance (child);
-					return;
-
-				case "IMPORT":
-					this .IMPORT (child);
-					return;
-
-				case "ROUTE":
-					this .ROUTE (child);
-					return;
-
-				case "EXPORT":
-					this .EXPORT (child);
-					return;
-
-				default:
-					this .node (child);
-					return;
-			}
-		},
-		DEF: function (element, node)
+		fieldValueElement: function (xmlElement)
 		{
 			try
 			{
-				var name = element .getAttribute ("DEF");
+				if (this .getParents () .length === 0)
+					return;
+
+				var
+					node = this .getParent (),
+					name = xmlElement .getAttribute ("name");
+
+				if (! (node instanceof X3DPrototypeInstance))
+					return;
+
+				if (! this .id (name))
+					return;
+
+				var
+					field      = node .getField (name),
+					accessType = field .getAccessType ();
+
+				if (accessType & X3DConstants .initializeOnly)
+				{
+					this .fieldValue (field, xmlElement .getAttribute ("value"));
+
+					this .pushParent (field);
+					this .childrenElements (xmlElement);
+					this .popParent ();
+				}
+			}
+			catch (error)
+			{
+				console .warn ("XML Parser Error: Couldn't assign field value: " + error .message);
+			}
+		},
+		nodeElement: function (xmlElement)
+		{
+			try
+			{
+				if (this .useAttribute (xmlElement))
+					return;
+
+				var node = this .getExecutionContext () .createNode (xmlElement .nodeName, false);
+
+				//AP: attach node to DOM xmlElement for access from DOM.
+				xmlElement .x3d = node;
+
+				this .defAttribute (xmlElement, node);
+				this .addNode (xmlElement, node);
+				this .pushParent (node);
+				this .nodeAttributes (xmlElement, node);
+				this .childrenElements (xmlElement);
+				this .getExecutionContext () .addUninitializedNode (node);
+				this .popParent ();
+			}
+			catch (error)
+			{
+				//console .error (error);
+
+				console .error ("XML Parser Error: " + error .message);
+			}
+		},
+		routeElement: function (xmlElement)
+		{
+			try
+			{
+				var
+					sourceNodeName      = xmlElement .getAttribute ("fromNode"),
+					sourceField         = xmlElement .getAttribute ("fromField"),
+					destinationNodeName = xmlElement .getAttribute ("toNode"),
+					destinationField    = xmlElement .getAttribute ("toField");
+
+				if (sourceNodeName === null)
+					throw new Error ("Bad ROUTE statement: Expected fromNode attribute.");
+
+				if (sourceField === null)
+					throw new Error ("Bad ROUTE statement: Expected fromField attribute.");
+
+				if (destinationNodeName === null)
+					throw new Error ("Bad ROUTE statement: Expected toNode attribute.");
+
+				if (destinationField === null)
+					throw new Error ("Bad ROUTE statement: Expected toField attribute.");
+
+				var
+					executionContext = this .getExecutionContext (),
+					sourceNode       = executionContext .getLocalNode (sourceNodeName),
+					destinationNode  = executionContext .getLocalNode (destinationNodeName),
+					route            = executionContext .addRoute (sourceNode, sourceField, destinationNode, destinationField);
+
+				xmlElement .x3d = route;
+			}
+			catch (error)
+			{
+				console .warn ("XML Parser Error: " + error .message);
+			}
+		},
+		importElement: function (xmlElement)
+		{
+			try
+			{
+				var
+					inlineNodeName   = xmlElement .getAttribute ("inlineDEF"),
+					exportedNodeName = xmlElement .getAttribute ("exportedDEF"),
+					localNodeName    = xmlElement .getAttribute ("AS");
+
+				if (inlineNodeName === null)
+					throw new Error ("Bad IMPORT statement: Expected exportedDEF attribute.");
+
+				if (exportedNodeName === null)
+					throw new Error ("Bad IMPORT statement: Expected exportedDEF attribute.");
+
+				if (! localNodeName)
+					localNodeName = exportedNodeName;
+
+				var namedNode = this .getExecutionContext () .getNamedNode (inlineNodeName);
+
+				this .getExecutionContext () .updateImportedNode (namedNode, exportedNodeName, localNodeName);
+			}
+			catch (error)
+			{
+				console .warn ("XML Parser Error: " + error .message);
+			}
+		},
+		exportElement: function (xmlElement)
+		{
+			try
+			{
+				if (this .scene !== this .getExecutionContext ())
+					return;
+
+				var
+					localNodeName    = xmlElement .getAttribute ("localDEF"),
+					exportedNodeName = xmlElement .getAttribute ("AS");
+
+				if (localNodeName === null)
+					throw new Error ("Bad EXPORT statement: Expected localDEF attribute.");
+
+				if (! exportedNodeName)
+					exportedNodeName = localNodeName;
+
+				var localNode = this .getExecutionContext () .getLocalNode (localNodeName);
+
+				this .scene .updateExportedNode (exportedNodeName, localNode);
+			}
+			catch (error)
+			{
+				console .warn ("XML Parser Error: " + error .message);
+			}
+		},
+		cdataNode: function (xmlElement)
+		{
+			if (this .getParents () .length === 0)
+				return;
+
+			var node = this .getParent ();
+
+			if (node instanceof X3DBaseNode)
+			{
+				var field = node .getSourceText ();
+
+				if (field)
+				{
+					field .push (xmlElement .data);
+					field .setSet (true);
+				}
+			}
+		},
+		useAttribute: function (xmlElement)
+		{
+			try
+			{
+				var name = xmlElement .getAttribute ("USE");
+
+				if (this .id (name))
+				{
+					var node = this .getExecutionContext () .getNamedNode (name);
+
+					this .addNode (xmlElement, node .getValue ());
+					return true;
+				}
+			}
+			catch (error)
+			{
+				console .warn ("Invalid USE name: " + error .message);
+			}
+
+			return false;
+		},
+		defAttribute: function (xmlElement, node)
+		{
+			try
+			{
+				var name = xmlElement .getAttribute ("DEF");
 
 				if (name)
 				{
@@ -37317,453 +37812,124 @@ function ($,
 				console .warn ("Invalid DEF name: " + error .message);
 			}
 		},
-		USE: function (element)
+		nodeAttributes: function (xmlElement, node)
+		{
+			var xmlAttributes = xmlElement .attributes;
+
+			for (var i = 0; i < xmlAttributes .length; ++ i)
+				this .nodeAttribute (xmlAttributes [i], node);
+		},
+		nodeAttribute: function (xmlAttribute, node)
 		{
 			try
 			{
-				var name = element .getAttribute ("USE");
+				var field = node .getField (this .attributeToCamelCase (xmlAttribute .name));
 
-				if (this .id (name))
-				{
-					var node = this .getExecutionContext () .getNamedNode (name);
-
-					this .addNode (element, node .getValue ());
-					return true;
-				}
-			}
-			catch (error)
-			{
-				console .warn ("Invalid USE name: " + error .message);
-			}
-
-			return false;
-		},
-		addNode: function (element, node)
-		{
-			if (this .parents .length)
-			{
-				var parent = this .getParent ();
-
-				if (parent instanceof X3DField)
-				{
-					switch (parent .getType ())
-					{
-						case X3DConstants .SFNode:
-							parent .setValue (node);
-							parent .setSet (true);
-							return;
-
-						case X3DConstants .MFNode:
-							parent .push (node);
-							parent .setSet (true);
-							return;
-					}
-				}
-				else
-				{
-					// parent is a node.
-
-					try
-					{
-						var containerField = element .getAttribute ("containerField");
-
-						if (containerField)
-						{
-							var field = parent .getField (containerField);
-
-							switch (field .getType ())
-							{
-								case X3DConstants .SFNode:
-									field .setValue (node);
-									field .setSet (true);
-									return;
-
-								case X3DConstants .MFNode:
-									field .push (node);
-									field .setSet (true);
-									return;
-							}
-						}
-					}
-					catch (error)
-					{
-						//console .warn (error .message);
-					}
-
-					try
-					{
-						// containerField attribute is not set or not found in node.
-
-						var field = parent .getField (node .getContainerField ());
-
-						switch (field .getType ())
-						{
-							case X3DConstants .SFNode:
-								field .setValue (node);
-								field .setSet (true);
-								return;
-
-							case X3DConstants .MFNode:
-								field .push (node);
-								field .setSet (true);
-								return;
-						}
-					}
-					catch (error)
-					{
-						//console .warn (error .message);
-					}
-				}
-			}
-			else
-				this .getExecutionContext () .rootNodes .push (node);
-		},
-		attributes: function (attributes, node)
-		{
-			for (var i = 0; i < attributes .length; ++ i)
-				this .attribute (attributes [i], node);
-		},
-		attribute: function (attribute, node)
-		{
-			try
-			{
-				var
-					name      = attribute .name,
-					value     = attribute .value,
-					field     = node .getField (this .attributeToCamelCase (name)),
-					fieldType = this .fieldTypes [field .getType ()];
-
-				this .parser .setInput (value);
-				fieldType .call (this .parser, field);
-				field .setSet (true);
+				this .fieldValue (field, xmlAttribute .value);
 			}
 			catch (error)
 			{
 				//console .warn (error .message);
 			}
 		},
-		cdata: function (element)
+		fieldValue: function (field, value)
 		{
-			var
-				node  = this .getParent (),
-				field = node .getSourceText ();
-
-			if (field)
-			{
-				field .push (element .data);
-				field .setSet (true);
-			}
-		},
-		field: function (element)
-		{
-			var node = this .getParent ();
-
-			if (! node .hasUserDefinedFields ())
+			if (value === null)
 				return;
 
-			var accessType = AccessType [element .getAttribute ("accessType")];
+			field .setSet (true);
 
-			if (accessType === undefined)
-				accessType = X3DConstants .initializeOnly;
-
-			var type = Fields [element .getAttribute ("type")];
-
-			if (type === undefined)
+			this .parser .setInput (value);
+			this .fieldTypes [field .getType ()] .call (this .parser, field);
+		},
+		addNode: function (xmlElement, node)
+		{
+			if (this .parents .length === 0 || this .getParent () instanceof X3DProtoDeclaration)
+			{
+				this .getExecutionContext () .rootNodes .push (node);
 				return;
+			}
 
-			var name = element .getAttribute ("name");
+			var parent = this .getParent ();
 
-			if (! this .id (name))
+			if (parent instanceof X3DField)
+			{
+				switch (parent .getType ())
+				{
+					case X3DConstants .SFNode:
+						parent .setValue (node);
+						parent .setSet (true);
+						return;
+
+					case X3DConstants .MFNode:
+						parent .push (node);
+						parent .setSet (true);
+						return;
+				}
+					
 				return;
-
-			var field = new type ();
-
-			if (accessType & X3DConstants .initializeOnly)
-			{
-				var value = element .getAttribute ("value");
-
-				if (field instanceof X3DArrayField)
-					field .length = 0;
-
-				if (value !== null)
-				{
-					this .parser .setInput (value);
-					this .fieldTypes [field .getType ()] .call (this .parser, field);
-					field .setSet (true);
-				}
-
-				this .pushParent (field);
-				this .statements (element .childNodes);
-				this .popParent ();
 			}
-
-			node .addUserDefinedField (accessType, name, field);
-		},
-		fieldValue: function (element)
-		{
-			try
-			{
-				var
-					node = this .getParent (),
-					name = element .getAttribute ("name");
-
-				if (! this .id (name))
-					return;
-
-				var
-					field      = node .getField (name),
-					accessType = field .getAccessType ();
-
-				if (accessType & X3DConstants .initializeOnly)
-				{
-					var value = element .getAttribute ("value");
-
-					if (field instanceof X3DArrayField)
-						field .length = 0;
-
-					if (value !== null)
-					{
-						this .parser .setInput (value);
-						this .fieldTypes [field .getType ()] .call (this .parser, field);
-						field .setSet (true);
-					}
-
-					this .pushParent (field);
-					this .statements (element .childNodes);
-					this .popParent ();
-				}
-			}
-			catch (error)
-			{
-				console .warn ("XML Parser Error: Couldn't assign field value: " + error .message);
-			}
-		},
-		IS: function (element)
-		{
-			if (this .getExecutionContext () instanceof X3DProtoDeclaration)
-			{
-				var childNodes = element .childNodes;
-
-				for (var i = 0; i < childNodes .length; ++ i)
-				{
-					var child = childNodes [i];
-
-					switch (child .nodeName)
-					{
-						case "connect":
-							this .connect (child);
-							continue;
-					}
-				}
-			}
-		},
-		connect: function (element)
-		{
-			var
-				nodeFieldName  = element .getAttribute ("nodeField"),
-				protoFieldName = element .getAttribute ("protoField");
-
-			if (nodeFieldName === null)
-				return console .warn ("XML Parser Error: Bad connect statement: Expected nodeField attribute.");
-
-			if (protoFieldName === null)
-				return console .warn ("XML Parser Error: Bad connect statement: Expected protoField attribute.");
-
-			try
-			{
-				var
-					node      = this .getParent (),
-					proto     = this .getExecutionContext (),
-					field     = node .getField (nodeFieldName),
-					reference = proto .getField (protoFieldName);
-
-				if (field .getType () === reference .getType ())
-				{
-					if (reference .isReference (field .getAccessType ()))
-						field .addReference (reference);
-					else
-						throw new Error ("Field '" + field .getName () + "' and '" + reference .getName () + "' in PROTO " + this .getExecutionContext () . getName () + " are incompatible as an IS mapping.");
-				}
-				else
-					throw new Error ("Field '" + field .getName () + "' and '" + reference .getName () + "' in PROTO " + this .getExecutionContext () .getName () + " have different types.");
-			}
-			catch (error)
-			{
-				console .warn ("XML Parser Error: Couldn't create IS reference: " + error .message);
-			}
-		},
-		ExternProtoDeclare: function (element)
-		{
-			var name = element .getAttribute ("name");
-
-			if (this .id (name))
-			{
-				var url = element .getAttribute ("url");
-
-				if (url === null)
-					return console .warn ("XML Parser Error: Bad ExternProtoDeclare statement: Expected url attribute.");
 				
-				if (url !== null)
-				{
-					this .parser .setInput (url);
-					Parser .prototype .sfstringValues .call (this .parser, this .url);
-				}
-				else
-					this .url .length = 0;
+			// parent is a node.
 
-				var externproto = new X3DExternProtoDeclaration (this .getExecutionContext ());
-							
-				this .pushParent (externproto);
-				this .ProtoInterface (element); // parse fields
-				this .popParent ();
-
-				externproto .setName (name);
-				externproto .url_ = this .url;
-				externproto .setup ();
-
-				this .getExecutionContext () .externprotos .add (name, externproto);	
-			}
-		},
-		ProtoDeclare: function (element)
-		{
-			var name = element .getAttribute ("name");
-
-			if (this .id (name))
-			{
-				var
-					proto      = new X3DProtoDeclaration (this .getExecutionContext ()),
-					childNodes = element .childNodes;
-
-				for (var i = 0; i < childNodes .length; ++ i)
-				{
-					var child = childNodes [i];
-
-					switch (child .nodeName)
-					{
-						case "ProtoInterface":
-							this .pushParent (proto);
-							this .ProtoInterface (child);
-							this .popParent ();
-							continue;
-						case "ProtoBody":
-							this .pushExecutionContext (proto);
-							this .ProtoBody (child);
-							this .popExecutionContext ();
-							continue;
-					}
-				}
-
-				proto .setName (name);
-				proto .setup ();
-
-				this .getExecutionContext () .protos .add (name, proto);
-			}
-		},
-		ProtoInterface: function (element)
-		{
-			var childNodes = element .childNodes;
-
-			for (var i = 0; i < childNodes .length; ++ i)
-			{
-				var child = childNodes [i];
-
-				switch (child .nodeName)
-				{
-					case "FIELD": // User-defined field
-					case "field": // User-defined field
-						this .field (child);
-						continue;
-				}
-			}
-		},
-		ProtoBody: function (element)
-		{
-			this .statements (element .childNodes);
-		},
-		IMPORT: function (element)
-		{
 			try
 			{
-				var
-					inlineNodeName   = element .getAttribute ("inlineDEF"),
-					exportedNodeName = element .getAttribute ("exportedDEF"),
-					localNodeName    = element .getAttribute ("AS");
+				var containerField = xmlElement .getAttribute ("containerField");
+				
+				if (! containerField)
+					containerField = node .getContainerField ();
+				
+				var field = parent .getField (containerField);
 
-				if (inlineNodeName === null)
-					throw new Error ("Bad IMPORT statement: Expected exportedDEF attribute.");
+				switch (field .getType ())
+				{
+					case X3DConstants .SFNode:
+						field .setValue (node);
+						field .setSet (true);
+						return;
 
-				if (exportedNodeName === null)
-					throw new Error ("Bad IMPORT statement: Expected exportedDEF attribute.");
-
-				if (! localNodeName)
-					localNodeName = exportedNodeName;
-
-				var namedNode = this .getExecutionContext () .getNamedNode (inlineNodeName);
-
-				this .getExecutionContext () .updateImportedNode (namedNode, exportedNodeName, localNodeName);
+					case X3DConstants .MFNode:
+						field .push (node);
+						field .setSet (true);
+						return;
+				}
 			}
 			catch (error)
 			{
-				console .warn ("XML Parser Error: " + error .message);
+				//console .warn (error .message);
 			}
 		},
-		ROUTE: function (element)
+		getBrowser: function ()
 		{
-			try
-			{
-				var
-					sourceNodeName      = element .getAttribute ("fromNode"),
-					sourceField         = element .getAttribute ("fromField"),
-					destinationNodeName = element .getAttribute ("toNode"),
-					destinationField    = element .getAttribute ("toField");
-
-				if (sourceNodeName === null)
-					throw new Error ("Bad ROUTE statement: Expected fromNode attribute.");
-
-				if (sourceField === null)
-					throw new Error ("Bad ROUTE statement: Expected fromField attribute.");
-
-				if (destinationNodeName === null)
-					throw new Error ("Bad ROUTE statement: Expected toNode attribute.");
-
-				if (destinationField === null)
-					throw new Error ("Bad ROUTE statement: Expected toField attribute.");
-
-				var
-					executionContext = this .getExecutionContext (),
-					sourceNode       = executionContext .getLocalNode (sourceNodeName),
-					destinationNode  = executionContext .getLocalNode (destinationNodeName),
-					route            = executionContext .addRoute (sourceNode, sourceField, destinationNode, destinationField);
-
-				element .x3d = route;
-			}
-			catch (error)
-			{
-				console .warn ("XML Parser Error: " + error .message);
-			}
+			return this .scene .getBrowser ();
 		},
-		EXPORT: function (element)
+		getExecutionContext: function ()
 		{
-			try
-			{
-				var
-					localNodeName    = element .getAttribute ("localDEF"),
-					exportedNodeName = element .getAttribute ("AS");
-
-				if (localNodeName === null)
-					throw new Error ("Bad EXPORT statement: Expected localDEF attribute.");
-
-				if (! exportedNodeName)
-					exportedNodeName = localNodeName;
-
-				var localNode = this .getExecutionContext () .getLocalNode (localNodeName);
-
-				this .getExecutionContext () .updateExportedNode (exportedNodeName, localNode);
-			}
-			catch (error)
-			{
-				console .warn ("XML Parser Error: " + error .message);
-			}
+			return this .executionContexts [this .executionContexts .length - 1];
+		},
+		pushExecutionContext: function (executionContext)
+		{
+			return this .executionContexts .push (executionContext);
+		},
+		popExecutionContext: function ()
+		{
+			this .executionContexts .pop ();
+		},
+		getParents: function ()
+		{
+			return this .parents;
+		},
+		getParent: function ()
+		{
+			return this .parents [this .parents .length - 1];
+		},
+		pushParent: function (parent)
+		{
+			return this .parents .push (parent);
+		},
+		popParent: function ()
+		{
+			this .parents .pop ();
 		},
 		id: function (string)
 		{
@@ -41259,7 +41425,7 @@ function ($,
 		},
 		setScene: function (scene, success)
 		{
-			scene .initLoadCount_ .addInterest (this, "set_initLoadCount__", scene, success);
+			scene .initLoadCount_ .addInterest ("set_initLoadCount__", this, scene, success);
 			scene .initLoadCount_ .addEvent ();
 		},
 		set_initLoadCount__: function (field, scene, success)
@@ -41267,7 +41433,7 @@ function ($,
 			if (field .getValue ())
 				return;
 
-			scene .initLoadCount_ .removeInterest (this, "set_initLoadCount__");
+			scene .initLoadCount_ .removeInterest ("set_initLoadCount__", this);
 
 			success (scene);
 
@@ -41865,7 +42031,7 @@ function (Fields,
 
 	function X3DRenderingContext ()
 	{
-		this .addChildObjects ("viewport", new Fields .MFInt32 (0, 0, 100, 100));
+		this .addChildObjects ("viewport", new Fields .MFInt32 (0, 0, 300, 150));
 
 		this .clipPlanes = [ ]; // Clip planes dumpster
 	}
@@ -42125,7 +42291,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("minAngle", new Fields .SFFloat (Math .PI / 20))
+		this .addChildObjects ("dimension", new Fields .SFInt32 (32))
 	}
 
 	ArcClose2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -42212,7 +42378,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("minAngle", new Fields .SFFloat (Math .PI / 20))
+		this .addChildObjects ("dimension", new Fields .SFInt32 (32))
 	}
 
 	Arc2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -42514,7 +42680,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("segments", new Fields .SFInt32 (40))
+		this .addChildObjects ("dimension", new Fields .SFInt32 (40))
 
 		this .vertices = [ ];
 	}
@@ -42536,7 +42702,7 @@ function ($,
 		},
 		initialize: function ()
 		{
-			this .addInterest (this, "build");
+			this .addInterest ("build", this);
 
 			this .build ();
 		},
@@ -42547,12 +42713,12 @@ function ($,
 		build: function ()
 		{
 			var
-				segments = this .segments_ .getValue (),
-				angle    = Math .PI * 2 / segments;
+				dimension = this .dimension_ .getValue (),
+				angle     = Math .PI * 2 / dimension;
 		
 			this .vertices .length = 0;
 
-			for (var n = 0; n < segments; ++ n)
+			for (var n = 0; n < dimension; ++ n)
 			{
 				var point = Complex .Polar (1, angle * n);
 		
@@ -42634,7 +42800,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("segments", new Fields .SFInt32 (40))
+		this .addChildObjects ("dimension", new Fields .SFInt32 (40))
 
 		this .circleVertices = [ ];
 		this .diskTexCoords  = [ ];
@@ -42659,7 +42825,7 @@ function ($,
 		},
 		initialize: function ()
 		{
-			this .addInterest (this, "build");
+			this .addInterest ("build", this);
 
 			this .build ();
 		},
@@ -42682,15 +42848,15 @@ function ($,
 		build: function ()
 		{
 			var
-				segments = this .segments_ .getValue (),
-				angle    = Math .PI * 2 / segments;
+				dimension = this .dimension_ .getValue (),
+				angle     = Math .PI * 2 / dimension;
 		
 			this .circleVertices .length = 0;
 			this .diskTexCoords  .length = 0;
 			this .diskNormals    .length = 0;
 			this .diskVertices   .length = 0;
 
-			for (var n = 0; n < segments; ++ n)
+			for (var n = 0; n < dimension; ++ n)
 			{
 				var
 					theta1    = angle * n,
@@ -46702,6 +46868,8 @@ function ($,
 
 
 	var
+		min             = new Vector3 (0, 0, 0),
+		max             = new Vector3 (0, 0, 0),
 		clipPoint       = new Vector3 (0, 0, 0),
 		modelViewMatrix = new Matrix4 (),
 		invMatrix       = new Matrix4 ();
@@ -46744,7 +46912,7 @@ function ($,
 		
 			X3DNode .prototype .setup .call (this);
 
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 			this .eventsProcessed ();
 
 			this .setTainted (false);
@@ -46753,7 +46921,7 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
 			var gl = this .getBrowser () .getContext ();
 
@@ -46814,6 +46982,22 @@ function ($,
 		{
 			// With screen matrix applied.
 			return this .bbox;
+		},
+		setBBox: function (bbox)
+		{
+			if (! bbox .equals (this .bbox))
+			{
+			   bbox .getExtents (min, max);
+	
+				this .min  .assign (min);
+				this .max  .assign (max);
+				this .bbox .assign (bbox);
+	
+				for (var i = 0; i < 5; ++ i)
+					this .planes [i] .set (i % 2 ? min : max, boxNormals [i]);
+	
+				this .bbox_changed_ .addEvent ();
+			}
 		},
 		getMin: function ()
 		{
@@ -47042,7 +47226,7 @@ function ($,
 		{
 			// Apply sceen nodes transformation in place here.
 		},
-		intersectsLine: function (line, clipPlanes, modelViewMatrix, intersections)
+		intersectsLine: function (line, clipPlanes, modelViewMatrix_, intersections)
 		{
 			try
 			{
@@ -47050,8 +47234,8 @@ function ($,
 
 				if (this .intersectsBBox (line))
 				{
-					this .transformLine   (line);            // Apply screen transformations from screen nodes.
-					this .transformMatrix (modelViewMatrix); // Apply screen transformations from screen nodes.
+					this .transformLine   (line);                                       // Apply screen transformations from screen nodes.
+					this .transformMatrix (modelViewMatrix .assign (modelViewMatrix_)); // Apply screen transformations from screen nodes.
 
 					var
 						texCoords  = this .texCoords [0],
@@ -47222,9 +47406,9 @@ function ($,
 		set_live__: function ()
 		{
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shading__");
+				this .getBrowser () .getBrowserOptions () .Shading_ .addInterest ("set_shading__", this);
 			else
-				this .getBrowser () .getBrowserOptions () .Shading_ .removeInterest (this, "set_shading__");
+				this .getBrowser () .getBrowserOptions () .Shading_ .removeInterest ("set_shading__", this);
 		},
 		set_shading__: function (shading)
 		{
@@ -47792,11 +47976,11 @@ function ($,
 		{
 			X3DGeometryNode .prototype .initialize .call (this);
 
-			this .attrib_   .addInterest (this, "set_attrib__");
-			this .color_    .addInterest (this, "set_color__");
-			this .texCoord_ .addInterest (this, "set_texCoord__");
-			this .normal_   .addInterest (this, "set_normal__");
-			this .coord_    .addInterest (this, "set_coord__");
+			this .attrib_   .addInterest ("set_attrib__", this);
+			this .color_    .addInterest ("set_color__", this);
+			this .texCoord_ .addInterest ("set_texCoord__", this);
+			this .normal_   .addInterest ("set_normal__", this);
+			this .coord_    .addInterest ("set_coord__", this);
 
 			this .set_attrib__ ();
 			this .set_color__ ();
@@ -47825,7 +48009,7 @@ function ($,
 			var attribNodes = this .getAttrib ();
 
 			for (var i = 0, length = attribNodes .length; i < length; ++ i)
-				attribNodes [i] .removeInterest (this, "addNodeEvent");
+				attribNodes [i] .removeInterest ("addNodeEvent", this);
 
 			attribNodes .length = 0;
 
@@ -47838,22 +48022,22 @@ function ($,
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest ("addNodeEvent", this);
 		},
 		set_color__: function ()
 		{
 			if (this .colorNode)
 			{
-				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
+				this .colorNode .removeInterest ("addNodeEvent", this);
+				this .colorNode .removeInterest ("set_transparent__", this);
 			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
 			{
-				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
+				this .colorNode .addInterest ("addNodeEvent", this);
+				this .colorNode .addInterest ("set_transparent__", this);
 
 				this .set_transparent__ ();
 			}
@@ -47867,34 +48051,34 @@ function ($,
 		set_texCoord__: function ()
 		{
 			if (this .texCoordNode)
-				this .texCoordNode .removeInterest (this, "addNodeEvent");
+				this .texCoordNode .removeInterest ("addNodeEvent", this);
 
 			this .texCoordNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoord_);
 
 			if (this .texCoordNode)
-				this .texCoordNode .addInterest (this, "addNodeEvent");
+				this .texCoordNode .addInterest ("addNodeEvent", this);
 
 			this .setCurrentTexCoord (this .texCoordNode);
 		},
 		set_normal__: function ()
 		{
 			if (this .normalNode)
-				this .normalNode .removeInterest (this, "addNodeEvent");
+				this .normalNode .removeInterest ("addNodeEvent", this);
 
 			this .normalNode = X3DCast (X3DConstants .X3DNormalNode, this .normal_);
 
 			if (this .normalNode)
-				this .normalNode .addInterest (this, "addNodeEvent");
+				this .normalNode .addInterest ("addNodeEvent", this);
 		},
 		set_coord__: function ()
 		{
 			if (this .coordNode)
-				this .coordNode .removeInterest (this, "addNodeEvent");
+				this .coordNode .removeInterest ("addNodeEvent", this);
 
 			this .coordNode = X3DCast (X3DConstants .X3DCoordinateNode, this .coord_);
 
 			if (this .coordNode)
-				this .coordNode .addInterest (this, "addNodeEvent");
+				this .coordNode .addInterest ("addNodeEvent", this);
 		},
 		getPolygonIndex: function (index)
 		{
@@ -48232,8 +48416,7 @@ function ($,
 				texCoordNode    = this .getTexCoord (),
 				normalNode      = this .getNormal (),
 				coordNode       = this .getCoord (),
-				textCoords      = this .getTexCoords (),
-				face            = 0;
+				textCoords      = this .getTexCoords ();
 
 			if (texCoordNode)
 				texCoordNode .init (textCoords);
@@ -48243,7 +48426,8 @@ function ($,
 				var
 					polygon   = polygons [p],
 					vertices  = polygon .vertices,
-					triangles = polygon .triangles;
+					triangles = polygon .triangles,
+					face      = polygon .face;
 
 				for (var v = 0, numVertices = triangles .length; v < numVertices; ++ v)
 				{
@@ -48310,7 +48494,9 @@ function ($,
 				}
 
 				// Construct triangle array and determine the number of used points.
-				var vertices = [ ];
+				var
+					vertices = [ ],
+					face     = 0;
 
 				for (var i = 0; i < coordLength; ++ i)
 				{
@@ -48343,7 +48529,7 @@ function ($,
 								case 3:
 								{
 									// Add polygon with one triangle.
-									polygons .push ({ vertices: vertices, triangles: Triangle });
+									polygons .push ({ vertices: vertices, triangles: Triangle, face: face });
 									vertices = [ ];
 									break;
 								}
@@ -48352,7 +48538,7 @@ function ($,
 									// Triangulate polygons.
 									var
 										triangles = [ ],
-										polygon   = { vertices: vertices, triangles: triangles };
+										polygon   = { vertices: vertices, triangles: triangles, face: face };
 
 									if (convex)
 										this .triangulateConvexPolygon (polygon);
@@ -48371,6 +48557,8 @@ function ($,
 								}
 							}
 						}
+						
+						++ face;
 					}
 				}
 			}
@@ -49496,8 +49684,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("uDimension", new Fields .SFInt32 (1),
-		                       "vDimension", new Fields .SFInt32 (20))
+		this .addChildObjects ("xDimension", new Fields .SFInt32 (20),
+		                       "yDimension", new Fields .SFInt32 (1))
 	}
 
 	ConeOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -49584,8 +49772,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 			
-		this .addChildObjects ("uDimension", new Fields .SFInt32 (1),
-		                       "vDimension", new Fields .SFInt32 (20))
+		this .addChildObjects ("xDimension", new Fields .SFInt32 (20),
+		                       "yDimension", new Fields .SFInt32 (1))
 	}
 
 	CylinderOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -49684,8 +49872,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("uDimension", new Fields .SFInt32 (32),
-		                       "vDimension", new Fields .SFInt32 (16))
+		this .addChildObjects ("xDimension", new Fields .SFInt32 (32),
+		                       "yDimension", new Fields .SFInt32 (15))
 	}
 
 	QuadSphereOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),
@@ -49707,7 +49895,7 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 		},
 		getGeometry: function ()
 		{
@@ -49719,29 +49907,29 @@ function ($,
 		createTexCoordIndex: function ()
 		{
 			var
-				uDimension    = this .uDimension_ .getValue () + 1,
-				vDimension    = this .vDimension_ .getValue () + 1,
+				xDimension    = this .xDimension_ .getValue () + 1,
+				yDimension    = this .yDimension_ .getValue (),
 				texCoordIndex = this .geometry .texCoordIndex_;
 
 			// North pole
 			
-			for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u)
+			for (var u = 0, uLength = xDimension - 1; u < uLength; ++ u)
 			{
 				texCoordIndex .push (u);
-				texCoordIndex .push (u + uDimension - 1);
-				texCoordIndex .push (u + uDimension);
+				texCoordIndex .push (u + xDimension - 1);
+				texCoordIndex .push (u + xDimension);
 				texCoordIndex .push (-1);
 			}
 
 			// Sphere segments
 			
-			for (var p = uDimension - 1, v = 0, vLength = vDimension - 3; v < vLength; ++ v, ++ p)
+			for (var p = xDimension - 1, v = 0, vLength = yDimension - 3; v < vLength; ++ v, ++ p)
 			{
-				for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u, ++ p)
+				for (var u = 0, uLength = xDimension - 1; u < uLength; ++ u, ++ p)
 				{
 					texCoordIndex .push (p);
-					texCoordIndex .push (p + uDimension);
-					texCoordIndex .push (p + uDimension + 1);
+					texCoordIndex .push (p + xDimension);
+					texCoordIndex .push (p + xDimension + 1);
 					texCoordIndex .push (p + 1);
 					texCoordIndex .push (-1);
 				}
@@ -49749,11 +49937,11 @@ function ($,
 			
 			// South pole
 
-			var p = (vDimension - 2) * uDimension - 1;
+			var p = (yDimension - 2) * xDimension - 1;
 
-			for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u, ++ p)
+			for (var u = 0, uLength = xDimension - 1; u < uLength; ++ u, ++ p)
 			{
-				texCoordIndex .push (p + uDimension);
+				texCoordIndex .push (p + xDimension);
 				texCoordIndex .push (p + 1);
 				texCoordIndex .push (p);
 				texCoordIndex .push (-1)
@@ -49762,30 +49950,30 @@ function ($,
 		createTexCoord: function ()
 		{
 			var
-				uDimension = this .uDimension_ .getValue () + 1,
-				vDimension = this .vDimension_ .getValue () + 1,
+				xDimension = this .xDimension_ .getValue () + 1,
+				yDimension = this .yDimension_ .getValue (),
 				point      = this .geometry .texCoord_ .getValue () .point_;
 
-				var poleOffset = -0.5 / (uDimension - 1);
+				var poleOffset = -0.5 / (xDimension - 1);
 
 				// North pole
 				
-				for (var u = 1; u < uDimension; ++ u)
+				for (var u = 1; u < xDimension; ++ u)
 				{
-					var x = u / (uDimension - 1) + poleOffset;
+					var x = u / (xDimension - 1) + poleOffset;
 					
 					point .push (new Vector2 (x, 1));
 				}
 
 				// Sphere segments
 				
-				for (var v = 1, vLength = vDimension - 1; v < vLength; ++ v)
+				for (var v = 1, vLength = yDimension - 1; v < vLength; ++ v)
 				{
-					var y = 1 - v / (vDimension - 1);
+					var y = 1 - v / (yDimension - 1);
 					
-					for (var u = 0; u < uDimension; ++ u)
+					for (var u = 0; u < xDimension; ++ u)
 					{
-						var x = u / (uDimension - 1);
+						var x = u / (xDimension - 1);
 						
 						point .push (new Vector2 (x, y));
 					}
@@ -49793,9 +49981,9 @@ function ($,
 
 				// South pole
 				
-				for (var u = 1; u < uDimension; ++ u)
+				for (var u = 1; u < xDimension; ++ u)
 				{
-					var x = u / (uDimension - 1) + poleOffset;
+					var x = u / (xDimension - 1) + poleOffset;
 					
 					point .push (new Vector2 (x, 0));
 				}
@@ -49803,13 +49991,13 @@ function ($,
 		createCoordIndex: function ()
 		{
 			var
-				uDimension = this .uDimension_ .getValue () + 1,
-				vDimension = this .vDimension_ .getValue () + 1,
+				xDimension = this .xDimension_ .getValue () + 1,
+				yDimension = this .yDimension_ .getValue (),
 				coordIndex = this .geometry .coordIndex_;
 
 			// North pole
 			
-			for (var u = 1, uLength = uDimension - 1; u < uLength; ++ u)
+			for (var u = 1, uLength = xDimension - 1; u < uLength; ++ u)
 			{
 				coordIndex .push (0);
 				coordIndex .push (u);
@@ -49826,29 +50014,29 @@ function ($,
 			
 			var p = 1;
 
-			for (var v = 0, vLength = vDimension - 3; v < vLength; ++ v, ++ p)
+			for (var v = 0, vLength = yDimension - 3; v < vLength; ++ v, ++ p)
 			{
-				for (var u = 0, uLength = uDimension - 2; u < uLength; ++ u, ++ p)
+				for (var u = 0, uLength = xDimension - 2; u < uLength; ++ u, ++ p)
 				{
 					coordIndex .push (p);
-					coordIndex .push (p + uDimension - 1);
-					coordIndex .push (p + uDimension);
+					coordIndex .push (p + xDimension - 1);
+					coordIndex .push (p + xDimension);
 					coordIndex .push (p + 1);
 					coordIndex .push (-1);
 				}
 
 				coordIndex .push (p);
-				coordIndex .push (p + uDimension - 1);
+				coordIndex .push (p + xDimension - 1);
 				coordIndex .push (p + 1);
-				coordIndex .push (p - uDimension + 2);
+				coordIndex .push (p - xDimension + 2);
 				coordIndex .push (-1);
 			}
 
 			// South pole
 			
-			var last = p + uDimension - 1;
+			var last = p + xDimension - 1;
 
-			for (var u = 0, uLength = uDimension - 2; u < uLength; ++ u, ++ p)
+			for (var u = 0, uLength = xDimension - 2; u < uLength; ++ u, ++ p)
 			{
 				coordIndex .push (last);
 				coordIndex .push (p + 1);
@@ -49857,26 +50045,26 @@ function ($,
 			}
 
 			coordIndex .push (last);
-			coordIndex .push (last - uDimension + 1);
+			coordIndex .push (last - xDimension + 1);
 			coordIndex .push (p);
 			coordIndex .push (-1);
 		},
 		createPoints: function ()
 		{
 			var
-				uDimension = this .uDimension_ .getValue () + 1,
-				vDimension = this .vDimension_ .getValue () + 1,
+				xDimension = this .xDimension_ .getValue () + 1,
+				yDimension = this .yDimension_ .getValue (),
 				point      = this .geometry .coord_ .getValue () .point_;
 
 			// North pole
 			point .push (new Vector3 (0, 1, 0));
 
 			// Sphere segments
-			for (var v = 1, vLength = vDimension - 1; v < vLength; ++ v)
+			for (var v = 1, vLength = yDimension - 1; v < vLength; ++ v)
 			{
 				var zPlane = Complex .Polar (1, -Math .PI * v / vLength);
 
-				for (var u = 0, uLength = uDimension - 1; u < uLength; ++ u)
+				for (var u = 0, uLength = xDimension - 1; u < uLength; ++ u)
 				{
 					var yPlane = Complex .Polar (zPlane .imag, 2 * Math .PI * u / uLength);
 
@@ -50126,7 +50314,7 @@ function (jquery,
 					event .stopImmediatePropagation (); // Keeps the rest of the handlers from being executed
 
 					browser .setCursor ("HAND");
-					browser .finished () .addInterest (this, "onverifymotion", x, y);
+					browser .finished () .addInterest ("onverifymotion", this, x, y);
 				}
 			}
 		},
@@ -50149,7 +50337,7 @@ function (jquery,
 				browser .getCanvas () .bind ("mousemove.PointingDevice", this .mousemove .bind (this));
 
 				browser .setCursor (this .isOver ? "HAND" : "DEFAULT");
-				browser .finished () .addInterest (this, "onverifymotion", x, y);
+				browser .finished () .addInterest ("onverifymotion", this, x, y);
 				browser .addBrowserEvent ();
 
 				this .cursor = "DEFAULT";
@@ -50214,7 +50402,7 @@ function (jquery,
 			// and the new child has a sensor node inside. This sensor node must be update to
 			// reflect the correct isOver state.
 
-			this .getBrowser () .finished () .removeInterest (this, "onverifymotion");
+			this .getBrowser () .finished () .removeInterest ("onverifymotion", this);
 
 			this .onmotion (x, y);
 		},
@@ -51415,7 +51603,7 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .set_bind_ .addInterest (this, "set_bind__");
+			this .set_bind_ .addInterest ("set_bind__", this);
 		},
 		getCameraObject: function ()
 		{
@@ -51543,16 +51731,16 @@ function ($,
 			this .addChildObjects ("initialized", new Fields .SFTime (),
 			                       "isEvenLive",  new Fields .SFBool ());
 
-			this .isLive ()   .addInterest (this, "set_live__");
-			this .isEvenLive_ .addInterest (this, "_set_live__"); // to X3DBaseNode
+			this .isLive ()   .addInterest ("set_live__", this);
+			this .isEvenLive_ .addInterest ("_set_live__", this); // to X3DBaseNode
 
-			this .initialized_ .addInterest (this, "set_loop__");
-			this .enabled_     .addInterest (this, "set_enabled__");
-			this .loop_        .addInterest (this, "set_loop__");
-			this .startTime_   .addInterest (this, "set_startTime__");
-			this .pauseTime_   .addInterest (this, "set_pauseTime__");
-			this .resumeTime_  .addInterest (this, "set_resumeTime__");
-			this .stopTime_    .addInterest (this, "set_stopTime__");
+			this .initialized_ .addInterest ("set_loop__", this);
+			this .enabled_     .addInterest ("set_enabled__", this);
+			this .loop_        .addInterest ("set_loop__", this);
+			this .startTime_   .addInterest ("set_startTime__", this);
+			this .pauseTime_   .addInterest ("set_pauseTime__", this);
+			this .resumeTime_  .addInterest ("set_resumeTime__", this);
+			this .stopTime_    .addInterest ("set_stopTime__", this);
 
 			this .startTimeValue  = this .startTime_  .getValue ();
 			this .pauseTimeValue  = this .pauseTime_  .getValue ();
@@ -51703,7 +51891,7 @@ function ($,
 
 				if (this .isLive () .getValue ())
 				{
-					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+					this .getBrowser () .prepareEvents () .addInterest ("prepareEvents", this);
 				}
 				else if (! this .disabled)
 				{
@@ -51734,7 +51922,7 @@ function ($,
 
 			this .set_pause ();
 
-			this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+			this .getBrowser () .prepareEvents () .removeInterest ("prepareEvents", this);
 		},
 		do_resume: function ()
 		{
@@ -51757,7 +51945,7 @@ function ($,
 
 			this .set_resume (interval);
 
-			this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+			this .getBrowser () .prepareEvents () .addInterest ("prepareEvents", this);
 			this .getBrowser () .addBrowserEvent ();
 		},
 		do_stop: function ()
@@ -51780,7 +51968,7 @@ function ($,
 				this .isActive_ = false;
 
 				if (this .isLive () .getValue ())
-					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+					this .getBrowser () .prepareEvents () .removeInterest ("prepareEvents", this);
 			}
 		},
 		timeout: function (callback)
@@ -52080,8 +52268,8 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 			
-			this .set_fraction_ .addInterest (this, "set_fraction__");
-			this .key_          .addInterest (this, "set_key__");
+			this .set_fraction_ .addInterest ("set_fraction__", this);
+			this .key_          .addInterest ("set_key__", this);
 		},
 		set_fraction__: function ()
 		{
@@ -52229,7 +52417,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .easeInEaseOut_ .addInterest (this, "set_keyValue__");
+			this .easeInEaseOut_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -52380,7 +52568,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -52504,7 +52692,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -52694,7 +52882,7 @@ function ($,
 			this .scaleInterpolator            .value_changed_ .addFieldInterest (this .scaleOffset_);
 			this .scaleOrientationInterpolator .value_changed_ .addFieldInterest (this .scaleOrientationOffset_);
 
-			this .isBound_ .addInterest (this, "set_bound__");
+			this .isBound_ .addInterest ("set_bound__", this);
 		},
 		getEaseInEaseOut: function ()
 		{
@@ -52818,7 +53006,7 @@ function ($,
 					this .timeSensor .cycleInterval_ = transitionTime;
 					this .timeSensor .stopTime_      = this .getBrowser () .getCurrentTime ();
 					this .timeSensor .startTime_     = this .getBrowser () .getCurrentTime ();
-					this .timeSensor .isActive_ .addInterest (this, "set_active__");
+					this .timeSensor .isActive_ .addInterest ("set_active__", this);
 
 					this .getRelativeTransformation (fromViewpoint, relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
 
@@ -52854,7 +53042,7 @@ function ($,
 		transitionStop: function ()
 		{
 			this .timeSensor .stopTime_ = this .getBrowser () .getCurrentTime ();
-			this .timeSensor .isActive_ .removeInterest (this, "set_active__");
+			this .timeSensor .isActive_ .removeInterest ("set_active__", this);
 		},
 		resetUserOffsets: function ()
 		{
@@ -52921,7 +53109,7 @@ function ($,
 			this .timeSensor .cycleInterval_ = 0.2;
 			this .timeSensor .stopTime_      = this .getBrowser () .getCurrentTime ();
 			this .timeSensor .startTime_     = this .getBrowser () .getCurrentTime ();
-			this .timeSensor .isActive_ .addInterest (this, "set_active__");
+			this .timeSensor .isActive_ .addInterest ("set_active__", this);
 	
 			this .easeInEaseOut .easeInEaseOut_ = [ new Vector2 (0, 1), new Vector2 (1, 0) ];
 
@@ -53236,8 +53424,8 @@ function ($,
 		{
 			X3DViewpointNode .prototype .initialize .call (this);
 
-			this .fieldOfView_      .addInterest (this, "set_fieldOfView___");
-			this .fieldOfViewScale_ .addInterest (this, "set_fieldOfView___");
+			this .fieldOfView_      .addInterest ("set_fieldOfView___", this);
+			this .fieldOfViewScale_ .addInterest ("set_fieldOfView___", this);
 
 			this .set_fieldOfView___ ();
 		},
@@ -54083,7 +54271,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			canvas .bind ("mouseup.X3DFlyViewer",    this .mouseup    .bind (this));
 			canvas .bind ("mousewheel.X3DFlyViewer", this .mousewheel .bind (this));
 
-			this .getBrowser () .controlKey_ .addInterest (this, "set_controlKey_");
+			this .getBrowser () .controlKey_ .addInterest ("set_controlKey_", this);
 		},
 		addCollision: function () { },
 		removeCollision: function () { },
@@ -54137,7 +54325,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 						this .direction  .set (0, 0, 0);
 
 						if (this .getBrowser () .getBrowserOption ("Rubberband"))
-							this .getBrowser () .finished () .addInterest (this, "display", MOVE);
+							this .getBrowser () .finished () .addInterest ("display", this, MOVE);
 					}
 
 					break;
@@ -54159,7 +54347,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					this .toVector   .assign (this .fromVector);
 
 					if (this .getBrowser () .getBrowserOption ("Rubberband"))
-						this .getBrowser () .finished () .addInterest (this, "display", PAN);
+						this .getBrowser () .finished () .addInterest ("display", this, PAN);
 					
 					break;
 				}
@@ -54366,7 +54554,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			if (this .startTime)
 				return;
 
-			this .getBrowser () .prepareEvents () .addInterest (this, "fly");
+			this .getBrowser () .prepareEvents () .addInterest ("fly", this);
 			this .getBrowser () .addBrowserEvent ();
 
 			this .startTime = performance .now ();
@@ -54376,7 +54564,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			if (this .startTime)
 				return;
 			
-			this .getBrowser () .prepareEvents () .addInterest (this, "pan");
+			this .getBrowser () .prepareEvents () .addInterest ("pan", this);
 			this .getBrowser () .addBrowserEvent ();
 
 			this .startTime = performance .now ();
@@ -54386,7 +54574,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			if (this .startTime)
 				return;
 			
-			this .getBrowser () .prepareEvents () .addInterest (this, "roll");
+			this .getBrowser () .prepareEvents () .addInterest ("roll", this);
 			this .getBrowser () .addBrowserEvent ();
 			
 			this .startTime = performance .now ();
@@ -54483,17 +54671,17 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			browser .addBrowserEvent ();
 
-			browser .prepareEvents () .removeInterest (this, "fly");
-			browser .prepareEvents () .removeInterest (this, "pan");
-			browser .prepareEvents () .removeInterest (this, "roll");
-			browser .finished ()      .removeInterest (this, "display");
+			browser .prepareEvents () .removeInterest ("fly", this);
+			browser .prepareEvents () .removeInterest ("pan", this);
+			browser .prepareEvents () .removeInterest ("roll", this);
+			browser .finished ()      .removeInterest ("display", this);
 
 			this .startTime = 0;
 		},
 		dispose: function ()
 		{
 			this .disconnect ();
-			this .getBrowser () .controlKey_ .removeInterest (this, "set_controlKey_");
+			this .getBrowser () .controlKey_ .removeInterest ("set_controlKey_", this);
 			this .getBrowser () .getCanvas () .unbind (".X3DFlyViewer");
 			$(document) .unbind (".X3DFlyViewer" + this .getId ());
 		},
@@ -54794,7 +54982,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -56071,8 +56259,8 @@ function ($,
 		constructor: X3DGeospatialObject,
 		initialize: function ()
 		{
-			this .geoSystem_ .addInterest (this, "set_geoSystem__");
-			this .geoOrigin_ .addInterest (this, "set_geoOrigin__");
+			this .geoSystem_ .addInterest ("set_geoSystem__", this);
+			this .geoOrigin_ .addInterest ("set_geoOrigin__", this);
 
 			this .set_geoSystem__ ();
 			this .set_geoOrigin__ ();
@@ -56088,18 +56276,18 @@ function ($,
 		{
 			if (this .geoOriginNode)
 			{
-				this .geoOriginNode .removeInterest (this, "set_origin__");
-				this .geoOriginNode .removeInterest (this, "set_rotateYUp__");
-				this .geoOriginNode .removeInterest (this, "addNodeEvent");
+				this .geoOriginNode .removeInterest ("set_origin__", this);
+				this .geoOriginNode .removeInterest ("set_rotateYUp__", this);
+				this .geoOriginNode .removeInterest ("addNodeEvent", this);
 			}
 		
 			this .geoOriginNode = X3DCast (X3DConstants .GeoOrigin, this .geoOrigin_);
 		
 			if (this .geoOriginNode)
 			{
-				this .geoOriginNode .addInterest (this, "set_origin__");
-				this .geoOriginNode .addInterest (this, "set_rotateYUp__");
-				this .geoOriginNode .addInterest (this, "addNodeEvent");
+				this .geoOriginNode .addInterest ("set_origin__", this);
+				this .geoOriginNode .addInterest ("set_rotateYUp__", this);
+				this .geoOriginNode .addInterest ("addNodeEvent", this);
 			}
 		
 			this .set_origin__ ();
@@ -56382,8 +56570,8 @@ function ($,
 		{
 			X3DBindableNode .prototype .initialize .call (this);
 
-			this .type_      .addInterest (this, "set_type__");
-			this .headlight_ .addInterest (this, "set_headlight__");
+			this .type_      .addInterest ("set_type__", this);
+			this .headlight_ .addInterest ("set_headlight__", this);
 
 			this .set_type__ ();
 			this .set_headlight__ ();
@@ -56583,7 +56771,11 @@ function ($,
 		},
 		enable: function (type, renderObject)
 		{
-			renderObject .getGlobalLights () .push (renderObject .getBrowser () .getHeadlight ());
+			if (type !== TraverseType .DISPLAY)
+				return;
+
+			if (this .headlight_ .getValue ())
+				renderObject .getGlobalLights () .push (renderObject .getBrowser () .getHeadlight ());
 		},
 		traverse: function (type, renderObject)
 		{
@@ -56761,8 +56953,8 @@ function ($,
 			X3DViewpointNode    .prototype .initialize .call (this);
 			X3DGeospatialObject .prototype .initialize .call (this);
 
-			this .position_       .addInterest (this, "set_position__");
-			this .positionOffset_ .addInterest (this, "set_position__");
+			this .position_       .addInterest ("set_position__", this);
+			this .positionOffset_ .addInterest ("set_position__", this);
 			this .navType_        .addFieldInterest (this .navigationInfoNode .type_);
 			this .headlight_      .addFieldInterest (this .navigationInfoNode .headlight_);
 		
@@ -57729,9 +57921,9 @@ function ($,
 			X3DChildNode     .prototype .initialize .call (this);
 			X3DBoundedObject .prototype .initialize .call (this);
 
-			this .addChildren_    .addInterest (this, "set_addChildren__");
-			this .removeChildren_ .addInterest (this, "set_removeChildren__");
-			this .children_       .addInterest (this, "set_children__");
+			this .addChildren_    .addInterest ("set_addChildren__", this);
+			this .removeChildren_ .addInterest ("set_removeChildren__", this);
+			this .children_       .addInterest ("set_children__", this);
 
 			this .set_children__ ();
 		},
@@ -57790,8 +57982,8 @@ function ($,
 
 			if (! this .children_ .getTainted ())
 			{
-				this .children_ .removeInterest (this, "set_children__");
-				this .children_ .addInterest (this, "connectChildren");
+				this .children_ .removeInterest ("set_children__", this);
+				this .children_ .addInterest ("connectChildren", this);
 			}
 
 			this .children_ .insert (this .children_ .length, this .addChildren_, 0, this .addChildren_ .length);
@@ -57810,8 +58002,8 @@ function ($,
 
 			if (! this .children_ .getTainted ())
 			{
-				this .children_ .removeInterest (this, "set_children__");
-				this .children_ .addInterest (this, "connectChildren");
+				this .children_ .removeInterest ("set_children__", this);
+				this .children_ .addInterest ("connectChildren", this);
 			}
 
 			this .children_ .erase (remove (this .children_,       0, this .children_ .length,
@@ -57829,8 +58021,8 @@ function ($,
 		},
 		connectChildren: function ()
 		{
-			this .children_ .removeInterest (this, "connectChildren");
-			this .children_ .addInterest (this, "set_children__");
+			this .children_ .removeInterest ("connectChildren", this);
+			this .children_ .addInterest ("set_children__", this);
 		},
 		add: function (children)
 		{
@@ -57885,7 +58077,7 @@ function ($,
 								case X3DConstants .X3DBackgroundNode:
 								case X3DConstants .X3DChildNode:
 								{
-									innerNode .isCameraObject_ .addInterest (this, "set_cameraObjects__");
+									innerNode .isCameraObject_ .addInterest ("set_cameraObjects__", this);
 
 									this .maybeCameraObjects .push (innerNode);
 									this .childNodes .push (innerNode);
@@ -57922,7 +58114,7 @@ function ($,
 		clear: function ()
 		{
 			for (var i = 0, length = this .childNodes .length; i < length; ++ i)
-				this .childNodes [i] .isCameraObject_ .removeInterest (this, "set_cameraObjects__");
+				this .childNodes [i] .isCameraObject_ .removeInterest ("set_cameraObjects__", this);
 			
 			this .pointingDeviceSensors .length = 0;
 			this .maybeCameraObjects    .length = 0;
@@ -58667,10 +58859,10 @@ function (Fields,
 	{
 		initialize: function ()
 		{
-			this .viewer_ .addInterest (this, "set_viewer__");
+			this .viewer_ .addInterest ("set_viewer__", this);
 
-			this .initialized () .addInterest (this, "set_world__");
-			this .shutdown ()    .addInterest (this, "remove_world__");
+			this .initialized () .addInterest ("set_world__", this);
+			this .shutdown ()    .addInterest ("remove_world__", this);
 
 			this .headlightContainer = getHeadLight (this);
 		},
@@ -58710,23 +58902,23 @@ function (Fields,
 		},
 		remove_world__: function ()
 		{
-			this .getWorld () .activeLayer_ .removeInterest (this, "set_activeLayer__");
+			this .getWorld () .activeLayer_ .removeInterest ("set_activeLayer__", this);
 		},
 		set_world__: function ()
 		{
-			this .getWorld () .activeLayer_ .addInterest (this, "set_activeLayer__");
+			this .getWorld () .activeLayer_ .addInterest ("set_activeLayer__", this);
 
 			this .set_activeLayer__ ();
 		},
 		set_activeLayer__: function ()
 		{
 			if (this .activeLayerNode)
-				this .activeLayerNode .getNavigationInfoStack () .removeInterest (this, "set_navigationInfo__");
+				this .activeLayerNode .getNavigationInfoStack () .removeInterest ("set_navigationInfo__", this);
 
 			this .activeLayerNode = this .getWorld () .getActiveLayer ();
 
 			if (this .activeLayerNode)
-				this .activeLayerNode .getNavigationInfoStack () .addInterest (this, "set_navigationInfo__");
+				this .activeLayerNode .getNavigationInfoStack () .addInterest ("set_navigationInfo__", this);
 
 			this .set_navigationInfo__ ();
 		},
@@ -59884,8 +60076,8 @@ function (Fields)
 	{
 		initialize: function ()
 		{
-			this .volume_ .addInterest (this, "set_volume__");
-			this .mute_   .addInterest (this, "set_mute__");
+			this .volume_ .addInterest ("set_volume__", this);
+			this .mute_   .addInterest ("set_mute__", this);
 
 			var
 				volume = this .getDataStorage () ["X3DSoundContext.volume"],
@@ -60103,8 +60295,8 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
-			this .style_   .addInterest (this, "set_style__");
-			this .justify_ .addInterest (this, "set_justify__");
+			this .style_   .addInterest ("set_style__", this);
+			this .justify_ .addInterest ("set_justify__", this);
 
 			this .font        = null;
 			this .familyIndex = 0;
@@ -61205,6 +61397,8 @@ function (TextAlignment,
 
 			return glyphs;
 		},
+		traverse: function (type, renderObject)
+		{ },
 	};
 
 	return X3DTextGeometry;
@@ -69126,7 +69320,7 @@ function ($,
 		{
 			X3DTextureTransformNode .prototype .initialize .call (this);
 			
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 
 			this .eventsProcessed ();
 		},
@@ -69672,9 +69866,9 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
-			this .speed_     .addInterest (this, "set_speed__");
-			this .variation_ .addInterest (this, "set_variation__");
-			this .mass_      .addInterest (this, "set_mass__");
+			this .speed_     .addInterest ("set_speed__", this);
+			this .variation_ .addInterest ("set_variation__", this);
+			this .mass_      .addInterest ("set_mass__", this);
 
 			this .set_speed__ ();
 			this .set_variation__ ();
@@ -70079,8 +70273,8 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .position_  .addInterest (this, "set_position__");
-			this .direction_ .addInterest (this, "set_direction__");
+			this .position_  .addInterest ("set_position__", this);
+			this .direction_ .addInterest ("set_direction__", this);
 
 			this .set_position__ ();
 			this .set_direction__ ();
@@ -70251,7 +70445,7 @@ define ('cobweb/Rendering/X3DRenderObject',[
 	"cobweb/Rendering/DepthBuffer",
 	"cobweb/Bits/TraverseType",
 	"standard/Math/Algorithm",
-	"standard/Math/Algorithms/QuickSort",
+	"standard/Math/Algorithms/MergeSort",
 	"standard/Math/Geometry/Camera",
 	"standard/Math/Geometry/Box3",
 	"standard/Math/Geometry/ViewVolume",
@@ -70265,7 +70459,7 @@ function ($,
           DepthBuffer,
 	       TraverseType,
           Algorithm,
-          QuickSort,
+          MergeSort,
           Camera,
           Box3,
           ViewVolume,
@@ -70280,6 +70474,7 @@ function ($,
 	var
 		DEPTH_BUFFER_WIDTH          = 16,
 		DEPTH_BUFFER_HEIGHT         = DEPTH_BUFFER_WIDTH,
+		viewportArray               = new Int32Array (4),
 		projectionMatrix            = new Matrix4 (),
 		projectionMatrixArray       = new Float32Array (16),
 		modelViewMatrix             = new Matrix4 (),
@@ -70320,7 +70515,7 @@ function ($,
 		this .numDepthShapes           = 0;
 		this .opaqueShapes             = [ ];
 		this .transparentShapes        = [ ];
-		this .transparencySorter       = new QuickSort (this .transparentShapes, compareDistance);
+		this .transparencySorter       = new MergeSort (this .transparentShapes, compareDistance);
 		this .collisionShapes          = [ ];
 		this .activeCollisions         = { };
 		this .depthShapes              = [ ];
@@ -70806,7 +71001,12 @@ function ($,
 		   {
 				// Terrain following and gravitation
 
-				if (this .getNavigationInfo () .getViewer () !== "WALK")
+				if (this .getBrowser () .getActiveLayer () .getNavigationInfo () === this .getNavigationInfo ())
+				{
+					if (this .getBrowser () .getCurrentViewer () !== "WALK")
+						return;
+				}
+				else if (this .getNavigationInfo () .getViewer () !== "WALK")
 					return;
 
 				// Get NavigationInfo values
@@ -70915,10 +71115,10 @@ function ($,
 				viewport   = this .getViewVolume () .getViewport (),
 				shaderNode = browser .getDepthShader ();
 
-			// Configure shader
+			// Configure depth shader.
 
 			shaderNode .useProgram (gl);
-			
+
 			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
 			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, projectionMatrixArray);
@@ -71026,14 +71226,15 @@ function ($,
 
 			// Sorted blend
 
+			viewportArray         .set (viewport);
 			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
-			browser .getPointShader   () .setGlobalUniforms (this, gl, projectionMatrixArray);
-			browser .getLineShader    () .setGlobalUniforms (this, gl, projectionMatrixArray);
-			browser .getDefaultShader () .setGlobalUniforms (this, gl, projectionMatrixArray);
+			browser .getPointShader   () .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
+			browser .getLineShader    () .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
+			browser .getDefaultShader () .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
 
 			for (var id in shaders)
-				shaders [id] .setGlobalUniforms (this, gl, projectionMatrixArray);
+				shaders [id] .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
 
 			// Render opaque objects first
 
@@ -71519,7 +71720,7 @@ function ($,
 		constructor: X3DFogObject,
 		initialize: function ()
 		{
-			this .fogType_ .addInterest (this, "set_fogType__");
+			this .fogType_ .addInterest ("set_fogType__", this);
 
 			this .set_fogType__ ();
 		},
@@ -71902,11 +72103,11 @@ function ($,
 			this .topBuffer       = gl .createBuffer ();
 			this .bottomBuffer    = gl .createBuffer ();
 
-			this .groundAngle_  .addInterest (this, "build");
-			this .groundColor_  .addInterest (this, "build");
-			this .skyAngle_     .addInterest (this, "build");
-			this .skyColor_     .addInterest (this, "build");
-			this .transparency_ .addInterest (this, "build");
+			this .groundAngle_  .addInterest ("build", this);
+			this .groundColor_  .addInterest ("build", this);
+			this .skyAngle_     .addInterest ("build", this);
+			this .skyColor_     .addInterest ("build", this);
+			this .transparency_ .addInterest ("build", this);
 
 			this .build ();
 			this .transferRectangle ();
@@ -71938,13 +72139,13 @@ function ($,
 		setTexture: function (key, texture, bit)
 		{
 			if (this [key])
-				this [key] .loadState_ .removeInterest (this, "setTextureBit");
+				this [key] .loadState_ .removeInterest ("setTextureBit", this);
 
 			this [key] = texture;
 
 			if (texture)
 			{
-				texture .loadState_ .addInterest (this, "setTextureBit", bit);
+				texture .loadState_ .addInterest ("setTextureBit", this, bit);
 				this .setTextureBit (texture .loadState_, bit);
 			}
 			else
@@ -72619,9 +72820,9 @@ function ($,
 			
 			this .target = gl .TEXTURE_2D;
 
-			this .repeatS_           .addInterest (this, "updateTextureProperties");
-			this .repeatT_           .addInterest (this, "updateTextureProperties");
-			this .textureProperties_ .addInterest (this, "set_textureProperties__");
+			this .repeatS_           .addInterest ("updateTextureProperties", this);
+			this .repeatT_           .addInterest ("updateTextureProperties", this);
+			this .textureProperties_ .addInterest ("set_textureProperties__", this);
 
 			gl .bindTexture (gl .TEXTURE_2D, this .getTexture ());
 			gl .texImage2D  (gl .TEXTURE_2D, 0, gl .RGBA, 1, 1, 0, gl .RGBA, gl .UNSIGNED_BYTE, defaultData);
@@ -72631,14 +72832,14 @@ function ($,
 		set_textureProperties__: function ()
 		{
 			if (this .texturePropertiesNode)
-				this .texturePropertiesNode .removeInterest (this, "updateTextureProperties");
+				this .texturePropertiesNode .removeInterest ("updateTextureProperties", this);
 
 			this .texturePropertiesNode = X3DCast (X3DConstants .TextureProperties, this .textureProperties_);
 
 			if (! this .texturePropertiesNode)
 				this .texturePropertiesNode = this .getBrowser () .getDefaultTextureProperties ();
 
-			this .texturePropertiesNode .addInterest (this, "updateTextureProperties");
+			this .texturePropertiesNode .addInterest ("updateTextureProperties", this);
 
 			this .updateTextureProperties ();
 		},
@@ -72881,7 +73082,7 @@ function ($,
 			X3DTexture2DNode .prototype .initialize .call (this);
 			X3DUrlObject     .prototype .initialize .call (this);
 
-			this .url_ .addInterest (this, "set_url__");
+			this .url_ .addInterest ("set_url__", this);
 
 			this .canvas = $("<canvas></canvas>");
 
@@ -73334,7 +73535,7 @@ function ($,
 			this .navigationInfos .setup ();
 			this .viewpoints      .setup ();
 
-			this .viewport_       .addInterest (this, "set_viewport__");
+			this .viewport_       .addInterest ("set_viewport__", this);
 			this .addChildren_    .addFieldInterest (this .groupNode .addChildren_);
 			this .removeChildren_ .addFieldInterest (this .groupNode .removeChildren_);
 			this .children_       .addFieldInterest (this .groupNode .children_);
@@ -73899,9 +74100,9 @@ function ($,
 			this .layerNode0 .setup ();
 			this .layerNode0 .isLayer0 (true);
 
-			this .activeLayer_ .addInterest (this, "set_activeLayer");
-			this .order_       .addInterest (this, "set_layers");
-			this .layers_      .addInterest (this, "set_layers");
+			this .activeLayer_ .addInterest ("set_activeLayer", this);
+			this .order_       .addInterest ("set_layers", this);
+			this .layers_      .addInterest ("set_layers", this);
 
 			this .set_layers ();
 		},
@@ -74109,9 +74310,9 @@ function ($,
 			this .layerSet .setPrivate (true);
 			this .layerSet .setup ();
 			this .layerSet .setLayer0 (this .layer0);
-			this .layerSet .activeLayer_ .addInterest (this, "set_activeLayer");
+			this .layerSet .activeLayer_ .addInterest ("set_activeLayer", this);
 
-			this .getExecutionContext () .getRootNodes () .addInterest (this, "set_rootNodes");
+			this .getExecutionContext () .getRootNodes () .addInterest ("set_rootNodes", this);
 			this .getExecutionContext () .setup ();
 
 			this .set_rootNodes ();
@@ -74152,8 +74353,8 @@ function ($,
 
 			if (this .layerSet !== oldLayerSet)
 			{
-				oldLayerSet    .activeLayer_ .removeInterest (this, "set_activeLayer");
-				this .layerSet .activeLayer_ .addInterest    (this, "set_activeLayer");
+				oldLayerSet    .activeLayer_ .removeInterest ("set_activeLayer", this);
+				this .layerSet .activeLayer_ .addInterest ("set_activeLayer", this);
 
 				this .set_activeLayer ();
 			}
@@ -75390,7 +75591,7 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
-			this .enabled_ .addInterest (this, "set_enabled__");
+			this .enabled_ .addInterest ("set_enabled__", this);
 		},
 		getMatrices: function ()
 		{
@@ -75923,16 +76124,14 @@ function ($,
 		X3DGeometryNode .call (this, executionContext);
 
 		//this .addType (X3DConstants .X3DLineGeometryNode);
-
-		this .shaderNode = this .getBrowser () .getLineShader ();
 	}
 
 	X3DLineGeometryNode .prototype = $.extend (Object .create (X3DGeometryNode .prototype),
 	{
 		constructor: X3DLineGeometryNode,
-		setShader: function (value)
+		getShader: function (browser)
 		{
-			this .shaderNode = value;
+			return browser .getLineShader ();
 		},
 		intersectsLine: function (line, clipPlanes, modelViewMatrix, intersections)
 		{
@@ -75954,7 +76153,7 @@ function ($,
 					attribBuffers = this .attribBuffers;
 	
 				if (shaderNode === browser .getDefaultShader ())
-					shaderNode = this .shaderNode;
+					shaderNode = this .getShader (browser);
 	
 				// Setup shader.
 	
@@ -75999,7 +76198,7 @@ function ($,
 					attribBuffers = this .attribBuffers;
 	
 				if (shaderNode === browser .getDefaultShader ())
-					shaderNode = this .shaderNode;
+					shaderNode = this .getShader (browser);
 	
 				// Setup shader.
 	
@@ -76165,11 +76364,11 @@ function ($,
 			X3DLineGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getArc2DOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getArc2DOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getArc2DOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getArc2DOptions () .removeInterest ("eventsProcessed", this);
 		},
-		getAngle: function ()
+		getSweepAngle: function ()
 		{
 			var
 				start = Algorithm .interval (this .startAngle_ .getValue (), 0, Math .PI * 2),
@@ -76178,13 +76377,13 @@ function ($,
 			if (start === end)
 				return Math .PI * 2;
 		
-			var difference = Math .abs (end - start);
+			var sweepAngle = Math .abs (end - start);
 		
 			if (start > end)
-				return (Math .PI * 2) - difference;
+				return (Math .PI * 2) - sweepAngle;
 		
-			if (! isNaN (difference))
-				return difference;
+			if (! isNaN (sweepAngle))
+				return sweepAngle;
 			
 			// We must test for NAN, as NAN to int is undefined.
 			return 0;
@@ -76194,28 +76393,33 @@ function ($,
 			var
 				gl         = this .getBrowser () .getContext (),
 				options    = this .getBrowser () .getArc2DOptions (),
-				minAngle   = options .minAngle_ .getValue (),
+				dimension  = options .dimension_ .getValue (),
 				startAngle = this .startAngle_ .getValue  (),
 				radius     = Math .abs (this .radius_ .getValue ()),
-				difference = this .getAngle (),
-				segments   = Math .ceil (difference / minAngle),
-				angle      = difference / segments,
+				sweepAngle = this .getSweepAngle (),
+				circle     = sweepAngle == (Math .PI * 2),
+				steps      = Math .floor (sweepAngle * dimension / (Math .PI * 2)),
 				vertices   = this .getVertices ();
 
-			if (difference < (Math .PI * 2))
+			steps = Math .max (3, steps);
+
+			if (! circle)
 			{
-				++ segments;
+				++ steps;
 				this .setPrimitiveMode (gl .LINE_STRIP);
 			}
 			else
 				this .setPrimitiveMode (gl .LINE_LOOP);
 
-			for (var n = 0; n < segments; ++ n)
+			var steps_1 = circle ? steps : steps - 1;
+
+			for (var n = 0; n < steps; ++ n)
 			{
 				var
-					theta = startAngle + angle * n,
+					t     = n / steps_1,
+					theta = startAngle + (sweepAngle * t),
 					point = Complex .Polar (radius, theta);
-		
+
 				vertices .push (point .real, point .imag, 0, 1);
 			}
 
@@ -76343,11 +76547,11 @@ function ($,
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getArcClose2DOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getArcClose2DOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getArcClose2DOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getArcClose2DOptions () .removeInterest ("eventsProcessed", this);
 		},
-		getAngle: function ()
+		getSweepAngle: function ()
 		{
 			var
 				start = Algorithm .interval (this .startAngle_ .getValue (), 0, Math .PI * 2),
@@ -76356,13 +76560,13 @@ function ($,
 			if (start === end)
 				return Math .PI * 2;
 		
-			var difference = Math .abs (end - start);
+			var sweepAngle = Math .abs (end - start);
 		
 			if (start > end)
-				return (Math .PI * 2) - difference;
+				return (Math .PI * 2) - sweepAngle;
 		
-			if (! isNaN (difference))
-				return difference;
+			if (! isNaN (sweepAngle))
+				return sweepAngle;
 			
 			// We must test for NAN, as NAN to int is undefined.
 			return 0;
@@ -76372,12 +76576,12 @@ function ($,
 			var
 				options    = this .getBrowser () .getArcClose2DOptions (),
 				chord      = this .closureType_ .getValue () === "CHORD",
-				minAngle   = options .minAngle_ .getValue (),
+				dimension  = options .dimension_ .getValue (),
 				startAngle = this .startAngle_ .getValue  (),
 				radius     = Math .abs (this .radius_ .getValue ()),
-				difference = this .getAngle (),
-				segments   = Math .ceil (difference / minAngle),
-				angle      = difference / segments,
+				sweepAngle = this .getSweepAngle (),
+				circle     = sweepAngle == (Math .PI * 2),
+				steps      = Math .max (4, Math .floor (sweepAngle * dimension / (Math .PI * 2))),
 				texCoords  = [ ],
 				normals    = this .getNormals (),
 				vertices   = this .getVertices (),
@@ -76386,9 +76590,13 @@ function ($,
 
 			this .getTexCoords () .push (texCoords);
 
-			for (var n = 0, length = segments + 1; n < length; ++ n)
+			var steps_1 = steps - 1;
+
+			for (var n = 0; n < steps; ++ n)
 			{
-				var theta = startAngle + angle * n;
+				var
+					t     = n / steps_1,
+					theta = startAngle + (sweepAngle * t);
 
 				texCoord .push (Complex .Polar (0.5, theta) .add (half));
 				points   .push (Complex .Polar (radius, theta));
@@ -76400,7 +76608,7 @@ function ($,
 					t0 = texCoord [0],
 					p0 = points [0];
 
-				for (var i = 1; i < segments; ++ i)
+				for (var i = 1; i < steps_1; ++ i)
 				{
 					var
 						t1 = texCoord [i],
@@ -76423,7 +76631,7 @@ function ($,
 			}
 			else
 			{
-				for (var i = 0; i < segments; ++ i)
+				for (var i = 0; i < steps_1; ++ i)
 				{
 					var
 						t1 = texCoord [i],
@@ -76544,13 +76752,13 @@ function ($,
 
 			if (this .getDisabled ())
 			{
-				this .getBrowser () .volume_ .removeInterest (this, "set_volume__");
-				this .getBrowser () .mute_   .removeInterest (this, "set_volume__");
+				this .getBrowser () .volume_ .removeInterest ("set_volume__", this);
+				this .getBrowser () .mute_   .removeInterest ("set_volume__", this);
 			}
 			else
 			{
-				this .getBrowser () .volume_ .addInterest (this, "set_volume__");
-				this .getBrowser () .mute_   .addInterest (this, "set_volume__");
+				this .getBrowser () .volume_ .addInterest ("set_volume__", this);
+				this .getBrowser () .mute_   .addInterest ("set_volume__", this);
 				this .set_volume__ ();
 			}
 		},
@@ -76804,7 +77012,7 @@ function ($,
 			X3DSoundSourceNode .prototype .initialize .call (this);
 			X3DUrlObject       .prototype .initialize .call (this);
 
-			this .url_ .addInterest (this, "set_url__");
+			this .url_ .addInterest ("set_url__", this);
 
 			this .audio = $("<audio></audio>");
 			this .audio .error (this .setError .bind (this));
@@ -77183,7 +77391,7 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .set_boolean_ .addInterest (this, "set_boolean__");
+			this .set_boolean_ .addInterest ("set_boolean__", this);
 		},
 		set_boolean__: function ()
 		{
@@ -77283,10 +77491,10 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 		
-			this .set_fraction_ .addInterest (this, "set_fraction__");
-			this .previous_     .addInterest (this, "set_previous__");
-			this .next_         .addInterest (this, "set_next__");
-			this .key_          .addInterest (this, "set_index__");
+			this .set_fraction_ .addInterest ("set_fraction__", this);
+			this .previous_     .addInterest ("set_previous__", this);
+			this .next_         .addInterest ("set_next__", this);
+			this .key_          .addInterest ("set_index__", this);
 		},
 		set_fraction__: function ()
 		{
@@ -77462,7 +77670,7 @@ function ($,
 		{
 			X3DSequencerNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_index__");
+			this .keyValue_ .addInterest ("set_index__", this);
 		},
 		getSize: function ()
 		{
@@ -77577,7 +77785,7 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .set_boolean_ .addInterest (this, "set_boolean__");
+			this .set_boolean_ .addInterest ("set_boolean__", this);
 		},
 		set_boolean__: function ()
 		{
@@ -77767,7 +77975,7 @@ function ($,
 		{
 			X3DTriggerNode .prototype .initialize .call (this);
 
-			this .set_triggerTime_ .addInterest (this, "set_triggerTime__");
+			this .set_triggerTime_ .addInterest ("set_triggerTime__", this);
 		},
 		set_triggerTime__: function ()
 		{
@@ -77958,19 +78166,19 @@ function ($,
 		{
 			X3DParticlePhysicsModelNode .prototype .initialize .call (this);
 
-			this .geometry_ .addInterest (this, "set_geometry__");
+			this .geometry_ .addInterest ("set_geometry__", this);
 
 			this .set_geometry__ ();
 		},
 		set_geometry__: function ()
 		{
 			if (this .geometryNode)
-				this .geometryNode .removeInterest (this, "addNodeEvent");
+				this .geometryNode .removeInterest ("addNodeEvent", this);
 
 			this .geometryNode = X3DCast (X3DConstants .X3DGeometryNode, this .geometry_);
 
 			if (this .geometryNode)
-				this .geometryNode .addInterest (this, "addNodeEvent");
+				this .geometryNode .addInterest ("addNodeEvent", this);
 		},
 		addGeometry: function (boundedNormals, boundedVertices)
 		{
@@ -78126,6 +78334,10 @@ function ($,
 					                z * defaultVertices [i + 2],
 					                1);
 				}
+
+				x = Math .abs (x);
+				y = Math .abs (y);
+				z = Math .abs (z);
 
 				this .getMin () .set (-x, -y, -z);
 				this .getMax () .set ( x,  y,  z);
@@ -78436,7 +78648,7 @@ function ($,
 			X3DProductStructureChildNode .prototype .initialize .call (this);
 			X3DBoundedObject             .prototype .initialize .call (this);
 
-			this .shape_ .addInterest (this, "set_shape__");
+			this .shape_ .addInterest ("set_shape__", this);
 
 			this .set_shape__ ();
 		},
@@ -78606,7 +78818,7 @@ function ($,
 		{
 			X3DGroupingNode .prototype .initialize .call (this);
 
-			this .visible_ .addInterest (this, "set_children__");
+			this .visible_ .addInterest ("set_children__", this);
 		},
 		getVisible: function ()
 		{
@@ -78829,7 +79041,7 @@ function ($,
 		{
 			X3DTransformMatrix3DNode .prototype .initialize .call (this);
 			
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 
 			this .eventsProcessed ();
 		},
@@ -79078,9 +79290,9 @@ function ($,
 			X3DLineGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getCircle2DOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getCircle2DOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getCircle2DOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getCircle2DOptions () .removeInterest ("eventsProcessed", this);
 		},
 		build: function ()
 		{
@@ -79263,8 +79475,8 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .enabled_ .addInterest (this, "set_enabled__");
-			this .plane_   .addInterest (this, "set_enabled__");
+			this .enabled_ .addInterest ("set_enabled__", this);
+			this .plane_   .addInterest ("set_enabled__", this);
 
 			this .set_enabled__ ();
 		},
@@ -79412,9 +79624,9 @@ function ($,
 			X3DGroupingNode .prototype .initialize .call (this);
 			//X3DSensorNode   .prototype .initialize .call (this); // We can only call the base of a *Objects.
 	
-			this .isLive () .addInterest (this, "set_live__");
-			this .enabled_  .addInterest (this, "set_live__");
-			this .proxy_    .addInterest (this, "set_proxy__");
+			this .isLive () .addInterest ("set_live__", this);
+			this .enabled_  .addInterest ("set_live__", this);
+			this .proxy_    .addInterest ("set_proxy__", this);
 
 			this .set_live__ ();
 			this .set_proxy__ ();
@@ -79774,7 +79986,7 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 		},
 		duplicate: function (value)
 		{
@@ -79820,11 +80032,11 @@ function ($,
 		{
 			if (this .isLive () .getValue () && this .isActive_ .getValue ())
 			{
-				this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents");
+				this .getBrowser () .prepareEvents () .addInterest ("prepareEvents", this);
 				this .getBrowser () .addBrowserEvent ();
 			}
 			else
-				this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents");
+				this .getBrowser () .prepareEvents () .removeInterest ("prepareEvents", this);
 		},
 		set_active: function (value)
 		{
@@ -79925,9 +80137,9 @@ function ($,
 		{
 			X3DFollowerNode .prototype .initialize .call (this);
 		
-			this .set_value_       .addInterest (this, "set_value__");
-			this .set_destination_ .addInterest (this, "set_destination__");
-			this .duration_        .addInterest (this, "set_duration__");
+			this .set_value_       .addInterest ("set_value__", this);
+			this .set_destination_ .addInterest ("set_destination__", this);
+			this .duration_        .addInterest ("set_duration__", this);
 
 			this .set_duration__ ();
 
@@ -80324,9 +80536,9 @@ function ($,
 		{
 			X3DFollowerNode .prototype .initialize .call (this);
 		
-			this .order_           .addInterest (this, "set_order__");
-			this .set_value_       .addInterest (this, "set_value__");
-			this .set_destination_ .addInterest (this, "set_destination__");
+			this .order_           .addInterest ("set_order__", this);
+			this .set_value_       .addInterest ("set_value__", this);
+			this .set_destination_ .addInterest ("set_destination__", this);
 
 			var
 				buffer             = this .getBuffer (),
@@ -80685,7 +80897,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -80932,12 +81144,12 @@ function ($,
 		{
 			if (this .isLive () .getValue ())
 			{
-				this .getBrowser () .getBrowserOptions () .TextureQuality_ .addInterest (this, "set_textureQuality__");
+				this .getBrowser () .getBrowserOptions () .TextureQuality_ .addInterest ("set_textureQuality__", this);
 	
 				this .set_textureQuality__ ();
 			}
 			else
-				this .getBrowser () .getBrowserOptions () .TextureQuality_ .removeInterest (this, "set_textureQuality__");
+				this .getBrowser () .getBrowserOptions () .TextureQuality_ .removeInterest ("set_textureQuality__", this);
 		},
 		set_textureQuality__: function ()
 		{
@@ -81087,14 +81299,14 @@ function ($,
 
 			// Initialize.
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .front_  .addInterest (this, "set_texture__", 0);
-			this .back_   .addInterest (this, "set_texture__", 1);
-			this .left_   .addInterest (this, "set_texture__", 2);
-			this .right_  .addInterest (this, "set_texture__", 3);
-			this .top_    .addInterest (this, "set_texture__", 5);
-			this .bottom_ .addInterest (this, "set_texture__", 4);
+			this .front_  .addInterest ("set_texture__", this, 0);
+			this .back_   .addInterest ("set_texture__", this, 1);
+			this .left_   .addInterest ("set_texture__", this, 2);
+			this .right_  .addInterest ("set_texture__", this, 3);
+			this .top_    .addInterest ("set_texture__", this, 5);
+			this .bottom_ .addInterest ("set_texture__", this, 4);
 
 			this .set_texture__ (this .front_,  0);
 			this .set_texture__ (this .back_,   1);
@@ -81113,7 +81325,7 @@ function ($,
 			{
 				var callbackName = "set_loadState__" + texture .getId () + "_" + index;
 
-				texture .removeInterest (this, "set_loadState__");
+				texture .removeInterest ("set_loadState__", this);
 				texture .loadState_ .removeFieldCallback (callbackName);
 			}
 
@@ -81123,7 +81335,7 @@ function ($,
 			{
 				var callbackName = "set_loadState__" + texture .getId () + "_" + index;
 
-				texture .addInterest (this, "set_loadState__", texture, index);
+				texture .addInterest ("set_loadState__", this, texture, index);
 				texture .loadState_ .addFieldCallback (callbackName, this .set_loadState__ .bind (this, null, texture, index));
 			}
 
@@ -81346,15 +81558,15 @@ function ($,
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getConeOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getConeOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getConeOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getConeOptions () .removeInterest ("eventsProcessed", this);
 		},
 		build: function ()
 		{
 			var
 				options      = this .getBrowser () .getConeOptions (),
-				vDimension   = options .vDimension_ .getValue (),
+				xDimension   = options .xDimension_ .getValue (),
 				height       = this .height_ .getValue (),
 				bottomRadius = this .bottomRadius_ .getValue (),
 				texCoords    = [ ],
@@ -81370,21 +81582,21 @@ function ($,
 
 			if (this .side_ .getValue ())
 			{
-				for (var i = 0; i < vDimension; ++ i)
+				for (var i = 0; i < xDimension; ++ i)
 				{
 					var
-						u1     = (i + 0.5) / vDimension,
+						u1     = (i + 0.5) / xDimension,
 						theta1 = 2 * Math .PI * u1,
 						n1     = Complex .Polar (nz .imag, theta1);
 
 					var
-						u2     = i / vDimension,
+						u2     = i / xDimension,
 						theta2 = 2 * Math .PI * u2,
 						p2     = Complex .Polar (-bottomRadius, theta2),
 						n2     = Complex .Polar (nz .imag, theta2);
 
 					var
-						u3     = (i + 1) / vDimension,
+						u3     = (i + 1) / xDimension,
 						theta3 = 2 * Math .PI * u3,
 						p3     = Complex .Polar (-bottomRadius, theta3),
 						n3     = Complex .Polar (nz .imag, theta3);
@@ -81418,10 +81630,10 @@ function ($,
 					texCoord = [ ],
 					points   = [ ];
 
-				for (var i = vDimension - 1; i > -1; -- i)
+				for (var i = xDimension - 1; i > -1; -- i)
 				{
 					var
-						u     = i / vDimension,
+						u     = i / xDimension,
 						theta = 2 * Math .PI * u,
 						t     = Complex .Polar (-1, theta),
 						p     = Complex .multiply (t, bottomRadius);
@@ -81600,9 +81812,9 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .position_  .addInterest (this, "set_position__");
-			this .direction_ .addInterest (this, "set_direction__");
-			this .angle_     .addInterest (this, "set_angle__");
+			this .position_  .addInterest ("set_position__", this);
+			this .direction_ .addInterest ("set_direction__", this);
+			this .angle_     .addInterest ("set_angle__", this);
 
 			this .set_position__ ();
 			this .set_direction__ ();
@@ -82572,15 +82784,15 @@ function ($,
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getCylinderOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getCylinderOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getCylinderOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getCylinderOptions () .removeInterest ("eventsProcessed", this);
 		},
 		build: function ()
 		{
 			var
 				options    = this .getBrowser () .getCylinderOptions (),
-				vDimension = options .vDimension_ .getValue (),
+				xDimension = options .xDimension_ .getValue (),
 				texCoords  = [ ],
 				normals    = this .getNormals (),
 				vertices   = this .getVertices ();
@@ -82594,16 +82806,16 @@ function ($,
 
 			if (this .side_ .getValue ())
 			{
-				for (var i = 0; i < vDimension; ++ i)
+				for (var i = 0; i < xDimension; ++ i)
 				{
 					var
-						u1     = i / vDimension,
+						u1     = i / xDimension,
 						theta1 = 2 * Math .PI * u1,
 						n1     = Complex .Polar (-1, theta1),
 						p1     = Complex .multiply (n1, radius);
 
 					var
-						u2     = (i + 1) / vDimension,
+						u2     = (i + 1) / xDimension,
 						theta2 = 2 * Math .PI * u2,
 						n2     = Complex .Polar (-1, theta2),
 						p2     = Complex .multiply (n2, radius);
@@ -82654,10 +82866,10 @@ function ($,
 					texCoord = [ ],
 					points   = [ ];
 
-				for (var i = 0; i < vDimension; ++ i)
+				for (var i = 0; i < xDimension; ++ i)
 				{
 					var
-						u     = i / vDimension,
+						u     = i / xDimension,
 						theta = 2 * Math .PI * u,
 						t     = Complex .Polar (-1, theta);
 
@@ -82697,10 +82909,10 @@ function ($,
 					texCoord = [ ],
 					points   = [ ];
 
-				for (var i = vDimension - 1; i > -1; -- i)
+				for (var i = xDimension - 1; i > -1; -- i)
 				{
 					var
-						u     = i / vDimension,
+						u     = i / xDimension,
 						theta = 2 * Math .PI * u,
 						t     = Complex .Polar (-1, theta);
 
@@ -83442,14 +83654,20 @@ function ($,
 
 			this .setPrimitiveMode (this .getBrowser () .getContext () .LINE_LOOP);
 		},
+		getShader: function (browser)
+		{
+			// For circle support.
+
+			return browser .getLineShader ();
+		},
 		set_live__: function ()
 		{
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getDisk2DOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getDisk2DOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getDisk2DOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getDisk2DOptions () .removeInterest ("eventsProcessed", this);
 		},
 		build: function ()
 		{
@@ -83564,17 +83782,50 @@ function ($,
 			this .setGeometryType (2);
 			this .setSolid (this .solid_ .getValue ());
 		},
+		intersectsLine: function (line, clipPlanes, modelViewMatrix, intersections)
+		{
+			if (this .getGeometryType () < 2)
+			{
+				return X3DLineGeometryNode .prototype .intersectsLine .call (this, line, clipPlanes, modelViewMatrix, intersections);
+			}
+			else
+			{
+				return X3DGeometryNode .prototype .intersectsLine .call (this, line, clipPlanes, modelViewMatrix, intersections);
+			}
+		},
+		intersectsBox: function (box, clipPlanes, modelViewMatrix)
+		{
+			if (this .getGeometryType () < 2)
+			{
+				return X3DLineGeometryNode .prototype .intersectsBox .call (this, box, clipPlanes, modelViewMatrix);
+			}
+			else
+			{
+				return X3DGeometryNode .prototype .intersectsBox .call (this, box, clipPlanes, modelViewMatrix);
+			}
+		},
 		display: function (context)
 		{
 			if (this .getGeometryType () < 2)
 			{
-				X3DLineGeometryNode .prototype .display .call (this, context);
+				return X3DLineGeometryNode .prototype .display .call (this, context);
 			}
 			else
 			{
-				X3DGeometryNode .prototype .display .call (this, context);
+				return X3DGeometryNode .prototype .display .call (this, context);
 			}
 		},
+		displayParticles: function (context, particles, numParticles)
+		{
+			if (this .getGeometryType () < 2)
+			{
+				return X3DLineGeometryNode .prototype .displayParticles .call (this, context, particles, numParticles);
+			}
+			else
+			{
+				return X3DGeometryNode .prototype .displayParticles .call (this, context, particles, numParticles);
+			}
+		}
 	});
 
 	return Disk2D;
@@ -83706,10 +83957,10 @@ function ($,
 		{
 			X3DGeometryNode .prototype .initialize .call (this);
 
-			this .attrib_   .addInterest (this, "set_attrib__");
-			this .color_    .addInterest (this, "set_color__");
-			this .texCoord_ .addInterest (this, "set_texCoord__");
-			this .normal_   .addInterest (this, "set_normal__");
+			this .attrib_   .addInterest ("set_attrib__", this);
+			this .color_    .addInterest ("set_color__", this);
+			this .texCoord_ .addInterest ("set_texCoord__", this);
+			this .normal_   .addInterest ("set_normal__", this);
 
 			this .set_attrib__ ();
 			this .set_color__ ();
@@ -83721,7 +83972,7 @@ function ($,
 			var attribNodes = this .getAttrib ();
 
 			for (var i = 0, length = attribNodes .length; i < length; ++ i)
-				attribNodes [i] .removeInterest (this, "addNodeEvent");
+				attribNodes [i] .removeInterest ("addNodeEvent", this);
 
 			attribNodes .length = 0;
 
@@ -83734,22 +83985,22 @@ function ($,
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest ("addNodeEvent", this);
 		},
 		set_color__: function ()
 		{
 			if (this .colorNode)
 			{
-				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
+				this .colorNode .removeInterest ("addNodeEvent", this);
+				this .colorNode .removeInterest ("set_transparent__", this);
 			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
 			{
-				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
+				this .colorNode .addInterest ("addNodeEvent", this);
+				this .colorNode .addInterest ("set_transparent__", this);
 
 				this .set_transparent__ ();
 			}
@@ -83763,24 +84014,24 @@ function ($,
 		set_texCoord__: function ()
 		{
 			if (this .texCoordNode)
-				this .texCoordNode .removeInterest (this, "addNodeEvent");
+				this .texCoordNode .removeInterest ("addNodeEvent", this);
 
 			this .texCoordNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoord_);
 
 			if (this .texCoordNode)
-				this .texCoordNode .addInterest (this, "addNodeEvent");
+				this .texCoordNode .addInterest ("addNodeEvent", this);
 
 			this .setCurrentTexCoord (this .texCoordNode);
 		},
 		set_normal__: function ()
 		{
 			if (this .normalNode)
-				this .normalNode .removeInterest (this, "addNodeEvent");
+				this .normalNode .removeInterest ("addNodeEvent", this);
 
 			this .normalNode = X3DCast (X3DConstants .X3DNormalNode, this .normal_);
 
 			if (this .normalNode)
-				this .normalNode .addInterest (this, "addNodeEvent");
+				this .normalNode .addInterest ("addNodeEvent", this);
 		},
 		getColor: function ()
 		{
@@ -84096,7 +84347,7 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .position_ .addInterest (this, "set_position__");
+			this .position_ .addInterest ("set_position__", this);
 
 			this .set_position__ ();
 		},
@@ -85388,7 +85639,7 @@ function ($,
 
 				// Apply texture properties.
 
-				this .isLive () .addInterest (this, "set_live__");
+				this .isLive () .addInterest ("set_live__", this);
 
 				this .set_live__ ();
 			}
@@ -85625,7 +85876,7 @@ function ($,
 			X3DCoordinateNode   .prototype .initialize .call (this);
 			X3DGeospatialObject .prototype .initialize .call (this);
 		
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 		
 			this .eventsProcessed ();
 		},
@@ -85815,7 +86066,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "color",           new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "texCoord",        new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "normal",          new Fields .SFNode ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "height",          new Fields .MFDouble ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "height",          new Fields .MFDouble (0, 0)),
 		]),
 		getTypeName: function ()
 		{
@@ -85834,9 +86085,9 @@ function ($,
 			X3DGeometryNode     .prototype .initialize .call (this);
 			X3DGeospatialObject .prototype .initialize .call (this);
 
-			this .color_    .addInterest (this, "set_color__");
-			this .texCoord_ .addInterest (this, "set_texCoord__");
-			this .normal_   .addInterest (this, "set_normal__");
+			this .color_    .addInterest ("set_color__", this);
+			this .texCoord_ .addInterest ("set_texCoord__", this);
+			this .normal_   .addInterest ("set_normal__", this);
 		
 			this .set_color__ ();
 			this .set_texCoord__ ();
@@ -85846,16 +86097,16 @@ function ($,
 		{
 			if (this .colorNode)
 			{
-				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
+				this .colorNode .removeInterest ("addNodeEvent", this);
+				this .colorNode .removeInterest ("set_transparent__", this);
 			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
 			{
-				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
+				this .colorNode .addInterest ("addNodeEvent", this);
+				this .colorNode .addInterest ("set_transparent__", this);
 
 				this .set_transparent__ ();
 			}
@@ -85869,24 +86120,24 @@ function ($,
 		set_texCoord__: function ()
 		{
 			if (this .texCoordNode)
-				this .texCoordNode .removeInterest (this, "addNodeEvent");
+				this .texCoordNode .removeInterest ("addNodeEvent", this);
 
 			this .texCoordNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoord_);
 
 			if (this .texCoordNode)
-				this .texCoordNode .addInterest (this, "addNodeEvent");
+				this .texCoordNode .addInterest ("addNodeEvent", this);
 
 			this .setCurrentTexCoord (this .texCoordNode);
 		},
 		set_normal__: function ()
 		{
 			if (this .normalNode)
-				this .normalNode .removeInterest (this, "addNodeEvent");
+				this .normalNode .removeInterest ("addNodeEvent", this);
 
 			this .normalNode = X3DCast (X3DConstants .X3DNormalNode, this .normal_);
 
 			if (this .normalNode)
-				this .normalNode .addInterest (this, "addNodeEvent");
+				this .normalNode .addInterest ("addNodeEvent", this);
 		},
 		getColor: function ()
 		{
@@ -86255,15 +86506,15 @@ function ($,
 			X3DUrlObject     .prototype .initialize .call (this);
 			X3DBoundedObject .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
 			this .group .setPrivate (true);
 			this .group .setup ();
 			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
 
-			this .load_   .addInterest (this, "set_load__");
-			this .url_    .addInterest (this, "set_url__");
-			this .buffer_ .addInterest (this, "set_buffer__");
+			this .load_   .addInterest ("set_load__", this);
+			this .url_    .addInterest ("set_url__", this);
+			this .buffer_ .addInterest ("set_buffer__", this);
 
 			this .requestAsyncLoad ();
 		},
@@ -86345,7 +86596,7 @@ function ($,
 		setInternalScene: function (scene)
 		{
 			this .scene .setLive (false);
-			this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
+			this .scene .rootNodes .removeInterest ("setValue", this .group .children_);
 
 			// Set new scene.
 
@@ -86354,7 +86605,7 @@ function ($,
 			this .scene .setPrivate (this .getExecutionContext () .getPrivate ());
 			this .scene .setup ();
 
-			this .scene .rootNodes .addInterest (this .group .children_, "setValue");
+			this .scene .rootNodes .addInterest ("setValue", this .group .children_);
 			this .group .children_ = this .scene .rootNodes;
 
 			this .set_live__ ();
@@ -86529,11 +86780,11 @@ function ($,
 			this .rootGroup .setPrivate (true);
 			this .rootGroup .setup ();
 		
-			this .rootInline   .loadState_ .addInterest (this, "set_rootLoadState__");
-			this .child1Inline .loadState_ .addInterest (this, "set_childLoadState__");
-			this .child2Inline .loadState_ .addInterest (this, "set_childLoadState__");
-			this .child3Inline .loadState_ .addInterest (this, "set_childLoadState__");
-			this .child4Inline .loadState_ .addInterest (this, "set_childLoadState__");
+			this .rootInline   .loadState_ .addInterest ("set_rootLoadState__", this);
+			this .child1Inline .loadState_ .addInterest ("set_childLoadState__", this);
+			this .child2Inline .loadState_ .addInterest ("set_childLoadState__", this);
+			this .child3Inline .loadState_ .addInterest ("set_childLoadState__", this);
+			this .child4Inline .loadState_ .addInterest ("set_childLoadState__", this);
 		
 			this .rootUrl_   .addFieldInterest (this .rootInline   .url_);
 			this .child1Url_ .addFieldInterest (this .child1Inline .url_);
@@ -86865,7 +87116,7 @@ function ($,
 			X3DTransformMatrix3DNode .prototype .initialize .call (this);
 			X3DGeospatialObject      .prototype .initialize .call (this);
 		
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 		
 			this .eventsProcessed ();
 		},
@@ -87160,7 +87411,7 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
-			this .geoSystem_ .addInterest (this, "set_geoSystem__");
+			this .geoSystem_ .addInterest ("set_geoSystem__", this);
 
 			this .set_geoSystem__ ();
 		},
@@ -87301,7 +87552,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -87417,11 +87668,11 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .enabled_   .addInterest (this, "set_live__");
-			this .size_      .addInterest (this, "set_live__");
-			this .traversed_ .addInterest (this, "set_live__");
+			this .enabled_   .addInterest ("set_live__", this);
+			this .size_      .addInterest ("set_live__", this);
+			this .traversed_ .addInterest ("set_live__", this);
 
 			this .set_live__ ();
 		},
@@ -87429,11 +87680,11 @@ function ($,
 		{
 			if (this .isLive () .getValue () && this .traversed_ .getValue () && this .enabled_ .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
 			{
-				this .getBrowser () .sensors () .addInterest (this, "update");
+				this .getBrowser () .sensors () .addInterest ("update", this);
 			}
 			else
 			{
-				this .getBrowser () .sensors () .removeInterest (this, "update");
+				this .getBrowser () .sensors () .removeInterest ("update", this);
 				
 				if (this .isActive_ .getValue ())
 				{
@@ -87596,9 +87847,9 @@ function ($,
 		{
 			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
 			
-			this .enabled_ .addInterest (this, "set_enabled__");
-			this .size_    .addInterest (this, "set_extents__");
-			this .center_  .addInterest (this, "set_extents__");
+			this .enabled_ .addInterest ("set_enabled__", this);
+			this .size_    .addInterest ("set_extents__", this);
+			this .center_  .addInterest ("set_extents__", this);
 
 			this .traversed_ .addFieldInterest (this .isCameraObject_);
 	
@@ -87899,7 +88150,7 @@ function ($,
 			this .proximitySensor .orientation_changed_      .addFieldInterest (this .orientation_changed_);
 			this .proximitySensor .centerOfRotation_changed_ .addFieldInterest (this .centerOfRotation_changed_);
 		
-			this .proximitySensor .position_changed_ .addInterest (this, "set_position__");
+			this .proximitySensor .position_changed_ .addInterest ("set_position__", this);
 		
 			this .proximitySensor .enabled_ = this .enabled_;
 			this .proximitySensor .size_    = this .size_;
@@ -88189,7 +88440,7 @@ function ($,
 			X3DTransformMatrix3DNode .prototype .initialize .call (this);
 			X3DGeospatialObject      .prototype .initialize .call (this);
 		
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 		
 			this .eventsProcessed ();
 		},
@@ -88360,7 +88611,7 @@ function ($,
 
 			// Initialize.
 
-			this .url_ .addInterest (this, "set_url__");
+			this .url_ .addInterest ("set_url__", this);
 
 			this .canvas = $("<canvas></canvas>");
 
@@ -88632,9 +88883,9 @@ function ($,
 		{
 			X3DLineGeometryNode .prototype .initialize .call (this);
 
-			this .attrib_ .addInterest (this, "set_attrib__");
-			this .color_  .addInterest (this, "set_color__");
-			this .coord_  .addInterest (this, "set_coord__");
+			this .attrib_ .addInterest ("set_attrib__", this);
+			this .color_  .addInterest ("set_color__", this);
+			this .coord_  .addInterest ("set_coord__", this);
 
 			this .setPrimitiveMode (this .getBrowser () .getContext () .LINES);
 			this .setSolid (false);
@@ -88648,7 +88899,7 @@ function ($,
 			var attribNodes = this .getAttrib ();
 
 			for (var i = 0, length = attribNodes .length; i < length; ++ i)
-				attribNodes [i] .removeInterest (this, "addNodeEvent");
+				attribNodes [i] .removeInterest ("addNodeEvent", this);
 
 			attribNodes .length = 0;
 
@@ -88661,22 +88912,22 @@ function ($,
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest ("addNodeEvent", this);
 		},
 		set_color__: function ()
 		{
 			if (this .colorNode)
 			{
-				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
+				this .colorNode .removeInterest ("addNodeEvent", this);
+				this .colorNode .removeInterest ("set_transparent__", this);
 			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
 			{
-				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
+				this .colorNode .addInterest ("addNodeEvent", this);
+				this .colorNode .addInterest ("set_transparent__", this);
 
 				this .set_transparent__ ();
 			}
@@ -88690,12 +88941,12 @@ function ($,
 		set_coord__: function ()
 		{
 			if (this .coordNode)
-				this .coordNode .removeInterest (this, "addNodeEvent");
+				this .coordNode .removeInterest ("addNodeEvent", this);
 
 			this .coordNode = X3DCast (X3DConstants .X3DCoordinateNode, this .coord_);
 
 			if (this .coordNode)
-				this .coordNode .addInterest (this, "addNodeEvent");
+				this .coordNode .addInterest ("addNodeEvent", this);
 		},
 		getColorPerVertexIndex: function (index)
 		{
@@ -88733,12 +88984,8 @@ function ($,
 					else
 					{
 						// Negativ index.
-
-						if (polyline .length > 1)
-						{
-							// Add polylines.
-							polylines .push (polyline);
-						}
+						// Add polylines.
+						polylines .push (polyline);
 
 						polyline = [ ];
 					}
@@ -88746,8 +88993,7 @@ function ($,
 
 				if (coordIndex [coordIndex .length - 1] .getValue () >= 0)
 				{
-					if (polyline .length > 1)
-						polylines .push (polyline);
+					polylines .push (polyline);
 				}
 			}
 
@@ -88808,26 +89054,29 @@ function ($,
 			
 				// Create two vertices for each line.
 
-				for (var line = 0, l_end = polyline .length - 1; line < l_end; ++ line)
+				if (polyline .length > 1)
 				{
-					for (var index = line, i_end = line + 2; index < i_end; ++ index)
+					for (var line = 0, l_end = polyline .length - 1; line < l_end; ++ line)
 					{
-						var
-							i  = polyline [index],
-							ci = coordIndex [i] .getValue ();
-
-						for (var a = 0; a < numAttrib; ++ a)
-							attribNodes [a] .addValue (attribs [a], ci);
-
-						if (colorNode)
+						for (var index = line, i_end = line + 2; index < i_end; ++ index)
 						{
-							if (colorPerVertex)
-								this .addColor (colorNode .get1Color (this .getColorPerVertexIndex (i)));
-							else
-								this .addColor (colorNode .get1Color (this .getColorIndex (face)));
-						}
+							var
+								i  = polyline [index],
+								ci = coordIndex [i] .getValue ();
 
-						this .addVertex (coordNode .get1Point (ci));
+							for (var a = 0; a < numAttrib; ++ a)
+								attribNodes [a] .addValue (attribs [a], ci);
+
+							if (colorNode)
+							{
+								if (colorPerVertex)
+									this .addColor (colorNode .get1Color (this .getColorPerVertexIndex (i)));
+								else
+									this .addColor (colorNode .get1Color (this .getColorIndex (face)));
+							}
+
+							this .addVertex (coordNode .get1Point (ci));
+						}
 					}
 				}
 
@@ -88952,7 +89201,7 @@ function ($,
 		{
 			X3DComposedGeometryNode .prototype .initialize .call (this);
 		
-			this .index_ .addInterest (this, "set_index__");
+			this .index_ .addInterest ("set_index__", this);
 		
 			this .set_index__ ();
 		},
@@ -89104,7 +89353,7 @@ function ($,
 		{
 			X3DComposedGeometryNode .prototype .initialize .call (this);
 		
-			this .index_ .addInterest (this, "set_index__");
+			this .index_ .addInterest ("set_index__", this);
 		
 			this .set_index__ ();
 		},
@@ -89383,7 +89632,7 @@ function ($,
 		{
 			X3DComposedGeometryNode .prototype .initialize .call (this);
 		
-			this .index_ .addInterest (this, "set_index__");
+			this .index_ .addInterest ("set_index__", this);
 		
 			this .set_index__ ();
 		},
@@ -89550,7 +89799,7 @@ function ($,
 		{
 			X3DSequencerNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_index__");
+			this .keyValue_ .addInterest ("set_index__", this);
 		},
 		getSize: function ()
 		{
@@ -89666,7 +89915,7 @@ function ($,
 		{
 			X3DTriggerNode .prototype .initialize .call (this);
 
-			this .set_boolean_ .addInterest (this, "set_boolean__");
+			this .set_boolean_ .addInterest ("set_boolean__", this);
 		},
 		set_boolean__: function ()
 		{
@@ -89753,7 +90002,7 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
 			this .set_live__ ();
 		},
@@ -89761,14 +90010,14 @@ function ($,
 		{
 			if (this .isLive () .getValue ())
 			{
-				this .enabled_ .addInterest (this, "set_enabled__");
+				this .enabled_ .addInterest ("set_enabled__", this);
 
 				if (this .enabled_ .getValue ())
 					this .enable ();
 			}
 			else
 			{
-				this .enabled_ .removeInterest (this, "set_enabled__");
+				this .enabled_ .removeInterest ("set_enabled__", this);
 
 				if (this .enabled_ .getValue ())
 					this .disable ();
@@ -90582,12 +90831,12 @@ function ($,
 		{
 			X3DLayoutNode .prototype .initialize .call (this);
 
-			this .align_       .addInterest (this, "set_align__");
-			this .offsetUnits_ .addInterest (this, "set_offsetUnits__");
-			this .offset_      .addInterest (this, "set_offset__");
-			this .sizeUnits_   .addInterest (this, "set_sizeUnits__");
-			this .size_        .addInterest (this, "set_size__");
-			this .scaleMode_   .addInterest (this, "set_scaleMode__");
+			this .align_       .addInterest ("set_align__", this);
+			this .offsetUnits_ .addInterest ("set_offsetUnits__", this);
+			this .offset_      .addInterest ("set_offset__", this);
+			this .sizeUnits_   .addInterest ("set_sizeUnits__", this);
+			this .size_        .addInterest ("set_size__", this);
+			this .scaleMode_   .addInterest ("set_scaleMode__", this);
 
 			this .set_align__ ();
 			this .set_offsetUnits__ ();
@@ -91199,8 +91448,8 @@ function ($,
 		{
 			X3DGroupingNode .prototype .initialize .call (this);
 
-			this .viewport_ .addInterest (this, "set_viewport__");
-			this .layout_   .addInterest (this, "set_layout__");
+			this .viewport_ .addInterest ("set_viewport__", this);
+			this .layout_   .addInterest ("set_layout__", this);
 		
 			this .set_viewport__ ();
 			this .set_layout__ ();
@@ -91493,7 +91742,7 @@ function ($,
 		{
 			X3DAppearanceChildNode .prototype .initialize .call (this);
 
-			this .linewidthScaleFactor_ .addInterest (this, "set_linewidthScaleFactor__");
+			this .linewidthScaleFactor_ .addInterest ("set_linewidthScaleFactor__", this);
 
 			this .set_linewidthScaleFactor__ ();
 		},
@@ -91619,9 +91868,9 @@ function ($,
 		{
 			X3DLineGeometryNode .prototype .initialize .call (this);
 
-			this .attrib_ .addInterest (this, "set_attrib__");
-			this .color_  .addInterest (this, "set_color__");
-			this .coord_  .addInterest (this, "set_coord__");
+			this .attrib_ .addInterest ("set_attrib__", this);
+			this .color_  .addInterest ("set_color__", this);
+			this .coord_  .addInterest ("set_coord__", this);
 
 			this .setPrimitiveMode (this .getBrowser () .getContext () .LINES);
 			this .setSolid (false);
@@ -91635,7 +91884,7 @@ function ($,
 			var attribNodes = this .getAttrib ();
 
 			for (var i = 0, length = attribNodes .length; i < length; ++ i)
-				attribNodes [i] .removeInterest (this, "addNodeEvent");
+				attribNodes [i] .removeInterest ("addNodeEvent", this);
 
 			attribNodes .length = 0;
 
@@ -91648,22 +91897,22 @@ function ($,
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest ("addNodeEvent", this);
 		},
 		set_color__: function ()
 		{
 			if (this .colorNode)
 			{
-				this .colorNode .removeInterest (this, "addNodeEvent");
-				this .colorNode .removeInterest (this, "set_transparent__");
+				this .colorNode .removeInterest ("addNodeEvent", this);
+				this .colorNode .removeInterest ("set_transparent__", this);
 			}
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
 			{
-				this .colorNode .addInterest (this, "addNodeEvent");
-				this .colorNode .addInterest (this, "set_transparent__");
+				this .colorNode .addInterest ("addNodeEvent", this);
+				this .colorNode .addInterest ("set_transparent__", this);
 
 				this .set_transparent__ ();
 			}
@@ -91677,12 +91926,12 @@ function ($,
 		set_coord__: function ()
 		{
 			if (this .coordNode)
-				this .coordNode .removeInterest (this, "addNodeEvent");
+				this .coordNode .removeInterest ("addNodeEvent", this);
 
 			this .coordNode = X3DCast (X3DConstants .X3DCoordinateNode, this .coord_);
 
 			if (this .coordNode)
-				this .coordNode .addInterest (this, "addNodeEvent");
+				this .coordNode .addInterest ("addNodeEvent", this);
 		},
 		build: function ()
 		{
@@ -92043,12 +92292,12 @@ function ($,
 
 			this .addChildObjects ("transparent", new Fields .SFBool ());
 
-			this .ambientIntensity_ .addInterest (this, "set_ambientIntensity__");
-			this .diffuseColor_     .addInterest (this, "set_diffuseColor__");
-			this .specularColor_    .addInterest (this, "set_specularColor__");
-			this .emissiveColor_    .addInterest (this, "set_emissiveColor__");
-			this .shininess_        .addInterest (this, "set_shininess__");
-			this .transparency_     .addInterest (this, "set_transparency__");
+			this .ambientIntensity_ .addInterest ("set_ambientIntensity__", this);
+			this .diffuseColor_     .addInterest ("set_diffuseColor__", this);
+			this .specularColor_    .addInterest ("set_specularColor__", this);
+			this .emissiveColor_    .addInterest ("set_emissiveColor__", this);
+			this .shininess_        .addInterest ("set_shininess__", this);
+			this .transparency_     .addInterest ("set_transparency__", this);
 	
 			this .set_ambientIntensity__ ();
 			this .set_diffuseColor__ ();
@@ -93219,7 +93468,7 @@ function ($,
 			X3DSoundSourceNode .prototype .initialize .call (this);
 			X3DUrlObject       .prototype .initialize .call (this);
 
-			this .url_ .addInterest (this, "set_url__");
+			this .url_ .addInterest ("set_url__", this);
 
 			this .canvas = $("<canvas></canvas>");
 
@@ -93635,7 +93884,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function () { },
 		interpolate: function (index0, index1, weight)
@@ -94016,10 +94265,10 @@ function ($,
 			X3DChildNode     .prototype .initialize .call (this);
 			X3DBoundedObject .prototype .initialize .call (this);
 
-			this .bboxSize_   .addInterest (this, "set_bbox__");
-			this .bboxCenter_ .addInterest (this, "set_bbox__");
-			this .appearance_ .addInterest (this, "set_apparance__");
-			this .geometry_   .addInterest (this, "set_geometry__");
+			this .bboxSize_   .addInterest ("set_bbox__", this);
+			this .bboxCenter_ .addInterest ("set_bbox__", this);
+			this .appearance_ .addInterest ("set_apparance__", this);
+			this .geometry_   .addInterest ("set_geometry__", this);
 
 			this .set_apparance__ ();
 			this .set_geometry__ ();
@@ -94072,12 +94321,12 @@ function ($,
 		set_apparance__: function ()
 		{
 			if (this .apparanceNode)
-				this .apparanceNode .removeInterest (this, "set_transparent__");
+				this .apparanceNode .removeInterest ("set_transparent__", this);
 
 			this .apparanceNode = X3DCast (X3DConstants .X3DAppearanceNode, this .appearance_);
 
 			if (this .apparanceNode)
-				this .apparanceNode .addInterest (this, "set_transparent__");
+				this .apparanceNode .addInterest ("set_transparent__", this);
 
 			else
 				this .apparanceNode = this .getBrowser () .getDefaultAppearance ();
@@ -94088,16 +94337,16 @@ function ($,
 		{
 			if (this .geometryNode)
 			{
-				this .geometryNode .transparent_  .addInterest (this, "set_transparent__");
-				this .geometryNode .bbox_changed_ .addInterest (this, "set_bbox__");
+				this .geometryNode .transparent_  .addInterest ("set_transparent__", this);
+				this .geometryNode .bbox_changed_ .addInterest ("set_bbox__", this);
 			}
 
 			this .geometryNode = X3DCast (X3DConstants .X3DGeometryNode, this .geometry_);
 
 			if (this .geometryNode)
 			{
-				this .geometryNode .transparent_  .addInterest (this, "set_transparent__");
-				this .geometryNode .bbox_changed_ .addInterest (this, "set_bbox__");
+				this .geometryNode .transparent_  .addInterest ("set_transparent__", this);
+				this .geometryNode .bbox_changed_ .addInterest ("set_bbox__", this);
 			}
 
 			this .set_transparent__ ();
@@ -94675,23 +94924,23 @@ function ($,
 
 			var gl = this .getBrowser () .getContext ();
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shader__");
-			//this .getBrowser () .getDefaultShader () .addInterest (this, "set_shader__");
+			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest ("set_shader__", this);
+			//this .getBrowser () .getDefaultShader () .addInterest ("set_shader__", this);
 
-			this .enabled_           .addInterest (this, "set_enabled__");
-			this .createParticles_   .addInterest (this, "set_createParticles__");
-			this .geometryType_      .addInterest (this, "set_geometryType__");
-			this .maxParticles_      .addInterest (this, "set_enabled__");
-			this .particleLifetime_  .addInterest (this, "set_particleLifetime__");
-			this .lifetimeVariation_ .addInterest (this, "set_lifetimeVariation__");
-			this .emitter_           .addInterest (this, "set_emitter__");
-			this .physics_           .addInterest (this, "set_physics__");
-			this .colorKey_          .addInterest (this, "set_color__");
-			this .colorRamp_         .addInterest (this, "set_colorRamp__");
-			this .texCoordKey_       .addInterest (this, "set_texCoord__");
-			this .texCoordRamp_      .addInterest (this, "set_texCoordRamp__");
+			this .enabled_           .addInterest ("set_enabled__", this);
+			this .createParticles_   .addInterest ("set_createParticles__", this);
+			this .geometryType_      .addInterest ("set_geometryType__", this);
+			this .maxParticles_      .addInterest ("set_enabled__", this);
+			this .particleLifetime_  .addInterest ("set_particleLifetime__", this);
+			this .lifetimeVariation_ .addInterest ("set_lifetimeVariation__", this);
+			this .emitter_           .addInterest ("set_emitter__", this);
+			this .physics_           .addInterest ("set_physics__", this);
+			this .colorKey_          .addInterest ("set_color__", this);
+			this .colorRamp_         .addInterest ("set_colorRamp__", this);
+			this .texCoordKey_       .addInterest ("set_texCoord__", this);
+			this .texCoordRamp_      .addInterest ("set_texCoordRamp__", this);
 
 			this .colorBuffer     = gl .createBuffer ();
 			this .texCoordBuffers = [ gl .createBuffer () ];
@@ -94745,7 +94994,7 @@ function ($,
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
-					this .getBrowser () .sensors () .addInterest (this, "animateParticles");
+					this .getBrowser () .sensors () .addInterest ("animateParticles", this);
 		
 					if (this .pauseTime)
 					{
@@ -94758,7 +95007,7 @@ function ($,
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
-					this .getBrowser () .sensors () .removeInterest (this, "animateParticles");
+					this .getBrowser () .sensors () .removeInterest ("animateParticles", this);
 		
 					if (this .pauseTime === 0)
 						this .pauseTime = performance .now () / 1000;
@@ -94773,7 +95022,7 @@ function ($,
 				{
 					if (this .isLive () .getValue ())
 					{
-						this .getBrowser () .sensors () .addInterest (this, "animateParticles");
+						this .getBrowser () .sensors () .addInterest ("animateParticles", this);
 			
 						this .pauseTime = 0;
 					}
@@ -94789,7 +95038,7 @@ function ($,
 				{
 					if (this .isLive () .getValue ())
 					{
-						this .getBrowser () .sensors () .removeInterest (this, "animateParticles");
+						this .getBrowser () .sensors () .removeInterest ("animateParticles", this);
 					}
 	
 					this .isActive_ = false;
@@ -95012,7 +95261,7 @@ function ($,
 				boundedPhysicsModelNodes = this .boundedPhysicsModelNodes;
 
 			for (var i = 0, length = boundedPhysicsModelNodes .length; i < length; ++ i)
-				boundedPhysicsModelNodes [i] .removeInterest (this, "set_boundedPhysics__");
+				boundedPhysicsModelNodes [i] .removeInterest ("set_boundedPhysics__", this);
 
 			forcePhysicsModelNodes   .length = 0;
 			boundedPhysicsModelNodes .length = 0;
@@ -95037,7 +95286,7 @@ function ($,
 							}
 							case X3DConstants .BoundedPhysicsModel:
 							{
-								innerNode .addInterest (this, "set_boundedPhysics__");
+								innerNode .addInterest ("set_boundedPhysics__", this);
 								boundedPhysicsModelNodes .push (innerNode);
 								break;
 							}
@@ -95074,12 +95323,12 @@ function ($,
 		set_colorRamp__: function ()
 		{
 			if (this .colorRampNode)
-				this .colorRampNode .removeInterest (this, "set_color__");
+				this .colorRampNode .removeInterest ("set_color__", this);
 
 			this .colorRampNode = X3DCast (X3DConstants .X3DColorNode, this .colorRamp_);
 
 			if (this .colorRampNode)
-				this .colorRampNode .addInterest (this, "set_color__");
+				this .colorRampNode .addInterest ("set_color__", this);
 
 			this .set_color__ ();
 			this .set_transparent__ ();
@@ -95109,12 +95358,12 @@ function ($,
 		set_texCoordRamp__: function ()
 		{
 			if (this .texCoordRampNode)
-				this .texCoordRampNode .removeInterest (this, "set_texCoord__");
+				this .texCoordRampNode .removeInterest ("set_texCoord__", this);
 
 			this .texCoordRampNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoordRamp_);
 
 			if (this .texCoordRampNode)
-				this .texCoordRampNode .addInterest (this, "set_texCoord__");
+				this .texCoordRampNode .addInterest ("set_texCoord__", this);
 
 			this .set_texCoord__ ();
 		},
@@ -95642,14 +95891,6 @@ function ($,
 			if (! this .isActive_ .getValue ())
 				return;
 
-			if (this .geometryType === GEOMETRY)
-			{
-				if (this .getGeometry ())
-					this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
-				else
-					return;
-			}
-
 			switch (type)
 			{
 				case TraverseType .POINTER:
@@ -95673,6 +95914,14 @@ function ($,
 
 					break;
 				}
+			}
+
+			if (this .geometryType === GEOMETRY)
+			{
+				if (this .getGeometry ())
+					this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
+				else
+					return;
 			}
 		},
 		depth: function (context, shaderNode)
@@ -95935,7 +96184,7 @@ function ($,
 		{
 			X3DTexture2DNode .prototype .initialize .call (this);
 
-			this .image_ .addInterest (this, "set_image__");
+			this .image_ .addInterest ("set_image__", this);
 
 			this .set_image__ ();
 		},
@@ -96865,13 +97114,12 @@ function ($,
 		{
 			X3DLineGeometryNode .prototype .initialize .call (this);
 
-			this .attrib_ .addInterest (this, "set_attrib__");
-			this .color_  .addInterest (this, "set_color__");
-			this .coord_  .addInterest (this, "set_coord__");
+			this .attrib_ .addInterest ("set_attrib__", this);
+			this .color_  .addInterest ("set_color__", this);
+			this .coord_  .addInterest ("set_coord__", this);
 
 			var browser = this .getBrowser ();
 
-			this .setShader (browser .getPointShader ());
 			this .setPrimitiveMode (browser .getContext () .POINTS);
 			this .setSolid (false);
 
@@ -96879,12 +97127,16 @@ function ($,
 			this .set_color__ ();
 			this .set_coord__ ();
 		},
+		getShader: function (browser)
+		{
+			return browser .getPointShader ();
+		},
 		set_attrib__: function ()
 		{
 			var attribNodes = this .getAttrib ();
 
 			for (var i = 0, length = attribNodes .length; i < length; ++ i)
-				attribNodes [i] .removeInterest (this, "addNodeEvent");
+				attribNodes [i] .removeInterest ("addNodeEvent", this);
 
 			attribNodes .length = 0;
 
@@ -96897,27 +97149,27 @@ function ($,
 			}
 
 			for (var i = 0; i < this .attribNodes .length; ++ i)
-				attribNodes [i] .addInterest (this, "addNodeEvent");
+				attribNodes [i] .addInterest ("addNodeEvent", this);
 		},
 		set_color__: function ()
 		{
 			if (this .colorNode)
-				this .colorNode .removeInterest (this, "addNodeEvent");
+				this .colorNode .removeInterest ("addNodeEvent", this);
 
 			this .colorNode = X3DCast (X3DConstants .X3DColorNode, this .color_);
 
 			if (this .colorNode)
-				this .colorNode .addInterest (this, "addNodeEvent");
+				this .colorNode .addInterest ("addNodeEvent", this);
 		},
 		set_coord__: function ()
 		{
 			if (this .coordNode)
-				this .coordNode .removeInterest (this, "addNodeEvent");
+				this .coordNode .removeInterest ("addNodeEvent", this);
 
 			this .coordNode = X3DCast (X3DConstants .X3DCoordinateNode, this .coord_);
 
 			if (this .coordNode)
-				this .coordNode .addInterest (this, "addNodeEvent");
+				this .coordNode .addInterest ("addNodeEvent", this);
 		},
 		build: function ()
 		{
@@ -97191,7 +97443,7 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .direction_ .addInterest (this, "set_direction__");
+			this .direction_ .addInterest ("set_direction__", this);
 
 			this .coordIndex_ .addFieldInterest (this .polylineNode .coordIndex_);
 			this .coord_      .addFieldInterest (this .polylineNode .coord_);
@@ -97199,7 +97451,7 @@ function ($,
 			this .polylineNode .coordIndex_ = this .coordIndex_;
 			this .polylineNode .coord_      = this .coord_;
 
-			this .polylineNode .addInterest (this, "set_polyline");
+			this .polylineNode .addInterest ("set_polyline", this);
 			this .polylineNode .setPrivate (true);
 			this .polylineNode .setup ();
 
@@ -97430,9 +97682,12 @@ function ($,
 
 			var browser = this .getBrowser ();
 
-			this .setShader (browser .getPointShader ());
 			this .setPrimitiveMode (browser .getContext () .POINTS);
 			this .setSolid (false);
+		},
+		getShader: function (browser)
+		{
+			return browser .getPointShader ();
 		},
 		build: function ()
 		{
@@ -98006,7 +98261,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_keyValue__");
+			this .keyValue_ .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -98996,15 +99251,14 @@ function ($,
 			min .set ((glyph .xMin || 0) / unitsPerEm, (glyph .yMin || 0) / unitsPerEm, 0);
 			max .set ((glyph .xMax || 0) / unitsPerEm, (glyph .yMax || 0) / unitsPerEm, 0);
 		},
-		transform: function (context)
+		transform: function (renderObject)
 		{
 			// throws an exception
 
 			var
-				renderObject     = context .renderer,
 				text             = this .getText (),
 				projectionMatrix = renderObject .getProjectionMatrix () .get (),
-				modelViewMatrix  = context .modelViewMatrix,
+				modelViewMatrix  = renderObject .getModelViewMatrix () .get (),
 				viewport         = renderObject .getViewVolume () .getViewport (),
 				screenMatrix     = this .screenMatrix;
 
@@ -99039,20 +99293,15 @@ function ($,
 
 			bbox .assign (this .getBBox ()) .multRight (this .matrix);
 
-			if (! bbox .equals (text .getBBox ()))
-			{
-			   bbox .getExtents (min, max);
-				text .getMin ()  .assign (min);
-				text .getMax ()  .assign (max);
-				text .getBBox () .assign (bbox);
-				text .bbox_changed_ .addEvent ();
-			}
-
-			return this .matrix;
+			text .setBBox (bbox);
+		},
+		traverse: function (type, renderObject)
+		{
+			this .transform (renderObject);
 		},
 		display: function (context)
 		{
-			Matrix4 .prototype .multLeft .call (context .modelViewMatrix, this .transform (context));
+			Matrix4 .prototype .multLeft .call (context .modelViewMatrix, this .matrix);
 
 		   context .textureNode          = this .texture;
 		   context .textureTransformNode = this .getBrowser () .getDefaultTextureTransform ();
@@ -99664,7 +99913,7 @@ function ($,
 		{
 			X3DScriptNode .prototype .initialize .call (this);
 
-			this .url_ .addInterest (this, "set_url__");
+			this .url_ .addInterest ("set_url__", this);
 
 			this .requestAsyncLoad ();
 		},
@@ -99892,10 +100141,10 @@ function ($,
 			if (this .isLive () .getValue ())
 			{
 				if ($.isFunction (this .context .prepareEvents))
-					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents__");
+					this .getBrowser () .prepareEvents () .addInterest ("prepareEvents__", this);
 
 				if ($.isFunction (this .context .eventsProcessed))
-					this .addInterest (this, "eventsProcessed__");
+					this .addInterest ("eventsProcessed__", this);
 
 				for (var name in userDefinedFields)
 				{
@@ -99908,7 +100157,7 @@ function ($,
 							var callback = this .context [field .getName ()];
 
 							if ($.isFunction (callback))
-								field .addInterest (this, "set_field__", callback);
+								field .addInterest ("set_field__", this, callback);
 
 							break;
 						}
@@ -99917,7 +100166,7 @@ function ($,
 							var callback = this .context ["set_" + field .getName ()];
 
 							if ($.isFunction (callback))
-								field .addInterest (this, "set_field__", callback);
+								field .addInterest ("set_field__", this, callback);
 
 							break;
 						}
@@ -99927,10 +100176,10 @@ function ($,
 			else
 			{
 				if (this .context .prepareEvents)
-					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents__");
+					this .getBrowser () .prepareEvents () .removeInterest ("prepareEvents__", this);
 
 				if (this .context .eventsProcessed)
-					this .removeInterest (this, "eventsProcessed__");
+					this .removeInterest ("eventsProcessed__", this);
 
 				for (var name in userDefinedFields)
 				{
@@ -99940,7 +100189,7 @@ function ($,
 					{
 						case X3DConstants .inputOnly:
 						case X3DConstants .inputOutput:
-							field .removeInterest (this, "set_field__");
+							field .removeInterest ("set_field__", this);
 							break;
 					}
 				}
@@ -99950,7 +100199,7 @@ function ($,
 		{
 			this .context = this .getContext (text);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
 			this .set_live__ ();
 
@@ -100188,8 +100437,6 @@ function ($,
 		traverse: function (type, renderObject)
 		{
 			// Always look at ParticleSystem if you do modify something here and there.
-	
-			this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
 
 			switch (type)
 			{
@@ -100213,6 +100460,8 @@ function ($,
 					break;
 				}
 			}
+	
+			this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
 		},
 		pointer: function (renderObject)
 		{
@@ -100484,7 +100733,7 @@ function ($,
 		{
 			X3DSoundNode .prototype .initialize .call (this);
 
-			this .source_ .addInterest (this, "set_source__");
+			this .source_ .addInterest ("set_source__", this);
 
 			this .set_source__ ();
 		},
@@ -100677,9 +100926,9 @@ function ($,
 			X3DGeometryNode .prototype .set_live__ .call (this);
 		   
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getSphereOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getSphereOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getSphereOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getSphereOptions () .removeInterest ("eventsProcessed", this);
 		},
 		build: function ()
 		{
@@ -100711,6 +100960,8 @@ function ($,
 					                radius * defaultVertices [i + 2],
 					                1);
 				}
+
+				radius = Math .abs (radius);
 
 				this .getMin () .set (-radius, -radius, -radius);
 				this .getMax () .set ( radius,  radius,  radius);
@@ -101629,8 +101880,8 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 		
-			this .keyValue_    .addInterest (this, "set_keyValue__");
-			this .keyVelocity_ .addInterest (this, "set_keyVelocity__");
+			this .keyValue_    .addInterest ("set_keyValue__", this);
+			this .keyVelocity_ .addInterest ("set_keyVelocity__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -101835,8 +102086,8 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 		
-			this .keyValue_    .addInterest (this, "set_keyValue__");
-			this .keyVelocity_ .addInterest (this, "set_keyVelocity__");
+			this .keyValue_    .addInterest ("set_keyValue__", this);
+			this .keyVelocity_ .addInterest ("set_keyVelocity__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -102082,8 +102333,8 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 		
-			this .keyValue_    .addInterest (this, "set_keyValue__");
-			this .keyVelocity_ .addInterest (this, "set_keyVelocity__");
+			this .keyValue_    .addInterest ("set_keyValue__", this);
+			this .keyVelocity_ .addInterest ("set_keyVelocity__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -102710,7 +102961,7 @@ function ($,
 		{
 			X3DInterpolatorNode .prototype .initialize .call (this);
 		
-			this .keyValue_    .addInterest (this, "set_keyValue__");
+			this .keyValue_    .addInterest ("set_keyValue__", this);
 		},
 		set_keyValue__: function ()
 		{
@@ -102865,7 +103116,7 @@ function ($,
 
 			// Connect after Group setup.
 			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
-			this .group .children_       .addInterest (this, "set_children__");
+			this .group .children_       .addInterest ("set_children__", this);
 
 			this .set_children__ ();
 		},
@@ -103005,19 +103256,19 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .surface_ .addInterest (this, "set_surface__");
+			this .surface_ .addInterest ("set_surface__", this);
 
 			this .set_surface__ ();
 		},
 		set_surface__: function ()
 		{
 			if (this .surfaceNode)
-				this .surfaceNode .removeInterest (this, "set_geometry__");
+				this .surfaceNode .removeInterest ("set_geometry__", this);
 
 			this .surfaceNode = X3DCast (X3DConstants .X3DGeometryNode, this .surface_);
 
 			if (this .surfaceNode)
-				this .surfaceNode .addInterest (this, "set_geometry__");
+				this .surfaceNode .addInterest ("set_geometry__", this);
 
 			this .set_geometry__ ();
 		},
@@ -103258,7 +103509,7 @@ function ($,
 		{
 			X3DGroupingNode .prototype .initialize .call (this);
 			
-			this .whichChoice_ .addInterest (this, "set_whichChoice__");
+			this .whichChoice_ .addInterest ("set_whichChoice__", this);
 			
 			this .set_whichChoice__ ();
 		},
@@ -103652,7 +103903,7 @@ function ($,
 		{
 		   X3DGeometryNode .prototype .initialize .call (this);
 
-		   this .fontStyle_ .addInterest (this, "set_fontStyle__");
+		   this .fontStyle_ .addInterest ("set_fontStyle__", this);
 	
 			this .set_fontStyle__ ();
 			this .eventsProcessed ();
@@ -103673,21 +103924,21 @@ function ($,
 		    X3DGeometryNode .prototype .set_live__ .call (this);
 
 		   if (this .isLive () .getValue ())
-				this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .addInterest ("eventsProcessed", this);
 		   else
-				this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getBrowserOptions () .PrimitiveQuality_ .removeInterest ("eventsProcessed", this);
 		},
 		set_fontStyle__: function ()
 		{
 		   if (this .fontStyleNode)
-		      this .fontStyleNode .removeInterest (this, "addNodeEvent");
+		      this .fontStyleNode .removeInterest ("addNodeEvent", this);
 
 			this .fontStyleNode = X3DCast (X3DConstants .X3DFontStyleNode, this .fontStyle_);
 
 			if (! this .fontStyleNode)
 				this .fontStyleNode = this .getBrowser () .getDefaultFontStyle ();
 
-		   this .fontStyleNode .addInterest (this, "addNodeEvent");
+		   this .fontStyleNode .addInterest ("addNodeEvent", this);
 
 		   this .textGeometry = this .fontStyleNode .getTextGeometry (this);
 		},
@@ -103697,6 +103948,19 @@ function ($,
 			this .textGeometry .build ();
 
 			this .setSolid (this .solid_ .getValue ());
+		},
+		traverse: function (type, renderObject)
+		{
+			try
+			{
+				this .textGeometry .traverse (type, renderObject);
+
+				X3DGeometryNode .prototype .traverse .call (this, type, renderObject);
+			}
+			catch (error)
+			{
+				console .log (error);
+			}
 		},
 		display: function (context)
 		{
@@ -103839,12 +104103,12 @@ function ($,
 		{
 			X3DBackgroundNode .prototype .initialize .call (this);
 
-			this .frontTexture_  .addInterest (this, "set_frontTexture__");
-			this .backTexture_   .addInterest (this, "set_backTexture__");
-			this .leftTexture_   .addInterest (this, "set_leftTexture__");
-			this .rightTexture_  .addInterest (this, "set_rightTexture__");
-			this .topTexture_    .addInterest (this, "set_topTexture__");
-			this .bottomTexture_ .addInterest (this, "set_bottomTexture__");
+			this .frontTexture_  .addInterest ("set_frontTexture__", this);
+			this .backTexture_   .addInterest ("set_backTexture__", this);
+			this .leftTexture_   .addInterest ("set_leftTexture__", this);
+			this .rightTexture_  .addInterest ("set_rightTexture__", this);
+			this .topTexture_    .addInterest ("set_topTexture__", this);
+			this .bottomTexture_ .addInterest ("set_bottomTexture__", this);
 
 			this .set_frontTexture__  (this .frontTexture_);
 			this .set_backTexture__   (this .backTexture_);
@@ -104245,7 +104509,7 @@ function ($,
 		{
 			X3DTextureTransformNode .prototype .initialize .call (this);
 			
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 
 			this .eventsProcessed ();
 		},
@@ -104493,7 +104757,7 @@ function ($,
 		{
 			X3DTriggerNode .prototype .initialize .call (this);
 		
-			this .set_boolean_ .addInterest (this, "set_boolean__");
+			this .set_boolean_ .addInterest ("set_boolean__", this);
 		},
 		set_boolean__: function ()
 		{
@@ -104736,13 +105000,13 @@ function ($,
 		{
 			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
 		
-			this .isLive () .addInterest (this, "set_enabled__");
+			this .isLive () .addInterest ("set_enabled__", this);
 
-			this .enabled_      .addInterest (this, "set_enabled__");
-			this .size_         .addInterest (this, "set_enabled__");
-			this .size_         .addInterest (this, "set_bbox__");
-			this .center_       .addInterest (this, "set_bbox__");
-			this .targetObject_ .addInterest (this, "set_targetObject__");
+			this .enabled_      .addInterest ("set_enabled__", this);
+			this .size_         .addInterest ("set_enabled__", this);
+			this .size_         .addInterest ("set_bbox__", this);
+			this .center_       .addInterest ("set_bbox__", this);
+			this .targetObject_ .addInterest ("set_targetObject__", this);
 
 			this .set_bbox__ ();
 			this .set_targetObject__ ();
@@ -104753,11 +105017,11 @@ function ($,
 		{
 			if (this .isLive () .getValue () && this .targetObjectNode && this .enabled_ .getValue () && ! this .size_. getValue () .equals (Vector3 .Zero))
 			{
-				this .getBrowser () .sensors () .addInterest (this, "update");
+				this .getBrowser () .sensors () .addInterest ("update", this);
 			}
 			else
 			{
-				this .getBrowser () .sensors () .removeInterest (this, "update");
+				this .getBrowser () .sensors () .removeInterest ("update", this);
 					
 				if (this .isActive_ .getValue ())
 				{
@@ -104925,7 +105189,7 @@ function ($,
 		{
 			X3DComposedGeometryNode .prototype .initialize .call (this);
 		
-			this .fanCount_ .addInterest (this, "set_fanCount__");
+			this .fanCount_ .addInterest ("set_fanCount__", this);
 		
 			this .set_fanCount__ ();
 		},
@@ -105335,7 +105599,7 @@ function ($,
 		{
 			X3DComposedGeometryNode .prototype .initialize .call (this);
 		
-			this .stripCount_ .addInterest (this, "set_stripCount__");
+			this .stripCount_ .addInterest ("set_stripCount__", this);
 		
 			this .set_stripCount__ ();
 		},
@@ -105500,19 +105764,19 @@ function ($,
 			
 			this .addChildObjects ("transparent", new Fields .SFBool ());
 
-			this .ambientIntensity_ .addInterest (this, "set_ambientIntensity__");
-			this .diffuseColor_     .addInterest (this, "set_diffuseColor__");
-			this .specularColor_    .addInterest (this, "set_specularColor__");
-			this .emissiveColor_    .addInterest (this, "set_emissiveColor__");
-			this .shininess_        .addInterest (this, "set_shininess__");
-			this .transparency_     .addInterest (this, "set_transparency__");
+			this .ambientIntensity_ .addInterest ("set_ambientIntensity__", this);
+			this .diffuseColor_     .addInterest ("set_diffuseColor__", this);
+			this .specularColor_    .addInterest ("set_specularColor__", this);
+			this .emissiveColor_    .addInterest ("set_emissiveColor__", this);
+			this .shininess_        .addInterest ("set_shininess__", this);
+			this .transparency_     .addInterest ("set_transparency__", this);
 	
-			this .backAmbientIntensity_ .addInterest (this, "set_backAmbientIntensity__");
-			this .backDiffuseColor_     .addInterest (this, "set_backDiffuseColor__");
-			this .backSpecularColor_    .addInterest (this, "set_backSpecularColor__");
-			this .backEmissiveColor_    .addInterest (this, "set_backEmissiveColor__");
-			this .backShininess_        .addInterest (this, "set_backShininess__");
-			this .backTransparency_     .addInterest (this, "set_backTransparency__");
+			this .backAmbientIntensity_ .addInterest ("set_backAmbientIntensity__", this);
+			this .backDiffuseColor_     .addInterest ("set_backDiffuseColor__", this);
+			this .backSpecularColor_    .addInterest ("set_backSpecularColor__", this);
+			this .backEmissiveColor_    .addInterest ("set_backEmissiveColor__", this);
+			this .backShininess_        .addInterest ("set_backShininess__", this);
+			this .backTransparency_     .addInterest ("set_backTransparency__", this);
 	
 			this .set_ambientIntensity__ ();
 			this .set_diffuseColor__ ();
@@ -105794,9 +106058,9 @@ function ($,
 			this .proximitySensor .size_   = this .size_;
 			this .proximitySensor .center_ = this .center_;
 
-			this .displayed_ .addInterest (this, "set_displayed__");
-			this .size_      .addInterest (this, "set_displayed__");
-			this .children_  .addInterest (this, "set_children__");
+			this .displayed_ .addInterest ("set_displayed__", this);
+			this .size_      .addInterest ("set_displayed__", this);
+			this .children_  .addInterest ("set_children__", this);
 
 			this .set_displayed__ ();
 			this .set_children__ ();
@@ -106039,7 +106303,7 @@ function ($,
 		{
 			X3DEnvironmentalSensorNode .prototype .initialize .call (this);
 
-			this .enabled_ .addInterest (this, "set_enabled__");
+			this .enabled_ .addInterest ("set_enabled__", this);
 
 			this .set_enabled__ ();
 		},
@@ -106247,7 +106511,7 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .direction_ .addInterest (this, "set_direction__");
+			this .direction_ .addInterest ("set_direction__", this);
 
 			this .coordIndex_ .addFieldInterest (this .volumeNode .coordIndex_);
 			this .coord_      .addFieldInterest (this .volumeNode .coord_);
@@ -106257,7 +106521,7 @@ function ($,
 			this .volumeNode .coordIndex_  = this .coordIndex_;
 			this .volumeNode .coord_       = this .coord_;
 
-			this .volumeNode .addInterest (this, "set_geometry__");
+			this .volumeNode .addInterest ("set_geometry__", this);
 			this .volumeNode .setPrivate (true);
 			this .volumeNode .setup ();
 
@@ -107521,7 +107785,7 @@ function ($,
 
 			X3DBrowserContext .prototype .initialize .call (this);
 
-			this .getLoadSensor () .loadTime_ .addInterest (this, "realize");
+			this .getLoadSensor () .loadTime_ .addInterest ("realize", this);
 
 			this .print ("Welcome to " + this .name + " X3D Browser " + this .version + ":\n" +
 			                "        Current Graphics Renderer\n" +
@@ -107544,7 +107808,7 @@ function ($,
 		},
 		realize: function ()
 		{
-			this .getLoadSensor () .loadTime_ .removeInterest (this, "realize");
+			this .getLoadSensor () .loadTime_ .removeInterest ("realize", this);
 
 			var urlCharacters = this .getElement () [0] .getAttribute ("src");
 
@@ -107625,8 +107889,8 @@ function ($,
 		{
 			// Cancel any loading.
 
-			this .loadCount_       .removeInterest (this, "set_loadCount__");
-			this .prepareEvents () .removeInterest (this, "bind");
+			this .loadCount_       .removeInterest ("set_loadCount__", this);
+			this .prepareEvents () .removeInterest ("bind", this);
 
 			if (this .loader)
 				this .loader .abort ();
@@ -107651,7 +107915,7 @@ function ($,
 			this .description = "";
 
 			this .setBrowserLoading (true);
-			this .loadCount_ .addInterest (this, "set_loadCount__");
+			this .loadCount_ .addInterest ("set_loadCount__", this);
 	
 			for (var id in scene .getLoadingObjects ())
 				this .addLoadCount (scene .getLoadingObjects () [id]);
@@ -107667,14 +107931,14 @@ function ($,
 			if (loadCount .getValue ())
 				return;
 
-			this .loadCount_ .removeInterest (this, "set_loadCount__");
+			this .loadCount_ .removeInterest ("set_loadCount__", this);
 
-			this .prepareEvents () .addInterest (this, "bind");
+			this .prepareEvents () .addInterest ("bind", this);
 			this .addBrowserEvent ();
 		},
 		bind: function ()
 		{
-			this .prepareEvents () .removeInterest (this, "bind");
+			this .prepareEvents () .removeInterest ("bind", this);
 
 			this .getWorld () .bind ();
 			this .setBrowserLoading (false);
@@ -107697,7 +107961,7 @@ function ($,
 			if (! external)
 			{
 				scene .setExecutionContext (currentScene);
-				currentScene .isLive () .addInterest (scene, "setLive");
+				currentScene .isLive () .addInterest ("setLive", scene);
 
 				if (currentScene .isLive () .getValue ())
 					scene .setLive (true);
@@ -107742,7 +108006,7 @@ function ($,
 				   if (! external)
 				   {
 						scene .setExecutionContext (currentScene);
-				      currentScene .isLive () .addInterest (scene, "setLive");
+				      currentScene .isLive () .addInterest ("setLive", scene);
 
 						if (currentScene .isLive () .getValue ())
 						   scene .setLive (true);
@@ -107769,7 +108033,7 @@ function ($,
 			if (! external)
 			{
 				scene .setExecutionContext (currentScene);
-				currentScene .isLive () .addInterest (scene, "setLive");
+				currentScene .isLive () .addInterest ("setLive", scene);
 						
 				if (currentScene .isLive () .getValue ())
 					scene .setLive (true);
@@ -107783,8 +108047,8 @@ function ($,
 		{
 			// Cancel any loading.
 
-			this .loadCount_       .removeInterest (this, "set_loadCount__");
-			this .prepareEvents () .removeInterest (this, "bind");
+			this .loadCount_       .removeInterest ("set_loadCount__", this);
+			this .prepareEvents () .removeInterest ("bind", this);
 
 			if (this .loader)
 				this .loader .abort ();
@@ -107799,10 +108063,13 @@ function ($,
 			this .loader .createX3DFromURL (url, parameter,
 			function (scene)
 			{
+				if (this .getElement () .attr ("splashScreen") === "false")
+					this .getCanvas () .fadeIn (0);
+
 				if (scene)
 					this .replaceWorld (scene);
 				else
-					setTimeout (function () { this .getLoadingElement () .find (".cobweb-spinner-text") .text (_ ("Failed loading world.")); } .bind (this), 31);
+					setTimeout (function () { this .getSplashScreen () .find (".cobweb-spinner-text") .text (_ ("Failed loading world.")); } .bind (this), 31);
 
 				// Must not remove load count, replaceWorld does a resetLoadCount when it sets setBrowserLoading to true.
 				// Don't set browser loading to false.
@@ -107810,6 +108077,9 @@ function ($,
 			.bind (this),
 			function (fragment)
 			{
+				if (this .getElement () .attr ("splashScreen") === "false")
+					this .getCanvas () .fadeIn (0);
+
 				this .currentScene .changeViewpoint (fragment);
 				this .removeLoadCount (id);
 				this .setBrowserLoading (false);
@@ -107817,6 +108087,9 @@ function ($,
 			.bind (this),
 			function (url, target)
 			{
+				if (this .getElement () .attr ("splashScreen") === "false")
+					this .getCanvas () .fadeIn (0);
+
 				if (target)
 					window .open (url, target);
 				else
@@ -107857,7 +108130,7 @@ function ($,
 			if (! external)
 			{
 				scene .setExecutionContext (currentScene);
-				currentScene .isLive () .addInterest (scene, "setLive");
+				currentScene .isLive () .addInterest ("setLive", scene);
 						
 				if (currentScene .isLive () .getValue ())
 					scene .setLive (true);
@@ -108239,9 +108512,6 @@ function ($,
 
 		browser .setup ();
 
-		if (dom .attr ("splashScreen") !== "false")
-			browser .getCanvas () .fadeOut (0);
-		
 		return browser;
 	}
 

@@ -113,13 +113,9 @@ li + .bookmark-section {
 }
 
 .browser {
+	display: block;
 	width: auto;
 	height: 100%;
-}
-
-.second-browser {
-	float: left;
-	margin-right: 20px;
 }
 
 .fallback {
@@ -174,16 +170,16 @@ X3D (function (X3DCanvases)
 	var pages =
 	[
 		{ name: 'Worlds' },
-		{ name: 'Smarty Bubbles',              url: [ "tests/Components/Rendering/bubbles.x3d" ] },
-		{ name: 'Flashing Lights',             url: [ "tests/Components/Lighting/lights/lights.x3d" ] },
-		{ name: 'Moving Circles',              url: [ "tests/Components/Texturing/circles/circles.x3d" ] },
-		{ name: 'Boyz Noise',                  url: [ "examples/noise/noise.x3d" ] },
-		{ name: 'Boyz Noise 2',                url: [ "examples/noise/noise2.x3d" ] },
-		{ name: 'Sliding Puzzle',              url: [ "examples/puzzle/puzzle.x3d" ] },
-		{ name: 'Fourmi Earth',                url: [ "examples/fourmilab/earth.x3d" ] },
-		{ name: 'Currencies',                  url: [ "examples/currencies/currencies.x3d" ] },
-		{ name: 'Universe',                    url: [ "examples/paul bourke/scene.x3d" ] },
-		{ name: 'Crazy Spiral',                url: [ "http://titania.create3000.de/fileadmin/images/teaser/crazy-spiral.x3d" ] },
+		{ name: 'Smarty Bubbles',        url: [ "tests/Components/Rendering/bubbles.x3d" ] },
+		{ name: 'Flashing Lights',       url: [ "tests/Components/Lighting/lights/lights.x3d" ] },
+		{ name: 'Moving Circles',        url: [ "tests/Components/Texturing/circles/circles.x3d" ] },
+		{ name: 'Boyz Noise',            url: [ "examples/noise/noise.x3d" ] },
+		{ name: 'Boyz Noise 2',          url: [ "examples/noise/noise2.x3d" ] },
+		{ name: 'Sliding Puzzle',        url: [ "examples/puzzle/puzzle.x3d" ] },
+		{ name: 'Fourmi Earth',          url: [ "examples/fourmilab/earth.x3d" ] },
+		{ name: 'Currencies',            url: [ "examples/currencies/currencies.x3d" ] },
+		{ name: 'Universe',              url: [ "examples/paul bourke/scene.x3d" ] },
+		{ name: 'Crazy Spiral',          url: [ "http://titania.create3000.de/fileadmin/images/teaser/crazy-spiral.x3d" ] },
 		{ name: 'Marble',                url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Marble/marble.x3d" ] },
 		{ name: 'X3D Logo Pieces',       url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/LogoPieces/index.x3d" ] },
 
@@ -247,14 +243,15 @@ X3D (function (X3DCanvases)
 		{ name: 'Rosalila',             url: [ "http://chichcalan.com/rosalila/rosalila.wrl" ] },
 
 		{ name: 'CADGeometry' },
-		{ name: 'CADGeometry',                 url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADGeometry.wrl" ] },
-		{ name: 'CADLayer',                    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADLayer.wrl" ] },
-		{ name: 'Setco',                       url: [ "tests/Components/CADGeometry/setco.x3d" ] },
+		{ name: 'CADGeometry',   url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADGeometry.wrl" ] },
+		{ name: 'CADLayer',      url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/CADGeometry/CADLayer.wrl" ] },
+		{ name: 'Setco',         url: [ "tests/Components/CADGeometry/setco.x3d" ] },
 		
 		{ name: 'Core' },
 		{ name: 'EXPORT',              url: [ "tests/Components/Core/EXPORT.x3d", "tests/Components/Core/EXPORT.x3dv" ] },
 		{ name: 'IMPORT',              url: [ "tests/Components/Core/IMPORT.x3d", "tests/Components/Core/IMPORT.x3dv" ] },
-		
+		{ name: 'scene',               url: [ "tests/Components/Core/scene.x3d" ] },
+		     
 		{ name: 'PROTO' },
 		{ name: 'NestedProtos',        url: [ "tests/Components/PROTO/NestedProtos.x3d" ] },
 		{ name: '27 Cubes',            url: [ "tests/Components/PROTO/27cubes.x3d" ] },
@@ -329,6 +326,7 @@ X3D (function (X3DCanvases)
 		{ name: 'Geometry3D' },
 		{ name: 'Geometry3D',              url: [ "tests/Components/Geometry3D/Geometry3D.x3d" ] },
 		{ name: 'Smash',                   url: [ "tests/Components/Geometry3D/Smash.x3d" ] },
+		{ name: 'Cube',                    url: [ "tests/Components/Geometry3D/Cube.x3dv" ] },
 		{ name: 'Box',                     url: [ "tests/Components/Geometry3D/box.x3d" ] },
 		{ name: '1728',                    url: [ "https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Geometry3D/1728.x3dv" ] },
 
@@ -420,6 +418,7 @@ X3D (function (X3DCanvases)
 		{ name: 'Glowing World',           url: [ "tests/Components/Rendering/world.x3d" ] },
 		{ name: 't85',                     url: [ "tests/Components/Rendering/DRracer/t85.x3d", "tests/Components/Rendering/DRracer/t85.wrl" ] },
 		{ name: 'Townsite',                url: [ "tests/Components/Rendering/DRracer/townsite_withHud_cobweb.x3d" ] },
+		{ name: 'L-System',                url: [ "tests/Components/Rendering/L-System.x3dv" ] },
 
 		{ name: 'Scripting' },
 		{ name: 'ColorSpheres',         url: [ "tests/Components/Scripting/ColorSpheres.x3d" ] },
@@ -440,10 +439,15 @@ X3D (function (X3DCanvases)
 		{ name: 'MURCIELAGO640',        url: [ "tests/Components/Scripting/MURCIELAGO640.json" ] },
 
 		{ name: 'Shaders' },
-		{ name: 'Shader Pipeline',             url: [ "tests/Components/Shaders/Pipeline.x3d" ] },
-		{ name: 'Shader Images',               url: [ "tests/Components/Shaders/images.x3d" ] },
-		{ name: 'Shader Fields',               url: [ "tests/Components/Shaders/Fields.x3d" ] },
-		{ name: 'Water Quality',               url: [ "examples/water/water.x3d" ] },
+		{ name: 'Shader Pipeline', url: [ "tests/Components/Shaders/Pipeline.x3d" ] },
+		{ name: 'Shader Images',   url: [ "tests/Components/Shaders/images.x3d" ] },
+		{ name: 'Shader Fields',   url: [ "tests/Components/Shaders/Fields.x3d" ] },
+		{ name: 'SFRotation',      url: [ "tests/Components/Shaders/ComposedShaderUniformRotation.x3d" ] },
+		{ name: 'Water Quality',   url: [ "examples/water/water.x3d" ] },
+		{ name: 'Water Quality 2', url: [ "examples/water/water2.x3d" ] },
+		{ name: 'Waves',           url: [ "tests/Components/Shaders/Waves.x3d" ] },
+		{ name: 'Mountains',       url: [ "tests/Components/Shaders/Mountains.x3d" ] },
+		{ name: 'Mandelbox',       url: [ "tests/Components/Shaders/Mandelbox.x3d" ] },
 
 		{ name: 'Vertex Attributes' },
 		{ name: 'Float',         url: [ "tests/Components/Shaders/FloatVertexAttribute.x3d" ] },
@@ -510,7 +514,7 @@ function loadURL ()
 		<div class="content">
 			<div class="tests">
 				<div class="bookmarks"></div>
-				<X3DCanvas class="browser" cache="false" xsrc="https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationChaser.wrl">
+				<X3DCanvas splashScreen="true" class="browser" cache="false" xsrc="https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationChaser.wrl">
 					<p class="fallback">Sorry,<br/>
 						it wasn't me!<br/>
 						<br/>
@@ -528,7 +532,10 @@ function loadURL ()
 					</tr>
 				</table>
 				<div class="toggle"><a href="cobweb.html">cobweb.html</a> | <a href="http://rawgit.com/create3000/cobweb/master/cobweb.js/cobweb.min.html">github</a></div>
-				<xX3DCanvas class="second-browser" cache="false" src="tests/Components/Rendering/IndexedLineSet.x3d"></xX3DCanvas>
+				<p>Second
+					<X3DCanvas splashScreen="false" timings="false" notification="false" contextMenu="false" cache="false" src="tests/Components/Rendering/IndexedLineSet.x3d"></X3DCanvas>
+					<canvas style="background: red;"></canvas>
+					Browser</p>
 				<p class="version cobweb-min"></p>
 				<p class="-cobweb-console"></p>
 			</div>

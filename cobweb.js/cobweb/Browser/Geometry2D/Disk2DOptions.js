@@ -68,7 +68,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("segments", new Fields .SFInt32 (40))
+		this .addChildObjects ("dimension", new Fields .SFInt32 (40))
 
 		this .circleVertices = [ ];
 		this .diskTexCoords  = [ ];
@@ -93,7 +93,7 @@ function ($,
 		},
 		initialize: function ()
 		{
-			this .addInterest (this, "build");
+			this .addInterest ("build", this);
 
 			this .build ();
 		},
@@ -116,15 +116,15 @@ function ($,
 		build: function ()
 		{
 			var
-				segments = this .segments_ .getValue (),
-				angle    = Math .PI * 2 / segments;
+				dimension = this .dimension_ .getValue (),
+				angle     = Math .PI * 2 / dimension;
 		
 			this .circleVertices .length = 0;
 			this .diskTexCoords  .length = 0;
 			this .diskNormals    .length = 0;
 			this .diskVertices   .length = 0;
 
-			for (var n = 0; n < segments; ++ n)
+			for (var n = 0; n < dimension; ++ n)
 			{
 				var
 					theta1    = angle * n,

@@ -128,7 +128,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			canvas .bind ("mouseup.X3DFlyViewer",    this .mouseup    .bind (this));
 			canvas .bind ("mousewheel.X3DFlyViewer", this .mousewheel .bind (this));
 
-			this .getBrowser () .controlKey_ .addInterest (this, "set_controlKey_");
+			this .getBrowser () .controlKey_ .addInterest ("set_controlKey_", this);
 		},
 		addCollision: function () { },
 		removeCollision: function () { },
@@ -182,7 +182,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 						this .direction  .set (0, 0, 0);
 
 						if (this .getBrowser () .getBrowserOption ("Rubberband"))
-							this .getBrowser () .finished () .addInterest (this, "display", MOVE);
+							this .getBrowser () .finished () .addInterest ("display", this, MOVE);
 					}
 
 					break;
@@ -204,7 +204,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 					this .toVector   .assign (this .fromVector);
 
 					if (this .getBrowser () .getBrowserOption ("Rubberband"))
-						this .getBrowser () .finished () .addInterest (this, "display", PAN);
+						this .getBrowser () .finished () .addInterest ("display", this, PAN);
 					
 					break;
 				}
@@ -411,7 +411,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			if (this .startTime)
 				return;
 
-			this .getBrowser () .prepareEvents () .addInterest (this, "fly");
+			this .getBrowser () .prepareEvents () .addInterest ("fly", this);
 			this .getBrowser () .addBrowserEvent ();
 
 			this .startTime = performance .now ();
@@ -421,7 +421,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			if (this .startTime)
 				return;
 			
-			this .getBrowser () .prepareEvents () .addInterest (this, "pan");
+			this .getBrowser () .prepareEvents () .addInterest ("pan", this);
 			this .getBrowser () .addBrowserEvent ();
 
 			this .startTime = performance .now ();
@@ -431,7 +431,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			if (this .startTime)
 				return;
 			
-			this .getBrowser () .prepareEvents () .addInterest (this, "roll");
+			this .getBrowser () .prepareEvents () .addInterest ("roll", this);
 			this .getBrowser () .addBrowserEvent ();
 			
 			this .startTime = performance .now ();
@@ -528,17 +528,17 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 
 			browser .addBrowserEvent ();
 
-			browser .prepareEvents () .removeInterest (this, "fly");
-			browser .prepareEvents () .removeInterest (this, "pan");
-			browser .prepareEvents () .removeInterest (this, "roll");
-			browser .finished ()      .removeInterest (this, "display");
+			browser .prepareEvents () .removeInterest ("fly", this);
+			browser .prepareEvents () .removeInterest ("pan", this);
+			browser .prepareEvents () .removeInterest ("roll", this);
+			browser .finished ()      .removeInterest ("display", this);
 
 			this .startTime = 0;
 		},
 		dispose: function ()
 		{
 			this .disconnect ();
-			this .getBrowser () .controlKey_ .removeInterest (this, "set_controlKey_");
+			this .getBrowser () .controlKey_ .removeInterest ("set_controlKey_", this);
 			this .getBrowser () .getCanvas () .unbind (".X3DFlyViewer");
 			$(document) .unbind (".X3DFlyViewer" + this .getId ());
 		},

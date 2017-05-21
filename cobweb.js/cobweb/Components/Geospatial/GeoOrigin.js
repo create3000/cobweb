@@ -100,7 +100,7 @@ function ($,
 		{
 			X3DNode .prototype .initialize .call (this);
 
-			this .geoSystem_ .addInterest (this, "set_geoSystem__");
+			this .geoSystem_ .addInterest ("set_geoSystem__", this);
 
 			this .set_geoSystem__ ();
 		},

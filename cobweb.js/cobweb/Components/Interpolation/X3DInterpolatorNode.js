@@ -87,8 +87,8 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 			
-			this .set_fraction_ .addInterest (this, "set_fraction__");
-			this .key_          .addInterest (this, "set_key__");
+			this .set_fraction_ .addInterest ("set_fraction__", this);
+			this .key_          .addInterest ("set_key__", this);
 		},
 		set_fraction__: function ()
 		{

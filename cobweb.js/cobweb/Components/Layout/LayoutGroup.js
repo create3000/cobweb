@@ -112,8 +112,8 @@ function ($,
 		{
 			X3DGroupingNode .prototype .initialize .call (this);
 
-			this .viewport_ .addInterest (this, "set_viewport__");
-			this .layout_   .addInterest (this, "set_layout__");
+			this .viewport_ .addInterest ("set_viewport__", this);
+			this .layout_   .addInterest ("set_layout__", this);
 		
 			this .set_viewport__ ();
 			this .set_layout__ ();

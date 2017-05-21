@@ -101,7 +101,7 @@ function ($,
 		{
 			X3DGroupingNode .prototype .initialize .call (this);
 
-			this .visible_ .addInterest (this, "set_children__");
+			this .visible_ .addInterest ("set_children__", this);
 		},
 		getVisible: function ()
 		{

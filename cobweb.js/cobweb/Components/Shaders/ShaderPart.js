@@ -55,7 +55,7 @@ define ([
 	"cobweb/Browser/Shaders/Shader",
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Components/Networking/X3DUrlObject",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -65,7 +65,7 @@ function ($,
           Shader,
           X3DNode, 
           X3DUrlObject,
-          Loader,
+          FileLoader,
           X3DConstants)
 {
 "use strict";
@@ -152,7 +152,7 @@ function ($,
 			
 			this .valid = false;
 
-			new Loader (this) .loadDocument (this .url_, null,
+			new FileLoader (this) .loadDocument (this .url_, null,
 			function (data, URL)
 			{
 				if (data === null)

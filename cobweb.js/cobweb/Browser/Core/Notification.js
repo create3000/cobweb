@@ -91,19 +91,15 @@ function ($,
 
 			$("<span></span>") .appendTo (this .element);
 
-			this .string_ .addInterest (this, "set_string__");
+			this .string_ .addInterest ("set_string__", this);
 		},
 		set_string__: function ()
 		{
-			if (this .string_ .length === 0)
+			if (! this .getBrowser () .getBrowserOptions () .getNotifications ())
 				return;
 
-			//this .element
-			//	.text (this .string_ .getValue ())
-			//	.stop (true, true)
-			//	.fadeIn ()
-			//	.animate ({ "delay": 1 }, 4000)
-			//	.fadeOut ();
+			if (this .string_ .length === 0)
+				return;
 
 			this .element .children () .text (this .string_ .getValue ());
 

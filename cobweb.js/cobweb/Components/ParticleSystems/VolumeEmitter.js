@@ -141,7 +141,7 @@ function ($,
 		{
 			X3DParticleEmitterNode .prototype .initialize .call (this);
 
-			this .direction_ .addInterest (this, "set_direction__");
+			this .direction_ .addInterest ("set_direction__", this);
 
 			this .coordIndex_ .addFieldInterest (this .volumeNode .coordIndex_);
 			this .coord_      .addFieldInterest (this .volumeNode .coord_);
@@ -151,7 +151,7 @@ function ($,
 			this .volumeNode .coordIndex_  = this .coordIndex_;
 			this .volumeNode .coord_       = this .coord_;
 
-			this .volumeNode .addInterest (this, "set_geometry__");
+			this .volumeNode .addInterest ("set_geometry__", this);
 			this .volumeNode .setPrivate (true);
 			this .volumeNode .setup ();
 

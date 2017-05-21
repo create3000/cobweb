@@ -57,7 +57,7 @@ define ([
 	"cobweb/Components/Grouping/X3DBoundedObject",
 	"cobweb/Components/Grouping/Group",
 	"cobweb/Bits/X3DConstants",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 ],
 function ($,
           Fields,
@@ -68,7 +68,7 @@ function ($,
           X3DBoundedObject,
           Group,
           X3DConstants,
-          Loader)
+          FileLoader)
 {
 "use strict";
 
@@ -119,15 +119,15 @@ function ($,
 			X3DUrlObject     .prototype .initialize .call (this);
 			X3DBoundedObject .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
 			this .group .setPrivate (true);
 			this .group .setup ();
 			this .group .isCameraObject_ .addFieldInterest (this .isCameraObject_);
 
-			this .load_   .addInterest (this, "set_load__");
-			this .url_    .addInterest (this, "set_url__");
-			this .buffer_ .addInterest (this, "set_buffer__");
+			this .load_   .addInterest ("set_load__", this);
+			this .url_    .addInterest ("set_url__", this);
+			this .buffer_ .addInterest ("set_buffer__", this);
 
 			this .requestAsyncLoad ();
 		},
@@ -168,7 +168,7 @@ function ($,
 
 				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_, null));
+				this .setInternalScene (new FileLoader (this) .createX3DFromURL (this .url_, null));
 			}
 			catch (error)
 			{
@@ -183,7 +183,7 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-			new Loader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
+			new FileLoader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
 		},
 		requestUnload: function ()
 		{
@@ -209,7 +209,7 @@ function ($,
 		setInternalScene: function (scene)
 		{
 			this .scene .setLive (false);
-			this .scene .rootNodes .removeInterest (this .group .children_, "setValue");
+			this .scene .rootNodes .removeInterest ("setValue", this .group .children_);
 
 			// Set new scene.
 
@@ -218,7 +218,7 @@ function ($,
 			this .scene .setPrivate (this .getExecutionContext () .getPrivate ());
 			this .scene .setup ();
 
-			this .scene .rootNodes .addInterest (this .group .children_, "setValue");
+			this .scene .rootNodes .addInterest ("setValue", this .group .children_);
 			this .group .children_ = this .scene .rootNodes;
 
 			this .set_live__ ();

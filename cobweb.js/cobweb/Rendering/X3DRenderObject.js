@@ -52,7 +52,7 @@ define ([
 	"cobweb/Rendering/DepthBuffer",
 	"cobweb/Bits/TraverseType",
 	"standard/Math/Algorithm",
-	"standard/Math/Algorithms/QuickSort",
+	"standard/Math/Algorithms/MergeSort",
 	"standard/Math/Geometry/Camera",
 	"standard/Math/Geometry/Box3",
 	"standard/Math/Geometry/ViewVolume",
@@ -66,7 +66,7 @@ function ($,
           DepthBuffer,
 	       TraverseType,
           Algorithm,
-          QuickSort,
+          MergeSort,
           Camera,
           Box3,
           ViewVolume,
@@ -81,6 +81,7 @@ function ($,
 	var
 		DEPTH_BUFFER_WIDTH          = 16,
 		DEPTH_BUFFER_HEIGHT         = DEPTH_BUFFER_WIDTH,
+		viewportArray               = new Int32Array (4),
 		projectionMatrix            = new Matrix4 (),
 		projectionMatrixArray       = new Float32Array (16),
 		modelViewMatrix             = new Matrix4 (),
@@ -121,7 +122,7 @@ function ($,
 		this .numDepthShapes           = 0;
 		this .opaqueShapes             = [ ];
 		this .transparentShapes        = [ ];
-		this .transparencySorter       = new QuickSort (this .transparentShapes, compareDistance);
+		this .transparencySorter       = new MergeSort (this .transparentShapes, compareDistance);
 		this .collisionShapes          = [ ];
 		this .activeCollisions         = { };
 		this .depthShapes              = [ ];
@@ -607,7 +608,12 @@ function ($,
 		   {
 				// Terrain following and gravitation
 
-				if (this .getNavigationInfo () .getViewer () !== "WALK")
+				if (this .getBrowser () .getActiveLayer () .getNavigationInfo () === this .getNavigationInfo ())
+				{
+					if (this .getBrowser () .getCurrentViewer () !== "WALK")
+						return;
+				}
+				else if (this .getNavigationInfo () .getViewer () !== "WALK")
 					return;
 
 				// Get NavigationInfo values
@@ -716,10 +722,10 @@ function ($,
 				viewport   = this .getViewVolume () .getViewport (),
 				shaderNode = browser .getDepthShader ();
 
-			// Configure shader
+			// Configure depth shader.
 
 			shaderNode .useProgram (gl);
-			
+
 			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
 			gl .uniformMatrix4fv (shaderNode .x3d_ProjectionMatrix, false, projectionMatrixArray);
@@ -827,14 +833,15 @@ function ($,
 
 			// Sorted blend
 
+			viewportArray         .set (viewport);
 			projectionMatrixArray .set (this .getProjectionMatrix () .get ());
 
-			browser .getPointShader   () .setGlobalUniforms (this, gl, projectionMatrixArray);
-			browser .getLineShader    () .setGlobalUniforms (this, gl, projectionMatrixArray);
-			browser .getDefaultShader () .setGlobalUniforms (this, gl, projectionMatrixArray);
+			browser .getPointShader   () .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
+			browser .getLineShader    () .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
+			browser .getDefaultShader () .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
 
 			for (var id in shaders)
-				shaders [id] .setGlobalUniforms (this, gl, projectionMatrixArray);
+				shaders [id] .setGlobalUniforms (this, gl, projectionMatrixArray, viewportArray);
 
 			// Render opaque objects first
 

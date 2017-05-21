@@ -74,6 +74,8 @@ function ($,
 
 		this .addAlias ("AntiAliased", this .Antialiased_);
 
+		this .setAttributeSplashScreen ();
+
 		this .primitiveQuality = PrimitiveQuality .MEDIUM;
 		this .textureQuality   = TextureQuality   .MEDIUM;
 	}
@@ -110,11 +112,12 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 			
-			this .Rubberband_                .addInterest (this, "set_rubberband__");
-			this .PrimitiveQuality_          .addInterest (this, "set_primitiveQuality__");
-			this .TextureQuality_            .addInterest (this, "set_textureQuality__");
-			this .Shading_                   .addInterest (this, "set_shading__");
-			this .getBrowser () .shutdown () .addInterest (this, "configure");
+			this .SplashScreen_              .addInterest ("set_splashScreen__", this);
+			this .Rubberband_                .addInterest ("set_rubberband__", this);
+			this .PrimitiveQuality_          .addInterest ("set_primitiveQuality__", this);
+			this .TextureQuality_            .addInterest ("set_textureQuality__", this);
+			this .Shading_                   .addInterest ("set_shading__", this);
+			this .getBrowser () .shutdown () .addInterest ("configure", this);
 
 			this .configure ();
 		},
@@ -139,10 +142,36 @@ function ($,
 				rubberband       = this .getBrowser () .getDataStorage () ["BrowserOptions.Rubberband"],
 				primitiveQuality = this .getBrowser () .getDataStorage () ["BrowserOptions.PrimitiveQuality"],
 				textureQuality   = this .getBrowser () .getDataStorage () ["BrowserOptions.TextureQuality"];
-				
+
+			this .setAttributeSplashScreen ();
+
 			if (rubberband       !== undefined && rubberband       !== this .Rubberband_       .getValue ()) this .Rubberband_       = rubberband;
 			if (primitiveQuality !== undefined && primitiveQuality !== this .PrimitiveQuality_ .getValue ()) this .PrimitiveQuality_ = primitiveQuality;
 			if (textureQuality   !== undefined && textureQuality   !== this .TextureQuality_   .getValue ()) this .TextureQuality_   = textureQuality;
+		},
+		setAttributeSplashScreen: function ()
+		{
+			this .SplashScreen_ .set (this .getSplashScreen ());
+		},
+		getSplashScreen: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("splashScreen") !== "false";
+		},
+		getNotifications: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("notifications") !== "false";
+		},
+		getTimings: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("timings") !== "false";
+		},
+		getContextMenu: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("contextMenu") !== "false";
+		},
+		getCache: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("cache") !== "false";
 		},
 		getPrimitiveQuality: function ()
 		{
@@ -155,6 +184,10 @@ function ($,
 		getShading: function ()
 		{
 			return this .Shading_ .getValue ();
+		},
+		set_splashScreen__: function (splashScreen)
+		{
+			this .getBrowser () .getElement () .attr ("splashScreen", splashScreen .getValue () ? "true" : "false");
 		},
 		set_rubberband__: function (rubberband)
 		{
@@ -179,48 +212,48 @@ function ($,
 				{
 					this .primitiveQuality = PrimitiveQuality .LOW;
 				
-					arc .minAngle_      = Math .PI / 10;
-					arcClose .minAngle_ = Math .PI / 10;
-					circle .segments_   = 20;
-					disk .segments_     = 20;
+					arc .dimension_      = 20;
+					arcClose .dimension_ = 20;
+					circle .dimension_   = 20;
+					disk .dimension_     = 20;
 
-					cone     .vDimension_ = 16;
-					cylinder .vDimension_ = 16;
+					cone     .xDimension_ = 16;
+					cylinder .xDimension_ = 16;
 
-					sphere .uDimension_ = 24;
-					sphere .vDimension_ = 12;
+					sphere .xDimension_ = 20;
+					sphere .yDimension_ = 9;
 					break;
 				}
 				case "HIGH":
 				{
 					this .primitiveQuality = PrimitiveQuality .HIGH;
 
-					arc .minAngle_      = Math .PI / 40;
-					arcClose .minAngle_ = Math .PI / 40;
-					circle .segments_   = 80;
-					disk .segments_     = 80;
+					arc .dimension_      = 80;
+					arcClose .dimension_ = 80;
+					circle .dimension_   = 80;
+					disk .dimension_     = 80;
 
-					cone     .vDimension_ = 32;
-					cylinder .vDimension_ = 32;
+					cone     .xDimension_ = 32;
+					cylinder .xDimension_ = 32;
 
-					sphere .uDimension_ = 40;
-					sphere .vDimension_ = 20;
+					sphere .xDimension_ = 64;
+					sphere .yDimension_ = 31;
 					break;
 				}
 				default:
 				{
 					this .primitiveQuality = PrimitiveQuality .MEDIUM;
 
-					arc .minAngle_      = Math .PI / 20;
-					arcClose .minAngle_ = Math .PI / 20;
-					circle .segments_   = 40;
-					disk .segments_     = 40;
+					arc .dimension_      = 40;
+					arcClose .dimension_ = 40;
+					circle .dimension_   = 40;
+					disk .dimension_     = 40;
 
-					cone     .vDimension_ = 20;
-					cylinder .vDimension_ = 20;
+					cone     .xDimension_ = 20;
+					cylinder .xDimension_ = 20;
 
-					sphere .uDimension_ = 32;
-					sphere .vDimension_ = 16;
+					sphere .xDimension_ = 32;
+					sphere .yDimension_ = 15;
 					break;
 				}
 			}

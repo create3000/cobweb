@@ -361,6 +361,9 @@ function ($,
 		{
 			try
 			{
+				this .scene .setEncoding ("VRML");
+				this .scene .setProfile (this .getBrowser () .getProfile ("Full"));
+
 				this .setInput (input);
 				this .x3dScene ();
 				return;

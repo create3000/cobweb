@@ -72,7 +72,7 @@ define ("cobweb/Components/Scripting/Script",
 	"cobweb/Routing/X3DRoute",
 	"cobweb/Browser/Scripting/evaluate",
 	"cobweb/Components/Scripting/X3DScriptNode",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -98,7 +98,7 @@ function ($,
           X3DRoute,
           evaluate,
           X3DScriptNode, 
-          Loader,
+          FileLoader,
           X3DConstants)
 {
 	function Script (executionContext)
@@ -133,7 +133,7 @@ function ($,
 		{
 			X3DScriptNode .prototype .initialize .call (this);
 
-			this .url_ .addInterest (this, "set_url__");
+			this .url_ .addInterest ("set_url__", this);
 
 			this .requestAsyncLoad ();
 		},
@@ -160,7 +160,7 @@ function ($,
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 			this .getScene () .addInitLoadCount (this);
 
-			new Loader (this) .loadScript (this .url_,
+			new FileLoader (this) .loadScript (this .url_,
 			function (data)
 			{
 				this .getScene () .removeInitLoadCount (this);
@@ -361,10 +361,10 @@ function ($,
 			if (this .isLive () .getValue ())
 			{
 				if ($.isFunction (this .context .prepareEvents))
-					this .getBrowser () .prepareEvents () .addInterest (this, "prepareEvents__");
+					this .getBrowser () .prepareEvents () .addInterest ("prepareEvents__", this);
 
 				if ($.isFunction (this .context .eventsProcessed))
-					this .addInterest (this, "eventsProcessed__");
+					this .addInterest ("eventsProcessed__", this);
 
 				for (var name in userDefinedFields)
 				{
@@ -377,7 +377,7 @@ function ($,
 							var callback = this .context [field .getName ()];
 
 							if ($.isFunction (callback))
-								field .addInterest (this, "set_field__", callback);
+								field .addInterest ("set_field__", this, callback);
 
 							break;
 						}
@@ -386,7 +386,7 @@ function ($,
 							var callback = this .context ["set_" + field .getName ()];
 
 							if ($.isFunction (callback))
-								field .addInterest (this, "set_field__", callback);
+								field .addInterest ("set_field__", this, callback);
 
 							break;
 						}
@@ -396,10 +396,10 @@ function ($,
 			else
 			{
 				if (this .context .prepareEvents)
-					this .getBrowser () .prepareEvents () .removeInterest (this, "prepareEvents__");
+					this .getBrowser () .prepareEvents () .removeInterest ("prepareEvents__", this);
 
 				if (this .context .eventsProcessed)
-					this .removeInterest (this, "eventsProcessed__");
+					this .removeInterest ("eventsProcessed__", this);
 
 				for (var name in userDefinedFields)
 				{
@@ -409,7 +409,7 @@ function ($,
 					{
 						case X3DConstants .inputOnly:
 						case X3DConstants .inputOutput:
-							field .removeInterest (this, "set_field__");
+							field .removeInterest ("set_field__", this);
 							break;
 					}
 				}
@@ -419,7 +419,7 @@ function ($,
 		{
 			this .context = this .getContext (text);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
 			this .set_live__ ();
 

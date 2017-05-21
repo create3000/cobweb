@@ -104,14 +104,20 @@ function ($,
 
 			this .setPrimitiveMode (this .getBrowser () .getContext () .LINE_LOOP);
 		},
+		getShader: function (browser)
+		{
+			// For circle support.
+
+			return browser .getLineShader ();
+		},
 		set_live__: function ()
 		{
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getDisk2DOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getDisk2DOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getDisk2DOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getDisk2DOptions () .removeInterest ("eventsProcessed", this);
 		},
 		build: function ()
 		{

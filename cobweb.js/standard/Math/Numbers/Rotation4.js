@@ -233,8 +233,12 @@ function ($,
 		},
 		setMatrix: function (matrix)
 		{
-			this .value .setMatrix (matrix);
+			this .value .setMatrix (matrix) .normalize ();
 			return this;
+		},
+		getMatrix: function (matrix)
+		{
+			return this .value .getMatrix (matrix);
 		},
 		equals: function (rot)
 		{

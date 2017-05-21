@@ -118,14 +118,14 @@ function ($,
 
 			// Initialize.
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .front_  .addInterest (this, "set_texture__", 0);
-			this .back_   .addInterest (this, "set_texture__", 1);
-			this .left_   .addInterest (this, "set_texture__", 2);
-			this .right_  .addInterest (this, "set_texture__", 3);
-			this .top_    .addInterest (this, "set_texture__", 5);
-			this .bottom_ .addInterest (this, "set_texture__", 4);
+			this .front_  .addInterest ("set_texture__", this, 0);
+			this .back_   .addInterest ("set_texture__", this, 1);
+			this .left_   .addInterest ("set_texture__", this, 2);
+			this .right_  .addInterest ("set_texture__", this, 3);
+			this .top_    .addInterest ("set_texture__", this, 5);
+			this .bottom_ .addInterest ("set_texture__", this, 4);
 
 			this .set_texture__ (this .front_,  0);
 			this .set_texture__ (this .back_,   1);
@@ -144,7 +144,7 @@ function ($,
 			{
 				var callbackName = "set_loadState__" + texture .getId () + "_" + index;
 
-				texture .removeInterest (this, "set_loadState__");
+				texture .removeInterest ("set_loadState__", this);
 				texture .loadState_ .removeFieldCallback (callbackName);
 			}
 
@@ -154,7 +154,7 @@ function ($,
 			{
 				var callbackName = "set_loadState__" + texture .getId () + "_" + index;
 
-				texture .addInterest (this, "set_loadState__", texture, index);
+				texture .addInterest ("set_loadState__", this, texture, index);
 				texture .loadState_ .addFieldCallback (callbackName, this .set_loadState__ .bind (this, null, texture, index));
 			}
 

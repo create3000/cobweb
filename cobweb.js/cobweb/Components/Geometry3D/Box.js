@@ -131,6 +131,10 @@ function ($,
 					                1);
 				}
 
+				x = Math .abs (x);
+				y = Math .abs (y);
+				z = Math .abs (z);
+
 				this .getMin () .set (-x, -y, -z);
 				this .getMax () .set ( x,  y,  z);
 			}

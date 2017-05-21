@@ -154,7 +154,7 @@ function ($,
 			// Connect to execution context.
 
 			if (this ._executionContext !== this)
-				this ._executionContext .isLive () .addInterest (this, "_set_live__");
+				this ._executionContext .isLive () .addInterest ("_set_live__", this);
 
 			// Return field
 

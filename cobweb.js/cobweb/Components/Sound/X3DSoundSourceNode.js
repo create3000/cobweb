@@ -87,13 +87,13 @@ function ($,
 
 			if (this .getDisabled ())
 			{
-				this .getBrowser () .volume_ .removeInterest (this, "set_volume__");
-				this .getBrowser () .mute_   .removeInterest (this, "set_volume__");
+				this .getBrowser () .volume_ .removeInterest ("set_volume__", this);
+				this .getBrowser () .mute_   .removeInterest ("set_volume__", this);
 			}
 			else
 			{
-				this .getBrowser () .volume_ .addInterest (this, "set_volume__");
-				this .getBrowser () .mute_   .addInterest (this, "set_volume__");
+				this .getBrowser () .volume_ .addInterest ("set_volume__", this);
+				this .getBrowser () .mute_   .addInterest ("set_volume__", this);
 				this .set_volume__ ();
 			}
 		},

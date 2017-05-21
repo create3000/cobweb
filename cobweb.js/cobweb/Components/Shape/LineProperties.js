@@ -96,7 +96,7 @@ function ($,
 		{
 			X3DAppearanceChildNode .prototype .initialize .call (this);
 
-			this .linewidthScaleFactor_ .addInterest (this, "set_linewidthScaleFactor__");
+			this .linewidthScaleFactor_ .addInterest ("set_linewidthScaleFactor__", this);
 
 			this .set_linewidthScaleFactor__ ();
 		},

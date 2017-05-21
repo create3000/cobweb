@@ -106,11 +106,11 @@ function (Fields,
 
 		// Get canvas & context.
 
-		var browser  = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
-		var loading  = $("<div></div>") .addClass ("cobweb-loading")  .appendTo (browser);
-		var spinner  = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (loading);
-		var progress = $("<div></div>") .addClass ("cobweb-progress") .appendTo (loading);
-		var surface  = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
+		var browser      = $("<div></div>") .addClass ("cobweb-browser")  .prependTo (this .element);
+		var splashScreen = $("<div></div>") .addClass ("cobweb-splash-screen") .appendTo (browser);
+		var spinner      = $("<div></div>") .addClass ("cobweb-spinner")  .appendTo (splashScreen);
+		var progress     = $("<div></div>") .addClass ("cobweb-progress") .appendTo (splashScreen);
+		var surface      = $("<div></div>") .addClass ("cobweb-surface cobweb-surface-" + this .getId ()) .appendTo (browser);
 
 		$("<div></div>") .addClass ("cobweb-spinner-one")   .appendTo (spinner);
 		$("<div></div>") .addClass ("cobweb-spinner-two")   .appendTo (spinner);
@@ -118,9 +118,9 @@ function (Fields,
 		$("<div></div>") .addClass ("cobweb-spinner-text")  .appendTo (progress) .text ("Lade 0 Dateien");
 		$("<div></div>") .addClass ("cobweb-progressbar")   .appendTo (progress) .append ($("<div></div>"));
 
-		this .loading = loading;
-		this .canvas  = $("<canvas></canvas>") .prependTo (surface);
-		this .context = getContext (this .canvas [0]);
+		this .splashScreen = splashScreen;
+		this .canvas       = $("<canvas></canvas>") .prependTo (surface);
+		this .context      = getContext (this .canvas [0]);
 
 		this .privateScene = new Scene (this); // Scene for default nodes.
 
@@ -133,6 +133,13 @@ function (Fields,
 
 		this .dataStorage = new DataStorage ("X3DBrowser(" + this .number + ").");
 		this .mobile      = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i .test (navigator .userAgent);
+
+		this .getCanvas () .fadeOut (0);
+
+		if (this .getBrowserOptions () .getSplashScreen ())
+			this .getSplashScreen () .fadeIn (0);
+
+		$(".cobweb-console") .empty ();
 	}
 
 	X3DCoreContext .prototype =
@@ -172,9 +179,9 @@ function (Fields,
 		{
 			return this .element;
 		},
-		getLoadingElement: function ()
+		getSplashScreen: function ()
 		{
-			return this .loading;
+			return this .splashScreen;
 		},
 		getCanvas: function ()
 		{
@@ -237,7 +244,7 @@ function (Fields,
 		{
 			var attributeName = mutation .attributeName;
 
-			switch (attributeName)
+			switch (attributeName .toLowerCase())
 			{
 				case "src":
 					var urlCharacters = this .getElement () .attr ("src");
@@ -249,8 +256,8 @@ function (Fields,
 				case "url":
 					this .load (this .getElement () .attr ("url"));
 					break;
-				case "cache":
-					this .setCaching (this .getElement () .attr ("cache") != "false");
+				case "splashscreen":
+					this .getBrowserOptions () .setAttributeSplashScreen ();
 					break;
 			}
 		},
@@ -268,6 +275,11 @@ function (Fields,
 
 				if (url .length)
 					this .loadURL (url, parameter);
+			}
+			else
+			{
+				if (! this .getLoading ())
+					this .getCanvas () .fadeIn (0);
 			}
 		},
 		getPrivateScene: function ()

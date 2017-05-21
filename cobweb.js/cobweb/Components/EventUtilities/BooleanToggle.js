@@ -96,7 +96,7 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 
-			this .set_boolean_ .addInterest (this, "set_boolean__");
+			this .set_boolean_ .addInterest ("set_boolean__", this);
 		},
 		set_boolean__: function ()
 		{

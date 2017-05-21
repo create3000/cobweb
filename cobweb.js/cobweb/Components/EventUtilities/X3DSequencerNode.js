@@ -77,10 +77,10 @@ function ($,
 		{
 			X3DChildNode .prototype .initialize .call (this);
 		
-			this .set_fraction_ .addInterest (this, "set_fraction__");
-			this .previous_     .addInterest (this, "set_previous__");
-			this .next_         .addInterest (this, "set_next__");
-			this .key_          .addInterest (this, "set_index__");
+			this .set_fraction_ .addInterest ("set_fraction__", this);
+			this .previous_     .addInterest ("set_previous__", this);
+			this .next_         .addInterest ("set_next__", this);
+			this .key_          .addInterest ("set_index__", this);
 		},
 		set_fraction__: function ()
 		{

@@ -118,19 +118,19 @@ function ($,
 			
 			this .addChildObjects ("transparent", new Fields .SFBool ());
 
-			this .ambientIntensity_ .addInterest (this, "set_ambientIntensity__");
-			this .diffuseColor_     .addInterest (this, "set_diffuseColor__");
-			this .specularColor_    .addInterest (this, "set_specularColor__");
-			this .emissiveColor_    .addInterest (this, "set_emissiveColor__");
-			this .shininess_        .addInterest (this, "set_shininess__");
-			this .transparency_     .addInterest (this, "set_transparency__");
+			this .ambientIntensity_ .addInterest ("set_ambientIntensity__", this);
+			this .diffuseColor_     .addInterest ("set_diffuseColor__", this);
+			this .specularColor_    .addInterest ("set_specularColor__", this);
+			this .emissiveColor_    .addInterest ("set_emissiveColor__", this);
+			this .shininess_        .addInterest ("set_shininess__", this);
+			this .transparency_     .addInterest ("set_transparency__", this);
 	
-			this .backAmbientIntensity_ .addInterest (this, "set_backAmbientIntensity__");
-			this .backDiffuseColor_     .addInterest (this, "set_backDiffuseColor__");
-			this .backSpecularColor_    .addInterest (this, "set_backSpecularColor__");
-			this .backEmissiveColor_    .addInterest (this, "set_backEmissiveColor__");
-			this .backShininess_        .addInterest (this, "set_backShininess__");
-			this .backTransparency_     .addInterest (this, "set_backTransparency__");
+			this .backAmbientIntensity_ .addInterest ("set_backAmbientIntensity__", this);
+			this .backDiffuseColor_     .addInterest ("set_backDiffuseColor__", this);
+			this .backSpecularColor_    .addInterest ("set_backSpecularColor__", this);
+			this .backEmissiveColor_    .addInterest ("set_backEmissiveColor__", this);
+			this .backShininess_        .addInterest ("set_backShininess__", this);
+			this .backTransparency_     .addInterest ("set_backTransparency__", this);
 	
 			this .set_ambientIntensity__ ();
 			this .set_diffuseColor__ ();

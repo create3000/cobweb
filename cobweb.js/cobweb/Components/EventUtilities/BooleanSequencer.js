@@ -100,7 +100,7 @@ function ($,
 		{
 			X3DSequencerNode .prototype .initialize .call (this);
 
-			this .keyValue_ .addInterest (this, "set_index__");
+			this .keyValue_ .addInterest ("set_index__", this);
 		},
 		getSize: function ()
 		{

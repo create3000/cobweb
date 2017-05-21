@@ -6,8 +6,8 @@
 		<meta http-equiv="Expires" content="0"/>
 		<meta charset="utf-8"/>
 		<link rel="stylesheet" type="text/css" href="http://titania.create3000.de/fileadmin/styles.css"/>
-		<link rel="stylesheet" type="text/css" href="https://rawgit.com/create3000/cobweb/master/stable/2/2.6/cobweb.css"/>
-		<script type="text/javascript" src="https://rawgit.com/create3000/cobweb/master/stable/2/2.6/cobweb.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="https://rawgit.com/create3000/cobweb/master/stable/3/3.2/cobweb.css"/>
+		<script type="text/javascript" src="https://rawgit.com/create3000/cobweb/master/stable/3/3.2/cobweb.min.js"></script>
 		<style>
 html, body {
 	margin: 0px;
@@ -113,9 +113,10 @@ li + .bookmark-section {
 }
 
 .browser {
-	background: #414141;
+	display: block;
 	width: auto;
 	height: 100%;
+	background: #414141;
 }
 
 .fallback {
@@ -142,8 +143,13 @@ X3D (function (X3DCanvases)
 		{ name: 'Boyz Noise 2',          mobile: true,  url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/examples/noise/noise2.x3d" ] },
 		{ name: 'Sliding Puzzle',        mobile: true,  url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/examples/puzzle/puzzle.x3d" ] },
 		{ name: 'Crazy Spiral',          mobile: true,  url: [ "http://titania.create3000.de/fileadmin/images/teaser/crazy-spiral.x3d" ] },
-		{ name: 'Water Quality',         mobile: false, url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/examples/water/water.x3d" ] },
+		{ name: 'Water Quality',         mobile: false, url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/examples/water/water2.x3d" ] },
 		
+		{ name: 'Shaders' },
+		{ name: 'Waves',     mobile: false, url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Shaders/Waves.x3d" ] },
+		{ name: 'Mountains', mobile: false, url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Shaders/Mountains.x3d" ] },
+		{ name: 'Mandelbox', mobile: false, url: [ "https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/tests/Components/Shaders/Mandelbox.x3d" ] },
+
 		{ name: 'VRML', mobile: true },
 		{ name: '4 Pong',                mobile: true,  url: [ "https://cdn.rawgit.com/create3000/Library/master/Examples/Pong/index.x3d",               "https://cdn.rawgit.com/create3000/Library/master/Examples/Pong/index.wrl" ] },
 		{ name: 'Mediafacade Berlin',    mobile: false, url: [ "https://rawgit.com/create3000/Library/master/Examples/Vattenfall/index.x3d",             "https://rawgit.com/create3000/Library/master/Examples/Vattenfall/index.wrl" ] },

@@ -161,7 +161,7 @@ function ($,
 			this .scaleInterpolator            .value_changed_ .addFieldInterest (this .scaleOffset_);
 			this .scaleOrientationInterpolator .value_changed_ .addFieldInterest (this .scaleOrientationOffset_);
 
-			this .isBound_ .addInterest (this, "set_bound__");
+			this .isBound_ .addInterest ("set_bound__", this);
 		},
 		getEaseInEaseOut: function ()
 		{
@@ -285,7 +285,7 @@ function ($,
 					this .timeSensor .cycleInterval_ = transitionTime;
 					this .timeSensor .stopTime_      = this .getBrowser () .getCurrentTime ();
 					this .timeSensor .startTime_     = this .getBrowser () .getCurrentTime ();
-					this .timeSensor .isActive_ .addInterest (this, "set_active__");
+					this .timeSensor .isActive_ .addInterest ("set_active__", this);
 
 					this .getRelativeTransformation (fromViewpoint, relativePosition, relativeOrientation, relativeScale, relativeScaleOrientation);
 
@@ -321,7 +321,7 @@ function ($,
 		transitionStop: function ()
 		{
 			this .timeSensor .stopTime_ = this .getBrowser () .getCurrentTime ();
-			this .timeSensor .isActive_ .removeInterest (this, "set_active__");
+			this .timeSensor .isActive_ .removeInterest ("set_active__", this);
 		},
 		resetUserOffsets: function ()
 		{
@@ -388,7 +388,7 @@ function ($,
 			this .timeSensor .cycleInterval_ = 0.2;
 			this .timeSensor .stopTime_      = this .getBrowser () .getCurrentTime ();
 			this .timeSensor .startTime_     = this .getBrowser () .getCurrentTime ();
-			this .timeSensor .isActive_ .addInterest (this, "set_active__");
+			this .timeSensor .isActive_ .addInterest ("set_active__", this);
 	
 			this .easeInEaseOut .easeInEaseOut_ = [ new Vector2 (0, 1), new Vector2 (1, 0) ];
 

@@ -200,23 +200,23 @@ function ($,
 
 			var gl = this .getBrowser () .getContext ();
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
-			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest (this, "set_shader__");
-			//this .getBrowser () .getDefaultShader () .addInterest (this, "set_shader__");
+			this .getBrowser () .getBrowserOptions () .Shading_ .addInterest ("set_shader__", this);
+			//this .getBrowser () .getDefaultShader () .addInterest ("set_shader__", this);
 
-			this .enabled_           .addInterest (this, "set_enabled__");
-			this .createParticles_   .addInterest (this, "set_createParticles__");
-			this .geometryType_      .addInterest (this, "set_geometryType__");
-			this .maxParticles_      .addInterest (this, "set_enabled__");
-			this .particleLifetime_  .addInterest (this, "set_particleLifetime__");
-			this .lifetimeVariation_ .addInterest (this, "set_lifetimeVariation__");
-			this .emitter_           .addInterest (this, "set_emitter__");
-			this .physics_           .addInterest (this, "set_physics__");
-			this .colorKey_          .addInterest (this, "set_color__");
-			this .colorRamp_         .addInterest (this, "set_colorRamp__");
-			this .texCoordKey_       .addInterest (this, "set_texCoord__");
-			this .texCoordRamp_      .addInterest (this, "set_texCoordRamp__");
+			this .enabled_           .addInterest ("set_enabled__", this);
+			this .createParticles_   .addInterest ("set_createParticles__", this);
+			this .geometryType_      .addInterest ("set_geometryType__", this);
+			this .maxParticles_      .addInterest ("set_enabled__", this);
+			this .particleLifetime_  .addInterest ("set_particleLifetime__", this);
+			this .lifetimeVariation_ .addInterest ("set_lifetimeVariation__", this);
+			this .emitter_           .addInterest ("set_emitter__", this);
+			this .physics_           .addInterest ("set_physics__", this);
+			this .colorKey_          .addInterest ("set_color__", this);
+			this .colorRamp_         .addInterest ("set_colorRamp__", this);
+			this .texCoordKey_       .addInterest ("set_texCoord__", this);
+			this .texCoordRamp_      .addInterest ("set_texCoordRamp__", this);
 
 			this .colorBuffer     = gl .createBuffer ();
 			this .texCoordBuffers = [ gl .createBuffer () ];
@@ -270,7 +270,7 @@ function ($,
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
-					this .getBrowser () .sensors () .addInterest (this, "animateParticles");
+					this .getBrowser () .sensors () .addInterest ("animateParticles", this);
 		
 					if (this .pauseTime)
 					{
@@ -283,7 +283,7 @@ function ($,
 			{
 				if (this .isActive_ .getValue () && this .maxParticles_ .getValue ())
 				{
-					this .getBrowser () .sensors () .removeInterest (this, "animateParticles");
+					this .getBrowser () .sensors () .removeInterest ("animateParticles", this);
 		
 					if (this .pauseTime === 0)
 						this .pauseTime = performance .now () / 1000;
@@ -298,7 +298,7 @@ function ($,
 				{
 					if (this .isLive () .getValue ())
 					{
-						this .getBrowser () .sensors () .addInterest (this, "animateParticles");
+						this .getBrowser () .sensors () .addInterest ("animateParticles", this);
 			
 						this .pauseTime = 0;
 					}
@@ -314,7 +314,7 @@ function ($,
 				{
 					if (this .isLive () .getValue ())
 					{
-						this .getBrowser () .sensors () .removeInterest (this, "animateParticles");
+						this .getBrowser () .sensors () .removeInterest ("animateParticles", this);
 					}
 	
 					this .isActive_ = false;
@@ -537,7 +537,7 @@ function ($,
 				boundedPhysicsModelNodes = this .boundedPhysicsModelNodes;
 
 			for (var i = 0, length = boundedPhysicsModelNodes .length; i < length; ++ i)
-				boundedPhysicsModelNodes [i] .removeInterest (this, "set_boundedPhysics__");
+				boundedPhysicsModelNodes [i] .removeInterest ("set_boundedPhysics__", this);
 
 			forcePhysicsModelNodes   .length = 0;
 			boundedPhysicsModelNodes .length = 0;
@@ -562,7 +562,7 @@ function ($,
 							}
 							case X3DConstants .BoundedPhysicsModel:
 							{
-								innerNode .addInterest (this, "set_boundedPhysics__");
+								innerNode .addInterest ("set_boundedPhysics__", this);
 								boundedPhysicsModelNodes .push (innerNode);
 								break;
 							}
@@ -599,12 +599,12 @@ function ($,
 		set_colorRamp__: function ()
 		{
 			if (this .colorRampNode)
-				this .colorRampNode .removeInterest (this, "set_color__");
+				this .colorRampNode .removeInterest ("set_color__", this);
 
 			this .colorRampNode = X3DCast (X3DConstants .X3DColorNode, this .colorRamp_);
 
 			if (this .colorRampNode)
-				this .colorRampNode .addInterest (this, "set_color__");
+				this .colorRampNode .addInterest ("set_color__", this);
 
 			this .set_color__ ();
 			this .set_transparent__ ();
@@ -634,12 +634,12 @@ function ($,
 		set_texCoordRamp__: function ()
 		{
 			if (this .texCoordRampNode)
-				this .texCoordRampNode .removeInterest (this, "set_texCoord__");
+				this .texCoordRampNode .removeInterest ("set_texCoord__", this);
 
 			this .texCoordRampNode = X3DCast (X3DConstants .X3DTextureCoordinateNode, this .texCoordRamp_);
 
 			if (this .texCoordRampNode)
-				this .texCoordRampNode .addInterest (this, "set_texCoord__");
+				this .texCoordRampNode .addInterest ("set_texCoord__", this);
 
 			this .set_texCoord__ ();
 		},
@@ -1167,14 +1167,6 @@ function ($,
 			if (! this .isActive_ .getValue ())
 				return;
 
-			if (this .geometryType === GEOMETRY)
-			{
-				if (this .getGeometry ())
-					this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
-				else
-					return;
-			}
-
 			switch (type)
 			{
 				case TraverseType .POINTER:
@@ -1198,6 +1190,14 @@ function ($,
 
 					break;
 				}
+			}
+
+			if (this .geometryType === GEOMETRY)
+			{
+				if (this .getGeometry ())
+					this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
+				else
+					return;
 			}
 		},
 		depth: function (context, shaderNode)

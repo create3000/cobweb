@@ -103,7 +103,7 @@ function ($,
 		{
 			X3DGroupingNode .prototype .initialize .call (this);
 			
-			this .whichChoice_ .addInterest (this, "set_whichChoice__");
+			this .whichChoice_ .addInterest ("set_whichChoice__", this);
 			
 			this .set_whichChoice__ ();
 		},

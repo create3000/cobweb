@@ -140,6 +140,39 @@ function ($, Vector3, Algorithm)
 
 			return this;
 		},
+		getMatrix: function (matrix)
+		{
+			var
+				x = this .x,
+				y = this .y,
+				z = this .z,
+				w = this .w;
+
+			var
+				a = x * x,
+				b = x * y,
+				c = y * y,
+				d = y * z,
+				e = z * x,
+				f = z * z,
+				g = w * x,
+				h = w * y,
+				i = w * z;
+		
+			matrix [0] = 1 - 2 * (c + f);
+			matrix [1] =     2 * (b + i);
+			matrix [2] =     2 * (e - h);
+
+			matrix [3] =     2 * (b - i);
+			matrix [4] = 1 - 2 * (f + a);
+			matrix [5] =     2 * (d + g);
+
+			matrix [6] =     2 * (e + h);
+			matrix [7] =     2 * (d - g);
+			matrix [8] = 1 - 2 * (c + a);
+
+			return matrix;
+		},
 		isReal: function ()
 		{
 			return ! (this .x || this .y || this .z);

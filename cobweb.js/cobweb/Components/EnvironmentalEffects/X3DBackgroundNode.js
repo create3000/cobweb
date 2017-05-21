@@ -195,11 +195,11 @@ function ($,
 			this .topBuffer       = gl .createBuffer ();
 			this .bottomBuffer    = gl .createBuffer ();
 
-			this .groundAngle_  .addInterest (this, "build");
-			this .groundColor_  .addInterest (this, "build");
-			this .skyAngle_     .addInterest (this, "build");
-			this .skyColor_     .addInterest (this, "build");
-			this .transparency_ .addInterest (this, "build");
+			this .groundAngle_  .addInterest ("build", this);
+			this .groundColor_  .addInterest ("build", this);
+			this .skyAngle_     .addInterest ("build", this);
+			this .skyColor_     .addInterest ("build", this);
+			this .transparency_ .addInterest ("build", this);
 
 			this .build ();
 			this .transferRectangle ();
@@ -231,13 +231,13 @@ function ($,
 		setTexture: function (key, texture, bit)
 		{
 			if (this [key])
-				this [key] .loadState_ .removeInterest (this, "setTextureBit");
+				this [key] .loadState_ .removeInterest ("setTextureBit", this);
 
 			this [key] = texture;
 
 			if (texture)
 			{
-				texture .loadState_ .addInterest (this, "setTextureBit", bit);
+				texture .loadState_ .addInterest ("setTextureBit", this, bit);
 				this .setTextureBit (texture .loadState_, bit);
 			}
 			else

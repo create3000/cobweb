@@ -62,8 +62,8 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 			
-		this .addChildObjects ("uDimension", new Fields .SFInt32 (1),
-		                       "vDimension", new Fields .SFInt32 (20))
+		this .addChildObjects ("xDimension", new Fields .SFInt32 (20),
+		                       "yDimension", new Fields .SFInt32 (1))
 	}
 
 	CylinderOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),

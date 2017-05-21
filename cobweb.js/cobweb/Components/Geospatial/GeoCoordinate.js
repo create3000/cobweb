@@ -108,7 +108,7 @@ function ($,
 			X3DCoordinateNode   .prototype .initialize .call (this);
 			X3DGeospatialObject .prototype .initialize .call (this);
 		
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 		
 			this .eventsProcessed ();
 		},

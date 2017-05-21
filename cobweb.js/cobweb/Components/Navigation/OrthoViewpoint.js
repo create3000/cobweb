@@ -117,8 +117,8 @@ function ($,
 		{
 			X3DViewpointNode .prototype .initialize .call (this);
 
-			this .fieldOfView_      .addInterest (this, "set_fieldOfView___");
-			this .fieldOfViewScale_ .addInterest (this, "set_fieldOfView___");
+			this .fieldOfView_      .addInterest ("set_fieldOfView___", this);
+			this .fieldOfViewScale_ .addInterest ("set_fieldOfView___", this);
 
 			this .set_fieldOfView___ ();
 		},

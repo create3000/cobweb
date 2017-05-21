@@ -148,11 +148,11 @@ function ($,
 			this .rootGroup .setPrivate (true);
 			this .rootGroup .setup ();
 		
-			this .rootInline   .loadState_ .addInterest (this, "set_rootLoadState__");
-			this .child1Inline .loadState_ .addInterest (this, "set_childLoadState__");
-			this .child2Inline .loadState_ .addInterest (this, "set_childLoadState__");
-			this .child3Inline .loadState_ .addInterest (this, "set_childLoadState__");
-			this .child4Inline .loadState_ .addInterest (this, "set_childLoadState__");
+			this .rootInline   .loadState_ .addInterest ("set_rootLoadState__", this);
+			this .child1Inline .loadState_ .addInterest ("set_childLoadState__", this);
+			this .child2Inline .loadState_ .addInterest ("set_childLoadState__", this);
+			this .child3Inline .loadState_ .addInterest ("set_childLoadState__", this);
+			this .child4Inline .loadState_ .addInterest ("set_childLoadState__", this);
 		
 			this .rootUrl_   .addFieldInterest (this .rootInline   .url_);
 			this .child1Url_ .addFieldInterest (this .child1Inline .url_);

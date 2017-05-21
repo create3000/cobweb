@@ -96,18 +96,19 @@ function ()
 		{
 			return this ._tainted;
 		},
-		addInterest: function (object, callback)
+		addInterest: function (callback, object)
 		{
 			if (! this .hasOwnProperty ("_interests"))
 				this ._interests = { };
 
 			var args = Array .prototype .slice .call (arguments, 0);
-	
+
+			args [0] = arguments [1];
 			args [1] = this;
 
 			this ._interests [object .getId () + callback] = Function .prototype .bind .apply (object [callback], args);
 		},
-		removeInterest: function (object, callback)
+		removeInterest: function (callback, object)
 		{
 			delete this ._interests [object .getId () + callback];
 		},

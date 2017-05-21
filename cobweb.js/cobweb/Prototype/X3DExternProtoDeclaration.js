@@ -68,6 +68,9 @@ function ($,
 {
 "use strict";
 
+	// Dummy callback function
+	function loadNowCallback () { }
+
 	function X3DExternProtoDeclaration (executionContext)
 	{
 		X3DProtoDeclarationNode .call (this, executionContext);
@@ -104,7 +107,7 @@ function ($,
 			X3DProtoDeclarationNode .prototype .initialize .call (this);
 			X3DUrlObject            .prototype .initialize .call (this);
 				
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 		},
 		set_live__: function ()
 		{
@@ -121,23 +124,31 @@ function ($,
 		{
 			this .proto = proto;
 
-			var
-				fieldDefinitions      = this .getFieldDefinitions (),
-				protoFieldDefinitions = proto .getFieldDefinitions ();
-
-			for (var i = 0, length = protoFieldDefinitions .length; i < length; ++ i)
+			if (this .proto)
 			{
 				var
-					protoFieldDefinition = protoFieldDefinitions [i],
-					fieldDefinition      = fieldDefinitions .get (protoFieldDefinition .name);
-
-				if (fieldDefinition)
-					fieldDefinition .value .setValue (protoFieldDefinition .value);
+					fieldDefinitions      = this .getFieldDefinitions (),
+					protoFieldDefinitions = proto .getFieldDefinitions ();
+	
+				for (var i = 0, length = protoFieldDefinitions .length; i < length; ++ i)
+				{
+					var
+						protoFieldDefinition = protoFieldDefinitions [i],
+						fieldDefinition      = fieldDefinitions .get (protoFieldDefinition .name);
+	
+					if (fieldDefinition)
+						fieldDefinition .value .setValue (protoFieldDefinition .value);
+				}
 			}
 		},
 		getProtoDeclaration: function ()
 		{
 			return this .proto;
+		},
+		loadNow: function (callback)
+		{
+			// 7.73 — ExternProtoDeclaration function, added callback argument.
+			this .requestAsyncLoad (callback || loadNowCallback);
 		},
 		requestAsyncLoad: function (callback)
 		{
@@ -148,12 +159,12 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 			this .getScene () .addInitLoadCount (this);
-			
-			// Don't create scene cache, as of possible default nodes and complete scenes.
 
-			var Loader = require ("cobweb/InputOutput/Loader");
+			// Don't create scene cache, due to possible default nodes in proto SFNode fields and complete scenes.
 
-			new Loader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
+			var FileLoader = require ("cobweb/InputOutput/FileLoader");
+
+			new FileLoader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
 		},
 		setInternalSceneAsync: function (value)
 		{

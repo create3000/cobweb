@@ -62,7 +62,9 @@ function ($,
 {
 "use strict";
 
-	var NULL = Fields .SFNode ();
+	var
+		matrix3 = new Matrix3 (),
+		NULL    = new Fields .SFNode ();
 
 	function X3DProgrammableShaderObject (executionContext)
 	{
@@ -179,10 +181,11 @@ function ($,
 
 			this .x3d_Texture = gl .getUniformLocation (program, "x3d_Texture"); // depreciated
 
-			this .x3d_TextureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
-			this .x3d_NormalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
+			this .x3d_Viewport         = gl .getUniformLocation (program, "x3d_Viewport");
 			this .x3d_ProjectionMatrix = gl .getUniformLocation (program, "x3d_ProjectionMatrix");
 			this .x3d_ModelViewMatrix  = gl .getUniformLocation (program, "x3d_ModelViewMatrix");
+			this .x3d_NormalMatrix     = gl .getUniformLocation (program, "x3d_NormalMatrix");
+			this .x3d_TextureMatrix    = gl .getUniformLocation (program, "x3d_TextureMatrix");
 			
 			this .x3d_Color    = gl .getAttribLocation (program, "x3d_Color");
 			this .x3d_TexCoord = gl .getAttribLocation (program, "x3d_TexCoord");
@@ -252,7 +255,7 @@ function ($,
 				{
 					field ._uniformLocation = location;
 
-					field .addInterest (this, "set_field__");
+					field .addInterest ("set_field__", this);
 
 					switch (field .getType ())
 					{
@@ -263,6 +266,7 @@ function ($,
 						}
 						case X3DConstants .SFMatrix3d:
 						case X3DConstants .SFMatrix3f:
+						case X3DConstants .SFRotation:
 						{
 							location .array = new Float32Array (9);
 							break;
@@ -293,6 +297,7 @@ function ($,
 						}
 						case X3DConstants .MFMatrix3d:
 						case X3DConstants .MFMatrix3f:
+						case X3DConstants .MFRotation:
 						{
 							location .array = new Float32Array (9 * this .getLocationLength (gl, program, field));
 							break;
@@ -335,7 +340,6 @@ function ($,
 						case X3DConstants .MFVec4d:
 						case X3DConstants .MFVec4f:
 						case X3DConstants .MFColorRGBA:
-						case X3DConstants .MFRotation:
 						{
 							location .array = new Float32Array (4 * this .getLocationLength (gl, program, field));
 							break;
@@ -357,7 +361,7 @@ function ($,
 			{
 				var field = userDefinedFields [name];
 
-				field .removeInterest (this, "set_field__");
+				field .removeInterest ("set_field__", this);
 
 				switch (field .getType ())
 				{
@@ -470,8 +474,9 @@ function ($,
 					}
 					case X3DConstants .SFRotation:
 					{
-						var quat = field .getValue () .value;
-						gl .uniform4f (location, quat .x, quat .y, quat .z, quat .w);
+						field .getValue () .getMatrix (location .array);
+
+						gl .uniformMatrix3fv (location, false, location .array);
 						return;
 					}
 					case X3DConstants .SFString:
@@ -682,21 +687,26 @@ function ($,
 						var
 							value = field .getValue (),
 							array = location .array;
-	
+
 						for (var i = 0, k = 0, length = value .length; i < length; ++ i)
 						{
-							var quat = value [i] .getValue () .value;
+							var matrix = value [i] .getValue () .getMatrix (matrix3);
 	
-							array [k++] = quat .x;
-							array [k++] = quat .y;
-							array [k++] = quat .z;
-							array [k++] = quat .w;
+							array [k++] = matrix [0];
+							array [k++] = matrix [1];
+							array [k++] = matrix [2];
+							array [k++] = matrix [3];
+							array [k++] = matrix [4];
+							array [k++] = matrix [5];
+							array [k++] = matrix [6];
+							array [k++] = matrix [7];
+							array [k++] = matrix [8];
 						}
 	
 						for (var length = array .length; k < length; ++ k)
 							array [k] = 0;
 	
-						gl .uniform4fv (location, array);
+						gl .uniformMatrix3fv (location, false, array);
 						return;
 					}
 					case X3DConstants .MFString:
@@ -852,9 +862,15 @@ function ($,
 			else
 				gl .uniform4fv (this .x3d_ClipPlane [0], this .x3d_NoneClipPlane);
 		},
-		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray)
+		setGlobalUniforms: function (renderObject, gl, projectionMatrixArray, viewportArray)
 		{
 			var globalLights = renderObject .getGlobalLights ();
+
+			// Set viewport
+
+			gl .uniform4iv (this .x3d_Viewport, viewportArray);
+
+			// Set projection matrix
 
 			gl .uniformMatrix4fv (this .x3d_ProjectionMatrix, false, projectionMatrixArray);
 

@@ -78,6 +78,8 @@ function ($,
 		},
 		addEvent: function (field)
 		{
+			field .setSet (true);
+
 			if (field .getTainted ())
 				return;
 

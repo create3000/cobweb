@@ -131,8 +131,6 @@ function ($,
 		traverse: function (type, renderObject)
 		{
 			// Always look at ParticleSystem if you do modify something here and there.
-	
-			this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
 
 			switch (type)
 			{
@@ -156,6 +154,8 @@ function ($,
 					break;
 				}
 			}
+	
+			this .getGeometry () .traverse (type, renderObject); // Currently used for ScreenText.
 		},
 		pointer: function (renderObject)
 		{

@@ -87,8 +87,8 @@ function ($,
 		constructor: X3DGeospatialObject,
 		initialize: function ()
 		{
-			this .geoSystem_ .addInterest (this, "set_geoSystem__");
-			this .geoOrigin_ .addInterest (this, "set_geoOrigin__");
+			this .geoSystem_ .addInterest ("set_geoSystem__", this);
+			this .geoOrigin_ .addInterest ("set_geoOrigin__", this);
 
 			this .set_geoSystem__ ();
 			this .set_geoOrigin__ ();
@@ -104,18 +104,18 @@ function ($,
 		{
 			if (this .geoOriginNode)
 			{
-				this .geoOriginNode .removeInterest (this, "set_origin__");
-				this .geoOriginNode .removeInterest (this, "set_rotateYUp__");
-				this .geoOriginNode .removeInterest (this, "addNodeEvent");
+				this .geoOriginNode .removeInterest ("set_origin__", this);
+				this .geoOriginNode .removeInterest ("set_rotateYUp__", this);
+				this .geoOriginNode .removeInterest ("addNodeEvent", this);
 			}
 		
 			this .geoOriginNode = X3DCast (X3DConstants .GeoOrigin, this .geoOrigin_);
 		
 			if (this .geoOriginNode)
 			{
-				this .geoOriginNode .addInterest (this, "set_origin__");
-				this .geoOriginNode .addInterest (this, "set_rotateYUp__");
-				this .geoOriginNode .addInterest (this, "addNodeEvent");
+				this .geoOriginNode .addInterest ("set_origin__", this);
+				this .geoOriginNode .addInterest ("set_rotateYUp__", this);
+				this .geoOriginNode .addInterest ("addNodeEvent", this);
 			}
 		
 			this .set_origin__ ();

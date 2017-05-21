@@ -103,7 +103,7 @@ function ($,
 		{
 			X3DTextureTransformNode .prototype .initialize .call (this);
 			
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 
 			this .eventsProcessed ();
 		},

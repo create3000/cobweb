@@ -72,7 +72,7 @@ function ($,
 		{
 			X3DSensorNode .prototype .initialize .call (this);
 
-			this .isLive () .addInterest (this, "set_live__");
+			this .isLive () .addInterest ("set_live__", this);
 
 			this .set_live__ ();
 		},
@@ -80,14 +80,14 @@ function ($,
 		{
 			if (this .isLive () .getValue ())
 			{
-				this .enabled_ .addInterest (this, "set_enabled__");
+				this .enabled_ .addInterest ("set_enabled__", this);
 
 				if (this .enabled_ .getValue ())
 					this .enable ();
 			}
 			else
 			{
-				this .enabled_ .removeInterest (this, "set_enabled__");
+				this .enabled_ .removeInterest ("set_enabled__", this);
 
 				if (this .enabled_ .getValue ())
 					this .disable ();

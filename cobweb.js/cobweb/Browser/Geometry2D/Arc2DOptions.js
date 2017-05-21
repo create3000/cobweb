@@ -62,7 +62,7 @@ function ($,
 	{
 		X3DBaseNode .call (this, executionContext);
 
-		this .addChildObjects ("minAngle", new Fields .SFFloat (Math .PI / 20))
+		this .addChildObjects ("dimension", new Fields .SFInt32 (32))
 	}
 
 	ArcClose2DOptions .prototype = $.extend (Object .create (X3DBaseNode .prototype),

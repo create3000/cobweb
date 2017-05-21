@@ -107,7 +107,7 @@ function ($,
 			this .ColorDepth_     = browser .getColorDepth ();
 			this .TextureMemory_  = browser .getTextureMemory ();
 
-			browser .getBrowserOptions () .Shading_ .addInterest (this, "set_shading__");
+			browser .getBrowserOptions () .Shading_ .addInterest ("set_shading__", this);
 
 			this .set_shading__ (browser .getBrowserOptions () .Shading_);
 		},

@@ -81,9 +81,9 @@ function ($,
 		{
 			X3DFollowerNode .prototype .initialize .call (this);
 		
-			this .set_value_       .addInterest (this, "set_value__");
-			this .set_destination_ .addInterest (this, "set_destination__");
-			this .duration_        .addInterest (this, "set_duration__");
+			this .set_value_       .addInterest ("set_value__", this);
+			this .set_destination_ .addInterest ("set_destination__", this);
+			this .duration_        .addInterest ("set_duration__", this);
 
 			this .set_duration__ ();
 

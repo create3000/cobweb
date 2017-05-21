@@ -106,11 +106,11 @@ function ($,
 			X3DLineGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getArc2DOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getArc2DOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getArc2DOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getArc2DOptions () .removeInterest ("eventsProcessed", this);
 		},
-		getAngle: function ()
+		getSweepAngle: function ()
 		{
 			var
 				start = Algorithm .interval (this .startAngle_ .getValue (), 0, Math .PI * 2),
@@ -119,13 +119,13 @@ function ($,
 			if (start === end)
 				return Math .PI * 2;
 		
-			var difference = Math .abs (end - start);
+			var sweepAngle = Math .abs (end - start);
 		
 			if (start > end)
-				return (Math .PI * 2) - difference;
+				return (Math .PI * 2) - sweepAngle;
 		
-			if (! isNaN (difference))
-				return difference;
+			if (! isNaN (sweepAngle))
+				return sweepAngle;
 			
 			// We must test for NAN, as NAN to int is undefined.
 			return 0;
@@ -135,28 +135,33 @@ function ($,
 			var
 				gl         = this .getBrowser () .getContext (),
 				options    = this .getBrowser () .getArc2DOptions (),
-				minAngle   = options .minAngle_ .getValue (),
+				dimension  = options .dimension_ .getValue (),
 				startAngle = this .startAngle_ .getValue  (),
 				radius     = Math .abs (this .radius_ .getValue ()),
-				difference = this .getAngle (),
-				segments   = Math .ceil (difference / minAngle),
-				angle      = difference / segments,
+				sweepAngle = this .getSweepAngle (),
+				circle     = sweepAngle == (Math .PI * 2),
+				steps      = Math .floor (sweepAngle * dimension / (Math .PI * 2)),
 				vertices   = this .getVertices ();
 
-			if (difference < (Math .PI * 2))
+			steps = Math .max (3, steps);
+
+			if (! circle)
 			{
-				++ segments;
+				++ steps;
 				this .setPrimitiveMode (gl .LINE_STRIP);
 			}
 			else
 				this .setPrimitiveMode (gl .LINE_LOOP);
 
-			for (var n = 0; n < segments; ++ n)
+			var steps_1 = circle ? steps : steps - 1;
+
+			for (var n = 0; n < steps; ++ n)
 			{
 				var
-					theta = startAngle + angle * n,
+					t     = n / steps_1,
+					theta = startAngle + (sweepAngle * t),
 					point = Complex .Polar (radius, theta);
-		
+
 				vertices .push (point .real, point .imag, 0, 1);
 			}
 

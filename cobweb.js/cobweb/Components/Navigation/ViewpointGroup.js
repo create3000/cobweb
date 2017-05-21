@@ -117,9 +117,9 @@ function ($,
 			this .proximitySensor .size_   = this .size_;
 			this .proximitySensor .center_ = this .center_;
 
-			this .displayed_ .addInterest (this, "set_displayed__");
-			this .size_      .addInterest (this, "set_displayed__");
-			this .children_  .addInterest (this, "set_children__");
+			this .displayed_ .addInterest ("set_displayed__", this);
+			this .size_      .addInterest ("set_displayed__", this);
+			this .children_  .addInterest ("set_children__", this);
 
 			this .set_displayed__ ();
 			this .set_children__ ();

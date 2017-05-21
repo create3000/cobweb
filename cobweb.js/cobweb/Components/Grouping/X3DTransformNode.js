@@ -72,7 +72,7 @@ function ($,
 		{
 			X3DTransformMatrix3DNode .prototype .initialize .call (this);
 			
-			this .addInterest (this, "eventsProcessed");
+			this .addInterest ("eventsProcessed", this);
 
 			this .eventsProcessed ();
 		},

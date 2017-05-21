@@ -110,8 +110,20 @@ function ($, Color3, Algorithm)
 			       this .b_ === color .b_ &&
 			       this .a_ === color .a_;
 		},
-		getHSV: Color3 .getHSV,
-		setHSV: Color3 .setHSV,
+		getHSVA: function (result)
+		{
+			Color3 .prototype .getHSV .call (this, result);
+
+			result [3] = this .a_;
+
+			return result;
+		},
+		setHSVA: function (h, s, v, a)
+		{
+			Color3 .prototype .setHSV .call (this, h, s, v);
+
+			this .a_ = clamp (a, 0, 1);
+		},
 		toString: function ()
 		{
 			return this .r_ + " " +

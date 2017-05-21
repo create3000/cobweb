@@ -110,11 +110,11 @@ function ($,
 			X3DGeometryNode .prototype .set_live__ .call (this);
 
 			if (this .isLive () .getValue ())
-				this .getBrowser () .getArcClose2DOptions () .addInterest (this, "eventsProcessed");
+				this .getBrowser () .getArcClose2DOptions () .addInterest ("eventsProcessed", this);
 			else
-				this .getBrowser () .getArcClose2DOptions () .removeInterest (this, "eventsProcessed");
+				this .getBrowser () .getArcClose2DOptions () .removeInterest ("eventsProcessed", this);
 		},
-		getAngle: function ()
+		getSweepAngle: function ()
 		{
 			var
 				start = Algorithm .interval (this .startAngle_ .getValue (), 0, Math .PI * 2),
@@ -123,13 +123,13 @@ function ($,
 			if (start === end)
 				return Math .PI * 2;
 		
-			var difference = Math .abs (end - start);
+			var sweepAngle = Math .abs (end - start);
 		
 			if (start > end)
-				return (Math .PI * 2) - difference;
+				return (Math .PI * 2) - sweepAngle;
 		
-			if (! isNaN (difference))
-				return difference;
+			if (! isNaN (sweepAngle))
+				return sweepAngle;
 			
 			// We must test for NAN, as NAN to int is undefined.
 			return 0;
@@ -139,12 +139,12 @@ function ($,
 			var
 				options    = this .getBrowser () .getArcClose2DOptions (),
 				chord      = this .closureType_ .getValue () === "CHORD",
-				minAngle   = options .minAngle_ .getValue (),
+				dimension  = options .dimension_ .getValue (),
 				startAngle = this .startAngle_ .getValue  (),
 				radius     = Math .abs (this .radius_ .getValue ()),
-				difference = this .getAngle (),
-				segments   = Math .ceil (difference / minAngle),
-				angle      = difference / segments,
+				sweepAngle = this .getSweepAngle (),
+				circle     = sweepAngle == (Math .PI * 2),
+				steps      = Math .max (4, Math .floor (sweepAngle * dimension / (Math .PI * 2))),
 				texCoords  = [ ],
 				normals    = this .getNormals (),
 				vertices   = this .getVertices (),
@@ -153,9 +153,13 @@ function ($,
 
 			this .getTexCoords () .push (texCoords);
 
-			for (var n = 0, length = segments + 1; n < length; ++ n)
+			var steps_1 = steps - 1;
+
+			for (var n = 0; n < steps; ++ n)
 			{
-				var theta = startAngle + angle * n;
+				var
+					t     = n / steps_1,
+					theta = startAngle + (sweepAngle * t);
 
 				texCoord .push (Complex .Polar (0.5, theta) .add (half));
 				points   .push (Complex .Polar (radius, theta));
@@ -167,7 +171,7 @@ function ($,
 					t0 = texCoord [0],
 					p0 = points [0];
 
-				for (var i = 1; i < segments; ++ i)
+				for (var i = 1; i < steps_1; ++ i)
 				{
 					var
 						t1 = texCoord [i],
@@ -190,7 +194,7 @@ function ($,
 			}
 			else
 			{
-				for (var i = 0; i < segments; ++ i)
+				for (var i = 0; i < steps_1; ++ i)
 				{
 					var
 						t1 = texCoord [i],
