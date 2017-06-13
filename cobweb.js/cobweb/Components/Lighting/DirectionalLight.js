@@ -262,6 +262,8 @@ function ($,
 		X3DLightNode .call (this, executionContext);
 
 		this .addType (X3DConstants .DirectionalLight);
+
+		this .global_ = false;
 	}
 
 	DirectionalLight .prototype = $.extend (Object .create (X3DLightNode .prototype),
