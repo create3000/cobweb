@@ -1301,6 +1301,8 @@
     <None Include="tests\Components\Shaders\Mandelbox.x3d" />
     <None Include="tests\Components\Shaders\ComposedShaderUniformRotation.x3d" />
     <None Include="cobweb\InputOutput\FileLoader.js" />
+    <None Include="examples\beyond-germany\beyond-germany.x3d" />
+    <None Include="examples\beyond-germany\worldcities.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />
@@ -1372,5 +1374,6 @@
     <Folder Include="cobweb\Browser\Shaders\Bits\" />
     <Folder Include="tests\HTML\" />
     <Folder Include="tests\HTML\cycle\" />
+    <Folder Include="examples\beyond-germany\" />
   </ItemGroup>
 </Project>

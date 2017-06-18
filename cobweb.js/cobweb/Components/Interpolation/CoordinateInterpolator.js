@@ -102,10 +102,10 @@ function ($,
 			var
 				keyValue      = this .keyValue_ .getValue (),
 				value_changed = this .value_changed_ .getValue (),
-				size          = this .key_ .length > 1 ? Math .floor (keyValue .length / this .key_ .length) : 0;
+				size          = this .key_ .length ? Math .floor (keyValue .length / this .key_ .length) : 0;
 
 			index0 *= size;
-			index1  = index0 + size;
+			index1  = index0 + (this .key_ .length > 1 ? size : 0);
 
 			this .value_changed_ .length = size;
 

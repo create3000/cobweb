@@ -257,7 +257,7 @@ function ($,
 			this .processEvents ();
 
 			var t1 = performance .now ();
-			this .world .traverse (TraverseType .CAMERA ,null);
+			this .world .traverse (TraverseType .CAMERA, null);
 			this .cameraTime = performance .now () - t1;
 
 			var t2 = performance .now ();
