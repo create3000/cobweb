@@ -346,6 +346,7 @@
     <None Include="cobweb\Fields.js" />
     <None Include="cobweb\Parser\Parser.js" />
     <None Include="cobweb\Parser\XMLParser.js" />
+    <None Include="cobweb\Parser\JSONParser.js" />
     <None Include="cobweb\Routing\X3DRoutingContext.js" />
     <None Include="cobweb\X3D.js" />
     <None Include="jam\jquery\dist\jquery.js" />
