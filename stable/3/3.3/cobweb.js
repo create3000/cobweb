@@ -33476,8 +33476,8 @@ define ('cobweb/Browser/Networking/urls',[],function ()
 
 	return {
 		providerUrl:       "http://titania.create3000.de/cobweb",
-		fallbackUrl:       "http://proxy.create3000.de/",
-		fallbackExpression: new RegExp ("^http://proxy.create3000.de/"),
+		fallbackUrl:       "http://cors.create3000.de/",
+		fallbackExpression: new RegExp ("^http://cors.create3000.de/"),
 	};
 });
 
@@ -69633,13 +69633,11 @@ function (Vector3)
 		},
 		advanceTime: function (time)
 		{
-			time += performance .timing .navigationStart;
+			time = (time + performance .timing .navigationStart) / 1000;
 
-			var
-				lastTime = this .currentTime,
-				interval = this .currentTime - lastTime;
+			var interval = time - this .currentTime;
 
-			this .currentTime      = time / 1000;
+			this .currentTime      = time;
 			this .currentFrameRate = interval ? 1 / interval : 0;
 
 			if (this .getWorld () && this .getActiveLayer ())
