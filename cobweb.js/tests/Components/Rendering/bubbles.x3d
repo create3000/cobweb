@@ -5,9 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Sat, 19 Dec 2015 09:16:40 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V3.0.4, http://titania.create3000.de'/>
+    <meta name='generator' content='Titania V2.0.1, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Rendering/bubbles.x3d'/>
-    <meta name='modified' content='Wed, 09 Aug 2017 09:11:18 GMT'/>
+    <meta name='modified' content='Thu, 20 Oct 2016 10:51:23 GMT'/>
   </head>
   <Scene>
     <WorldInfo>
@@ -41,44 +41,16 @@
         <MetadataSet DEF='Selection' containerField='value'
             name='Selection'
             reference='http://titania.create3000.de'>
-          <MetadataBoolean DEF='selectGeometry' containerField='value'
-              name='selectGeometry'
-              reference='http://titania.create3000.de'
-              value='false'/>
-          <MetadataSet DEF='nodes' containerField='value'
-              name='nodes'
+          <MetadataSet DEF='children' containerField='value'
+              name='children'
               reference='http://titania.create3000.de'>
-            <Script DEF='pointSizeScript' containerField='value'>
-              <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
-              <field accessType='inputOutput' type='SFString' name='description' value='pointSize'/>
-              <field accessType='inputOutput' type='SFFloat' name='minValue' value='1'/>
-              <field accessType='inputOutput' type='SFFloat' name='maxValue' value='100'/>
-              <field accessType='outputOnly' type='SFFloat' name='value_changed'/>
-              <field accessType='outputOnly' type='MFString' name='string_changed'/>
-              <field accessType='initializeOnly' type='SFInt32' name='currentValue' value='20'/>
-<![CDATA[ecmascript:
-
-function initialized ()
-{
-	set_value (value);
-}
-
-function set_translation (value)
-{
-	set_value (minValue + (value .x * (maxValue - minValue)));
-}
-
-function set_value (value)
-{
-	if (value == currentValue)
-		return;
-
-	currentValue   = value;
-	value_changed  = value;
-	string_changed [0] = description + " " + currentValue;
-}]]>
-            </Script>
+            <FontStyle DEF='_1' containerField='value'
+                family='"SANS"'
+                justify='"END"'/>
           </MetadataSet>
+          <MetadataSet DEF='previous' containerField='value'
+              name='previous'
+              reference='http://titania.create3000.de'/>
         </MetadataSet>
         <MetadataSet DEF='LayerSet' containerField='value'
             name='LayerSet'
@@ -88,161 +60,48 @@ function set_value (value)
               reference='http://titania.create3000.de'
               value='-1'/>
         </MetadataSet>
-        <MetadataSet DEF='Page' containerField='value'
-            name='Page'
-            reference='http://titania.create3000.de'>
-          <MetadataInteger DEF='activeView' containerField='value'
-              name='activeView'
-              reference='http://titania.create3000.de'
-              value='1'/>
-          <MetadataInteger DEF='multiView' containerField='value'
-              name='multiView'
-              reference='http://titania.create3000.de'
-              value='0'/>
-        </MetadataSet>
-        <MetadataSet DEF='RouteGraph' containerField='value'
-            name='RouteGraph'
-            reference='http://titania.create3000.de'>
-          <MetadataSet DEF='pages' containerField='value'
-              name='pages'
-              reference='http://titania.create3000.de'>
-            <MetadataSet DEF='Page0' containerField='value'
-                name='Page0'
-                reference='http://titania.create3000.de'>
-              <MetadataString DEF='pageName' containerField='value'
-                  name='pageName'
-                  reference='http://titania.create3000.de'
-                  value='"Point Size Logic"'/>
-              <MetadataDouble DEF='scrollPosition' containerField='value'
-                  name='scrollPosition'
-                  reference='http://titania.create3000.de'
-                  value='-449.246978759766, 3.768798828125'/>
-              <MetadataDouble DEF='nodePositions' containerField='value'
-                  name='nodePositions'
-                  reference='http://titania.create3000.de'
-                  value='329, 83, 1079, 45, 1187, 351, 789, 360, 1499, 60, 1478, 285, 45, 101'/>
-              <MetadataSet DEF='nodes_1' containerField='value'
-                  name='nodes'
-                  reference='http://titania.create3000.de'>
-                <PositionInterpolator DEF='pointSizeScriptSet_translationInterpolator' containerField='value'
-                    key='0, 0.0147059, 0.0294118, 0.0441176, 0.0588235, 0.0735294, 0.0882353, 0.102941, 0.117647, 0.132353, 0.147059, 0.161765, 0.176471, 0.191176, 0.205882, 0.220588, 0.235294, 0.25, 0.264706, 0.279412, 0.294118, 0.308824, 0.323529, 0.338235, 0.352941, 0.367647, 0.382353, 0.397059, 0.411765, 0.426471, 0.441176, 0.455882, 0.470588, 0.485294, 0.5, 0.514706, 0.529412, 0.544118, 0.558824, 0.573529, 0.588235, 0.602941, 0.617647, 0.632353, 0.647059, 0.661765, 0.676471, 0.691176, 0.705882, 0.720588, 0.735294, 0.75, 0.764706, 0.779412, 0.794118, 0.808824, 0.823529, 0.838235, 0.852941, 0.867647, 0.882353, 0.897059, 0.911765, 0.926471, 0.941176, 0.955882, 0.970588, 0.985294, 1'
-                    keyValue='0.200605 0 0, 0.202642 0 0, 0.208588 0 0, 0.2182 0 0, 0.231232 0 0, 0.247441 0 0, 0.266581 0 0, 0.288408 0 0, 0.312679 0 0, 0.339147 0 0, 0.367569 0 0, 0.3977 0 0, 0.429295 0 0, 0.462111 0 0, 0.495902 0 0, 0.530424 0 0, 0.565432 0 0, 0.600683 0 0, 0.63593 0 0, 0.670931 0 0, 0.70544 0 0, 0.739212 0 0, 0.772004 0 0, 0.803571 0 0, 0.833668 0 0, 0.86205 0 0, 0.888474 0 0, 0.912694 0 0, 0.934466 0 0, 0.953546 0 0, 0.969689 0 0, 0.98265 0 0, 0.992186 0 0, 0.99805 0 0, 1 0 0, 0.997866 0 0, 0.991808 0 0, 0.982071 0 0, 0.968899 0 0, 0.95254 0 0, 0.933237 0 0, 0.911238 0 0, 0.886786 0 0, 0.860128 0 0, 0.831508 0 0, 0.801174 0 0, 0.769369 0 0, 0.736339 0 0, 0.70233 0 0, 0.667588 0 0, 0.632357 0 0, 0.596883 0 0, 0.561412 0 0, 0.526189 0 0, 0.49146 0 0, 0.457469 0 0, 0.424463 0 0, 0.392687 0 0, 0.362387 0 0, 0.333807 0 0, 0.307193 0 0, 0.282792 0 0, 0.260847 0 0, 0.241605 0 0, 0.225311 0 0, 0.212211 0 0, 0.20255 0 0, 0.196573 0 0, 0.194526 0 0'>
-                  <MetadataSet DEF='Interpolator'
-                      name='Interpolator'
-                      reference='http://titania.create3000.de'>
-                    <MetadataInteger DEF='key' containerField='value'
-                        name='key'
-                        reference='http://titania.create3000.de'
-                        value='0, 34, 68'/>
-                    <MetadataDouble DEF='keyValue' containerField='value'
-                        name='keyValue'
-                        reference='http://titania.create3000.de'
-                        value='0.20060533285141, 0, 0, 1, 0, 0, 0.194526299834251, 0, 0'/>
-                    <MetadataString DEF='keyType' containerField='value'
-                        name='keyType'
-                        reference='http://titania.create3000.de'
-                        value='"SPLINE", "SPLINE", "SPLINE"'/>
-                  </MetadataSet>
-                </PositionInterpolator>
-                <Script USE='pointSizeScript' containerField='value'/>
-                <Transform DEF='Rectangle2D' containerField='value'
-                    translation='0.200605 0 0'
-                    scale='0.027 0.0267372 0.0267372'>
-                  <Shape>
-                    <Appearance>
-                      <Material/>
-                    </Appearance>
-                    <Disk2D/>
-                  </Shape>
-                </Transform>
-                <PlaneSensor DEF='_1' containerField='value'
-                    offset='0.200605 0 0'
-                    maxPosition='1 0'/>
-                <LineProperties DEF='_2' containerField='value'
-                    linewidthScaleFactor='20.8599'/>
-                <Text DEF='_3' containerField='value'
-                    string='"pointSize 20"'
-                    solid='true'>
-                  <FontStyle
-                      family='"SANS"'
-                      justify='"END"'/>
-                </Text>
-                <TimeSensor DEF='_4' containerField='value'
-                    cycleInterval='6.8'
-                    loop='true'
-                    startTime='1450552664.38374'
-                    resumeTime='1450546905.08543'
-                    pauseTime='1450546916.44882'
-                    stopTime='1450552664.38373'/>
-              </MetadataSet>
-            </MetadataSet>
-            <MetadataSet DEF='Page1' containerField='value'
-                name='Page1'
-                reference='http://titania.create3000.de'>
-              <MetadataString DEF='pageName_1' containerField='value'
-                  name='pageName'
-                  reference='http://titania.create3000.de'
-                  value='"Number of Particles Logic"'/>
-              <MetadataDouble DEF='scrollPosition_1' containerField='value'
-                  name='scrollPosition'
-                  reference='http://titania.create3000.de'
-                  value='0, 0'/>
-              <MetadataDouble DEF='nodePositions_1' containerField='value'
-                  name='nodePositions'
-                  reference='http://titania.create3000.de'
-                  value='551, 302, 1180, 452, 1160, 229, 823, 16, 45, 76, 321, 426'/>
-              <MetadataSet DEF='nodes_2' containerField='value'
-                  name='nodes'
-                  reference='http://titania.create3000.de'>
-                <Script DEF='numParticlesScript' containerField='value'>
-                  <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
-                  <field accessType='inputOutput' type='SFString' name='description' value='numParticles'/>
-                  <field accessType='inputOutput' type='SFInt32' name='minValue' value='10'/>
-                  <field accessType='inputOutput' type='SFInt32' name='maxValue' value='500'/>
-                  <field accessType='outputOnly' type='SFInt32' name='value_changed'/>
-                  <field accessType='outputOnly' type='MFString' name='string_changed'/>
-                  <field accessType='initializeOnly' type='SFInt32' name='currentValue' value='100'/>
-<![CDATA[ecmascript:
-
-function initialized ()
-{
-	set_value (value);
-}
-
-function set_translation (value)
-{
-	set_value (minValue + (value .x * (maxValue - minValue)));
-}
-
-function set_value (value)
-{
-	if (value == currentValue)
-		return;
-
-	currentValue   = value;
-	value_changed  = value;
-	string_changed [0] = description + " " + currentValue;
-}]]>
-                </Script>
-                <Text DEF='_5' containerField='value'
-                    string='"numParticles 100"'
-                    solid='true'>
-                  <FontStyle
-                      family='"SANS"'
-                      justify='"END"'/>
-                </Text>
-                <Script DEF='BubblesScript' containerField='value'>
-                  <field accessType='inputOnly' type='SFTime' name='set_time'/>
-                  <field accessType='inputOutput' type='SFInt32' name='numParticles' value='100'/>
-                  <field accessType='inputOutput' type='SFFloat' name='transparency' value='0.5'/>
-                  <field accessType='initializeOnly' type='SFNode' name='color'>
-                    <ColorRGBA DEF='_6'
-                        color='0.066872 0.0236669 0.517982 0.253977, 0.367584 0.257257 0.212249 0.238864, 0.205703 0.98209 0.778028 0.431788, 0.205643 0.451454 0.407135 0.426114, 0.586356 0.279771 0.917212 0.470006, 0.659222 0.531875 0.554012 0.373654, 0.852706 0.706488 0.708351 0.497511, 0.220645 0.19746 0.183611 0.417502, 0.859345 0.825267 0.570732 0.0874722, 0.433287 0.424242 0.494372 0.408647, 0.544339 0.428599 0.456371 0.481485, 0.225803 0.77503 0.737123 0.0783386, 0.698424 0.00606845 0.135658 0.493548, 0.285194 0.162571 0.0953791 0.319265, 0.187128 0.264003 0.131744 0.364925, 0.611594 0.931504 0.154865 0.101174, 0.503595 0.97312 0.764953 0.216428, 0.140875 0.656659 0.439636 0.138415, 0.944942 0.499249 0.574136 0.292008, 0.658053 0.931238 0.969736 0.247675, 0.213723 0.295031 0.781339 0.406782, 0.155149 0.638126 0.366597 0.0768688, 0.848682 0.397151 0.45929 0.403757, 0.311587 0.761064 0.697446 0.0506821, 0.585196 0.583953 0.648136 0.486467, 0.893347 0.699647 0.00873754 0.464707, 0.535903 0.302433 0.848518 0.0296245, 0.579035 0.303084 0.351232 0.168389, 0.965763 0.771429 0.092512 0.376628, 0.0266745 0.432373 0.0455493 0.207205, 0.413358 0.80945 0.162073 0.21137, 0.894447 0.799041 0.977139 0.146521, 0.981519 0.920915 0.486606 0.342272, 0.0217738 0.110797 0.843349 0.0735148, 0.785413 0.00369855 0.806884 0.158867, 0.0640453 0.180467 0.502837 0.469356, 0.805 0.713708 0.84199 0.115444, 0.554958 0.624246 0.898852 0.261491, 0.741324 0.0388377 0.939116 0.362425, 0.64485 0.0888363 0.442948 0.405456, 0.922374 0.99499 0.0229435 0.0841038, 0.631581 0.60424 0.25449 0.307043, 0.844321 0.560942 0.09203 0.21125, 0.862414 0.659935 0.253844 0.278968, 0.567674 0.0167173 0.03401 0.458823, 0.641023 0.946939 0.803436 0.0313463, 0.915493 0.741696 0.649599 0.092647, 0.423166 0.396679 0.380895 0.422345, 0.242056 0.264059 0.4873 0.454394, 0.82774 0.179879 0.652308 0.344296, 0.455411 0.932265 0.396365 0.0715747, 0.8268 0.704583 0.291119 0.191364, 0.986055 0.00211487 0.605009 0.148484, 0.908872 0.372231 0.959523 0.347543, 0.496499 0.199539 0.62399 0.375164, 0.0342049 0.914111 0.0342283 0.0482809, 0.32279 0.929628 0.362629 0.304419, 0.818859 0.537798 0.917261 0.305491, 0.929076 0.256491 0.524984 0.0318049, 0.596386 0.864121 0.125011 0.343993, 0.0401035 0.576411 0.628305 0.0702281, 0.811537 0.729962 0.795019 0.17759, 0.594078 0.54835 0.854071 0.139421, 0.59986 0.370627 0.790042 0.0550698, 0.229595 0.331202 0.403823 0.0910451, 0.400192 0.277811 0.212714 0.0303101, 0.685402 0.506324 0.0876583 0.362526, 0.0339807 0.15509 0.871674 0.3565, 0.250525 0.236677 0.522685 0.196978, 0.86603 0.862659 0.0613083 0.272137, 0.254853 0.230575 0.561886 0.382683, 0.435671 0.0564689 0.932293 0.0360313, 0.536544 0.938323 0.41075 0.453562, 0.315539 0.384172 0.738931 0.279962, 0.86266 0.11418 0.319723 0.151977, 0.917031 0.601236 0.351788 0.380944, 0.413238 0.423909 0.764899 0.486897, 0.517206 0.815333 0.62045 0.110212, 0.666528 0.169782 0.647577 0.424101, 0.931283 0.255583 0.461229 0.29313, 0.344433 0.440259 0.255203 0.120585, 0.998065 0.495446 0.928482 0.113091, 0.492201 0.0706655 0.531882 0.162669, 0.382536 0.934043 0.0056914 0.0133401, 0.275248 0.724047 0.606058 0.48658, 0.130533 0.56042 0.42379 0.393286, 0.678489 0.167962 0.516144 0.0513712, 0.934817 0.588727 0.479225 0.460436, 0.989858 0.43335 0.661753 0.397042, 0.19002 0.459528 0.583055 0.1855, 0.739757 0.995711 0.688906 0.455571, 0.625869 0.95342 0.124916 0.316538, 0.651927 0.416649 0.291945 0.389332, 0.613761 0.757882 0.181973 0.338166, 0.138806 0.0254955 0.783098 0.309961, 0.141145 0.766733 0.64302 0.113907, 0.945699 0.206019 0.242508 0.481232, 0.941363 0.673824 0.451668 0.223709, 0.713152 0.682366 0.617249 0.0318813, 0.353507 0.0485439 0.900132 0.204419'/>
-                  </field>
-                  <field accessType='initializeOnly' type='SFNode' name='coord'>
-                    <Coordinate DEF='_7'
-                        point='0.57334 0.00440346 0, 0.66744 0.0230895 0, 0.354037 0.0238946 0, 0.69659 0.0238467 0, 0.0554724 0.0143746 0, 0.31549 0.00370203 0, 0.168278 0.0186141 0, 0.579159 0.0149055 0, 0.794263 0.0187503 0, 0.657136 0.0136094 0, 0.340027 0.0127656 0, 0.885812 0.0118604 0, 0.78111 0.0149195 0, 0.515614 0.0155866 0, 0.149864 0.000579949 0, 0.0332575 0.0176246 0, 0.252732 0.0164454 0, 0.213719 0.0007085 0, 0.0689387 0.00563113 0, 0.924699 0.0150637 0, 0.822641 0.0208108 0, 0.168305 0.022936 0, 0.354333 0.014001 0, 0.900326 0.00881302 0, 0.144904 0.0106953 0, 0.816877 0.0209825 0, 0.166962 0.00874997 0, 0.541382 0.00471589 0, 0.653158 8.8556e-05 0, 0.481746 0.00651114 0, 0.879949 0.0194898 0, 0.0582681 0.00581461 0, 0.167852 0.0170177 0, 0.0272117 0.0213311 0, 0.495474 0.00649238 0, 0.243173 0.0094605 0, 0.414683 0.0216112 0, 0.415244 0.00228463 0, 0.338042 0.00897662 0, 0.217676 0.0215656 0, 0.747193 0.0161443 0, 0.515134 0.000767828 0, 0.44215 0.0121422 0, 0.455811 0.00965585 0, 0.6165 0.00608543 0, 0.77258 0.00228311 0, 0.302321 0.000335665 0, 0.813038 0.0246346 0, 0.581126 0.00587914 0, 0.593676 0.00685257 0, 0.903474 0.0157847 0, 0.541621 0.0228867 0, 0.899896 0.0126999 0, 0.549275 0.00572076 0, 0.199591 0.0234609 0, 0.522847 0.00866294 0, 0.000873696 0.00351512 0, 0.755199 0.0244932 0, 0.458662 0.0180056 0, 0.196581 0.0157911 0, 0.369304 0.0170876 0, 0.03375 0.00653676 0, 0.14187 0.00971844 0, 0.918617 0.00764615 0, 0.647532 0.0113907 0, 0.712014 0.0213287 0, 0.234984 0.0110023 0, 0.726288 0.00706786 0, 0.989861 0.0235857 0, 0.1624 0.00540781 0, 0.199927 0.0251322 0, 0.742812 0.0193095 0, 0.965328 0.00849388 0, 0.440909 0.0112971 0, 0.964499 0.0203426 0, 0.700839 0.0219635 0, 0.55136 0.0211106 0, 0.628575 0.00849108 0, 0.618209 0.00433607 0, 0.315669 0.000140599 0, 0.0112782 0.00585968 0, 0.731577 0.0231527 0, 0.732193 0.0186468 0, 0.488609 0.0114703 0, 0.698622 0.0216969 0, 0.245459 0.000315852 0, 0.471187 0.00440097 0, 0.570938 0.0201492 0, 0.0812598 0.00219853 0, 0.738955 0.0116786 0, 0.915522 0.000569394 0, 0.168947 0.00045133 0, 0.528261 0.018142 0, 0.0628662 0.00405834 0, 0.261104 0.00975517 0, 0.220525 0.0111818 0, 0.652483 0.00331791 0, 0.0394705 0.000970702 0, 0.815365 0.00519439 0, 0.323764 0.0243357 0'/>
-                  </field>
+      </MetadataSet>
+    </WorldInfo>
+    <LayerSet
+        activeLayer='1'
+        order='1, 2'>
+      <Layer>
+        <Background DEF='Gray'
+            skyColor='0.2 0.2 0.2'/>
+        <Viewpoint
+            description='Initial View'
+            position='4.67802 5.38117 14.5216'
+            centerOfRotation='4.67802 5.38117 -9.53674e-07'/>
+        <Transform DEF='PointSet'
+            translation='-5.56507 -0.0667507 0'
+            scale='20.2666 11.168 10.218'>
+          <Shape>
+            <Appearance>
+              <LineProperties DEF='_2'
+                  linewidthScaleFactor='69.9584'/>
+              <Material
+                  emissiveColor='1 0 0'/>
+            </Appearance>
+            <PointSet>
+              <ColorRGBA DEF='_3'
+                  color='0.699491 0.630907 0.358628 0.276681, 0.573119 0.844698 0.134196 0.0296546, 0.769427 0.0385386 0.0614378 0.0805076, 0.227262 0.533166 0.395349 0.352103, 0.93272 0.950188 0.989277 0.121062, 0.457541 0.131913 0.0425553 0.0850668, 0.658433 0.856607 0.933689 0.338556, 0.246498 0.469919 0.581353 0.0408528, 0.902938 0.0874489 0.866957 0.383165, 0.538442 0.934947 0.735093 0.37579, 0.390293 0.514977 0.668994 0.149293, 0.833374 0.112707 0.725061 0.0200883, 0.908081 0.821881 0.47301 0.403819, 0.476645 0.835076 0.338895 0.413944, 0.886682 0.629808 0.979568 0.0239596, 0.846125 0.912148 0.191498 0.375725, 0.183392 0.618743 0.96982 0.0300047, 0.182745 0.0228551 0.315752 0.211132, 0.466614 0.698662 0.713086 0.411425, 0.73589 0.141784 0.208623 0.173132, 0.818742 0.903803 0.766035 0.339522, 0.971718 0.621537 0.941732 0.313189, 0.165862 0.108907 0.646254 0.240189, 0.267569 0.760731 0.885855 0.267363, 0.0911728 0.838295 0.019871 0.12355, 0.516127 0.00854022 0.879127 0.0745505, 0.891963 0.314665 0.143497 0.0751589, 0.545236 0.973437 0.532975 0.319665, 0.917519 0.481651 0.367328 0.214932, 0.1922 0.233222 0.246561 0.0650617, 0.217951 0.99628 0.0698208 0.0453226, 0.769438 0.338592 0.911111 0.285641, 0.51868 0.408577 0.398854 0.480736, 0.593143 0.795361 0.329767 0.457679, 0.102213 0.85507 0.631062 0.22414, 0.678109 0.909042 0.51085 0.478235, 0.928345 0.58331 0.690596 0.164387, 0.376576 0.777884 0.917477 0.464786, 0.193337 0.12819 0.210817 0.293168, 0.524036 0.746371 0.471391 0.30885, 0.0500374 0.465473 0.360765 0.153814, 0.899229 0.0460838 0.187808 0.42067, 0.834038 0.650767 0.112107 0.152423, 0.711864 0.522051 0.947959 0.111692, 0.143284 0.829043 0.461717 0.460771, 0.534792 0.771416 0.828228 0.0579378, 0.937242 0.608006 0.115179 0.403303, 0.406694 0.407667 0.227828 0.229997, 0.821636 0.442459 0.738902 0.119246, 0.476582 0.270359 0.379261 0.134388, 0.298555 0.211435 0.945205 0.038533, 0.850606 0.391033 0.851861 0.219136, 0.539836 0.896031 0.523562 0.0550394, 0.610525 0.445324 0.928978 0.352643, 0.620384 0.694404 0.942372 0.320235, 0.112273 0.21912 0.437419 0.0336925, 0.666054 0.347979 0.0955748 0.311979, 0.517696 0.305245 0.376642 0.236267, 0.558672 0.867311 0.0681848 0.132217, 0.589712 0.906067 0.810702 0.305747, 0.838004 0.621337 0.834428 0.234959, 0.835934 0.395202 0.884992 0.0447136, 0.332545 0.419678 0.885837 0.156148, 0.240535 0.633919 0.905083 0.0692894, 0.706501 0.866478 0.317497 0.197978, 0.244356 0.838118 0.525477 0.408469, 0.0471268 0.823729 0.973497 0.325063, 0.374295 0.554426 0.366633 0.178585, 0.656999 0.660841 0.638405 0.140085, 0.347195 0.966851 0.460919 0.104035, 0.872147 0.126896 0.510635 0.366281, 0.53387 0.128364 0.434201 0.184625, 0.284076 0.61164 0.866195 0.341974, 0.418321 0.216943 0.532131 0.147525, 0.693556 0.7296 0.409543 0.158795, 0.162001 0.409723 0.777709 0.228384, 0.995514 0.277864 0.625206 0.230089, 0.29391 0.900515 0.438597 0.302934, 0.750507 0.27719 0.197458 0.1621, 0.44509 0.362909 0.991149 0.44812, 0.408002 0.678037 0.64079 0.3025, 0.555109 0.19555 0.782221 0.105342, 0.69574 0.300081 0.864788 0.375755, 0.567989 0.485483 0.354011 0.358202, 0.885079 0.707575 0.946489 0.404773, 0.763513 0.273047 0.185638 0.016378, 0.555436 0.775667 0.0579911 0.0901518, 0.255906 0.495876 0.219837 0.421733, 0.462543 0.194603 0.808411 0.38823, 0.126281 0.0901413 0.692376 0.408071, 0.596873 0.643659 0.186765 0.266053, 0.543519 0.594349 0.615109 0.230294, 0.198395 0.0448637 0.942572 0.493291, 0.788199 0.450269 0.102998 0.343381, 0.283062 0.801746 0.41101 0.200969, 0.0491639 0.644616 0.467894 0.275843, 0.784258 0.381487 0.0396135 0.491319, 0.715722 0.153852 0.813557 0.177022, 0.700251 0.759318 0.776879 0.435746, 0.277342 0.961612 0.220995 0.498153'/>
+              <Coordinate DEF='_4'
+                  point='0.458766 0.00550924 0, 0.753938 0.258512 0, 0.383757 0.343332 0, 0.604524 0.000511925 0, 0.0474525 0.00199591 0, 0.671614 0.259002 0, 0.330236 0.822678 0, 0.508 0.311543 0, 0.291193 0 0, 0.522465 0.133083 0, 0.742495 0.0521672 0, 0.783336 0.337508 0, 0.060752 0.0522262 0, 0.242035 0.314586 0, 0.00458576 0.0595247 0, 0.483633 0.127396 0, 0.304368 0.518767 0, 0.759118 0.0011393 0, 0.354728 0.0464741 0, 0.355129 0.115958 0, 0.54805 0.0978877 0, 0.524664 0.122474 0, 0.508725 0.129561 0, 0.0146048 0.897389 0, 0.650729 0.0209603 0, 0.649174 0.0402993 0, 0.884479 0.16808 0, 0.307115 0.568246 0, 0.531561 0.493854 0, 0.837002 0.707196 0, 0.324868 0.827778 0, 0.710048 0.817273 0, 0.437686 0.226671 0, 0.680295 0.205281 0, 0.19813 0.723432 0, 0.711576 0.237141 0, 0.660179 0.001134 0, 0.0215975 0.43553 0, 0.0652864 0.300393 0, 0.250812 0.402486 0, 0.913573 0.0383478 0, 0.423564 0.167979 0, 0.790329 0.0157399 0, 0.0459943 0.44064 0, 0.0635661 0.570135 0, 0.407503 0.0842523 0, 0.472142 0.602801 0, 0.999045 0.0547993 0, 0.00558404 0.00485624 0, 0.438296 0.022568 0, 0.52775 0.0274797 0, 0.872677 0.059858 0, 0.28932 0.517015 0, 0.457361 0.482109 0, 0.94579 0.308435 0, 0.385227 0.600782 0, 0.670593 0.00927656 0, 0.595884 0.902089 0, 0.0468652 0.127019 0, 0.253949 0.018399 0, 0.478543 0.387622 0, 0.835727 0.551591 0, 0.883476 0.0675936 0, 0.692633 0.776892 0, 0.939025 0.969213 0, 0.789972 0.0843095 0, 0.701316 0.271104 0, 0.543395 0.35062 0, 0.441031 0.784349 0, 0.258989 0.660307 0, 0.805818 0.0016862 0, 0.321204 0.171792 0, 0.312154 0.191882 0, 0.507017 0.0550644 0, 0.456143 0.119996 0, 0.113705 0.0266992 0, 0.836581 0.386993 0, 0.368799 0.186458 0, 0.203526 0.655078 0, 0.237516 0.157538 0, 0.499531 0.00199092 0, 0.0176171 0.116151 0, 0.191934 0.303288 0, 0.728766 0.584337 0, 0.0208586 0.0105962 0, 0.856879 0.0969769 0, 0.540803 0.0587001 0, 0.930832 0.279794 0, 0.705418 0.0296509 0, 0.727761 0.860993 0, 0.575898 0.38317 0, 0.158811 0.910127 0, 0.621086 0.00387268 0, 0.242991 0.0803107 0, 0.649753 0.3994 0, 0.890352 0.460748 0, 0.858949 0.498218 0, 0.287885 0.0472575 0, 0.426506 0.0164488 0, 0.223912 0.338926 0'/>
+            </PointSet>
+          </Shape>
+        </Transform>
+        <TimeSensor DEF='_5'
+            loop='true'/>
+        <Script DEF='BubblesScript'>
+          <field accessType='inputOnly' type='SFTime' name='set_time'/>
+          <field accessType='inputOutput' type='SFInt32' name='numParticles' value='100'/>
+          <field accessType='inputOutput' type='SFFloat' name='transparency' value='0.5'/>
+          <field accessType='initializeOnly' type='SFNode' name='color'>
+            <ColorRGBA USE='_3'/>
+          </field>
+          <field accessType='initializeOnly' type='SFNode' name='coord'>
+            <Coordinate USE='_4'/>
+          </field>
 <![CDATA[ecmascript:
 
 var velocity     = new MFFloat ();
@@ -285,7 +144,6 @@ function set_time ()
 	for (var i = 0; i < numParticles; ++ i)
 	{
 		var dv = acceleration [i] * dt;
-	
 		velocity [i] += dv;
 	
 		coord .point [i] .y += velocity [i] * dt;
@@ -293,60 +151,8 @@ function set_time ()
 		if (coord .point [i] .y > 1)
 			set_particle (i);
 	}
-}]]>
-                </Script>
-                <TimeSensor DEF='_8' containerField='value'
-                    loop='true'/>
-                <PlaneSensor DEF='_9' containerField='value'
-                    offset='0.184767 0 0'
-                    maxPosition='1 0'/>
-                <Transform DEF='Rectangle2D_1' containerField='value'
-                    translation='0.184767 0 0'
-                    scale='0.027 0.0267372 0.0267372'>
-                  <Shape>
-                    <Appearance>
-                      <Material/>
-                    </Appearance>
-                    <Disk2D/>
-                  </Shape>
-                </Transform>
-              </MetadataSet>
-            </MetadataSet>
-          </MetadataSet>
-          <MetadataInteger DEF='currentPage' containerField='value'
-              name='currentPage'
-              reference='http://titania.create3000.de'
-              value='0'/>
-        </MetadataSet>
-      </MetadataSet>
-    </WorldInfo>
-    <LayerSet
-        activeLayer='1'
-        order='1, 2'>
-      <Layer>
-        <Background DEF='Gray'
-            skyColor='0.2 0.2 0.2'/>
-        <Viewpoint
-            description='Initial View'
-            position='4.67802 5.38117 14.5216'
-            centerOfRotation='4.67802 5.38117 -9.53674e-07'/>
-        <Transform DEF='PointSet'
-            translation='-5.56507 -0.0667507 0'
-            scale='20.2666 11.168 10.218'>
-          <Shape>
-            <Appearance>
-              <LineProperties USE='_2'/>
-              <Material
-                  emissiveColor='1 0 0'/>
-            </Appearance>
-            <PointSet>
-              <ColorRGBA USE='_6'/>
-              <Coordinate USE='_7'/>
-            </PointSet>
-          </Shape>
-        </Transform>
-        <TimeSensor USE='_8'/>
-        <Script USE='BubblesScript'/>
+}]]> 
+        </Script>
       </Layer>
       <Layer>
         <MetadataSet DEF='Titania_1'
@@ -440,7 +246,13 @@ function set_time ()
               <Appearance>
                 <Material/>
               </Appearance>
-              <Text USE='_5'/>
+              <Text DEF='_6'
+                  string='"numParticles 100"'
+                  solid='true'>
+                <FontStyle
+                    family='"SANS"'
+                    justify='"END"'/>
+              </Text>
             </Shape>
           </Transform>
           <Transform DEF='numParticlesSlider'
@@ -463,8 +275,19 @@ function set_time ()
               </Shape>
             </Transform>
             <Transform>
-              <Transform USE='Rectangle2D_1'/>
-              <PlaneSensor USE='_9'/>
+              <Transform DEF='Rectangle2D'
+                  translation='0.184767 0 0'
+                  scale='0.027 0.0267372 0.0267372'>
+                <Shape>
+                  <Appearance>
+                    <Material/>
+                  </Appearance>
+                  <Disk2D/>
+                </Shape>
+              </Transform>
+              <PlaneSensor DEF='_7'
+                  offset='0.184767 0 0'
+                  maxPosition='1 0'/>
             </Transform>
           </Transform>
           <Transform DEF='pointSizeText'
@@ -474,7 +297,11 @@ function set_time ()
               <Appearance>
                 <Material/>
               </Appearance>
-              <Text USE='_3'/>
+              <Text DEF='_8'
+                  string='"pointSize 69"'
+                  solid='true'>
+                <FontStyle USE='_1'/>
+              </Text>
             </Shape>
           </Transform>
           <Transform DEF='pointSizeSlider'
@@ -497,8 +324,19 @@ function set_time ()
               </Shape>
             </Transform>
             <Transform>
-              <Transform USE='Rectangle2D'/>
-              <PlaneSensor USE='_1'/>
+              <Transform DEF='Rectangle2D_1'
+                  translation='0.696549 0 0'
+                  scale='0.027 0.0267372 0.0267372'>
+                <Shape>
+                  <Appearance>
+                    <Material/>
+                  </Appearance>
+                  <Disk2D/>
+                </Shape>
+              </Transform>
+              <PlaneSensor DEF='_9'
+                  offset='0.696549 0 0'
+                  maxPosition='1 0'/>
             </Transform>
             <Group>
               <Group DEF='Animation'>
@@ -514,12 +352,95 @@ function set_time ()
                       reference='http://titania.create3000.de'
                       value='10'/>
                 </MetadataSet>
-                <TimeSensor USE='_4'/>
-                <PositionInterpolator USE='pointSizeScriptSet_translationInterpolator'/>
+                <TimeSensor DEF='_10'
+                    cycleInterval='6.8'
+                    loop='true'
+                    startTime='1450552664.38374'
+                    resumeTime='1450546905.08543'
+                    pauseTime='1450546916.44882'
+                    stopTime='1450552664.38373'/>
+                <PositionInterpolator DEF='pointSizeScriptSet_translationInterpolator'
+                    key='0, 0.0147059, 0.0294118, 0.0441176, 0.0588235, 0.0735294, 0.0882353, 0.102941, 0.117647, 0.132353, 0.147059, 0.161765, 0.176471, 0.191176, 0.205882, 0.220588, 0.235294, 0.25, 0.264706, 0.279412, 0.294118, 0.308824, 0.323529, 0.338235, 0.352941, 0.367647, 0.382353, 0.397059, 0.411765, 0.426471, 0.441176, 0.455882, 0.470588, 0.485294, 0.5, 0.514706, 0.529412, 0.544118, 0.558824, 0.573529, 0.588235, 0.602941, 0.617647, 0.632353, 0.647059, 0.661765, 0.676471, 0.691176, 0.705882, 0.720588, 0.735294, 0.75, 0.764706, 0.779412, 0.794118, 0.808824, 0.823529, 0.838235, 0.852941, 0.867647, 0.882353, 0.897059, 0.911765, 0.926471, 0.941176, 0.955882, 0.970588, 0.985294, 1'
+                    keyValue='0.200605 0 0, 0.202642 0 0, 0.208588 0 0, 0.2182 0 0, 0.231232 0 0, 0.247441 0 0, 0.266581 0 0, 0.288408 0 0, 0.312679 0 0, 0.339147 0 0, 0.367569 0 0, 0.3977 0 0, 0.429295 0 0, 0.462111 0 0, 0.495902 0 0, 0.530424 0 0, 0.565432 0 0, 0.600683 0 0, 0.63593 0 0, 0.670931 0 0, 0.70544 0 0, 0.739212 0 0, 0.772004 0 0, 0.803571 0 0, 0.833668 0 0, 0.86205 0 0, 0.888474 0 0, 0.912694 0 0, 0.934466 0 0, 0.953546 0 0, 0.969689 0 0, 0.98265 0 0, 0.992186 0 0, 0.99805 0 0, 1 0 0, 0.997866 0 0, 0.991808 0 0, 0.982071 0 0, 0.968899 0 0, 0.95254 0 0, 0.933237 0 0, 0.911238 0 0, 0.886786 0 0, 0.860128 0 0, 0.831508 0 0, 0.801174 0 0, 0.769369 0 0, 0.736339 0 0, 0.70233 0 0, 0.667588 0 0, 0.632357 0 0, 0.596883 0 0, 0.561412 0 0, 0.526189 0 0, 0.49146 0 0, 0.457469 0 0, 0.424463 0 0, 0.392687 0 0, 0.362387 0 0, 0.333807 0 0, 0.307193 0 0, 0.282792 0 0, 0.260847 0 0, 0.241605 0 0, 0.225311 0 0, 0.212211 0 0, 0.20255 0 0, 0.196573 0 0, 0.194526 0 0'>
+                  <MetadataSet DEF='Interpolator'
+                      name='Interpolator'
+                      reference='http://titania.create3000.de'>
+                    <MetadataInteger DEF='key' containerField='value'
+                        name='key'
+                        reference='http://titania.create3000.de'
+                        value='0, 34, 68'/>
+                    <MetadataDouble DEF='keyValue' containerField='value'
+                        name='keyValue'
+                        reference='http://titania.create3000.de'
+                        value='0.20060533285141, 0, 0, 1, 0, 0, 0.194526299834251, 0, 0'/>
+                    <MetadataString DEF='keyType' containerField='value'
+                        name='keyType'
+                        reference='http://titania.create3000.de'
+                        value='"SPLINE", "SPLINE", "SPLINE"'/>
+                  </MetadataSet>
+                </PositionInterpolator>
               </Group>
-              <Script USE='pointSizeScript'/>
+              <Script DEF='pointSizeScript'>
+                <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
+                <field accessType='inputOutput' type='SFString' name='description' value='pointSize'/>
+                <field accessType='inputOutput' type='SFFloat' name='minValue' value='1'/>
+                <field accessType='inputOutput' type='SFFloat' name='maxValue' value='100'/>
+                <field accessType='outputOnly' type='SFFloat' name='value_changed'/>
+                <field accessType='outputOnly' type='MFString' name='string_changed'/>
+                <field accessType='initializeOnly' type='SFInt32' name='currentValue' value='69'/>
+<![CDATA[ecmascript:
+
+function initialized ()
+{
+	set_value (value);
+}
+
+function set_translation (value)
+{
+	set_value (minValue + (value .x * (maxValue - minValue)));
+}
+
+function set_value (value)
+{
+	if (value == currentValue)
+		return;
+
+	currentValue   = value;
+	value_changed  = value;
+	string_changed [0] = description + " " + currentValue;
+}]]> 
+              </Script>
             </Group>
-            <Script USE='numParticlesScript'/>
+            <Script DEF='numParticlesScript'>
+              <field accessType='inputOnly' type='SFVec3f' name='set_translation'/>
+              <field accessType='inputOutput' type='SFString' name='description' value='numParticles'/>
+              <field accessType='inputOutput' type='SFInt32' name='minValue' value='10'/>
+              <field accessType='inputOutput' type='SFInt32' name='maxValue' value='500'/>
+              <field accessType='outputOnly' type='SFInt32' name='value_changed'/>
+              <field accessType='outputOnly' type='MFString' name='string_changed'/>
+              <field accessType='initializeOnly' type='SFInt32' name='currentValue' value='100'/>
+<![CDATA[ecmascript:
+
+function initialized ()
+{
+	set_value (value);
+}
+
+function set_translation (value)
+{
+	set_value (minValue + (value .x * (maxValue - minValue)));
+}
+
+function set_value (value)
+{
+	if (value == currentValue)
+		return;
+
+	currentValue   = value;
+	value_changed  = value;
+	string_changed [0] = description + " " + currentValue;
+}]]> 
+            </Script>
             <Transform DEF='Rectangle2D_2'
                 translation='-0.0729483 0 0'
                 scale='0.027 0.0267372 0.0267372'>
@@ -529,12 +450,12 @@ function set_time ()
                 </Appearance>
                 <Rectangle2D/>
               </Shape>
-              <TouchSensor DEF='_10'
+              <TouchSensor DEF='_11'
                   description='Toggle Animation'/>
               <Script DEF='TogglePointSizeAnim'>
                 <field accessType='inputOnly' type='SFTime' name='set_touchTime'/>
                 <field accessType='initializeOnly' type='SFNode' name='timer'>
-                  <TimeSensor USE='_4'/>
+                  <TimeSensor USE='_10'/>
                 </field>
 <![CDATA[ecmascript:
 
@@ -549,26 +470,26 @@ function set_touchTime (value, time)
 	}
 	else
 		timer .startTime = time;
-}]]>
+}]]> 
               </Script>
             </Transform>
           </Transform>
         </Group>
       </Layer>
     </LayerSet>
-    <ROUTE fromNode='_8' fromField='time' toNode='BubblesScript' toField='set_time'/>
-    <ROUTE fromNode='_9' fromField='translation_changed' toNode='Rectangle2D_1' toField='set_translation'/>
-    <ROUTE fromNode='_9' fromField='translation_changed' toNode='numParticlesScript' toField='set_translation'/>
-    <ROUTE fromNode='numParticlesScript' fromField='string_changed' toNode='_5' toField='set_string'/>
+    <ROUTE fromNode='_5' fromField='time' toNode='BubblesScript' toField='set_time'/>
+    <ROUTE fromNode='_7' fromField='translation_changed' toNode='Rectangle2D' toField='set_translation'/>
+    <ROUTE fromNode='_7' fromField='translation_changed' toNode='numParticlesScript' toField='set_translation'/>
+    <ROUTE fromNode='numParticlesScript' fromField='string_changed' toNode='_6' toField='set_string'/>
     <ROUTE fromNode='numParticlesScript' fromField='value_changed' toNode='BubblesScript' toField='set_numParticles'/>
-    <ROUTE fromNode='_1' fromField='translation_changed' toNode='Rectangle2D' toField='set_translation'/>
-    <ROUTE fromNode='_1' fromField='translation_changed' toNode='pointSizeScript' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScript' fromField='string_changed' toNode='_3' toField='set_string'/>
+    <ROUTE fromNode='_9' fromField='translation_changed' toNode='Rectangle2D_1' toField='set_translation'/>
+    <ROUTE fromNode='_9' fromField='translation_changed' toNode='pointSizeScript' toField='set_translation'/>
+    <ROUTE fromNode='pointSizeScript' fromField='string_changed' toNode='_8' toField='set_string'/>
     <ROUTE fromNode='pointSizeScript' fromField='value_changed' toNode='_2' toField='set_linewidthScaleFactor'/>
-    <ROUTE fromNode='_4' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator' toField='set_fraction'/>
+    <ROUTE fromNode='_10' fromField='fraction_changed' toNode='pointSizeScriptSet_translationInterpolator' toField='set_fraction'/>
     <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='pointSizeScript' toField='set_translation'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='_1' toField='set_offset'/>
-    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='Rectangle2D' toField='set_translation'/>
-    <ROUTE fromNode='_10' fromField='touchTime' toNode='TogglePointSizeAnim' toField='set_touchTime'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='_9' toField='set_offset'/>
+    <ROUTE fromNode='pointSizeScriptSet_translationInterpolator' fromField='value_changed' toNode='Rectangle2D_1' toField='set_translation'/>
+    <ROUTE fromNode='_11' fromField='touchTime' toNode='TogglePointSizeAnim' toField='set_touchTime'/>
   </Scene>
 </X3D>

@@ -73,13 +73,11 @@ function (Vector3)
 		},
 		advanceTime: function (time)
 		{
-			time += performance .timing .navigationStart;
+			time = (time + performance .timing .navigationStart) / 1000;
 
-			var
-				lastTime = this .currentTime,
-				interval = this .currentTime - lastTime;
+			var interval = time - this .currentTime;
 
-			this .currentTime      = time / 1000;
+			this .currentTime      = time;
 			this .currentFrameRate = interval ? 1 / interval : 0;
 
 			if (this .getWorld () && this .getActiveLayer ())
