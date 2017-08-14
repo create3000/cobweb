@@ -53,7 +53,7 @@ define (function ()
 
 	return {
 		providerUrl:       "http://titania.create3000.de/cobweb",
-		fallbackUrl:       "https://crossorigin.me/",
-		fallbackExpression: new RegExp ("^https://crossorigin.me/"),
+		fallbackUrl:       "http://cors.create3000.de/",
+		fallbackExpression: new RegExp ("^http://cors.create3000.de/"),
 	};
 });

@@ -241,7 +241,7 @@ function ($,
 			if (! this .currentViewport)
 				this .currentViewport = this .getBrowser () .getDefaultViewport ();
 		},
-		bind: function ()
+		bind: function (viewpointName)
 		{
 			this .traverse (TraverseType .CAMERA, this);
 
@@ -251,7 +251,7 @@ function ($,
 				navigationInfo = this .navigationInfos .getBound (),
 				background     = this .backgrounds     .getBound (),
 				fog            = this .fogs            .getBound (),
-				viewpoint      = this .viewpoints      .getBound ();
+				viewpoint      = this .viewpoints      .getBound (viewpointName);
 
 			this .navigationInfoStack .forcePush (navigationInfo);
 			this .backgroundStack     .forcePush (background);

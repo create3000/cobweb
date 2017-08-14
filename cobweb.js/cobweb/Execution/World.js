@@ -148,19 +148,7 @@ function ($,
 		{
 			// Bind first X3DBindableNodes found in each layer.
 
-			this .layerSet .bind ();
-
-			// Bind viewpoint from URL.
-
-			try
-			{
-				var fragment = this .getExecutionContext () .getURL () .fragment;
-
-				if (fragment .length)
-					this .getExecutionContext () .changeViewpoint (fragment);
-			}
-			catch (error)
-			{ }
+			this .layerSet .bind (this .getExecutionContext () .getURL () .fragment);
 		},
 		traverse: function (type, renderObject)
 		{

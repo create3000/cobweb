@@ -105,6 +105,8 @@ function ($, X3DBaseNode)
 
 			if (node !== top)
 			{
+				this .pushOnTop (node);
+
 				if (top .isBound_ .getValue ())
 				{
 					top .set_bind_ = false;

@@ -685,6 +685,30 @@
     <None Include="3\3.2\images\Viewpoint.png" />
     <None Include="3\3.2\images\WalkViewer.png" />
     <None Include="3\3.2\cobweb-3.2.zip" />
+    <None Include="3\3.3\browser.html" />
+    <None Include="3\3.3\cobweb.css" />
+    <None Include="3\3.3\cobweb.js" />
+    <None Include="3\3.3\cobweb.min.js" />
+    <None Include="3\3.3\cobweb-3.3.zip" />
+    <None Include="3\3.3\spinner.css" />
+    <None Include="3\3.3\images\ExamineViewer.png" />
+    <None Include="3\3.3\images\FlyViewer.png" />
+    <None Include="3\3.3\images\gtk-fullscreen.png" />
+    <None Include="3\3.3\images\gtk-leave-fullscreen.png" />
+    <None Include="3\3.3\images\gtk-zoom-fit.png" />
+    <None Include="3\3.3\images\gtk-zoom-in.png" />
+    <None Include="3\3.3\images\help-about.png" />
+    <None Include="3\3.3\images\icon.bw.png" />
+    <None Include="3\3.3\images\icon.png" />
+    <None Include="3\3.3\images\logo.bw.png" />
+    <None Include="3\3.3\images\logo.png" />
+    <None Include="3\3.3\images\NoneViewer.png" />
+    <None Include="3\3.3\images\PlaneViewer.png" />
+    <None Include="3\3.3\images\PrimitiveQuality.png" />
+    <None Include="3\3.3\images\TextureQuality.png" />
+    <None Include="3\3.3\images\Time.png" />
+    <None Include="3\3.3\images\Viewpoint.png" />
+    <None Include="3\3.3\images\WalkViewer.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="1\" />
@@ -724,5 +748,7 @@
     <Folder Include="3\3.1\" />
     <Folder Include="3\3.2\" />
     <Folder Include="3\3.2\images\" />
+    <Folder Include="3\3.3\" />
+    <Folder Include="3\3.3\images\" />
   </ItemGroup>
 </Project>

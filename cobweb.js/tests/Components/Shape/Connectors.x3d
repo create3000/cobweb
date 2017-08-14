@@ -5,8 +5,9 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Fri, 04 Sep 2015 10:19:01 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.0.0, http://titania.create3000.de'/>
-    <meta name='modified' content='Fri, 04 Sep 2015 10:19:01 GMT'/>
+    <meta name='generator' content='Titania V3.0.4, http://titania.create3000.de'/>
+    <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Shape/Connectors.x3d'/>
+    <meta name='modified' content='Tue, 25 Jul 2017 09:42:17 GMT'/>
     <meta name='title' content='Connectors'/>
   </head>
   <Scene>
@@ -79,7 +80,7 @@ function initialize ()
 
 	geometry .coord .point = points;
 }
-]]> 
+]]>
         </Script>
       </ProtoBody>
     </ProtoDeclare>
@@ -185,7 +186,7 @@ function initialize ()
 {
 	sensor .offset = translation;
 }
-]]> 
+]]>
         </Script>
         <ROUTE fromNode='PlaneSensor' fromField='translation_changed' toNode='Node' toField='set_translation'/>
       </ProtoBody>
@@ -261,7 +262,7 @@ function set_translation ()
 		geometry .coord .point [i] = outPoint .add (new SFVec3f (t * w, y, 0));
 	}
 }
-]]> 
+]]>
         </Script>
       </ProtoBody>
     </ProtoDeclare>
@@ -291,7 +292,7 @@ function set_translation ()
       </ProtoInstance>
       <ProtoInstance name='Route'>
         <fieldValue name='output'>
-          <ProtoInstance USE='N1'/>
+          <ProtoInstance name='Node' USE='N1'/>
         </fieldValue>
         <fieldValue name='input'>
           <ProtoInstance name='Node' DEF='N3'>
@@ -301,7 +302,7 @@ function set_translation ()
       </ProtoInstance>
       <ProtoInstance name='Route'>
         <fieldValue name='output'>
-          <ProtoInstance USE='N1'/>
+          <ProtoInstance name='Node' USE='N1'/>
         </fieldValue>
         <fieldValue name='input'>
           <ProtoInstance name='Node' DEF='N4'>
@@ -311,7 +312,7 @@ function set_translation ()
       </ProtoInstance>
       <ProtoInstance name='Route'>
         <fieldValue name='output'>
-          <ProtoInstance USE='N1'/>
+          <ProtoInstance name='Node' USE='N1'/>
         </fieldValue>
         <fieldValue name='input'>
           <ProtoInstance name='Node' DEF='N5'>
@@ -321,7 +322,7 @@ function set_translation ()
       </ProtoInstance>
       <ProtoInstance name='Route'>
         <fieldValue name='output'>
-          <ProtoInstance USE='N2'/>
+          <ProtoInstance name='Node' USE='N2'/>
         </fieldValue>
         <fieldValue name='input'>
           <ProtoInstance name='Node' DEF='N6'>
@@ -331,15 +332,15 @@ function set_translation ()
       </ProtoInstance>
       <ProtoInstance name='Route'>
         <fieldValue name='output'>
-          <ProtoInstance USE='N3'/>
+          <ProtoInstance name='Node' USE='N3'/>
         </fieldValue>
         <fieldValue name='input'>
-          <ProtoInstance USE='N6'/>
+          <ProtoInstance name='Node' USE='N6'/>
         </fieldValue>
       </ProtoInstance>
       <ProtoInstance name='Route'>
         <fieldValue name='output'>
-          <ProtoInstance USE='N4'/>
+          <ProtoInstance name='Node' USE='N4'/>
         </fieldValue>
         <fieldValue name='input'>
           <ProtoInstance name='Node' DEF='N7'>
@@ -349,15 +350,15 @@ function set_translation ()
       </ProtoInstance>
       <ProtoInstance name='Route'>
         <fieldValue name='output'>
-          <ProtoInstance USE='N5'/>
+          <ProtoInstance name='Node' USE='N5'/>
         </fieldValue>
         <fieldValue name='input'>
-          <ProtoInstance USE='N7'/>
+          <ProtoInstance name='Node' USE='N7'/>
         </fieldValue>
       </ProtoInstance>
       <ProtoInstance name='Route'>
         <fieldValue name='output'>
-          <ProtoInstance USE='N6'/>
+          <ProtoInstance name='Node' USE='N6'/>
         </fieldValue>
         <fieldValue name='input'>
           <ProtoInstance name='Node' DEF='N8'>
@@ -367,20 +368,20 @@ function set_translation ()
       </ProtoInstance>
       <ProtoInstance name='Route'>
         <fieldValue name='output'>
-          <ProtoInstance USE='N7'/>
+          <ProtoInstance name='Node' USE='N7'/>
         </fieldValue>
         <fieldValue name='input'>
-          <ProtoInstance USE='N8'/>
+          <ProtoInstance name='Node' USE='N8'/>
         </fieldValue>
       </ProtoInstance>
-      <ProtoInstance USE='N1'/>
-      <ProtoInstance USE='N2'/>
-      <ProtoInstance USE='N3'/>
-      <ProtoInstance USE='N4'/>
-      <ProtoInstance USE='N5'/>
-      <ProtoInstance USE='N6'/>
-      <ProtoInstance USE='N7'/>
-      <ProtoInstance USE='N8'/>
+      <ProtoInstance name='Node' USE='N1'/>
+      <ProtoInstance name='Node' USE='N2'/>
+      <ProtoInstance name='Node' USE='N3'/>
+      <ProtoInstance name='Node' USE='N4'/>
+      <ProtoInstance name='Node' USE='N5'/>
+      <ProtoInstance name='Node' USE='N6'/>
+      <ProtoInstance name='Node' USE='N7'/>
+      <ProtoInstance name='Node' USE='N8'/>
     </Transform>
   </Scene>
 </X3D>

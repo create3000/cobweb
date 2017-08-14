@@ -97,8 +97,19 @@ function ($, X3DBaseNode)
 		{
 			return this .array;
 		},
-		getBound: function ()
+		getBound: function (name)
 		{
+			if (name && name .length)
+			{
+				for (var i = 1, length = this .array .length; i < length; ++ i)
+				{
+					var node = this .array [i];
+
+					if (node .getName () == name)
+						return node;
+				}
+			}
+
 			for (var i = 1, length = this .array .length; i < length; ++ i)
 			{
 				var node = this .array [i];

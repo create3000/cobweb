@@ -186,18 +186,18 @@ function ($,
 
 			this .set_activeLayer ();
 		},
-		bind: function ()
+		bind: function (viewpointName)
 		{
 			var layers = this .layers_ .getValue ();
 
-			this .layerNode0 .bind ();
+			this .layerNode0 .bind (viewpointName);
 
 			for (var i = 0, length = layers .length; i < length; ++ i)
 			{
 				var layerNode = X3DCast (X3DConstants .X3DLayerNode, layers [i]);
 
 				if (layerNode)
-					layerNode .bind ();
+					layerNode .bind (viewpointName);
 			}
 		},
 		traverse: function (type, renderObject)

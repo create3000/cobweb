@@ -49,5 +49,5 @@
 ﻿
 define (function ()
 {
-	return "3.3a";
+	return "3.3";
 });

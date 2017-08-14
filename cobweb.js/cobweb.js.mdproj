@@ -1302,6 +1302,7 @@
     <None Include="tests\Components\Shaders\ComposedShaderUniformRotation.x3d" />
     <None Include="cobweb\InputOutput\FileLoader.js" />
     <None Include="examples\beyond-germany\beyond-germany.x3dz" />
+    <None Include="tests\Components\Navigation\ViewpointJump.x3d" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\Browser\Texturing\" />

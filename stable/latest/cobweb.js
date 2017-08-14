@@ -19863,7 +19863,7 @@ function ($,
 ﻿
 define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "3.2";
+	return "3.3";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -21198,6 +21198,8 @@ function ($,
 
 		this .addAlias ("AntiAliased", this .Antialiased_);
 
+		this .setAttributeSplashScreen ();
+
 		this .primitiveQuality = PrimitiveQuality .MEDIUM;
 		this .textureQuality   = TextureQuality   .MEDIUM;
 	}
@@ -21265,11 +21267,35 @@ function ($,
 				primitiveQuality = this .getBrowser () .getDataStorage () ["BrowserOptions.PrimitiveQuality"],
 				textureQuality   = this .getBrowser () .getDataStorage () ["BrowserOptions.TextureQuality"];
 
-			this .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
-				
+			this .setAttributeSplashScreen ();
+
 			if (rubberband       !== undefined && rubberband       !== this .Rubberband_       .getValue ()) this .Rubberband_       = rubberband;
 			if (primitiveQuality !== undefined && primitiveQuality !== this .PrimitiveQuality_ .getValue ()) this .PrimitiveQuality_ = primitiveQuality;
 			if (textureQuality   !== undefined && textureQuality   !== this .TextureQuality_   .getValue ()) this .TextureQuality_   = textureQuality;
+		},
+		setAttributeSplashScreen: function ()
+		{
+			this .SplashScreen_ .set (this .getSplashScreen ());
+		},
+		getSplashScreen: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("splashScreen") !== "false";
+		},
+		getNotifications: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("notifications") !== "false";
+		},
+		getTimings: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("timings") !== "false";
+		},
+		getContextMenu: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("contextMenu") !== "false";
+		},
+		getCache: function ()
+		{
+			return this .getBrowser () .getElement () .attr ("cache") !== "false";
 		},
 		getPrimitiveQuality: function ()
 		{
@@ -21734,28 +21760,21 @@ function ($,
 		},
 		set_string__: function ()
 		{
-			if (this .getBrowser () .getElement () .attr ("notifications") !== "false")
-			{
-				if (this .string_ .length === 0)
-					return;
-	
-				//this .element
-				//	.text (this .string_ .getValue ())
-				//	.stop (true, true)
-				//	.fadeIn ()
-				//	.animate ({ "delay": 1 }, 4000)
-				//	.fadeOut ();
-	
-				this .element .children () .text (this .string_ .getValue ());
-	
-				this .element 
-					.stop (true, true)
-					.fadeIn (0)
-					.animate ({ width: this .element .textWidth () })
-					.animate ({ "delay": 1 }, 5000)
-					.animate ({ width: 0 })
-					.fadeOut (0);
-			}
+			if (! this .getBrowser () .getBrowserOptions () .getNotifications ())
+				return;
+
+			if (this .string_ .length === 0)
+				return;
+
+			this .element .children () .text (this .string_ .getValue ());
+
+			this .element 
+				.stop (true, true)
+				.fadeIn (0)
+				.animate ({ width: this .element .textWidth () })
+				.animate ({ "delay": 1 }, 5000)
+				.animate ({ width: 0 })
+				.fadeOut (0);
 		},
 	});
 
@@ -22317,21 +22336,21 @@ function ($,
 		},
 		set_enabled__: function (enabled)
 		{
-			if (this .getBrowser () .getElement () .attr ("timings") !== "false")
+			if (! this .getBrowser () .getBrowserOptions () .getTimings ())
+				return;
+
+			this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
+
+			if (enabled .getValue ())
 			{
-				this .getBrowser () .getDataStorage () ["BrowserTimings.enabled"] = enabled .getValue ();
-	
-				if (enabled .getValue ())
-				{
-					this .element .fadeIn ();
-					this .getBrowser () .prepareEvents () .addInterest ("update", this);
-					this .update ();
-				}
-				else
-				{
-					this .element .fadeOut ();
-					this .getBrowser () .prepareEvents () .removeInterest ("update", this);
-				}
+				this .element .fadeIn ();
+				this .getBrowser () .prepareEvents () .addInterest ("update", this);
+				this .update ();
+			}
+			else
+			{
+				this .element .fadeOut ();
+				this .getBrowser () .prepareEvents () .removeInterest ("update", this);
 			}
 		},
 		set_type__: function ()
@@ -24356,13 +24375,13 @@ function ($,
 		{
 			X3DBaseNode .prototype .initialize .call (this);
 
-			if (this .getBrowser () .getElement () .attr ("contextMenu") !== "false")
-			{
-				$.contextMenu ({
-					selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
-					build: this .build .bind (this),
-				});
-			}
+			if (! this .getBrowser () .getBrowserOptions () .getContextMenu ())
+				return;
+
+			$.contextMenu ({
+				selector: ".cobweb-surface-" + this .getBrowser () .getId (), 
+				build: this .build .bind (this),
+			});
 		},
 		build: function (trigger, event)
 		{
@@ -24524,7 +24543,7 @@ function ($,
 							.bind (this),
 						},
 					},
-					"browser-timings": this .getBrowser () .getElement () .attr ("timings") !== "false" ? {
+					"browser-timings": this .getBrowser () .getBrowserOptions () .getTimings () ? {
 						name: _("Browser Timings"),
 						type: "checkbox",
 						selected: this .getBrowser () .getBrowserTimings () .enabled_ .getValue (),
@@ -24599,7 +24618,7 @@ function ($,
 					description = viewpoint .description_ .getValue ();
 
 				if (description === "")
-				   continue;
+					continue;
 
 				var item = {
 					name: description,
@@ -28914,9 +28933,9 @@ function ($,
 
 			// Don't create scene cache, due to possible default nodes in proto SFNode fields and complete scenes.
 
-			var Loader = require ("cobweb/InputOutput/Loader");
+			var FileLoader = require ("cobweb/InputOutput/FileLoader");
 
-			new Loader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
+			new FileLoader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
 		},
 		setInternalSceneAsync: function (value)
 		{
@@ -32543,7 +32562,7 @@ function (Fields,
 
 		this .getCanvas () .fadeOut (0);
 
-		if (this .getElement () .attr ("splashScreen") !== "false")
+		if (this .getBrowserOptions () .getSplashScreen ())
 			this .getSplashScreen () .fadeIn (0);
 
 		$(".cobweb-console") .empty ();
@@ -32664,10 +32683,7 @@ function (Fields,
 					this .load (this .getElement () .attr ("url"));
 					break;
 				case "splashscreen":
-					this .getBrowserOptions () .SplashScreen_ .set (this .getBrowser () .getElement () .attr ("splashScreen") !== "false");
-					break;
-				case "cache":
-					this .setCaching (this .getElement () .attr ("cache") !== "false");
+					this .getBrowserOptions () .setAttributeSplashScreen ();
 					break;
 			}
 		},
@@ -32688,7 +32704,7 @@ function (Fields,
 			}
 			else
 			{
-				if (! this .getBrowserLoading ())
+				if (! this .getLoading ())
 					this .getCanvas () .fadeIn (0);
 			}
 		},
@@ -33460,8 +33476,8 @@ define ('cobweb/Browser/Networking/urls',[],function ()
 
 	return {
 		providerUrl:       "http://titania.create3000.de/cobweb",
-		fallbackUrl:       "https://crossorigin.me/",
-		fallbackExpression: new RegExp ("^https://crossorigin.me/"),
+		fallbackUrl:       "http://proxy.create3000.de/",
+		fallbackExpression: new RegExp ("^http://proxy.create3000.de/"),
 	};
 });
 
@@ -33753,16 +33769,14 @@ function (Fields,
 
 	function X3DNetworkingContext ()
 	{
-		this .cache = this .getElement () [0] .getAttribute ("cache") != "false";
-
 		this .addChildObjects ("loadCount", new Fields .SFInt32 ());
 
 		this .loadSensor     = new LoadSensor (this .getPrivateScene ());
 		this .loadingTotal   = 0;
 		this .loadingObjects = { };
+		this .loading        = false;
 		this .location       = getBaseURI (this .getElement () [0]);
 		this .defaultScene   = this .createScene (); // Inline node's empty scene.
-		this .browserLoading = false;
 	}
 
 	X3DNetworkingContext .prototype =
@@ -33781,14 +33795,6 @@ function (Fields,
 		{
 			return urls .providerUrl;
 		},
-		setCaching: function (value)
-		{
-		   this .cache = value;
-		},
-		doCaching: function ()
-		{
-		   return this .cache;
-		},
 		getLocation: function ()
 		{
 			return this .location;
@@ -33803,13 +33809,13 @@ function (Fields,
 		},
 		setBrowserLoading: function (value)
 		{
-			this .browserLoading = value;
+			this .loading = value;
 
 			if (value)
 			{
 				this .resetLoadCount ();
 
-				if (this .getElement () .attr ("splashScreen") !== "false")
+				if (this .getBrowserOptions () .getSplashScreen ())
 				{
 					this .getCanvas ()       .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeOut (0);
 					this .getSplashScreen () .stop (true, true) .animate ({ "delay": 1 }, 1) .fadeIn (0);
@@ -33817,7 +33823,7 @@ function (Fields,
 			}
 			else
 			{
-				if (this .getElement () .attr ("splashScreen") !== "false")
+				if (this .getBrowserOptions () .getSplashScreen ())
 				{
 					this .getSplashScreen () .stop (true, true) .fadeOut (2000);
 					this .getCanvas ()       .stop (true, true) .fadeIn (2000);
@@ -33826,9 +33832,9 @@ function (Fields,
 					this .getCanvas () .fadeIn (0);
 			}
 		},
-		getBrowserLoading: function ()
+		getLoading: function ()
 		{
-			return this .browserLoading;
+			return this .loading;
 		},
 		addLoadCount: function (object)
 		{
@@ -33865,7 +33871,7 @@ function (Fields,
 				this .setCursor ("DEFAULT");
 			}
 
-			if (! this .browserLoading)
+			if (! this .loading)
 				this .getNotification () .string_ = string;
 
 			this .getSplashScreen () .find (".cobweb-spinner-text") .text (string);
@@ -41298,7 +41304,7 @@ function (VERSION)
  ******************************************************************************/
 
 
-define ('cobweb/InputOutput/Loader',[
+define ('cobweb/InputOutput/FileLoader',[
 	"jquery",
 	"cobweb/Base/X3DObject",
 	"cobweb/Fields",
@@ -41338,7 +41344,7 @@ function ($,
 
 	var defaultParameter = new Fields .MFString ();
 
-	function Loader (node, external)
+	function FileLoader (node, external)
 	{
 		X3DObject .call (this);
 
@@ -41351,9 +41357,9 @@ function ($,
 		this .fileReader       = new FileReader ();
 	}
 
-	Loader .prototype = $.extend (Object .create (X3DObject .prototype),
+	FileLoader .prototype = $.extend (Object .create (X3DObject .prototype),
 	{
-		constructor: Loader,
+		constructor: FileLoader,
 		abort: function ()
 		{
 			this .callback      = Function .prototype;
@@ -41477,7 +41483,7 @@ function ($,
 					url: this .URL,
 					dataType: "text",
 					async: false,
-					cache: this .browser .doCaching (),
+					cache: this .browser .getBrowserOptions () .getCache (),
 					//timeout: 15000,
 					global: false,
 					context: this,
@@ -41632,7 +41638,7 @@ function ($,
 				url: this .URL,
 				dataType: "binary",
 				async: true,
-				cache: this .browser .doCaching (),
+				cache: this .browser .getBrowserOptions () .getCache (),
 				//timeout: 15000,
 				global: false,
 				context: this,
@@ -41741,7 +41747,7 @@ function ($,
 		},
 	});
 
-	return Loader;
+	return FileLoader;
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -41801,7 +41807,7 @@ define ('cobweb/Components/Shaders/ShaderPart',[
 	"cobweb/Browser/Shaders/Shader",
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Components/Networking/X3DUrlObject",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -41811,7 +41817,7 @@ function ($,
           Shader,
           X3DNode, 
           X3DUrlObject,
-          Loader,
+          FileLoader,
           X3DConstants)
 {
 
@@ -41898,7 +41904,7 @@ function ($,
 			
 			this .valid = false;
 
-			new Loader (this) .loadDocument (this .url_, null,
+			new FileLoader (this) .loadDocument (this .url_, null,
 			function (data, URL)
 			{
 				if (data === null)
@@ -41941,7 +41947,7 @@ define('text!cobweb/Browser/Shaders/Gouraud.fs',[],function () { return 'data:te
 
 define('text!cobweb/Browser/Shaders/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix [x3d_MaxTextures];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
-define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n\n#ifdef X3D_SHADOWS\nuniform vec3      x3d_ShadowColor [x3d_MaxLights];\nuniform float     x3d_ShadowIntensity [x3d_MaxLights];\nuniform float     x3d_ShadowDiffusion [x3d_MaxLights];\nuniform mat4      x3d_ShadowMatrix [x3d_MaxLights];\nuniform sampler2D x3d_ShadowMap [x3d_MaxLights];\n#endif\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\n#pragma X3D include "Bits/Random.h"\n#pragma X3D include "Bits/Plane3.h"\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nfloat\ngetSpotFactor (in float cutOffAngle, in float beamWidth, in vec3 L, in vec3 d)\n{\n\tfloat spotAngle = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\n\tif (spotAngle >= cutOffAngle)\n\t\treturn 0.0;\n\telse if (spotAngle <= beamWidth)\n\t\treturn 1.0;\n\n\treturn (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n}\n\n#ifdef X3D_SHADOWS\nfloat\nunpack (in vec4 color)\n{\n\treturn color .r + color .g / 255.0 + color .b / 65025.0 + color .a / 16581375.0;\n}\n\nfloat\ngetShadowDepth (in int index, in vec2 shadowCoord)\n{\n\t#if x3d_MaxShadows > 0\n\tif (index == 0)\n\t\treturn unpack (texture2D (x3d_ShadowMap [0], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 1\n\tif (index == 1)\n\t\treturn unpack (texture2D (x3d_ShadowMap [1], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 2\n\tif (index == 2)\n\t\treturn unpack (texture2D (x3d_ShadowMap [2], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 3\n\tif (index == 3)\n\t\treturn unpack (texture2D (x3d_ShadowMap [3], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 4\n\tif (index == 4)\n\t\treturn unpack (texture2D (x3d_ShadowMap [4], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 5\n\tif (index == 5)\n\t\treturn unpack (texture2D (x3d_ShadowMap [5], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 6\n\tif (index == 6)\n\t\treturn unpack (texture2D (x3d_ShadowMap [6], shadowCoord));\n\t#endif\n\n\t#if x3d_MaxShadows > 7\n\tif (index == 7)\n\t\treturn unpack (texture2D (x3d_ShadowMap [7], shadowCoord));\n\t#endif\n\n\treturn 0.0;\n}\n\nfloat\ngetShadowIntensity (in int index, in int lightType, in float shadowIntensity, in float shadowDiffusion, in mat4 shadowMatrix, in Plane3 plane, in float lightAngle)\n{\n\t#define SHADOW_TEXTURE_EPS 0.01\n\t#define SHADOW_BIAS_OFFSET 0.002\n\t#define SHADOW_BIAS_FACTOR 0.004\n\t\t\n\tfloat shadowBias = SHADOW_BIAS_OFFSET + SHADOW_BIAS_FACTOR * (1.0 - abs (lightAngle));\n\n\tif (lightType == x3d_PointLight)\n\t{\n\t\tmat4 rotationProjectionBias [6];\n\t\trotationProjectionBias [0] = mat4 (-0.1666666666666667, -0.25, -1.0001250156269537, -1.0, 0, 0.1443375672974065, 0.0, 0.0, -0.09622504486493763, 0.0, 0.0, 0.0, 0.0, 0.0, -0.12501562695336918, 0.0);\n\t\trotationProjectionBias [1] = mat4 (0.16666666666666666, 0.25, 1.0001250156269537, 1.0, 0, 0.1443375672974065, 0.0, 0.0, 0.09622504486493771, 0.0, 0.0, 0.0, 0.0, 0.0, -0.12501562695336918, 0.0);\n\t\trotationProjectionBias [2] = mat4 (0.09622504486493766, 0.0, 0.0, 0.0, 0.0, 0.1443375672974065, 0.0, 0.0, -0.16666666666666666, -0.25, -1.0001250156269532, -1.0, 0.0, 0.0, -0.12501562695336918, 0.0);\n\t\trotationProjectionBias [3] = mat4 (-0.09622504486493766, 0.0, 0.0, 0.0, 0, 0.1443375672974065, 0.0, 0.0, 0.16666666666666666, 0.25, 1.0001250156269532, 1.0, 0.0, 0.0, -0.12501562695336918, 0.0);\n\t\trotationProjectionBias [4] = mat4 (0.09622504486493766, 0.0, 0.0, 0.0, -0.16666666666666669, -0.25, -1.0001250156269537, -1.0, 0.0, -0.14433756729740646, 0.0, 0.0, 0.0, 0, -0.12501562695336918, 0.0);\n\t\trotationProjectionBias [5] = mat4 (0.09622504486493766, 0.0, 0.0, 0.0, 0.16666666666666669, 0.25, 1.0001250156269537, 1.0, 0.0, 0.14433756729740657, 0.0, 0.0, 0.0, 0.0, -0.12501562695336918, 0.0);\n\n\t\t// Offsets to the shadow map.\n\t\tvec2 offsets [6];\n\t\toffsets [0] = vec2 (0.0,       0.0);\n\t\toffsets [1] = vec2 (1.0 / 3.0, 0.0);\n\t\toffsets [2] = vec2 (2.0 / 3.0, 0.0);\n\t\toffsets [3] = vec2 (0.0,       0.5);\n\t\toffsets [4] = vec2 (1.0 / 3.0, 0.5);\n\t\toffsets [5] = vec2 (2.0 / 3.0, 0.5);\n\n\t\tint value   = 0;\n\t\tint samples = 0;\n\n\t\tfor (int m = 0; m < 6; ++ m)\n\t\t{\n\t\t\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t\t\t{\n\t\t\t\tif (samples >= x3d_ShadowSamples)\n\t\t\t\t\treturn shadowIntensity * float (value) / float (x3d_ShadowSamples);\n\n\t\t\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\t\t\tvec4  shadowCoord = rotationProjectionBias [m] * shadowMatrix * vec4 (vertex, 1.0);\n\t\t\t\tfloat bias        = shadowBias / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\t\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\t\t\tif (shadowCoord .x < SHADOW_TEXTURE_EPS || shadowCoord .x > 1.0 / 3.0 - SHADOW_TEXTURE_EPS)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .y < SHADOW_TEXTURE_EPS || shadowCoord .y > 1.0 / 2.0 - SHADOW_TEXTURE_EPS)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (shadowCoord .z >= 1.0)\n\t\t\t\t\tcontinue;\n\n\t\t\t\tif (getShadowDepth (index, shadowCoord .xy + offsets [m]) < shadowCoord .z - bias)\n\t\t\t\t{\n\t\t\t\t\t++ value;\n\t\t\t\t}\n\n\t\t\t\t// We definitely have a shadow sample.\n\t\t\t\t++ samples;\n\t\t\t}\n\t\t}\n\n\t\treturn shadowIntensity * float (value) / float (x3d_ShadowSamples);\n\t}\n\n\tint value = 0;\n\n\tfor (int i = 0; i < x3d_ShadowSamples; ++ i)\n\t{\n\t\tvec3  vertex      = closest_point (plane, v + random3 () * shadowDiffusion);\n\t\tvec4  shadowCoord = shadowMatrix * vec4 (vertex, 1.0);\n\t\tfloat bias        = shadowBias / shadowCoord .w; // 0.005 / shadowCoord .w;\n\n\t\tshadowCoord .xyz /= shadowCoord .w;\n\n\t\tif (shadowCoord .z >= 1.0)\n\t\t\tcontinue;\n\n\t\tif (getShadowDepth (index, shadowCoord .xy) < shadowCoord .z - bias)\n\t\t{\n\t\t\t++ value;\n\t\t}\n\t}\n\n\treturn shadowIntensity * float (value) / float (x3d_ShadowSamples);\n}\n#endif\n\nvec4\ngetMaterialColor ()\n{\n\tif (x3d_Lighting)\n\t{\n\t\tPlane3 plane = plane3 (v, vN);\n\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint lightType = x3d_LightType [i];\n\n\t\t\tif (lightType == x3d_NoneLight)\n\t\t\t\tbreak;\n\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);      // Normalized vector from point on geometry to light source i position.\n\t\t\t\tvec3 H = normalize (L + V);             // Specular term\n\n\t\t\t\tfloat lightAngle     = dot (N, L);       // Angle between normal and light ray.\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * clamp (lightAngle, 0.0, 1.0);\n\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\n\t\t\t\tfloat attenuationFactor           = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spotFactor                  = lightType == x3d_SpotLight ? getSpotFactor (x3d_LightCutOffAngle [i], x3d_LightBeamWidth [i], L, d) : 1.0;\n\t\t\t\tfloat attenuationSpotFactor       = attenuationFactor * spotFactor;\n\t\t\t\tvec3  ambientColor                = x3d_LightAmbientIntensity [i] * ambientTerm;\n\t\t\t\tvec3  ambientDiffuseSpecularColor = ambientColor + x3d_LightIntensity [i] * (diffuseTerm + specularTerm);\n\n\t\t\t\t#ifdef X3D_SHADOWS\n\n\t\t\t\tif (x3d_ShadowIntensity [i] > 0.0 && lightAngle > 0.0)\n\t\t\t\t{\n\t\t\t\t\tfloat shadowIntensity = getShadowIntensity (i, lightType, x3d_ShadowIntensity [i], x3d_ShadowDiffusion [i], x3d_ShadowMatrix [i], plane, lightAngle);\n\t\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (mix (x3d_LightColor [i], x3d_ShadowColor [i], shadowIntensity) * ambientDiffuseSpecularColor);\n\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\n\t\t\t\t#else\n\n\t\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\n\t\t\t\t#endif\n\t\t\t}\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\treturn vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\treturn finalColor;\n\t}\n}\n\nvec3\ngetFogColor (in vec3 color)\n{\n\tif (x3d_FogType == x3d_NoneFog)\n\t\treturn color;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn x3d_FogColor;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn mix (x3d_FogColor, color, (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange);\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn mix (x3d_FogColor, color, exp (-dV / (x3d_FogVisibilityRange - dV)));\n\n\treturn color;\n}\n\nvoid\nmain ()\n{\n\tseed (int (fract (dot (v, v)) * float (RAND_MAX)));\n\n\tclip ();\n\n\tgl_FragColor = getMaterialColor ();\n\n\tgl_FragColor .rgb = getFogColor (gl_FragColor .rgb);\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nfloat\ngetSpotFactor (in float cutOffAngle, in float beamWidth, in vec3 L, in vec3 d)\n{\n\tfloat spotAngle = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\n\tif (spotAngle >= cutOffAngle)\n\t\treturn 0.0;\n\telse if (spotAngle <= beamWidth)\n\t\treturn 1.0;\n\n\treturn (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n}\n\nvec4\ngetMaterialColor ()\n{\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint lightType = x3d_LightType [i];\n\n\t\t\tif (lightType == x3d_NoneLight)\n\t\t\t\tbreak;\n\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);      // Normalized vector from point on geometry to light source i position.\n\t\t\t\tvec3 H = normalize (L + V);             // Specular term\n\n\t\t\t\tfloat lightAngle     = dot (N, L);      // Angle between normal and light ray.\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * clamp (lightAngle, 0.0, 1.0);\n\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\n\t\t\t\tfloat attenuationFactor           = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spotFactor                  = lightType == x3d_SpotLight ? getSpotFactor (x3d_LightCutOffAngle [i], x3d_LightBeamWidth [i], L, d) : 1.0;\n\t\t\t\tfloat attenuationSpotFactor       = attenuationFactor * spotFactor;\n\t\t\t\tvec3  ambientColor                = x3d_LightAmbientIntensity [i] * ambientTerm;\n\t\t\t\tvec3  ambientDiffuseSpecularColor = ambientColor + x3d_LightIntensity [i] * (diffuseTerm + specularTerm);\n\n\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\t\t\t}\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\treturn vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\treturn finalColor;\n\t}\n}\n\nvec3\ngetFogColor (in vec3 color)\n{\n\tif (x3d_FogType == x3d_NoneFog)\n\t\treturn color;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn x3d_FogColor;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn mix (x3d_FogColor, color, (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange);\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn mix (x3d_FogColor, color, exp (-dV / (x3d_FogVisibilityRange - dV)));\n\n\treturn color;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = getMaterialColor ();\n\n\tgl_FragColor .rgb = getFogColor (gl_FragColor .rgb);\n}\n';});
 
 define('text!cobweb/Browser/Shaders/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
@@ -52133,10 +52139,14 @@ function ($,
 			{
 				if (this .loop_ .getValue ())
 				{
-					this .cycle            += this .interval * Math .floor ((time - this .cycle) / this .interval);
-					this .fraction_changed_ = this .last;
-					this .elapsedTime_      = this .getElapsedTime ();
-					this .cycleTime_        = time;
+					if (this .interval)
+					{
+						this .cycle += this .interval * Math .floor ((time - this .cycle) / this .interval);
+
+						this .fraction_changed_ = this .last;
+						this .elapsedTime_      = this .getElapsedTime ();
+						this .cycleTime_        = time;
+					}
 				}
 				else
 				{
@@ -55103,7 +55113,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput, "position",          new Fields .SFVec3f (0, 0, 10)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "orientation",       new Fields .SFRotation ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "centerOfRotation",  new Fields .SFVec3f ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "fieldOfView",       new Fields .SFFloat (Math .PI / 4)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "fieldOfView",       new Fields .SFFloat (0.7854)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "jump",              new Fields .SFBool (true)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "retainUserOffsets", new Fields .SFBool ()),
 			new X3DFieldDefinition (X3DConstants .outputOnly,  "isBound",           new Fields .SFBool ()),
@@ -56927,7 +56937,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "position",          new Fields .SFVec3d (0, 0, 100000)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "orientation",       new Fields .SFRotation ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "centerOfRotation",  new Fields .SFVec3d ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "fieldOfView",       new Fields .SFFloat (0.785398)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "fieldOfView",       new Fields .SFFloat (0.7854)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "jump",              new Fields .SFBool (true)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "retainUserOffsets", new Fields .SFBool ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "navType",           new Fields .MFString ("EXAMINE", "ANY")),
@@ -58715,6 +58725,8 @@ function ($,
 		X3DLightNode .call (this, executionContext);
 
 		this .addType (X3DConstants .DirectionalLight);
+
+		this .global_ = false;
 	}
 
 	DirectionalLight .prototype = $.extend (Object .create (X3DLightNode .prototype),
@@ -60224,7 +60236,7 @@ define ('cobweb/Components/Text/X3DFontStyleNode',[
 	"cobweb/Components/Core/X3DNode",
 	"cobweb/Components/Networking/X3DUrlObject",
 	"cobweb/Browser/Text/TextAlignment",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
@@ -60234,7 +60246,7 @@ function ($,
           X3DNode,
           X3DUrlObject,
           TextAlignment,
-          Loader,
+          FileLoader,
           X3DConstants,
           urls,
           URI)
@@ -60246,7 +60258,7 @@ function ($,
     */
 
 	var FontDirectories = [
-		"http://titania.create3000.de/fileadmin/cobweb/fonts/",
+		"http://media.create3000.de/fonts/",
 		"https://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
 		"http://cdn.rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
 		"https://rawgit.com/create3000/cobweb/master/cobweb.js/fonts/",
@@ -60285,7 +60297,7 @@ function ($,
 
 		this .familyStack = [ ];
 		this .alignments  = [ ];
-		this .loader      = new Loader (this);
+		this .loader      = new FileLoader (this);
 	}
 
 	X3DFontStyleNode .prototype = $.extend (Object .create (X3DNode .prototype),
@@ -69623,10 +69635,12 @@ function (Vector3)
 		{
 			time += performance .timing .navigationStart;
 
-			var lastTime = this .currentTime;
+			var
+				lastTime = this .currentTime,
+				interval = this .currentTime - lastTime;
 
 			this .currentTime      = time / 1000;
-			this .currentFrameRate = 1 / (this .currentTime - lastTime);
+			this .currentFrameRate = interval ? 1 / interval : 0;
 
 			if (this .getWorld () && this .getActiveLayer ())
 			{
@@ -71434,6 +71448,8 @@ function ($, X3DBaseNode)
 
 			if (node !== top)
 			{
+				this .pushOnTop (node);
+
 				if (top .isBound_ .getValue ())
 				{
 					top .set_bind_ = false;
@@ -71613,8 +71629,19 @@ function ($, X3DBaseNode)
 		{
 			return this .array;
 		},
-		getBound: function ()
+		getBound: function (name)
 		{
+			if (name && name .length)
+			{
+				for (var i = 1, length = this .array .length; i < length; ++ i)
+				{
+					var node = this .array [i];
+
+					if (node .getName () == name)
+						return node;
+				}
+			}
+
 			for (var i = 1, length = this .array .length; i < length; ++ i)
 			{
 				var node = this .array [i];
@@ -71650,6 +71677,7 @@ function ($, X3DBaseNode)
 
 	return BindableList;
 });
+
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
  *
@@ -72430,47 +72458,52 @@ function ($,
 		},
 		display: function (renderObject, viewport)
 		{
-			if (this .hidden)
-				return;
+			try
+			{
+				if (this .hidden)
+					return;
 
-			var
-				browser = renderObject .getBrowser (),
-				gl      = browser .getContext ();
+				var
+					browser = renderObject .getBrowser (),
+					gl      = browser .getContext ();
 
-			// Setup context.
+				// Setup context.
 	
-			gl .disable (gl .DEPTH_TEST);
-			gl .depthMask (false);
-			gl .enable (gl .CULL_FACE);
-			gl .frontFace (gl .CCW);
+				gl .disable (gl .DEPTH_TEST);
+				gl .depthMask (false);
+				gl .enable (gl .CULL_FACE);
+				gl .frontFace (gl .CCW);
 
-			// Get background scale.
+				// Get background scale.
 
-			var
-				farValue        = -ViewVolume .unProjectPointMatrix (0, 0, 0.99999, projectionMatrix .assign (renderObject .getProjectionMatrix () .get ()) .inverse (), viewport, farVector) .z,
-				rotation        = this .rotation,
-				modelViewMatrix = this .modelViewMatrix .assign (this .transformationMatrix);
+				var
+					farValue        = -ViewVolume .unProjectPointMatrix (0, 0, 0.99999, projectionMatrix .assign (renderObject .getProjectionMatrix () .get ()) .inverse (), viewport, farVector) .z,
+					rotation        = this .rotation,
+					modelViewMatrix = this .modelViewMatrix .assign (this .transformationMatrix);
 
-			// Get projection matrix.
+				// Get projection matrix.
 
-			this .projectionMatrixArray .set (renderObject .getProjectionMatrix () .get ());	
+				this .projectionMatrixArray .set (renderObject .getProjectionMatrix () .get ());	
 
-			// Rotate and scale background.
+				// Rotate and scale background.
 
-			modelViewMatrix .multRight (renderObject .getInverseCameraSpaceMatrix () .get ());
-			modelViewMatrix .get (null, rotation);
-			modelViewMatrix .identity ();
-			modelViewMatrix .rotate (rotation);
-			modelViewMatrix .scale (this .scale .set (farValue, farValue, farValue));
+				modelViewMatrix .multRight (renderObject .getInverseCameraSpaceMatrix () .get ());
+				modelViewMatrix .get (null, rotation);
+				modelViewMatrix .identity ();
+				modelViewMatrix .rotate (rotation);
+				modelViewMatrix .scale (this .scale .set (farValue, farValue, farValue));
 
-			this .modelViewMatrixArray .set (modelViewMatrix);
+				this .modelViewMatrixArray .set (modelViewMatrix);
 
-			// Draw.
+				// Draw background sphere and texture cube.
 
-			this .drawSphere (renderObject);
+				this .drawSphere (renderObject);
 
-			if (this .textures)
-				this .drawCube (renderObject);
+				if (this .textures)
+					this .drawCube (renderObject);
+			}
+			catch (error)
+			{ }
 		},
 		drawSphere: function (renderObject)
 		{
@@ -73632,7 +73665,7 @@ function ($,
 			if (! this .currentViewport)
 				this .currentViewport = this .getBrowser () .getDefaultViewport ();
 		},
-		bind: function ()
+		bind: function (viewpointName)
 		{
 			this .traverse (TraverseType .CAMERA, this);
 
@@ -73642,7 +73675,7 @@ function ($,
 				navigationInfo = this .navigationInfos .getBound (),
 				background     = this .backgrounds     .getBound (),
 				fog            = this .fogs            .getBound (),
-				viewpoint      = this .viewpoints      .getBound ();
+				viewpoint      = this .viewpoints      .getBound (viewpointName);
 
 			this .navigationInfoStack .forcePush (navigationInfo);
 			this .backgroundStack     .forcePush (background);
@@ -74176,18 +74209,18 @@ function ($,
 
 			this .set_activeLayer ();
 		},
-		bind: function ()
+		bind: function (viewpointName)
 		{
 			var layers = this .layers_ .getValue ();
 
-			this .layerNode0 .bind ();
+			this .layerNode0 .bind (viewpointName);
 
 			for (var i = 0, length = layers .length; i < length; ++ i)
 			{
 				var layerNode = X3DCast (X3DConstants .X3DLayerNode, layers [i]);
 
 				if (layerNode)
-					layerNode .bind ();
+					layerNode .bind (viewpointName);
 			}
 		},
 		traverse: function (type, renderObject)
@@ -74367,19 +74400,7 @@ function ($,
 		{
 			// Bind first X3DBindableNodes found in each layer.
 
-			this .layerSet .bind ();
-
-			// Bind viewpoint from URL.
-
-			try
-			{
-				var fragment = this .getExecutionContext () .getURL () .fragment;
-
-				if (fragment .length)
-					this .getExecutionContext () .changeViewpoint (fragment);
-			}
-			catch (error)
-			{ }
+			this .layerSet .bind (this .getExecutionContext () .getURL () .fragment);
 		},
 		traverse: function (type, renderObject)
 		{
@@ -74649,7 +74670,7 @@ function ($,
 			this .processEvents ();
 
 			var t1 = performance .now ();
-			this .world .traverse (TraverseType .CAMERA ,null);
+			this .world .traverse (TraverseType .CAMERA, null);
 			this .cameraTime = performance .now () - t1;
 
 			var t2 = performance .now ();
@@ -75919,7 +75940,7 @@ define ('cobweb/Components/Networking/Anchor',[
 	"cobweb/Components/PointingDeviceSensor/TouchSensor",
 	"cobweb/Bits/TraverseType",
 	"cobweb/Bits/X3DConstants",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 ],
 function ($,
           Fields,
@@ -75930,7 +75951,7 @@ function ($,
           TouchSensor,
           TraverseType,
           X3DConstants,
-          Loader)
+          FileLoader)
 {
 
 
@@ -75999,7 +76020,7 @@ function ($,
 		{
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE, false);
 
-			new Loader (this) .createX3DFromURL (this .url_, this .parameter_,
+			new FileLoader (this) .createX3DFromURL (this .url_, this .parameter_,
 			function (scene)
 			{
 				if (scene)
@@ -76528,7 +76549,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "startAngle",  new Fields .SFFloat ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "endAngle",    new Fields .SFFloat (1.5708)),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "radius",      new Fields .SFFloat (1)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",       new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",       new Fields .SFBool ()),
 		]),
 		getTypeName: function ()
 		{
@@ -81790,7 +81811,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "position",    new Fields .SFVec3f ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "direction",   new Fields .SFVec3f (0, 1, 0)),
-			new X3DFieldDefinition (X3DConstants .inputOutput,    "angle",       new Fields .SFFloat (0.785398)),
+			new X3DFieldDefinition (X3DConstants .inputOutput,    "angle",       new Fields .SFFloat (0.7854)),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "speed",       new Fields .SFFloat ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "variation",   new Fields .SFFloat (0.25)),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "mass",        new Fields .SFFloat ()),
@@ -82532,10 +82553,10 @@ function ($,
 			var
 				keyValue      = this .keyValue_ .getValue (),
 				value_changed = this .value_changed_ .getValue (),
-				size          = this .key_ .length > 1 ? Math .floor (keyValue .length / this .key_ .length) : 0;
+				size          = this .key_ .length ? Math .floor (keyValue .length / this .key_ .length) : 0;
 
 			index0 *= size;
-			index1  = index0 + size;
+			index1  = index0 + (this .key_ .length > 1 ? size : 0);
 
 			this .value_changed_ .length = size;
 
@@ -82654,10 +82675,10 @@ function ($,
 			var
 				keyValue      = this .keyValue_ .getValue (),
 				value_changed = this .value_changed_ .getValue (),
-				size          = this .key_ .length > 1 ? Math .floor (this .keyValue_ .length / this .key_ .length) : 0;
+				size          = this .key_ .length ? Math .floor (keyValue .length / this .key_ .length) : 0;
 
 			index0 *= size;
-			index1  = index0 + size;
+			index1  = index0 + (this .key_ .length > 1 ? size : 0);
 
 			this .value_changed_ .length = size;
 
@@ -83334,7 +83355,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput, "enabled",            new Fields .SFBool (true)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "description",        new Fields .SFString ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "axisRotation",       new Fields .SFRotation ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "diskAngle",          new Fields .SFFloat (0.261799)),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "diskAngle",          new Fields .SFFloat (0.261792)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "minAngle",           new Fields .SFFloat ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "maxAngle",           new Fields .SFFloat (-1)),
 			new X3DFieldDefinition (X3DConstants .inputOutput, "offset",             new Fields .SFFloat ()),
@@ -83634,7 +83655,7 @@ function ($,
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata",    new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "innerRadius", new Fields .SFFloat ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "outerRadius", new Fields .SFFloat (1)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",       new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",       new Fields .SFBool ()),
 		]),
 		getTypeName: function ()
 		{
@@ -86444,7 +86465,7 @@ define ('cobweb/Components/Networking/Inline',[
 	"cobweb/Components/Grouping/X3DBoundedObject",
 	"cobweb/Components/Grouping/Group",
 	"cobweb/Bits/X3DConstants",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 ],
 function ($,
           Fields,
@@ -86455,7 +86476,7 @@ function ($,
           X3DBoundedObject,
           Group,
           X3DConstants,
-          Loader)
+          FileLoader)
 {
 
 
@@ -86555,7 +86576,7 @@ function ($,
 
 				this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-				this .setInternalScene (new Loader (this) .createX3DFromURL (this .url_, null));
+				this .setInternalScene (new FileLoader (this) .createX3DFromURL (this .url_, null));
 			}
 			catch (error)
 			{
@@ -86570,7 +86591,7 @@ function ($,
 
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 
-			new Loader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
+			new FileLoader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
 		},
 		requestUnload: function ()
 		{
@@ -89896,7 +89917,7 @@ function ($,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput, "metadata",     new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOnly,   "set_boolean",  new Fields .SFBool ()),
-			new X3DFieldDefinition (X3DConstants .inputOutput, "integerKey",   new Fields .SFInt32 ()),
+			new X3DFieldDefinition (X3DConstants .inputOutput, "integerKey",   new Fields .SFInt32 (-1)),
 			new X3DFieldDefinition (X3DConstants .outputOnly,  "triggerValue", new Fields .SFInt32 ()),
 		]),
 		getTypeName: function ()
@@ -98515,7 +98536,7 @@ function ($,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .initializeOnly, "size",     new Fields .SFVec2f (2, 2)),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",    new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",    new Fields .SFBool ()),
 		]),
 		getTypeName: function ()
 		{
@@ -99852,7 +99873,7 @@ define ("cobweb/Components/Scripting/Script",
 	"cobweb/Routing/X3DRoute",
 	"cobweb/Browser/Scripting/evaluate",
 	"cobweb/Components/Scripting/X3DScriptNode",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 	"cobweb/Bits/X3DConstants",
 ],
 function ($,
@@ -99878,7 +99899,7 @@ function ($,
           X3DRoute,
           evaluate,
           X3DScriptNode, 
-          Loader,
+          FileLoader,
           X3DConstants)
 {
 	function Script (executionContext)
@@ -99940,7 +99961,7 @@ function ($,
 			this .setLoadState (X3DConstants .IN_PROGRESS_STATE);
 			this .getScene () .addInitLoadCount (this);
 
-			new Loader (this) .loadScript (this .url_,
+			new FileLoader (this) .loadScript (this .url_,
 			function (data)
 			{
 				this .getScene () .removeInitLoadCount (this);
@@ -105437,7 +105458,7 @@ function ($,
 		fieldDefinitions: new FieldDefinitionArray ([
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "metadata", new Fields .SFNode ()),
 			new X3DFieldDefinition (X3DConstants .inputOutput,    "vertices", new Fields .MFVec2f ()),
-			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",    new Fields .SFBool (true)),
+			new X3DFieldDefinition (X3DConstants .initializeOnly, "solid",    new Fields .SFBool ()),
 		]),
 		getTypeName: function ()
 		{
@@ -107729,7 +107750,7 @@ define ('cobweb/Browser/X3DBrowser',[
 	"cobweb/Configuration/SupportedComponents",
 	"cobweb/Configuration/SupportedNodes",
 	"cobweb/Execution/Scene",
-	"cobweb/InputOutput/Loader",
+	"cobweb/InputOutput/FileLoader",
 	"cobweb/Parser/XMLParser",
 	"cobweb/Bits/X3DConstants",
 	"lib/gettext",
@@ -107744,7 +107765,7 @@ function ($,
           SupportedComponents,
           SupportedNodes,
           Scene,
-          Loader,
+          FileLoader,
           XMLParser,
           X3DConstants,
           _)
@@ -107956,7 +107977,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				scene        = new Loader (this .getWorld ()) .createX3DFromString (this .currentScene .getURL (), x3dSyntax);
+				scene        = new FileLoader (this .getWorld ()) .createX3DFromString (this .currentScene .getURL (), x3dSyntax);
 
 			if (! external)
 			{
@@ -107990,7 +108011,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				loader       = new Loader (this .getWorld ());
+				loader       = new FileLoader (this .getWorld ());
 
 			this .addLoadCount (loader);
 
@@ -108028,7 +108049,7 @@ function ($,
 			var
 				currentScene = this .currentScene,
 				external     = this .isExternal (),
-				scene        = new Loader (this .getWorld ()) .createX3DFromURL (url, null);
+				scene        = new FileLoader (this .getWorld ()) .createX3DFromURL (url, null);
 
 			if (! external)
 			{
@@ -108058,12 +108079,12 @@ function ($,
 			this .setBrowserLoading (true);
 			this .addLoadCount (this);
 
-			this .loader = new Loader (this .getWorld ());
+			this .loader = new FileLoader (this .getWorld ());
 
 			this .loader .createX3DFromURL (url, parameter,
 			function (scene)
 			{
-				if (this .getElement () .attr ("splashScreen") === "false")
+				if (! this .getBrowserOptions () .getSplashScreen ())
 					this .getCanvas () .fadeIn (0);
 
 				if (scene)
@@ -108077,9 +108098,6 @@ function ($,
 			.bind (this),
 			function (fragment)
 			{
-				if (this .getElement () .attr ("splashScreen") === "false")
-					this .getCanvas () .fadeIn (0);
-
 				this .currentScene .changeViewpoint (fragment);
 				this .removeLoadCount (id);
 				this .setBrowserLoading (false);
@@ -108087,9 +108105,6 @@ function ($,
 			.bind (this),
 			function (url, target)
 			{
-				if (this .getElement () .attr ("splashScreen") === "false")
-					this .getCanvas () .fadeIn (0);
-
 				if (target)
 					window .open (url, target);
 				else

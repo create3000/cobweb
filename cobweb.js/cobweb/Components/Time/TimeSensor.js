@@ -129,10 +129,14 @@ function ($,
 			{
 				if (this .loop_ .getValue ())
 				{
-					this .cycle            += this .interval * Math .floor ((time - this .cycle) / this .interval);
-					this .fraction_changed_ = this .last;
-					this .elapsedTime_      = this .getElapsedTime ();
-					this .cycleTime_        = time;
+					if (this .interval)
+					{
+						this .cycle += this .interval * Math .floor ((time - this .cycle) / this .interval);
+
+						this .fraction_changed_ = this .last;
+						this .elapsedTime_      = this .getElapsedTime ();
+						this .cycleTime_        = time;
+					}
 				}
 				else
 				{
