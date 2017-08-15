@@ -41340,7 +41340,7 @@ function ($,
 		dataURL       = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/,
 		contentTypeRx = /^(?:(.*?);(.*?)$)/;
 
-	var foreignSuffixes = new RegExp ("\.(?:html|xhtml|php)$");
+	var foreignSuffixes = new RegExp ("\.(?:html|xhtml)$");
 
 	var foreign = {
 		"text/html":             true,
