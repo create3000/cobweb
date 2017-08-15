@@ -95,6 +95,7 @@ function ($,
 		this .browser          = node .getBrowser ();
 		this .external         = external === undefined ? this .browser .isExternal () : external;
 		this .executionContext = this .external ? node .getExecutionContext () : this .browser .currentScene;
+		this .userAgent        = this .browser .getName () + "/" + this .browser .getVersion () + " (X3D Browser; +" + this .browser .getProviderUrl () + ")";
 		this .url              = [ ];
 		this .URL              = new URI ();
 		this .fileReader       = new FileReader ();

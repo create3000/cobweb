@@ -165,12 +165,12 @@ table {
 	</style>
 	<script type="text/javascript" src="Bookmarks.js"></script>
 	<script type="text/javascript">
-X3D (function (X3DCanvases)
+X3D (function ()
 {
 	var pages =
 	[
 		{ name: 'Worlds' },
-		{ name: 'Beyond Germany',        url: [ "examples/beyond-germany/beyond-germany.x3dz" ] },
+		{ name: 'Beyond Germany',        url: [ "http://media.create3000.de/x3d/beyond-germany/beyond-germany.x3dz" ] },
 		{ name: 'Smarty Bubbles',        url: [ "tests/Components/Rendering/bubbles.x3d" ] },
 		{ name: 'Flashing Lights',       url: [ "tests/Components/Lighting/lights/lights.x3d" ] },
 		{ name: 'Moving Circles',        url: [ "tests/Components/Texturing/circles/circles.x3d" ] },
@@ -488,7 +488,7 @@ X3D (function (X3DCanvases)
 		pages [i] .mobile = true;
 
 	var
-		Browser   = X3D .getBrowser (X3DCanvases), // Get first browser.
+		Browser   = X3D .getBrowser ("#browser"),
 		bookmarks = new Bookmarks (Browser, $(".bookmarks"), pages);
 
 	bookmarks .setSplit (true);
@@ -497,7 +497,7 @@ X3D (function (X3DCanvases)
 
 	$(".version") .text (Browser .name + " V" + Browser .version);
 },
-function (elements, error)
+function (error)
 {
 	console .error ("Please forgive me, your browser may not support all features required by Cobweb!");
 	console .error (error);
@@ -505,7 +505,7 @@ function (elements, error)
 
 function loadURL ()
 {
-	var Browser = X3D .getBrowser ($("X3DCanvas"));
+	var Browser = X3D .getBrowser ("#browser");
 
 	Browser .loadURL (new X3D .MFString ($(".load-url input") .val ()), new X3D .MFString ());
 }
@@ -516,7 +516,7 @@ function loadURL ()
 		<div class="content">
 			<div class="tests">
 				<div class="bookmarks"></div>
-				<X3DCanvas splashScreen="true" class="browser" cache="false" xsrc="https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationChaser.wrl">
+				<X3DCanvas splashScreen="true" id="browser" class="browser" cache="false" xsrc="https://cdn.rawgit.com/create3000/Titania/master/Library/Tests/Follower/OrientationChaser.wrl">
 					<p class="fallback">Sorry,<br/>
 						it wasn't me!<br/>
 						<br/>
@@ -529,7 +529,7 @@ function loadURL ()
 			<div class="location-bar">
 				<table class="load-url">
 					<tr>
-						<td><input class="input input-text" style="width:100%"/></td>
+						<td><input class="input input-text" style="width:100%" value="http://www.web3d.org/x3d/content/examples/Basic/ChemicalMarkupLanguage/ButanedioicAcid.x3d"/></td>
 						<td style="width:15%"><button class="input input-button" onclick="loadURL ()" style="width:100%">Load URL</button></td>
 					</tr>
 				</table>

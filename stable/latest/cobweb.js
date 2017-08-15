@@ -41352,6 +41352,7 @@ function ($,
 		this .browser          = node .getBrowser ();
 		this .external         = external === undefined ? this .browser .isExternal () : external;
 		this .executionContext = this .external ? node .getExecutionContext () : this .browser .currentScene;
+		this .userAgent        = this .browser .getName () + "/" + this .browser .getVersion () + " (X3D Browser; +" + this .browser .getProviderUrl () + ")";
 		this .url              = [ ];
 		this .URL              = new URI ();
 		this .fileReader       = new FileReader ();
@@ -108562,23 +108563,23 @@ function ($,
 					{
 						var browser = browsers [i];
 
-						browser .initialized () .addFieldCallback ("initialized" + browser .getId (), set_initialized .bind (null, browser, elements));
+						browser .initialized () .addFieldCallback ("initialized" + browser .getId (), set_initialized .bind (null, browser));
 					}
 				}
 				else
-					set_initialized (null, []);
+					set_initialized (null);
 			}
 			catch (error)
 			{
 				Error .fallback (elements);
-				fallbacks .resolve (elements, error);
+				fallbacks .resolve (error);
 			}
 		});
 	}
 
 	var numBrowsers = 0;
 
-	function set_initialized (browser, elements)
+	function set_initialized (browser)
 	{
 		if (browser)
 			browser .initialized () .removeFieldCallback ("initialized" + browser .getId ());
@@ -108586,7 +108587,7 @@ function ($,
 		if (-- numBrowsers > 0)
 			return;
 
-		callbacks .resolve (Array .prototype .slice .call (elements));
+		callbacks .resolve ();
 	}
 
 	$.extend (X3D,
