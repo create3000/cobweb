@@ -357,7 +357,10 @@ function ($)
 		},
 		isDirectory: function ()
 		{
-			return this .value .path .length && this .value .path [this .value .path .length - 1] === "/";
+			if (this .value .path .length == 0)
+				return this .isNetwork ();
+
+			return this .value .path [this .value .path .length - 1] === "/";
 		},
 		isFile: function ()
 		{

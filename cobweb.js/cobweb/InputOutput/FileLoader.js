@@ -80,6 +80,8 @@ function ($,
 		dataURL       = /^data\:([^]*?)(?:;([^]*?))?(;base64)?,([^]*)$/,
 		contentTypeRx = /^(?:(.*?);(.*?)$)/;
 
+	var foreignSuffixes = new RegExp ("\.(?:html|xhtml|php)$");
+
 	var foreign = {
 		"text/html":             true,
 		"application/xhtml+xml": true,
@@ -293,6 +295,8 @@ function ($,
 		},
 		loadDocumentAsync: function (URL)
 		{
+			var uri = new URI (URL);
+
 			if (URL .length == 0)
 			{
 				this .loadDocumentError (new Error ("URL is empty."));
@@ -303,8 +307,6 @@ function ($,
 			{
 				if (this .bindViewpoint)
 				{
-					var uri = new URI (URL);
-
 					if (uri .filename .toString () .length === 0 && uri .query .length === 0)
 					{
 						this .bindViewpoint (uri .fragment);
@@ -375,6 +377,16 @@ function ($,
 
 			if (this .target .length && this .target !== "_self" && this .foreign)
 				return this .foreign (this .URL .toString () .replace (urls .fallbackExpression, ""), this .target);
+
+			// Handle well known foreign content depending on suffix or if path looks like directory.
+
+			if (uri .isDirectory () || uri .suffix .match (foreignSuffixes))
+			{
+				if (this .foreign)
+				{
+					return this .foreign (URL .replace (urls .fallbackExpression, ""), this .target);
+				}
+			}
 
 			// Load URL async
 

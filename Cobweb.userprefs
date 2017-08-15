@@ -1,12 +1,16 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/tests/Components/Rendering/bubbles.x3d">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Browser/Navigation/ExamineViewer.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb.release.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Networking/urls.js" Line="60" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/VERSION.js" Line="44" Column="3" />
-      <File FileName="cobweb.js/tests/Components/Rendering/bubbles.x3d" Line="148" Column="15" />
+      <File FileName="cobweb.js/cobweb.html" Line="526" Column="10" />
+      <File FileName="cobweb.js/cobweb/Browser/VERSION.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Time/X3DTimeContext.js" Line="73" Column="5" />
+      <File FileName="cobweb.js/cobweb/Browser/Rendering/X3DRenderingContext.js" Line="112" Column="1" />
+      <File FileName="cobweb.js/browser.html" Line="25" Column="1" />
+      <File FileName="cobweb.js/cobweb/X3D.js" Line="199" Column="30" />
+      <File FileName="cobweb.js/cobweb/Error.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Navigation/X3DNavigationContext.js" Line="1" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Navigation/ExamineViewer.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
