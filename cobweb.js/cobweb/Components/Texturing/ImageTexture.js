@@ -162,10 +162,13 @@ function ($,
 		{
 			var URL = this .URL .toString ();
 
-			if (! (this .URL .isLocal () || this .URL .host === "localhost"))
+			if (DEBUG)
 			{
-				if (! URL .match (urls .fallbackExpression))
-					this .urlStack .unshift (urls .fallbackUrl + URL);
+				if (! (this .URL .isLocal () || this .URL .host === "localhost"))
+				{
+					if (! URL .match (urls .fallbackExpression))
+						this .urlStack .unshift (urls .fallbackUrl + URL);
+				}
 			}
 
 			if (this .URL .scheme !== "data")

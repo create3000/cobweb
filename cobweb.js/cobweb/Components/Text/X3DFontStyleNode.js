@@ -57,6 +57,7 @@ define ([
 	"cobweb/Bits/X3DConstants",
 	"cobweb/Browser/Networking/urls",
 	"standard/Networking/URI",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -66,7 +67,8 @@ function ($,
           FileLoader,
           X3DConstants,
           urls,
-          URI)
+          URI,
+          DEBUG)
 {
 "use strict";
 
@@ -269,10 +271,13 @@ function ($,
 		{
 			var URL = this .URL .toString ();
 
-			if (! (this .URL .isLocal () || this .URL .host === "localhost"))
+			if (DEBUG)
 			{
-				if (! URL .match (urls .fallbackExpression))
-					this .familyStack .unshift (urls .fallbackUrl + URL);
+				if (! (this .URL .isLocal () || this .URL .host === "localhost"))
+				{
+					if (! URL .match (urls .fallbackExpression))
+						this .familyStack .unshift (urls .fallbackUrl + URL);
+				}
 			}
 
 			if (this .URL .scheme !== "data")
