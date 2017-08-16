@@ -6,12 +6,12 @@
     <meta name='comment' content='World of Titania'/>
     <meta name='created' content='Sat, 02 Apr 2016 03:25:15 GMT'/>
     <meta name='creator' content='Holger Seelig'/>
-    <meta name='generator' content='Titania V1.4.0, http://titania.create3000.de'/>
+    <meta name='generator' content='Titania V3.0.4, http://titania.create3000.de'/>
     <meta name='identifier' content='file:///home/holger/Projekte/Cobweb/cobweb.js/examples/currencies/currencies.x3d'/>
-    <meta name='modified' content='Mon, 04 Apr 2016 12:49:17 GMT'/>
+    <meta name='modified' content='Wed, 16 Aug 2017 04:38:31 GMT'/>
   </head>
   <Scene>
-    <ExternProtoDeclare name='RoundedExtrusion' url='"RoundedExtrusion.x3d#RoundedExtrusion", "file:///home/holger/Projekte/Cobweb/cobweb.js/examples/currencies/RoundedExtrusion.x3d#RoundedExtrusion"'>
+    <ExternProtoDeclare name='RoundedExtrusion' url='"RoundedExtrusion.x3d&#35;RoundedExtrusion", "file:///home/holger/Projekte/Cobweb/cobweb.js/examples/currencies/RoundedExtrusion.x3d&#35;RoundedExtrusion"'>
       <field accessType='initializeOnly' type='SFBool' name='beginCap'/>
       <field accessType='initializeOnly' type='SFBool' name='endCap'/>
       <field accessType='initializeOnly' type='SFBool' name='solid'/>
@@ -90,10 +90,27 @@
                 key='0, 1'
                 easeInEaseOut='0 1, 1 0'/>
           </MetadataSet>
+          <MetadataBoolean DEF='selectGeometry' containerField='value'
+              name='selectGeometry'
+              reference='http://titania.create3000.de'
+              value='false'/>
+        </MetadataSet>
+        <MetadataSet DEF='Page' containerField='value'
+            name='Page'
+            reference='http://titania.create3000.de'>
+          <MetadataInteger DEF='activeView' containerField='value'
+              name='activeView'
+              reference='http://titania.create3000.de'
+              value='1'/>
+          <MetadataInteger DEF='multiView' containerField='value'
+              name='multiView'
+              reference='http://titania.create3000.de'
+              value='0'/>
         </MetadataSet>
       </MetadataSet>
     </WorldInfo>
     <LayerSet
+        activeLayer='-1'
         order='0, 1'>
       <LayoutLayer>
         <MetadataSet DEF='Titania_1'
@@ -1156,8 +1173,7 @@
                     repeatS='false'
                     repeatT='false'/>
               </Appearance>
-              <Rectangle2D
-                  solid='false'/>
+              <Rectangle2D/>
             </Shape>
           </Transform>
         </Group>
@@ -1504,10 +1520,11 @@ function get_trend (last2, last1)
 
 	return "=";
 }
-]]> 
+]]>
         </Script>
         <Transform DEF='EuroSign'
             translation='1.41973 0.373394 0.270001'
+            rotation='0 1 0 0.876346910592914'
             scale='0.208199 0.208199 0.208199'>
           <Group DEF='EuroSignAnimation'>
             <MetadataSet DEF='Animation'

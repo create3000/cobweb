@@ -72,7 +72,7 @@ function (jquery,
 		{
 			var canvas = this .getBrowser () .getCanvas ();
 
-			canvas .bind ("mousewheel.PointingDevice", this .mousewheel .bind (this));
+			//canvas .bind ("mousewheel.PointingDevice", this .mousewheel .bind (this));
 			canvas .bind ("mousedown.PointingDevice",  this .mousedown  .bind (this));
 			canvas .bind ("mouseup.PointingDevice",    this .mouseup    .bind (this));
 			canvas .bind ("dblclick.PointingDevice",   this .dblclick   .bind (this));

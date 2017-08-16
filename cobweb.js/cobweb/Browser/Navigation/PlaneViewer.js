@@ -168,7 +168,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
-			event .preventDefault ();
+			event .preventDefault (); // Must be done here, not in Pointing device!
 			event .stopImmediatePropagation ();
 
 			var
