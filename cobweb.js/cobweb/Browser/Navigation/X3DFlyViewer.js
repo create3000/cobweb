@@ -156,12 +156,16 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			{
 				case 0:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
+					event .stopImmediatePropagation ();
+
 					this .button = event .button;
 				
 					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
-					event .stopImmediatePropagation ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
@@ -189,12 +193,16 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				}
 				case 1:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
+					event .stopImmediatePropagation ();
+
 					this .button = event .button;
 				
 					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
-					event .stopImmediatePropagation ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
@@ -212,6 +220,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		},
 		mouseup: function (event)
 		{
+			event .preventDefault ();
+
 			if (event .button !== this .button)
 				return;
 
@@ -242,6 +252,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				{
 					if (this .getBrowser () .getControlKey ())
 					{
+						event .preventDefault ();
+
 						// Look around
 
 						var
@@ -270,8 +282,12 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				}
 				case 1:
 				{
-					// Pan
+					// Stop event propagation.
+
+					event .preventDefault ();
 					event .stopImmediatePropagation ();
+
+					// Pan
 
 					this .toVector  .set (x, -y, 0);
 					this .direction .assign (this .toVector) .subtract (this .fromVector);
@@ -284,7 +300,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
-			event .preventDefault (); // Must be done here, not in Pointing device!
+
+			event .preventDefault ();
 			event .stopImmediatePropagation ();
 
 			// Determine scroll direction.

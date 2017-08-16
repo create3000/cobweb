@@ -50298,7 +50298,7 @@ function (jquery,
 		{
 			var canvas = this .getBrowser () .getCanvas ();
 
-			canvas .bind ("mousewheel.PointingDevice", this .mousewheel .bind (this));
+			//canvas .bind ("mousewheel.PointingDevice", this .mousewheel .bind (this));
 			canvas .bind ("mousedown.PointingDevice",  this .mousedown  .bind (this));
 			canvas .bind ("mouseup.PointingDevice",    this .mouseup    .bind (this));
 			canvas .bind ("dblclick.PointingDevice",   this .dblclick   .bind (this));
@@ -50311,8 +50311,6 @@ function (jquery,
 		},
 		mousedown: function (event)
 		{
-			event .preventDefault ();
-
 			var browser = this .getBrowser ();
 
 			browser .getCanvas () .focus ();
@@ -50333,6 +50331,7 @@ function (jquery,
 
 				if (browser .buttonPressEvent (x, y))
 				{
+					event .preventDefault ();
 					event .stopImmediatePropagation (); // Keeps the rest of the handlers from being executed
 
 					browser .setCursor ("HAND");
@@ -50348,6 +50347,7 @@ function (jquery,
 
 			if (event .button === 0)
 			{
+				event .preventDefault ();
 				browser .buttonReleaseEvent ();
 
 				var
@@ -50367,8 +50367,6 @@ function (jquery,
 		},
 		dblclick: function (event)
 		{
-			event .preventDefault ();
-
 			if (this .isOver)
 				event .stopImmediatePropagation ();
 		},
@@ -50414,8 +50412,6 @@ function (jquery,
 		},
 		onmouseout: function (event)
 		{
-			event .preventDefault ();
-
 			this .getBrowser () .leaveNotifyEvent ();
 		},
 		onverifymotion: function (value, x, y)
@@ -53940,7 +53936,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 
 			canvas .bind ("mousedown.ExamineViewer",  this .mousedown  .bind (this));
 			canvas .bind ("mouseup.ExamineViewer",    this .mouseup    .bind (this));
-			canvas .bind ("dblclick.ExamineViewer",   this .dblclick  .bind (this));
+			canvas .bind ("dblclick.ExamineViewer",   this .dblclick   .bind (this));
 			canvas .bind ("mousewheel.ExamineViewer", this .mousewheel .bind (this));
 		},
 		mousedown: function (event)
@@ -53959,12 +53955,16 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 			{
 				case 0:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
+					event .stopImmediatePropagation ();
+
 					this .button = event .button;
 					
 					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
 
-					event .stopImmediatePropagation ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
@@ -53977,6 +53977,11 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				}
 				case 1:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
+					event .stopImmediatePropagation ();
+
 					this .button = event .button;
 					
 					this .getBrowser () .getCanvas () .unbind ("mousemove.ExamineViewer");
@@ -53984,7 +53989,6 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 					$(document) .bind ("mouseup.ExamineViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.ExamineViewer" + this .getId (), this .mousemove .bind (this));
 		
-					event .stopImmediatePropagation ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
@@ -54008,7 +54012,11 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 			{
 				case 0:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
 					event .stopImmediatePropagation ();
+
 					this .getBrowser () .setCursor ("DEFAULT");
 
 					if (Math .abs (this .rotation .angle) > SPIN_ANGLE && performance .now () - this .motionTime < SPIN_RELEASE_TIME)
@@ -54028,7 +54036,11 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				}
 				case 1:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
 					event .stopImmediatePropagation ();
+
 					this .getBrowser () .setCursor ("DEFAULT");
 					break;
 				}
@@ -54036,12 +54048,15 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		},
 		dblclick: function (event)
 		{
+			// Stop event propagation.
+
+			event .preventDefault ();
+			event .stopImmediatePropagation ();
+
 			var
 				offset = this .getBrowser () .getCanvas () .offset (), 
 				x      = event .pageX - offset .left,
 				y      = this .getBrowser () .getCanvas () .height () - (event .pageY - offset .top);
-
-			event .stopImmediatePropagation ();
 
 			this .lookAt (x, y);
 		},
@@ -54056,6 +54071,12 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 			{
 				case 0:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
+
+					// Move.
+
 					var
 						viewpoint = this .getActiveViewpoint (),
 						toVector  = this .trackballProjectToSphere (x, y, this .toVector);
@@ -54076,6 +54097,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 				{
 					// Stop event propagation.
 
+					event .preventDefault ();
 					event .stopImmediatePropagation ();
 
 					// Move.
@@ -54096,6 +54118,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
+
 			event .preventDefault ();
 			event .stopImmediatePropagation ();
 
@@ -54326,12 +54349,16 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 			{
 				case 0:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
+					event .stopImmediatePropagation ();
+
 					this .button = event .button;
 				
 					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
-					event .stopImmediatePropagation ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
@@ -54359,12 +54386,16 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				}
 				case 1:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
+					event .stopImmediatePropagation ();
+
 					this .button = event .button;
 				
 					$(document) .bind ("mouseup.X3DFlyViewer"   + this .getId (), this .mouseup   .bind (this));
 					$(document) .bind ("mousemove.X3DFlyViewer" + this .getId (), this .mousemove .bind (this));
 		
-					event .stopImmediatePropagation ();
 					this .disconnect ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
@@ -54382,6 +54413,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		},
 		mouseup: function (event)
 		{
+			event .preventDefault ();
+
 			if (event .button !== this .button)
 				return;
 
@@ -54412,6 +54445,8 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				{
 					if (this .getBrowser () .getControlKey ())
 					{
+						event .preventDefault ();
+
 						// Look around
 
 						var
@@ -54440,8 +54475,12 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 				}
 				case 1:
 				{
-					// Pan
+					// Stop event propagation.
+
+					event .preventDefault ();
 					event .stopImmediatePropagation ();
+
+					// Pan
 
 					this .toVector  .set (x, -y, 0);
 					this .direction .assign (this .toVector) .subtract (this .fromVector);
@@ -54454,6 +54493,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
+
 			event .preventDefault ();
 			event .stopImmediatePropagation ();
 
@@ -57221,13 +57261,17 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 			{
 				case 1:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
+					event .stopImmediatePropagation ();
+
 					this .button = event .button;
 					
 					this .getBrowser () .getCanvas () .unbind ("mousemove.PlaneViewer");
 					$(document) .bind ("mouseup.PlaneViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.PlaneViewer" + this .getId (), this .mousemove .bind (this));
 		
-					event .stopImmediatePropagation ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
 
@@ -57238,6 +57282,11 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 		},
 		mouseup: function (event)
 		{
+			// Stop event propagation.
+
+			event .preventDefault ();
+			event .stopImmediatePropagation ();
+
 			if (event .button !== this .button)
 				return;
 			
@@ -57261,6 +57310,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 				{
 					// Stop event propagation.
 
+					event .preventDefault ();
 					event .stopImmediatePropagation ();
 
 					// Move.
@@ -57281,6 +57331,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
+
 			event .preventDefault ();
 			event .stopImmediatePropagation ();
 
@@ -57503,13 +57554,16 @@ function ($, X3DViewer, _)
 			{
 				case 0:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
+					event .stopImmediatePropagation ();
+
 					this .button = event .button;
 					
 					$(document) .bind ("mouseup.LookAtViewer" + this .getId (), this .mouseup .bind (this));
 
-					event .stopImmediatePropagation ();
 					this .getActiveViewpoint () .transitionStop ();
-
 					break;
 				}
 			}
@@ -57532,6 +57586,9 @@ function ($, X3DViewer, _)
 			{
 				case 0:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
 					event .stopImmediatePropagation ();
 
 					this .lookAt (x, y, true);

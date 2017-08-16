@@ -108,13 +108,17 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 			{
 				case 1:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
+					event .stopImmediatePropagation ();
+
 					this .button = event .button;
 					
 					this .getBrowser () .getCanvas () .unbind ("mousemove.PlaneViewer");
 					$(document) .bind ("mouseup.PlaneViewer"   + this .getId (), this .mouseup .bind (this));
 					$(document) .bind ("mousemove.PlaneViewer" + this .getId (), this .mousemove .bind (this));
 		
-					event .stopImmediatePropagation ();
 					this .getActiveViewpoint () .transitionStop ();
 					this .getBrowser () .setCursor ("MOVE");
 
@@ -125,6 +129,11 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 		},
 		mouseup: function (event)
 		{
+			// Stop event propagation.
+
+			event .preventDefault ();
+			event .stopImmediatePropagation ();
+
 			if (event .button !== this .button)
 				return;
 			
@@ -148,6 +157,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 				{
 					// Stop event propagation.
 
+					event .preventDefault ();
 					event .stopImmediatePropagation ();
 
 					// Move.
@@ -168,7 +178,8 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
-			event .preventDefault (); // Must be done here, not in Pointing device!
+
+			event .preventDefault ();
 			event .stopImmediatePropagation ();
 
 			var

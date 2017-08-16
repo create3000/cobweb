@@ -89,13 +89,16 @@ function ($, X3DViewer, _)
 			{
 				case 0:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
+					event .stopImmediatePropagation ();
+
 					this .button = event .button;
 					
 					$(document) .bind ("mouseup.LookAtViewer" + this .getId (), this .mouseup .bind (this));
 
-					event .stopImmediatePropagation ();
 					this .getActiveViewpoint () .transitionStop ();
-
 					break;
 				}
 			}
@@ -118,6 +121,9 @@ function ($, X3DViewer, _)
 			{
 				case 0:
 				{
+					// Stop event propagation.
+
+					event .preventDefault ();
 					event .stopImmediatePropagation ();
 
 					this .lookAt (x, y, true);

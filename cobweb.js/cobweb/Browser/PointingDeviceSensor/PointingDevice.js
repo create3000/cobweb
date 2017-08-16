@@ -85,8 +85,6 @@ function (jquery,
 		},
 		mousedown: function (event)
 		{
-			event .preventDefault ();
-
 			var browser = this .getBrowser ();
 
 			browser .getCanvas () .focus ();
@@ -107,6 +105,7 @@ function (jquery,
 
 				if (browser .buttonPressEvent (x, y))
 				{
+					event .preventDefault ();
 					event .stopImmediatePropagation (); // Keeps the rest of the handlers from being executed
 
 					browser .setCursor ("HAND");
@@ -122,6 +121,7 @@ function (jquery,
 
 			if (event .button === 0)
 			{
+				event .preventDefault ();
 				browser .buttonReleaseEvent ();
 
 				var
@@ -141,8 +141,6 @@ function (jquery,
 		},
 		dblclick: function (event)
 		{
-			event .preventDefault ();
-
 			if (this .isOver)
 				event .stopImmediatePropagation ();
 		},
@@ -188,8 +186,6 @@ function (jquery,
 		},
 		onmouseout: function (event)
 		{
-			event .preventDefault ();
-
 			this .getBrowser () .leaveNotifyEvent ();
 		},
 		onverifymotion: function (value, x, y)
