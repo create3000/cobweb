@@ -50307,7 +50307,7 @@ function (jquery,
 		},
 		mousewheel: function (event)
 		{
-			event .preventDefault ();
+			// event .preventDefault () must be done in the several viewers.
 		},
 		mousedown: function (event)
 		{
@@ -54096,6 +54096,7 @@ function ($, X3DViewer, Vector3, Rotation4, _)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
+			event .preventDefault ();
 			event .stopImmediatePropagation ();
 
 			// Determine scroll direction.
@@ -54453,6 +54454,7 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
+			event .preventDefault ();
 			event .stopImmediatePropagation ();
 
 			// Determine scroll direction.
@@ -57279,6 +57281,7 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
 		mousewheel: function (event)
 		{
 			// Stop event propagation.
+			event .preventDefault ();
 			event .stopImmediatePropagation ();
 
 			var

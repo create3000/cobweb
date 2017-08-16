@@ -81,7 +81,7 @@ function (jquery,
 		},
 		mousewheel: function (event)
 		{
-			event .preventDefault ();
+			// event .preventDefault () must be done in the several viewers.
 		},
 		mousedown: function (event)
 		{
