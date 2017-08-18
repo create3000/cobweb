@@ -1,19 +1,20 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/InputOutput/FileLoader.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Browser/Navigation/ExamineViewer.js">
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="526" Column="10" />
+      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Browser/VERSION.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Time/X3DTimeContext.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Rendering/X3DRenderingContext.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/browser.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/X3D.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Error.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Navigation/X3DNavigationContext.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/Navigation/ExamineViewer.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Components/Networking/Anchor.js" Line="187" Column="5" />
-      <File FileName="cobweb.js/cobweb/InputOutput/FileLoader.js" Line="72" Column="2" />
-      <File FileName="cobweb.js/standard/Networking/URI.js" Line="362" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/PointingDeviceSensor/PointingDevice.js" Line="52" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Navigation/ExamineViewer.js" Line="219" Column="4" />
+      <File FileName="cobweb.js/cobweb/Browser/Navigation/LookAtViewer.js" Line="90" Column="12" />
+      <File FileName="cobweb.js/cobweb/Browser/Navigation/X3DViewer.js" Line="151" Column="4" />
+      <File FileName="cobweb.js/cobweb/InputOutput/FileLoader.js" Line="61" Column="1" />
+      <File FileName="cobweb.js/cobweb/Browser/Networking/urls.js" Line="57" Column="21" />
+      <File FileName="cobweb.js/cobweb/Components/Texturing/ImageTexture.js" Line="173" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Texturing/MovieTexture.js" Line="63" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Text/X3DFontStyleNode.js" Line="276" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/Sound/AudioClip.js" Line="183" Column="1" />
+      <File FileName="cobweb.js/cobweb/Components/CubeMapTexturing/ImageCubeMapTexture.js" Line="196" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

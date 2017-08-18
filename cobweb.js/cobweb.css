@@ -52,6 +52,7 @@ X3DCanvas .cobweb-surface {
 
 X3DCanvas canvas {
 	display: block;
+	outline: none;
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
