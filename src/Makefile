@@ -29,7 +29,7 @@ all:
 dist: all
 	perl dist.pl
 
-version: all
+version: dist
 	perl version.pl
 
 

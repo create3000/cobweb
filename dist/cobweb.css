@@ -6,12 +6,12 @@
 @import url(spinner.css);
 
 X3DCanvas {
+	overflow: hidden;
 	position: relative;
 	display: inline-block;
 	margin: 0px;
 	padding: 0px;
 	border: 0px;
-	overflow: hidden;
 	width: 300px;
 	height: 150px;
 }
