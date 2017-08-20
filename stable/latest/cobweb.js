@@ -11496,10 +11496,6 @@ function ($, X3DField, X3DConstants)
 		{
 			X3DField .prototype .set .call (this, Boolean (value));
 		},
-		valueOf: function ()
-		{
-			return this .getValue ();
-		},
 		getTypeName: function ()
 		{
 			return "SFBool";
@@ -11508,7 +11504,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return X3DConstants .SFBool;
 		},
-		valueOf: X3DField .prototype .getValue,
+		valueOf: function ()
+		{
+			return this .getValue ();
+		},
 		toString: function ()
 		{
 			return this .getValue () ? "TRUE" : "FALSE";
@@ -12977,10 +12976,6 @@ function ($, X3DField)
 			isDefaultValue: function ()
 			{
 				return this .getValue () .equals (Matrix .Identity);
-			},
-			set: function (value)
-			{
-				this .getValue () .assign (value);
 			},
 			set: function (value)
 			{
@@ -16490,28 +16485,28 @@ function ($, Vector3, Algorithm)
 		add: function (lhs, rhs)
 		{
 			var copy = Object .create (this .prototype);
-			copy .x = rhs .x + rhs .x;
-			copy .y = rhs .y + rhs .y;
-			copy .z = rhs .z + rhs .z;
-			copy .w = rhs .w + rhs .w;
+			copy .x = lhs .x + rhs .x;
+			copy .y = lhs .y + rhs .y;
+			copy .z = lhs .z + rhs .z;
+			copy .w = lhs .w + rhs .w;
 			return copy;
 		},
 		subtract: function (lhs, rhs)
 		{
 			var copy = Object .create (this .prototype);
-			copy .x = rhs .x - rhs .x;
-			copy .y = rhs .y - rhs .y;
-			copy .z = rhs .z - rhs .z;
-			copy .w = rhs .w - rhs .w;
+			copy .x = lhs .x - rhs .x;
+			copy .y = lhs .y - rhs .y;
+			copy .z = lhs .z - rhs .z;
+			copy .w = lhs .w - rhs .w;
 			return copy;
 		},
 		multiply: function (lhs, rhs)
 		{
 			var copy = Object .create (this .prototype);
-			copy .x = rhs .x * rhs;
-			copy .y = rhs .y * rhs;
-			copy .z = rhs .z * rhs;
-			copy .w = rhs .w * rhs;
+			copy .x = lhs .x * rhs;
+			copy .y = lhs .y * rhs;
+			copy .z = lhs .z * rhs;
+			copy .w = lhs .w * rhs;
 			return copy;
 		},
 		multLeft: function (lhs, rhs)
@@ -16545,10 +16540,10 @@ function ($, Vector3, Algorithm)
 		divide: function (lhs, rhs)
 		{
 			var copy = Object .create (this .prototype);
-			copy .x = rhs .x / rhs;
-			copy .y = rhs .y / rhs;
-			copy .z = rhs .z / rhs;
-			copy .w = rhs .w / rhs;
+			copy .x = lhs .x / rhs;
+			copy .y = lhs .y / rhs;
+			copy .z = lhs .z / rhs;
+			copy .w = lhs .w / rhs;
 			return copy;
 		},
 		normalize: function (quat)
@@ -22402,14 +22397,14 @@ function ($,
 			if (this .type === "MORE")
 			{
 				var 
+					layers            = browser .getWorld () .getLayerSet () .getLayers (),
+					activeLayer       = browser .getActiveLayer (),
 					systemTime        = browser .systemTime,
 					navigationTime    = activeLayer && browser .getCollisionCount () ? activeLayer .collisionTime : 0,
 					collisionTime     = browser .collisionTime + navigationTime,
 					routingTime       = browser .browserTime - (browser .cameraTime + browser .collisionTime + browser .displayTime + navigationTime),
 					prepareEvents     = Object .keys (browser .prepareEvents () .getInterests ()) .length - 1,
 					sensors           = Object .keys (browser .sensors () .getInterests ()) .length,
-					layers            = browser .getWorld () .getLayerSet () .getLayers (),
-					activeLayer       = browser .getActiveLayer (),
 					opaqueShapes      = 0,
 					transparentShapes = 0;
 
@@ -26847,7 +26842,7 @@ function ($,
 		addImportedNode: function (inlineNode, exportedName, importedName)
 		{
 			if (importedName === undefined)
-				importedName = importedName;
+				importedName = exportedName;
 
 			if (this .importedNodes [importedName])
 				throw new Error ("Couldn't add imported node: imported name '" + importedName + "' already in use.");
@@ -37364,13 +37359,8 @@ function ($,
 				if (url === null)
 					return console .warn ("XML Parser Error: Bad ExternProtoDeclare statement: Expected url attribute.");
 				
-				if (url !== null)
-				{
-					this .parser .setInput (url);
-					Parser .prototype .sfstringValues .call (this .parser, this .url);
-				}
-				else
-					this .url .length = 0;
+				this .parser .setInput (url);
+				Parser .prototype .sfstringValues .call (this .parser, this .url);
 
 				var externproto = new X3DExternProtoDeclaration (this .getExecutionContext ());
 							
@@ -46312,24 +46302,6 @@ function (Triangle3,
 					m [12] = center .x;   m [13] = center .y;   m [14] = center .z;   m [15] = 1;
 					return this;
 				}
-				case 3:
-				{
-					var
-						min = arguments [0],
-						max = arguments [1],
-						sx  = (max .x - min .x) / 2,
-						sy  = (max .y - min .y) / 2,
-						sz  = (max .z - min .z) / 2,
-						cx  = (max .x + min .x) / 2,
-						cy  = (max .y + min .y) / 2,
-						cz  = (max .z + min .z) / 2;
-
-					m [ 0] = sx; m [ 1] = 0;  m [ 2] = 0;  m [ 3] = 0;
-					m [ 4] = 0;  m [ 5] = sy; m [ 6] = 0;  m [ 7] = 0;
-					m [ 8] = 0;  m [ 9] = 0;  m [10] = sz; m [11] = 0;
-					m [12] = cx; m [13] = cy; m [14] = cz; m [15] = 1;
-					return this;
-				}
 			}
 		},
 		setExtents: function (min, max)
@@ -47325,7 +47297,6 @@ function ($,
 				max          = this .max,
 				minX         = min .x,
 				maxX         = max .x,
-				maxZ         = max .x,
 				minY         = min .y,
 				maxY         = max .y,
 				minZ         = min .z,
@@ -56740,25 +56711,25 @@ function ($,
 					// Some string defaults to EXAMINE.
 					examineViewer = true;
 				}
-
-				if (examineViewer)
-					this .availableViewers_ .push ("EXAMINE");
-
-				if (walkViewer)
-					this .availableViewers_ .push ("WALK");
-
-				if (flyViewer)
-					this .availableViewers_ .push ("FLY");
-
-				if (planeViewer)
-					this .availableViewers_ .push ("PLANE");
-
-				if (lookAt)
-					this .availableViewers_ .push ("LOOKAT");
-
-				if (noneViewer)
-					this .availableViewers_ .push ("NONE");
 			}
+
+			if (examineViewer)
+				this .availableViewers_ .push ("EXAMINE");
+
+			if (walkViewer)
+				this .availableViewers_ .push ("WALK");
+
+			if (flyViewer)
+				this .availableViewers_ .push ("FLY");
+
+			if (planeViewer)
+				this .availableViewers_ .push ("PLANE");
+
+			if (lookAt)
+				this .availableViewers_ .push ("LOOKAT");
+
+			if (noneViewer)
+				this .availableViewers_ .push ("NONE");
 		},
 		set_headlight__: function ()
 		{
@@ -60689,14 +60660,6 @@ function (Matrix3, Vector2)
 		set: function (size, center)
 		{
 			var m = this .matrix;
-			m [0] = size .x / 2; m [1] = 0;           m [2] = 0;
-			m [3] = 0;           m [4] = size .y / 2; m [5] = 0;
-			m [6] = center .x;   m [7] = center .y;   m [8] = 1;
-			return this;
-		},
-		set: function (size, center)
-		{
-			var m = this .matrix;
 		
 			switch (arguments .length)
 			{
@@ -60709,24 +60672,10 @@ function (Matrix3, Vector2)
 				}
 				case 2:
 				{
+					// size, center
 					m [0] = size .x / 2; m [1] = 0;           m [2] = 0;
 					m [3] = 0;           m [4] = size .y / 2; m [5] = 0;
 					m [6] = center .x;   m [7] = center .y;   m [8] = 1;
-					return this;
-				}
-				case 3:
-				{
-					var
-						min = arguments [0],
-						max = arguments [1],
-						sx  = (max .x - min .x) / 2,
-						sy  = (max .y - min .y) / 2,
-						cx  = (max .x + min .x) / 2,
-						cy  = (max .y + min .y) / 2;
-
-					m [0] = sx; m [1] = 0;  m [2] = 0;
-					m [3] = 0;  m [4] = sy; m [5] = 0;
-					m [6] = cx; m [7] = cy; m [8] = 1;
 					return this;
 				}
 			}
@@ -83821,7 +83770,6 @@ function ($,
 
 				var
 					radius          = Math .abs (Math .max (innerRadius, outerRadius)),
-					normals         = this .getNormals (),
 					defaultVertices = options .getDiskVertices (),
 					vertices        = this .getVertices ();
 
@@ -94708,7 +94656,6 @@ function (Vector3,
 				max          = this .max,
 				minX         = min .x,
 				maxX         = max .x,
-				maxZ         = max .x,
 				minY         = min .y,
 				maxY         = max .y,
 				minZ         = min .z,
@@ -95794,8 +95741,7 @@ function ($,
 				
 							var
 								particle = particles [i],
-								fraction = particle .elapsedTime / particle .lifetime,
-								color    = particle .color;
+								fraction = particle .elapsedTime / particle .lifetime;
 			
 							if (length == 1 || fraction <= texCoordKeys [0])
 							{
@@ -99187,7 +99133,6 @@ function ($,
 			var
 			   w = width  / canvas .width,
 			   h = height / canvas .height,
-			   x = 1 - w,
 			   y = 1 - h;
 
 			texCoords .push (0, y, 0, 1,
@@ -103418,25 +103363,21 @@ function ($,
 		},
 		getRandomPosition: function (position)
 		{
-			// Determine index0 and weight.
+			// Determine index0.
 
 			var
 				areaSoFarArray = this .areaSoFarArray,
 				length         = areaSoFarArray .length,
 				fraction       = Math .random () * areaSoFarArray [length - 1],
-				index0         = 0,
-				index1         = 0,
-				weight         = 0;
+				index0         = 0
 
 			if (length == 1 || fraction <= areaSoFarArray [0])
 			{
 				index0 = 0;
-				weight = 0;
 			}
 			else if (fraction >= areaSoFarArray [length - 1])
 			{
 				index0 = length - 2;
-				weight = 1;
 			}
 			else
 			{
@@ -103444,19 +103385,11 @@ function ($,
 
 				if (index < length)
 				{
-					index1 = index;
 					index0 = index - 1;
-			
-					var
-						key0 = areaSoFarArray [index0],
-						key1 = areaSoFarArray [index1];
-			
-					weight = Algorithm .clamp ((fraction - key0) / (key1 - key0), 0, 1);
 				}
 				else
 				{
 					index0 = 0;
-					weight = 0;
 				}
 			}
 
@@ -106674,25 +106607,21 @@ function ($,
 		{
 			// Get random point on surface
 
-			// Determine index0 and weight.
+			// Determine index0.
 
 			var
 				areaSoFarArray = this .areaSoFarArray,
 				length         = areaSoFarArray .length,
 				fraction       = Math .random () * areaSoFarArray [length - 1],
-				index0         = 0,
-				index1         = 0,
-				weight         = 0;
+				index0         = 0;
 
 			if (length == 1 || fraction <= areaSoFarArray [0])
 			{
 				index0 = 0;
-				weight = 0;
 			}
 			else if (fraction >= areaSoFarArray [length - 1])
 			{
 				index0 = length - 2;
-				weight = 1;
 			}
 			else
 			{
@@ -106700,19 +106629,11 @@ function ($,
 
 				if (index < length)
 				{
-					index1 = index;
 					index0 = index - 1;
-			
-					var
-						key0 = areaSoFarArray [index0],
-						key1 = areaSoFarArray [index1];
-			
-					weight = Algorithm .clamp ((fraction - key0) / (key1 - key0), 0, 1);
 				}
 				else
 				{
 					index0 = 0;
-					weight = 0;
 				}
 			}
 
