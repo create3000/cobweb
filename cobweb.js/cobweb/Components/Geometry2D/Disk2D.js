@@ -165,7 +165,6 @@ function ($,
 
 				var
 					radius          = Math .abs (Math .max (innerRadius, outerRadius)),
-					normals         = this .getNormals (),
 					defaultVertices = options .getDiskVertices (),
 					vertices        = this .getVertices ();
 

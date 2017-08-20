@@ -347,13 +347,8 @@ function ($,
 				if (url === null)
 					return console .warn ("XML Parser Error: Bad ExternProtoDeclare statement: Expected url attribute.");
 				
-				if (url !== null)
-				{
-					this .parser .setInput (url);
-					Parser .prototype .sfstringValues .call (this .parser, this .url);
-				}
-				else
-					this .url .length = 0;
+				this .parser .setInput (url);
+				Parser .prototype .sfstringValues .call (this .parser, this .url);
 
 				var externproto = new X3DExternProtoDeclaration (this .getExecutionContext ());
 							

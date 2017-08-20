@@ -958,8 +958,7 @@ function ($,
 				
 							var
 								particle = particles [i],
-								fraction = particle .elapsedTime / particle .lifetime,
-								color    = particle .color;
+								fraction = particle .elapsedTime / particle .lifetime;
 			
 							if (length == 1 || fraction <= texCoordKeys [0])
 							{

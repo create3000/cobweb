@@ -218,25 +218,25 @@ function ($,
 					// Some string defaults to EXAMINE.
 					examineViewer = true;
 				}
-
-				if (examineViewer)
-					this .availableViewers_ .push ("EXAMINE");
-
-				if (walkViewer)
-					this .availableViewers_ .push ("WALK");
-
-				if (flyViewer)
-					this .availableViewers_ .push ("FLY");
-
-				if (planeViewer)
-					this .availableViewers_ .push ("PLANE");
-
-				if (lookAt)
-					this .availableViewers_ .push ("LOOKAT");
-
-				if (noneViewer)
-					this .availableViewers_ .push ("NONE");
 			}
+
+			if (examineViewer)
+				this .availableViewers_ .push ("EXAMINE");
+
+			if (walkViewer)
+				this .availableViewers_ .push ("WALK");
+
+			if (flyViewer)
+				this .availableViewers_ .push ("FLY");
+
+			if (planeViewer)
+				this .availableViewers_ .push ("PLANE");
+
+			if (lookAt)
+				this .availableViewers_ .push ("LOOKAT");
+
+			if (noneViewer)
+				this .availableViewers_ .push ("NONE");
 		},
 		set_headlight__: function ()
 		{

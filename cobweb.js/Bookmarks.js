@@ -91,7 +91,6 @@ var Bookmarks = (function ()
 			var
 				bookmarks    = this .bookmarks,
 				filesPerPage = this .filesPerPage,
-				index        = this .index,
 				pages        = [ ];
 
 			if (mobile)
@@ -99,8 +98,6 @@ var Bookmarks = (function ()
 	
 			while (bookmarks .length)
 				pages .push (bookmarks .splice (0, filesPerPage || 20));
-	
-			index = Math .min (index, pages .length - 1);
 	
 			this .pages = pages;
 

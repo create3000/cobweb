@@ -176,14 +176,14 @@ function ($,
 			if (this .type === "MORE")
 			{
 				var 
+					layers            = browser .getWorld () .getLayerSet () .getLayers (),
+					activeLayer       = browser .getActiveLayer (),
 					systemTime        = browser .systemTime,
 					navigationTime    = activeLayer && browser .getCollisionCount () ? activeLayer .collisionTime : 0,
 					collisionTime     = browser .collisionTime + navigationTime,
 					routingTime       = browser .browserTime - (browser .cameraTime + browser .collisionTime + browser .displayTime + navigationTime),
 					prepareEvents     = Object .keys (browser .prepareEvents () .getInterests ()) .length - 1,
 					sensors           = Object .keys (browser .sensors () .getInterests ()) .length,
-					layers            = browser .getWorld () .getLayerSet () .getLayers (),
-					activeLayer       = browser .getActiveLayer (),
 					opaqueShapes      = 0,
 					transparentShapes = 0;
 

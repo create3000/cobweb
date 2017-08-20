@@ -79,10 +79,6 @@ function ($, X3DField, X3DConstants)
 		{
 			X3DField .prototype .set .call (this, Boolean (value));
 		},
-		valueOf: function ()
-		{
-			return this .getValue ();
-		},
 		getTypeName: function ()
 		{
 			return "SFBool";
@@ -91,7 +87,10 @@ function ($, X3DField, X3DConstants)
 		{
 			return X3DConstants .SFBool;
 		},
-		valueOf: X3DField .prototype .getValue,
+		valueOf: function ()
+		{
+			return this .getValue ();
+		},
 		toString: function ()
 		{
 			return this .getValue () ? "TRUE" : "FALSE";

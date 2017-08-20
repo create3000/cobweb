@@ -233,7 +233,6 @@ function ($,
 			var
 			   w = width  / canvas .width,
 			   h = height / canvas .height,
-			   x = 1 - w,
 			   y = 1 - h;
 
 			texCoords .push (0, y, 0, 1,

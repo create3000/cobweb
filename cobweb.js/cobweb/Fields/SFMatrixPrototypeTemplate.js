@@ -75,10 +75,6 @@ function ($, X3DField)
 			{
 				this .getValue () .assign (value);
 			},
-			set: function (value)
-			{
-				this .getValue () .assign (value);
-			},
 			setTransform: function (translation, rotation, scale, scaleOrientation, center)
 			{
 				translation      = translation      ? translation      .getValue () : null;

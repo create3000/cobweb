@@ -298,7 +298,7 @@ function ($,
 		addImportedNode: function (inlineNode, exportedName, importedName)
 		{
 			if (importedName === undefined)
-				importedName = importedName;
+				importedName = exportedName;
 
 			if (this .importedNodes [importedName])
 				throw new Error ("Couldn't add imported node: imported name '" + importedName + "' already in use.");

@@ -488,28 +488,28 @@ function ($, Vector3, Algorithm)
 		add: function (lhs, rhs)
 		{
 			var copy = Object .create (this .prototype);
-			copy .x = rhs .x + rhs .x;
-			copy .y = rhs .y + rhs .y;
-			copy .z = rhs .z + rhs .z;
-			copy .w = rhs .w + rhs .w;
+			copy .x = lhs .x + rhs .x;
+			copy .y = lhs .y + rhs .y;
+			copy .z = lhs .z + rhs .z;
+			copy .w = lhs .w + rhs .w;
 			return copy;
 		},
 		subtract: function (lhs, rhs)
 		{
 			var copy = Object .create (this .prototype);
-			copy .x = rhs .x - rhs .x;
-			copy .y = rhs .y - rhs .y;
-			copy .z = rhs .z - rhs .z;
-			copy .w = rhs .w - rhs .w;
+			copy .x = lhs .x - rhs .x;
+			copy .y = lhs .y - rhs .y;
+			copy .z = lhs .z - rhs .z;
+			copy .w = lhs .w - rhs .w;
 			return copy;
 		},
 		multiply: function (lhs, rhs)
 		{
 			var copy = Object .create (this .prototype);
-			copy .x = rhs .x * rhs;
-			copy .y = rhs .y * rhs;
-			copy .z = rhs .z * rhs;
-			copy .w = rhs .w * rhs;
+			copy .x = lhs .x * rhs;
+			copy .y = lhs .y * rhs;
+			copy .z = lhs .z * rhs;
+			copy .w = lhs .w * rhs;
 			return copy;
 		},
 		multLeft: function (lhs, rhs)
@@ -543,10 +543,10 @@ function ($, Vector3, Algorithm)
 		divide: function (lhs, rhs)
 		{
 			var copy = Object .create (this .prototype);
-			copy .x = rhs .x / rhs;
-			copy .y = rhs .y / rhs;
-			copy .z = rhs .z / rhs;
-			copy .w = rhs .w / rhs;
+			copy .x = lhs .x / rhs;
+			copy .y = lhs .y / rhs;
+			copy .z = lhs .z / rhs;
+			copy .w = lhs .w / rhs;
 			return copy;
 		},
 		normalize: function (quat)

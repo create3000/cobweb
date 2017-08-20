@@ -165,25 +165,21 @@ function ($,
 		},
 		getRandomPosition: function (position)
 		{
-			// Determine index0 and weight.
+			// Determine index0.
 
 			var
 				areaSoFarArray = this .areaSoFarArray,
 				length         = areaSoFarArray .length,
 				fraction       = Math .random () * areaSoFarArray [length - 1],
-				index0         = 0,
-				index1         = 0,
-				weight         = 0;
+				index0         = 0
 
 			if (length == 1 || fraction <= areaSoFarArray [0])
 			{
 				index0 = 0;
-				weight = 0;
 			}
 			else if (fraction >= areaSoFarArray [length - 1])
 			{
 				index0 = length - 2;
-				weight = 1;
 			}
 			else
 			{
@@ -191,19 +187,11 @@ function ($,
 
 				if (index < length)
 				{
-					index1 = index;
 					index0 = index - 1;
-			
-					var
-						key0 = areaSoFarArray [index0],
-						key1 = areaSoFarArray [index1];
-			
-					weight = Algorithm .clamp ((fraction - key0) / (key1 - key0), 0, 1);
 				}
 				else
 				{
 					index0 = 0;
-					weight = 0;
 				}
 			}
 
