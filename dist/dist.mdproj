@@ -36,6 +36,7 @@
     <None Include="images\Time.png" />
     <None Include="images\Viewpoint.png" />
     <None Include="images\WalkViewer.png" />
+    <None Include="cobweb-3.3.zip" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="images\" />
