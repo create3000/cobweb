@@ -22,8 +22,6 @@ sub dist {
 	system "cp", "-v", "cobweb.min.js",               "../dist/";
 	system "cp", "-v", "-r", "images",                "../dist/";
 	system "cp", "-v", "browser.html",                "../dist/";
-
-	system "perl", "-pi", "-e", 's|\s*<script src="jam/require\.js"></script>\n||sg', "../dist/browser.html";
 }
 
 sub zip {

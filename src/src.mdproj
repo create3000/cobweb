@@ -20,11 +20,9 @@
     <None Include="cobweb.js" />
     <None Include="Cobweb.mdproj" />
     <None Include="Cobweb.userprefs" />
-    <None Include="cobweb.dom.integration.xhtml" />
     <None Include="cobweb.js.mdproj" />
     <None Include="cobweb.min.html" />
     <None Include="cobweb.min.js" />
-    <None Include="cobweb.release.html" />
     <None Include="cobweb.uncompressed.js" />
     <None Include="license.pl" />
     <None Include="license.txt" />
