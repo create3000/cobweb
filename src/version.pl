@@ -33,7 +33,12 @@ sub publish {
 
 exit if $VERSION =~ /a$/;
 
-say "Making version '$VERSION' now.";
+my $result = system "zenity", "--question", "--text=Do you really want to publish the project as version $VERSION?", "--ok-label=Yes", "--cancel-label=No";
 
-publish ($VERSION);
-publish ("latest");
+if ($result == 0)
+{
+	say "Publishing version '$VERSION' now.";
+	
+	publish ($VERSION);
+	publish ("latest");
+}
