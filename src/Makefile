@@ -29,6 +29,9 @@ all:
 dist: all
 	perl dist.pl
 
+version: all
+	perl version.pl
+
 
 clean:
 	rm cobweb.min.html

@@ -9,7 +9,7 @@
     <ProjectGuid>{45DFA11C-B569-4954-B1E1-DA0CF12C452A}</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Default|AnyCPU' ">
-    <OutputPath>.\</OutputPath>
+    <OutputPath>.</OutputPath>
   </PropertyGroup>
   <ItemGroup>
     <None Include="src.mdproj" />
@@ -1019,6 +1019,7 @@
     <None Include="standard\Networking\URI.js" />
     <None Include="standard\Utility\ObjectCache.js" />
     <None Include="dist.pl" />
+    <None Include="version.pl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\" />

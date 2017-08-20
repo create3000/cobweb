@@ -40,27 +40,9 @@ sub zip {
 	chdir $CWD;
 }
 
-sub publish {
-	my $version = shift;
-
-	chdir "../";
-
-	system "git", "tag", "--delete", "$version";
-	system "git", "push", "--delete", "origin", "$version";
-	system "git", "push", "--delete", "github", "$version";
-
-	system "git", "tag", "$version";
-	system "git", "push", "origin", "--tags";
-	system "git", "push", "github", "--tags";
-
-	chdir $CWD;
-}
-
 exit if $VERSION =~ /a$/;
 
 say "Making version '$VERSION' now.";
 
 dist;
 zip;
-publish ($VERSION);
-publish ("latest");
