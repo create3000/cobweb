@@ -1,10 +1,11 @@
 ﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb.css">
+  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Execution/X3DExecutionContext.js">
     <Files>
       <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb/Browser/VERSION.js" Line="1" Column="1" />
       <File FileName="cobweb.js/cobweb.css" Line="62" Column="1" />
+      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="302" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
