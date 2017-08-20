@@ -21,6 +21,7 @@ sub commit {
 	chdir "../";
 
 	system "git", "commit", "-am",  "Publised version $VERSION.";
+	system "git", "push";
 	system "git", "push", "origin";
 	system "git", "push", "github";
 
