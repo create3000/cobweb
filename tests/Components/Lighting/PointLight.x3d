@@ -270,7 +270,7 @@
             </Transform>
             <Transform DEF='Beethoven'>
               <Inline
-                  url='"../Geometry3D/Beethoven.x3d", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Geometry3D/Beethoven.x3d"'/>
+                  url='"../Geometry3D/Beethoven.x3dz", "file:///home/holger/Projekte/Cobweb/cobweb.js/tests/Components/Geometry3D/Beethoven.x3dz"'/>
             </Transform>
           </Transform>
         </Transform>

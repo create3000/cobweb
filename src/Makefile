@@ -26,13 +26,11 @@ all:
 	echo
 
 
-version: all
-	perl version.pl
+dist: all
+	perl dist.pl
 
 
 clean:
 	rm cobweb.min.html
 	rm cobweb.uncompressed.js
 	rm cobweb.min.js
-	rm cobweb.VRML.uncompressed.js
-	rm cobweb.VRML.min.js

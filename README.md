@@ -1,4 +1,4 @@
-[Cobweb](http://titania.create3000.de/cobweb/) — Cobweb WebGL X3D Browser
+[Cobweb](http://create3000.de/cobweb/) — Cobweb WebGL X3D Browser
 ==================================================
 
 
@@ -7,14 +7,17 @@ Introduction
 
 Cobweb is a work in progress. The goal is a full standard WebGL X3D browser for all major web browsers.
 
-For more information and live preview please visit [http://titania.create3000.de/cobweb/](http://titania.create3000.de/cobweb/).
+For more information and live preview please visit [http://create3000.de/cobweb/](http://create3000.de/cobweb/).
 
 
 Links
 --------------------------------------
-* [Dynamic Shadows](http://titania.create3000.de/cobweb/dynamic-shadows/)
-* [Custom Shaders](http://titania.create3000.de/cobweb/custom-shaders/)
-* [XHTML DOM Integration](http://titania.create3000.de/index.php?id=120)
+* [Getting Started](http://create3000.de/cobweb/getting-started/)
+* [What’s New](http://create3000.de/cobweb/whats-new/)
+* [Supported Nodes](http://create3000.de/cobweb/supported-nodes/)
+* [Accessing the External Browser](http://create3000.de/cobweb/accessing-the-external-browser/)
+* [Cobweb XHTML DOM Integration](http://create3000.de/cobweb/cobweb-xhtml-dom-integration/)
+* [Custom Shaders](http://create3000.de/cobweb/shaders/)
 
 Embedding Cobweb within a Web Page
 --------------------------------------
@@ -26,23 +29,23 @@ The HTML5 page is quite easy to create, the HTML5 code below shows you the minim
 **Note:** it is important to use a HTML5 page and to save it as .html file. 
 
     <!DOCTYPE html>
-    <html>
+      <html>
        <head>
-          <meta charset="utf-8"/>
-          <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/create3000/cobweb/master/stable/2/2.1/cobweb.css"/>
-          <script type="text/javascript" src="https://cdn.rawgit.com/create3000/cobweb/master/stable/2/2.1/cobweb.min.js"></script>
-       <style>
-    X3DCanvas {
-       width: 768px;
-       height: 432px;
-    }
-       </style>
-       </head>
-       <body>
-          <X3DCanvas src="path/to/your/X3D/world.x3d">
-             <p>Your browser may not support all features required by Cobweb!</p>
-          </X3DCanvas>
-       </body>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/create3000/cobweb/3.3/cobweb.js/cobweb.css"/>
+        <script type="text/javascript" src="https://cdn.rawgit.com/create3000/cobweb/3.3/cobweb.js/cobweb.min.js"></script>
+        <style>
+        X3DCanvas {
+          width: 768px;
+          height: 432px;
+        }
+        </style>
+      </head>
+      <body>
+        <X3DCanvas src="path/to/your/X3D/world.x3d">
+          <p>Your browser may not support all features required by Cobweb!</p>
+        </X3DCanvas>
+      </body>
     </html>
 
 To get Cobweb working you must include the CSS file »cobweb.css« and the JavaScript file »cobweb.min.js «. After cobweb is successfully loaded a new HTML tag <X3DCanvas> is available on your page.
@@ -100,7 +103,7 @@ Programmers who want to work on Cobweb shall first read the [Style Guide](STYLE_
 
 Tests
 --------------------------------------
-[Cobweb Test Page](http://rawgit.com/create3000/cobweb/master/cobweb.js/cobweb.min.html)
+[Cobweb Test Page](http://rawgit.com/create3000/cobweb/master/src/cobweb.min.html)
 
 
 Authors

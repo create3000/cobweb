@@ -31,7 +31,6 @@
     <None Include="Makefile" />
     <None Include="package.json" />
     <None Include="spinner.css" />
-    <None Include="version.pl" />
     <None Include="cobweb\Base\Events.js" />
     <None Include="cobweb\Base\X3DChildObject.js" />
     <None Include="cobweb\Base\X3DEventObject.js" />
@@ -1019,6 +1018,7 @@
     <None Include="standard\Math\Utility\MatrixStack.js" />
     <None Include="standard\Networking\URI.js" />
     <None Include="standard\Utility\ObjectCache.js" />
+    <None Include="dist.pl" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\" />

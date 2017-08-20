@@ -34,7 +34,7 @@
         <Transform DEF='Beethoven'
             rotation='0 -1 0 4.26986'>
           <Inline
-              url='"../Geometry3D/Beethoven.x3d"'/>
+              url='"../Geometry3D/Beethoven.x3dz"'/>
         </Transform>
       </Transform>
     </Viewport>

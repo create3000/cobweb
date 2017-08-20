@@ -1,4 +1,4 @@
-﻿<Properties StartupItem="cobweb.js/cobweb.js.mdproj">
+﻿<Properties StartupItem="meta/meta.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Execution/X3DExecutionContext.js">
     <Files>

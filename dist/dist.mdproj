@@ -18,7 +18,6 @@
     <None Include="cobweb.js" />
     <None Include="cobweb.min.js" />
     <None Include="spinner.css" />
-    <None Include="cobweb.zip" />
     <None Include="images\ExamineViewer.png" />
     <None Include="images\FlyViewer.png" />
     <None Include="images\gtk-fullscreen.png" />

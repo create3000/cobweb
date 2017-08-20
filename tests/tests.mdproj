@@ -28,8 +28,6 @@
     <None Include="Components\EnvironmentalSensor\TransformSensor.x3d" />
     <None Include="Components\EnvironmentalSensor\VisibilitySensor.x3d" />
     <None Include="Components\Geometry2D\Geometry2D.x3d" />
-    <None Include="Components\Geometry3D\Beethoven.x3d" />
-    <None Include="Components\Geometry3D\Beethoven.x3dv" />
     <None Include="Components\Geometry3D\box.x3d" />
     <None Include="Components\Geometry3D\box.x3dv" />
     <None Include="Components\Geometry3D\Cube.x3dv" />
@@ -64,7 +62,6 @@
     <None Include="Components\Geospatial\YUp.x3d" />
     <None Include="Components\Grouping\AddRemoveChildren.x3dv" />
     <None Include="Components\Grouping\StaticGroup.x3d" />
-    <None Include="Components\images\campfire.512.mp4" />
     <None Include="Components\images\earth.png" />
     <None Include="Components\images\farbmanagement_test.jpg" />
     <None Include="Components\images\image.png" />
@@ -215,7 +212,6 @@
     <None Include="Components\Sound\04. Like A Virgin.mp3" />
     <None Include="Components\Sound\AudioClip.wrl" />
     <None Include="Components\Sound\AudioClip.x3d" />
-    <None Include="Components\Text\ARIALUNI.TTF" />
     <None Include="Components\Text\CHOPS___.TTF" />
     <None Include="Components\Text\date.x3d" />
     <None Include="Components\Text\horizontal.x3d" />
@@ -237,18 +233,12 @@
     <None Include="HTML\Cone.x3d" />
     <None Include="HTML\createBrowser.html" />
     <None Include="HTML\createBrowser2.html" />
-    <None Include="HTML\cycle\cycle.xhtml" />
-    <None Include="HTML\cycle\DarkSideOfTheMoon.png" />
-    <None Include="HTML\cycle\DarkSideOfTheMoon.x3d" />
-    <None Include="HTML\cycle\JoinUs.png" />
-    <None Include="HTML\cycle\JoinUs.x3d" />
-    <None Include="HTML\cycle\ToBeOrToHave.png" />
-    <None Include="HTML\cycle\ToBeOrToHave.x3d" />
     <None Include="HTML\Events.xhtml" />
     <None Include="HTML\iframe.html" />
     <None Include="HTML\ImportDocumentRootNodes.html" />
     <None Include="HTML\README" />
     <None Include="HTML\X3DCanvasSetUrlAttribute.html" />
+    <None Include="Components\Geometry3D\Beethoven.x3dz" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Components\" />
