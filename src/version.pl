@@ -15,6 +15,18 @@ my $VERSION = `cat cobweb/Browser/VERSION.js`;
 $VERSION =~ /"(.*?)"/;
 $VERSION = $1;
 
+sub commit {
+	my $version = shift;
+
+	chdir "../";
+
+	system "git", "commit", "-am",  "Publised version $VERSION.";
+	system "git", "push", "origin";
+	system "git", "push", "github";
+
+	chdir $CWD;
+}
+
 sub publish {
 	my $version = shift;
 
@@ -38,7 +50,8 @@ my $result = system "zenity", "--question", "--text=Do you really want to publis
 if ($result == 0)
 {
 	say "Publishing version '$VERSION' now.";
-	
+
+	commit;
 	publish ($VERSION);
 	publish ("latest");
 }
