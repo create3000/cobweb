@@ -13,5 +13,32 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="dist.mdproj" />
+    <None Include="browser.html" />
+    <None Include="cobweb.css" />
+    <None Include="cobweb.js" />
+    <None Include="cobweb.min.js" />
+    <None Include="spinner.css" />
+    <None Include="cobweb.zip" />
+    <None Include="images\ExamineViewer.png" />
+    <None Include="images\FlyViewer.png" />
+    <None Include="images\gtk-fullscreen.png" />
+    <None Include="images\gtk-leave-fullscreen.png" />
+    <None Include="images\gtk-zoom-fit.png" />
+    <None Include="images\gtk-zoom-in.png" />
+    <None Include="images\help-about.png" />
+    <None Include="images\icon.bw.png" />
+    <None Include="images\icon.png" />
+    <None Include="images\logo.bw.png" />
+    <None Include="images\logo.png" />
+    <None Include="images\NoneViewer.png" />
+    <None Include="images\PlaneViewer.png" />
+    <None Include="images\PrimitiveQuality.png" />
+    <None Include="images\TextureQuality.png" />
+    <None Include="images\Time.png" />
+    <None Include="images\Viewpoint.png" />
+    <None Include="images\WalkViewer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="images\" />
   </ItemGroup>
 </Project>

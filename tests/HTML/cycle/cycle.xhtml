@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+      <title>XHTML DOM access for Cobweb</title>
+      <meta charset="utf-8"/>
+
+      <link rel="stylesheet" type="text/css" href="http://titania.create3000.de/fileadmin/styles.css"/>
+
+      <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/create3000/cobweb/master/stable/3/3.2/cobweb.css"/>
+      <script type="text/javascript" src="https://cdn.rawgit.com/create3000/cobweb/master/stable/3/3.2/cobweb.min.js"></script>
+      <script type="text/javascript" src="https://cdn.rawgit.com/andreasplesch/cobweb_dom/master/release/cobweb_dom.0.75.js"></script>
+
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script src="http://malsup.github.com/jquery.cycle2.js"></script>
+
+      <style>
+html, body {
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
+
+.cycle-slideshow {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	left: 0px;
+	width: auto;
+	height: auto;
+}
+
+.cycle-slideshow > div,
+.browser {
+	position: absolute;
+	width: 100%;
+	height: 100%
+}
+
+.text {
+	position: absolute;
+	color: white;
+	text-align: center;
+	/* xOffset yOffset blur color */
+	text-shadow: 0px 0px 3px black;
+	bottom: 20px;
+	left: 30px;
+	right: 30px;
+}
+
+.text h1 {
+	margin: 20px 0px;
+	font-size: 50px;
+}
+
+.text p {
+	margin: 20px 0px;
+	font-size: 30px;
+}
+
+.fallback {
+	margin: 0px;
+	width: 100%;
+	height: 100%
+}
+
+.cobweb-menu {
+	display: none !important;
+}
+
+.cobweb-browser-timings {
+	display: none !important;
+}
+      </style>
+   </head>
+	<body>
+
+		<div class="cycle-slideshow" data-cycle-fx="scrollHorz" data-cycle-timeout="12000" data-cycle-slides="> div">
+			<div>
+				<X3DCanvas class="browser" timings="false" notification="false" contextMenu="false">
+					<X3D xmlns="http://www.web3d.org/specifications/x3d-namespace">
+						<Scene>
+							<Inline url='"JoinUs.x3d"'/>
+						</Scene>
+					</X3D>
+					<div class="fallback">
+						<img src="JoinUs.png"/>
+					</div>
+				</X3DCanvas>
+				<div class="text">
+					<h1>
+						Join Us Now
+					</h1>
+					<p>
+						You are able to create some impressive 3D worlds with Cobweb and Titania to add to your design portfolio.
+					</p>
+				</div>
+			</div>
+			<div>
+				<X3DCanvas class="browser" timings="false" notification="false" contextMenu="false">
+					<X3D xmlns="http://www.web3d.org/specifications/x3d-namespace">
+						<Scene>
+							<Inline url='"DarkSideOfTheMoon.x3d"'/>
+						</Scene>
+					</X3D>
+					<div class="fallback">
+						<img src="DarkSideOfTheMoon.png"/>
+					</div>
+				</X3DCanvas>
+				<div class="text">
+					<h1>
+						The Dark Side of the Moon
+					</h1>
+					<p>
+						Cobweb and Titania are the best X3D software alternatives for making stunning HTML5 presentations!
+					</p>
+				</div>
+			</div>
+			<div>
+				<X3DCanvas class="browser" timings="false" notification="false" contextMenu="false">
+					<X3D xmlns="http://www.web3d.org/specifications/x3d-namespace">
+						<Scene>
+							<Inline url='"ToBeOrToHave.x3d"'/>
+						</Scene>
+					</X3D>
+					<div class="fallback">
+						<img src="ToBeOrToHave.png"/>
+					</div>
+				</X3DCanvas>
+				<div class="text">
+					<h1>
+						To Be or To Have
+					</h1>
+					<p>
+						Use the full set of richt tools from Cobweb and Titania to design your worlds in a way as you like best!
+					</p>
+				</div>
+			</div>
+		</div>
+
+	</body>
+</html>
