@@ -44,7 +44,11 @@ sub publish {
 	chdir $CWD;
 }
 
-exit if $VERSION =~ /a$/;
+if ($VERSION =~ /a$/)
+{
+	system "zenity", "--error", "--text=Cannot publish version $VERSION!", "--ok-label=Ok";
+	exit;
+}
 
 my $result = system "zenity", "--question", "--text=Do you really want to publish the project as version $VERSION?", "--ok-label=Yes", "--cancel-label=No";
 

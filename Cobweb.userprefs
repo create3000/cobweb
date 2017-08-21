@@ -1,11 +1,14 @@
 ﻿<Properties StartupItem="meta/meta.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="cobweb.js/cobweb/Execution/X3DExecutionContext.js">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="cobweb.js/cobweb.html" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb/Browser/VERSION.js" Line="1" Column="1" />
-      <File FileName="cobweb.js/cobweb.css" Line="62" Column="1" />
-      <File FileName="cobweb.js/cobweb/Execution/X3DExecutionContext.js" Line="302" Column="1" />
+      <File FileName="src/cobweb.css" Line="17" Column="2" />
+      <File FileName="src/Makefile" Line="14" Column="1" />
+      <File FileName="src/cobweb/Browser/PointingDeviceSensor/X3DPointingDeviceSensorContext.js" Line="67" Column="17" />
+      <File FileName="dist/cobweb.js" Line="17" Column="29" />
+      <File FileName="src/package.json" Line="30" Column="56" />
+      <File FileName="src/cobweb.js" Line="71" Column="13" />
+      <File FileName="src/standard/Math/Geometry/Box2.js" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
