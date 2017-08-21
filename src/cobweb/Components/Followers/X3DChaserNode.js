@@ -47,11 +47,11 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Followers/X3DChaserNode",
+define ("./X3DChaserNode.js",
 [
 	"jquery",
-	"cobweb/Components/Followers/X3DFollowerNode",
-	"cobweb/Bits/X3DConstants",
+	"./X3DFollowerNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           X3DFollowerNode, 

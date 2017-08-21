@@ -49,10 +49,10 @@
 
 define ([
 	"jquery",
-	"cobweb/Configuration/ProfileInfo",
-	"cobweb/Configuration/ProfileInfoArray",
-	"cobweb/Configuration/ComponentInfoArray",
-	"cobweb/Browser/Networking/urls",
+	"./ProfileInfo.js",
+	"./ProfileInfoArray.js",
+	"./ComponentInfoArray.js",
+	"../Browser/Networking/urls.js",
 ],
 function ($,
           ProfileInfo,

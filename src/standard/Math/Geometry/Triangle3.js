@@ -48,8 +48,8 @@
 
 
 define ([
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Matrix4",
+	"../Numbers/Vector3.js",
+	"../Numbers/Matrix4.js",
 	"lib/poly2tri.js/dist/poly2tri.js",
 ],
 function (Vector3,

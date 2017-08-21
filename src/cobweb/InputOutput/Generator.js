@@ -50,7 +50,7 @@
 
 define ([
 	"jquery",
-	"cobweb/Bits/X3DConstants",
+	"../Bits/X3DConstants.js",
 ],
 function ($,
           X3DConstants)

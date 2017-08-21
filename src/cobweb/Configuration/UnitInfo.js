@@ -49,7 +49,7 @@
 
 define ([
 	"jquery",
-	"cobweb/InputOutput/Generator",
+	"../InputOutput/Generator.js",
 ],
 function ($,
           Generator)

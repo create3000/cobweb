@@ -49,11 +49,11 @@
 ﻿
 define ([
 	"jquery",
-	"cobweb/Browser/Navigation/X3DViewer",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
-	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Geometry/Camera",
+	"./X3DViewer.js",
+	"../../../standard/Math/Numbers/Vector3.js",
+	"../../../standard/Math/Numbers/Rotation4.js",
+	"../../../standard/Math/Numbers/Matrix4.js",
+	"../../../standard/Math/Geometry/Camera.js",
 	"jquery-mousewheel",
 ],
 function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)

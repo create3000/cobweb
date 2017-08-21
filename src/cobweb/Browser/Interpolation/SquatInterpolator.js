@@ -48,7 +48,7 @@
 
 
 define ([
-	"standard/Math/Numbers/Rotation4",
+	"../../../standard/Math/Numbers/Rotation4.js",
 ],
 function (Rotation4)
 {

@@ -49,11 +49,11 @@
 
 define ([
 	"jquery",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Bits/TraverseType",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Algorithm",
+	"../Core/X3DChildNode.js",
+	"../../Bits/TraverseType.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Matrix4.js",
+	"../../../standard/Math/Algorithm.js",
 ],
 function ($,
           X3DChildNode,

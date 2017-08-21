@@ -47,16 +47,16 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Layout/LayoutLayer",
+define ("./LayoutLayer.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Layering/X3DLayerNode",
-	"cobweb/Components/Layout/LayoutGroup",
-	"cobweb/Components/Navigation/OrthoViewpoint",
-	"cobweb/Bits/X3DConstants",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"../Layering/X3DLayerNode.js",
+	"./LayoutGroup.js",
+	"../Navigation/OrthoViewpoint.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           Fields,

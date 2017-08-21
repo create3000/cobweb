@@ -49,9 +49,9 @@
 
 define ([
 	"jquery",
-	"cobweb/Basic/X3DField",
-	"cobweb/Bits/X3DConstants",
-	"cobweb/InputOutput/Generator",
+	"../Basic/X3DField.js",
+	"../Bits/X3DConstants.js",
+	"../InputOutput/Generator.js",
 ],
 function ($,
           X3DField,

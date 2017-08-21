@@ -47,14 +47,14 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Geometry2D/Circle2D",
+define ("./Circle2D.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DLineGeometryNode",
-	"cobweb/Bits/X3DConstants",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"../Rendering/X3DLineGeometryNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           Fields,

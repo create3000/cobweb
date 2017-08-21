@@ -50,10 +50,10 @@
 
 define ([
 	"jquery",
-	"standard/Math/Numbers/Quaternion",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Vector4",
-	"standard/Math/Algorithm",
+	"./Quaternion.js",
+	"./Vector3.js",
+	"./Vector4.js",
+	"../Algorithm.js",
 ],
 function ($,
           Quaternion,

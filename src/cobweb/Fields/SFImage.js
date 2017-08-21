@@ -49,9 +49,9 @@
 
 define ([
 	"jquery",
-	"cobweb/Basic/X3DField",
-	"cobweb/Fields/ArrayFields",
-	"cobweb/Bits/X3DConstants",
+	"../Basic/X3DField.js",
+	"./ArrayFields.js",
+	"../Bits/X3DConstants.js",
 ],
 function ($, X3DField, ArrayFields, X3DConstants)
 {

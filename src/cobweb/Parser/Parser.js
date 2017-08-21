@@ -47,12 +47,12 @@
  ******************************************************************************/
 
 
-define ("cobweb/Parser/Parser", [
+define ("./Parser.js", [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Prototype/X3DExternProtoDeclaration",
-	"cobweb/Prototype/X3DProtoDeclaration",
-	"cobweb/Bits/X3DConstants",
+	"../Fields.js",
+	"../Prototype/X3DExternProtoDeclaration.js",
+	"../Prototype/X3DProtoDeclaration.js",
+	"../Bits/X3DConstants.js",
 ],
 function ($,
           Fields,

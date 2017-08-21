@@ -47,16 +47,16 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/EnvironmentalSensor/VisibilitySensor",
+define ("./VisibilitySensor.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
-	"cobweb/Bits/TraverseType",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"./X3DEnvironmentalSensorNode.js",
+	"../../Bits/TraverseType.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Vector3.js",
 ],
 function ($,
           Fields,

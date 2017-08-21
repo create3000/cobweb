@@ -49,12 +49,12 @@
 
 define ([
 	"jquery",
-	"cobweb/Basic/X3DBaseNode",
-	"cobweb/Components/Geometry3D/IndexedFaceSet",
-	"cobweb/Components/Rendering/Coordinate",
-	"cobweb/Components/Texturing/TextureCoordinate",
-	"standard/Math/Numbers/Vector2",
-	"standard/Math/Numbers/Vector3",
+	"../../Basic/X3DBaseNode.js",
+	"../../Components/Geometry3D/IndexedFaceSet.js",
+	"../../Components/Rendering/Coordinate.js",
+	"../../Components/Texturing/TextureCoordinate.js",
+	"../../../standard/Math/Numbers/Vector2.js",
+	"../../../standard/Math/Numbers/Vector3.js",
 ],
 function ($,
           X3DBaseNode,

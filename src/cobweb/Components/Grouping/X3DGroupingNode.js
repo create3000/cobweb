@@ -49,12 +49,12 @@
 
 define ([
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Components/Grouping/X3DBoundedObject",
-	"cobweb/Bits/TraverseType",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Matrix4",
+	"../../Fields.js",
+	"../Core/X3DChildNode.js",
+	"./X3DBoundedObject.js",
+	"../../Bits/TraverseType.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Matrix4.js",
 ],
 function ($,
 	       Fields,

@@ -49,8 +49,8 @@
 
 define ([
 	"jquery",
-	"cobweb/Components/Core/X3DNode",
-	"cobweb/Bits/X3DConstants",
+	"../Core/X3DNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           X3DNode, 

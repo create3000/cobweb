@@ -49,11 +49,11 @@
 
 define ([
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/NURBS/X3DNurbsSurfaceGeometryNode",
-	"cobweb/Bits/X3DConstants",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"./X3DNurbsSurfaceGeometryNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           Fields,

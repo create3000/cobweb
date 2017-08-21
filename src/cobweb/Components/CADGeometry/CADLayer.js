@@ -47,14 +47,14 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/CADGeometry/CADLayer",
+define ("./CADLayer.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Grouping/X3DGroupingNode",
-	"cobweb/Bits/X3DConstants",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"../Grouping/X3DGroupingNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           Fields,

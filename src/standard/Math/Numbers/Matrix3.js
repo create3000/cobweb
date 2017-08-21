@@ -49,10 +49,10 @@
 
 define ([
 	"jquery",
-	"standard/Math/Numbers/Vector2",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Matrix2",
-	"standard/Math/Algorithms/eigendecomposition",
+	"./Vector2.js",
+	"./Vector3.js",
+	"./Matrix2.js",
+	"../Algorithms/eigendecomposition.js",
 ],
 function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 {

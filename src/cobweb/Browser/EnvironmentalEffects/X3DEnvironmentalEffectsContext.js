@@ -48,9 +48,9 @@
 
 
 define ([
-	"cobweb/Components/Shaders/ComposedShader",
-	"cobweb/Components/Shaders/ShaderPart",
-	"cobweb/Components/Texturing/TextureProperties",
+	"../../Components/Shaders/ComposedShader.js",
+	"../../Components/Shaders/ShaderPart.js",
+	"../../Components/Texturing/TextureProperties.js",
 	"text!cobweb/Browser/Shaders/BackgroundSphereVertexShader.vs",
 	"text!cobweb/Browser/Shaders/BackgroundSphereFragmentShader.fs",
 ],

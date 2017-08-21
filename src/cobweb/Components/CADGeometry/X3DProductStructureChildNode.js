@@ -47,11 +47,11 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/CADGeometry/X3DProductStructureChildNode",
+define ("./X3DProductStructureChildNode.js",
 [
 	"jquery",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Bits/X3DConstants",
+	"../Core/X3DChildNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           X3DChildNode, 

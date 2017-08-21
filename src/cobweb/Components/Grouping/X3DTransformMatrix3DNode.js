@@ -49,11 +49,11 @@
 
 define ([
 	"jquery",
-	"cobweb/Components/Grouping/X3DGroupingNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
-	"standard/Math/Numbers/Matrix4",
+	"./X3DGroupingNode.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Vector3.js",
+	"../../../standard/Math/Numbers/Rotation4.js",
+	"../../../standard/Math/Numbers/Matrix4.js",
 ],
 function ($,
           X3DGroupingNode,

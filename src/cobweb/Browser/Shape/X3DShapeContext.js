@@ -48,7 +48,7 @@
 
 
 define ([
-	"cobweb/Components/Shape/Appearance",
+	"../../Components/Shape/Appearance.js",
 ],
 function (Appearance)
 {

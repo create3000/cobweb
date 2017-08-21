@@ -47,18 +47,18 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Geometry3D/ElevationGrid",
+define ("./ElevationGrid.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DGeometryNode",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Geometry/Triangle3",
-	"standard/Math/Numbers/Vector2",
-	"standard/Math/Numbers/Vector3",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"../Rendering/X3DGeometryNode.js",
+	"../../Bits/X3DCast.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Geometry/Triangle3.js",
+	"../../../standard/Math/Numbers/Vector2.js",
+	"../../../standard/Math/Numbers/Vector3.js",
 ],
 function ($,
           Fields,

@@ -47,15 +47,15 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Followers/ScalarChaser",
+define ("./ScalarChaser.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Followers/X3DChaserNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Algorithm",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"./X3DChaserNode.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Algorithm.js",
 ],
 function ($,
           Fields,

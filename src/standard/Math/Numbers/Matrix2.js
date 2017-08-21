@@ -49,7 +49,7 @@
 
 define ([
 	"jquery",
-	"standard/Math/Algorithm"
+	"../Algorithm.js"
 ],
 function ($, Algorithm)
 {

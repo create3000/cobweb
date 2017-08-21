@@ -48,7 +48,7 @@
 
 
 define ([
-	"cobweb/Components/ParticleSystems/PointEmitter",
+	"../../Components/ParticleSystems/PointEmitter.js",
 ],
 function (PointEmitter)
 {

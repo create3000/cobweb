@@ -50,9 +50,9 @@
 //https://github.com/sdecima/javascript-detect-element-resize
 
 define ([
-	"cobweb/Fields",
-	"cobweb/Components/Shaders/ComposedShader",
-	"cobweb/Components/Shaders/ShaderPart",
+	"../../Fields.js",
+	"../../Components/Shaders/ComposedShader.js",
+	"../../Components/Shaders/ShaderPart.js",
 	"text!cobweb/Browser/Shaders/PointSet.fs",
 	"text!cobweb/Browser/Shaders/Wireframe.vs",
 	"text!cobweb/Browser/Shaders/Wireframe.fs",
@@ -62,7 +62,7 @@ define ([
 	"text!cobweb/Browser/Shaders/Phong.fs",
 	"text!cobweb/Browser/Shaders/Depth.vs",
 	"text!cobweb/Browser/Shaders/Depth.fs",
-	"standard/Math/Numbers/Vector4",
+	"../../../standard/Math/Numbers/Vector4.js",
 ],
 function (Fields,
           ComposedShader,

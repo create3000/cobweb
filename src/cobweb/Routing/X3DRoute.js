@@ -49,10 +49,10 @@
 
 define ([
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DBaseNode",
-	"cobweb/Bits/X3DConstants",
-	"cobweb/InputOutput/Generator",
+	"../Fields.js",
+	"../Basic/X3DBaseNode.js",
+	"../Bits/X3DConstants.js",
+	"../InputOutput/Generator.js",
 ],
 function ($,
           Fields,

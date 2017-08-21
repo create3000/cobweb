@@ -47,7 +47,7 @@
  ******************************************************************************/
 
 
-define ("cobweb/Browser/Followers/X3DArrayFollowerTemplate",
+define ("./X3DArrayFollowerTemplate.js",
 function ()
 {
 "use strict";

@@ -47,12 +47,12 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Followers/X3DDamperNode",
+define ("./X3DDamperNode.js",
 [
 	"jquery",
-	"cobweb/Components/Followers/X3DFollowerNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Algorithm",
+	"./X3DFollowerNode.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Algorithm.js",
 ],
 function ($,
           X3DFollowerNode, 

@@ -47,17 +47,17 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Layout/LayoutGroup",
+define ("./LayoutGroup.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Grouping/X3DGroupingNode",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/TraverseType",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Matrix4",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"../Grouping/X3DGroupingNode.js",
+	"../../Bits/X3DCast.js",
+	"../../Bits/TraverseType.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Matrix4.js",
 ],
 function ($,
           Fields,

@@ -49,8 +49,8 @@
 
 define ([
 	"jquery",
-	"cobweb/Browser/Navigation/X3DViewer",
-	"lib/gettext",
+	"./X3DViewer.js",
+	"../../../lib/gettext.js",
 	"jquery-mousewheel",
 ],
 function ($, X3DViewer, _)

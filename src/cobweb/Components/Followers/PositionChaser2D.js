@@ -47,15 +47,15 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Followers/PositionChaser2D",
+define ("./PositionChaser2D.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Followers/X3DChaserNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector2",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"./X3DChaserNode.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Vector2.js",
 ],
 function ($,
           Fields,

@@ -47,16 +47,16 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Followers/CoordinateChaser",
+define ("./CoordinateChaser.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Followers/X3DChaserNode",
-	"cobweb/Browser/Followers/X3DArrayChaserTemplate",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"./X3DChaserNode.js",
+	"../../Browser/Followers/X3DArrayChaserTemplate.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Vector3.js",
 ],
 function ($,
           Fields,

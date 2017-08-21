@@ -49,8 +49,8 @@
 
 define ([
 	"jquery",
-	"cobweb/Components/NURBS/X3DParametricGeometryNode",
-	"cobweb/Bits/X3DConstants",
+	"./X3DParametricGeometryNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           X3DParametricGeometryNode, 

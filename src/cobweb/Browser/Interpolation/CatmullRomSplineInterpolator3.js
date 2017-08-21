@@ -48,8 +48,8 @@
 
 
 define ([
-	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolatorTemplate",
-	"standard/Math/Numbers/Vector3",
+	"./CatmullRomSplineInterpolatorTemplate.js",
+	"../../../standard/Math/Numbers/Vector3.js",
 ],
 function (CatmullRomSplineInterpolatorTemplate,
           Vector3)

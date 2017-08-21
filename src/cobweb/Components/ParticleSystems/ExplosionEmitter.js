@@ -49,11 +49,11 @@
 
 define ([
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
-	"cobweb/Bits/X3DConstants",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"./X3DParticleEmitterNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           Fields,

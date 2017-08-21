@@ -48,8 +48,8 @@
 
 ﻿
 define ([
-	"cobweb/Browser/Navigation/X3DFlyViewer",
-	"lib/gettext",
+	"./X3DFlyViewer.js",
+	"../../../lib/gettext.js",
 ],
 function (X3DFlyViewer, _)
 {

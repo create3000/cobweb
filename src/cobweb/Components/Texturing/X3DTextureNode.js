@@ -49,9 +49,9 @@
 
 define ([
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Components/Shape/X3DAppearanceChildNode",
-	"cobweb/Bits/X3DConstants",
+	"../../Fields.js",
+	"../Shape/X3DAppearanceChildNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           Fields,

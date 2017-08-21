@@ -47,12 +47,12 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Scripting/X3DScriptNode",
+define ("./X3DScriptNode.js",
 [
 	"jquery",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Components/Networking/X3DUrlObject",
-	"cobweb/Bits/X3DConstants",
+	"../Core/X3DChildNode.js",
+	"../Networking/X3DUrlObject.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           X3DChildNode, 

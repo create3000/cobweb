@@ -49,8 +49,8 @@
 
 define ([
 	"jquery",
-	"cobweb/Components/Grouping/X3DTransformMatrix3DNode",
-	"cobweb/Bits/X3DConstants",
+	"./X3DTransformMatrix3DNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           X3DTransformMatrix3DNode, 

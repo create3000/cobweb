@@ -47,12 +47,12 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/EventUtilities/X3DSequencerNode",
+define ("./X3DSequencerNode.js",
 [
 	"jquery",
-	"cobweb/Components/Core/X3DChildNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Algorithm",
+	"../Core/X3DChildNode.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Algorithm.js",
 ],
 function ($,
           X3DChildNode, 

@@ -47,13 +47,13 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+define ("./X3DEnvironmentalSensorNode.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Components/Core/X3DSensorNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
+	"../../Fields.js",
+	"../Core/X3DSensorNode.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Vector3.js",
 ],
 function ($,
           Fields,

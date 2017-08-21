@@ -47,15 +47,15 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Followers/OrientationDamper",
+define ("./OrientationDamper.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Followers/X3DDamperNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Rotation4",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"./X3DDamperNode.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Rotation4.js",
 ],
 function ($,
           Fields,

@@ -48,9 +48,9 @@
 
 
 define ([
-	"standard/Math/Geometry/ViewVolume",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Matrix4",
+	"../../standard/Math/Geometry/ViewVolume.js",
+	"../../standard/Math/Numbers/Vector3.js",
+	"../../standard/Math/Numbers/Matrix4.js",
 ],
 function (ViewVolume,
           Vector3,

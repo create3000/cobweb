@@ -49,9 +49,9 @@
 
 define ([
 	"jquery",
-	"cobweb/Components/Rendering/X3DGeometryNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Matrix4",
+	"./X3DGeometryNode.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Matrix4.js",
 ],
 function ($,
           X3DGeometryNode,

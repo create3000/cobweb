@@ -49,10 +49,10 @@
 
 define ([
 	"jquery",
-	"cobweb/Components/Rendering/X3DGeometryNode",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
+	"./X3DGeometryNode.js",
+	"../../Bits/X3DCast.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Vector3.js",
 ],
 function ($,
           X3DGeometryNode,

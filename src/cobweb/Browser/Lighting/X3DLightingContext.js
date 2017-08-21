@@ -48,7 +48,7 @@
 
 
 define ([
-	"cobweb/Rendering/DepthBuffer",
+	"../../Rendering/DepthBuffer.js",
 ],
 function (DepthBuffer)
 {

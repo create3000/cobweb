@@ -48,11 +48,11 @@
 
 
 define ([
-	"cobweb/Browser/Text/TextAlignment",
-	"standard/Math/Geometry/Box2",
-	"standard/Math/Geometry/Box3",
-	"standard/Math/Numbers/Vector2",
-	"standard/Math/Numbers/Vector3",
+	"./TextAlignment.js",
+	"../../../standard/Math/Geometry/Box2.js",
+	"../../../standard/Math/Geometry/Box3.js",
+	"../../../standard/Math/Numbers/Vector2.js",
+	"../../../standard/Math/Numbers/Vector3.js",
 ],
 function (TextAlignment,
           Box2,

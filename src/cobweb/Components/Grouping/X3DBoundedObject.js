@@ -49,10 +49,10 @@
 
 define ([
 	"jquery",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Geometry/Box3",
+	"../../Bits/X3DCast.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Vector3.js",
+	"../../../standard/Math/Geometry/Box3.js",
 ],
 function ($,
           X3DCast,

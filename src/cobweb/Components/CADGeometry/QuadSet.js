@@ -47,14 +47,14 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/CADGeometry/QuadSet",
+define ("./QuadSet.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DComposedGeometryNode",
-	"cobweb/Bits/X3DConstants",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"../Rendering/X3DComposedGeometryNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           Fields,

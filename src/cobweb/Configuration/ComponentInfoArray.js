@@ -49,8 +49,8 @@
 
 define ([
 	"jquery",
-	"cobweb/Configuration/X3DInfoArray",
-	"cobweb/Configuration/ComponentInfo",
+	"./X3DInfoArray.js",
+	"./ComponentInfo.js",
 ],
 function ($, X3DInfoArray, ComponentInfo)
 {

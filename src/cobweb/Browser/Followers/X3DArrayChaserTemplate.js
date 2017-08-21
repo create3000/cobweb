@@ -47,10 +47,10 @@
  ******************************************************************************/
 
 
-define ("cobweb/Browser/Followers/X3DArrayChaserTemplate",
+define ("./X3DArrayChaserTemplate.js",
 [
 	"jquery",
-	"cobweb/Browser/Followers/X3DArrayFollowerTemplate",
+	"./X3DArrayFollowerTemplate.js",
 ],
 function ($,
           X3DArrayFollowerTemplate)

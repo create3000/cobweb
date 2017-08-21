@@ -47,15 +47,15 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture",
+define ("./ComposedCubeMapTexture.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode",
-	"cobweb/Bits/X3DCast",
-	"cobweb/Bits/X3DConstants",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"./X3DEnvironmentTextureNode.js",
+	"../../Bits/X3DCast.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           Fields,

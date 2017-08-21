@@ -47,16 +47,16 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Followers/TexCoordDamper2D",
+define ("./TexCoordDamper2D.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Followers/X3DDamperNode",
-	"cobweb/Browser/Followers/X3DArrayFollowerTemplate",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector2",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"./X3DDamperNode.js",
+	"../../Browser/Followers/X3DArrayFollowerTemplate.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Vector2.js",
 ],
 function ($,
           Fields,

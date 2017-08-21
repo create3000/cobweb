@@ -47,16 +47,16 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Followers/ColorChaser",
+define ("./ColorChaser.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Followers/X3DChaserNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Color3",
-	"standard/Math/Numbers/Vector3",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"./X3DChaserNode.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Color3.js",
+	"../../../standard/Math/Numbers/Vector3.js",
 ],
 function ($,
           Fields,

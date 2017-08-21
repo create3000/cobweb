@@ -47,15 +47,15 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/PointingDeviceSensor/TouchGroup",
+define ("./TouchGroup.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Grouping/X3DGroupingNode",
-	"cobweb/Components/Core/X3DSensorNode",
-	"cobweb/Bits/X3DConstants",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"../Grouping/X3DGroupingNode.js",
+	"../Core/X3DSensorNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           Fields,

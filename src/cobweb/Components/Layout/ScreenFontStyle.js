@@ -47,15 +47,15 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Layout/ScreenFontStyle",
+define ("./ScreenFontStyle.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Text/X3DFontStyleNode",
-	"cobweb/Browser/Layout/ScreenText",
-	"cobweb/Bits/X3DConstants",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"../Text/X3DFontStyleNode.js",
+	"../../Browser/Layout/ScreenText.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           Fields,

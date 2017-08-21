@@ -47,15 +47,15 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Geometry2D/Polyline2D",
+define ("./Polyline2D.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DLineGeometryNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"../Rendering/X3DLineGeometryNode.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Vector3.js",
 ],
 function ($,
           Fields,

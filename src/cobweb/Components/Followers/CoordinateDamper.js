@@ -47,16 +47,16 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Followers/CoordinateDamper",
+define ("./CoordinateDamper.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Followers/X3DDamperNode",
-	"cobweb/Browser/Followers/X3DArrayFollowerTemplate",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"./X3DDamperNode.js",
+	"../../Browser/Followers/X3DArrayFollowerTemplate.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Vector3.js",
 ],
 function ($,
           Fields,

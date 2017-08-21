@@ -59,7 +59,7 @@
 
 	function fallback (error)
 	{
-		require (["cobweb/Error"],
+		require (["./cobweb/Error.js"],
 		function (Error)
 		{
 			Error (error, fallbacks);
@@ -80,7 +80,7 @@
 
 	window .X3D = X3D; // Now assign temporary X3D.
 
-	require (["cobweb/X3D"],
+	require (["./cobweb/X3D.js"],
 	function (X3D)
 	{
 		window .X3D = X3D; // Now assign real X3D.

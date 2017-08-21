@@ -47,18 +47,18 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/EnvironmentalSensor/ProximitySensor",
+define ("./ProximitySensor.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
-	"cobweb/Bits/TraverseType",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
-	"standard/Math/Numbers/Matrix4",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"./X3DEnvironmentalSensorNode.js",
+	"../../Bits/TraverseType.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Vector3.js",
+	"../../../standard/Math/Numbers/Rotation4.js",
+	"../../../standard/Math/Numbers/Matrix4.js",
 ],
 function ($,
           Fields,

@@ -47,14 +47,14 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/EventUtilities/BooleanTrigger",
+define ("./BooleanTrigger.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/EventUtilities/X3DTriggerNode",
-	"cobweb/Bits/X3DConstants",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"./X3DTriggerNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           Fields,

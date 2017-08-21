@@ -47,18 +47,18 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/EnvironmentalSensor/TransformSensor",
+define ("./TransformSensor.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
-	"cobweb/Bits/X3DConstants",
-	"cobweb/Bits/X3DCast",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
-	"standard/Math/Geometry/Box3",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"./X3DEnvironmentalSensorNode.js",
+	"../../Bits/X3DConstants.js",
+	"../../Bits/X3DCast.js",
+	"../../../standard/Math/Numbers/Vector3.js",
+	"../../../standard/Math/Numbers/Rotation4.js",
+	"../../../standard/Math/Geometry/Box3.js",
 ],
 function ($,
           Fields,

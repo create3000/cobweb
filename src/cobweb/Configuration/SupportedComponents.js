@@ -49,8 +49,8 @@
 
 define ([
 	"jquery",
-	"cobweb/Configuration/ComponentInfoArray",
-	"cobweb/Browser/Networking/urls",
+	"./ComponentInfoArray.js",
+	"../Browser/Networking/urls.js",
 ],
 function ($, ComponentInfoArray, urls)
 {

@@ -47,17 +47,17 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/Geometry2D/ArcClose2D",
+define ("./ArcClose2D.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Rendering/X3DGeometryNode",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Complex",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Algorithm",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"../Rendering/X3DGeometryNode.js",
+	"../../Bits/X3DConstants.js",
+	"../../../standard/Math/Numbers/Complex.js",
+	"../../../standard/Math/Numbers/Vector3.js",
+	"../../../standard/Math/Algorithm.js",
 ],
 function ($,
           Fields,

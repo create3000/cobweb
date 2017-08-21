@@ -49,9 +49,9 @@
 
 define ([
 	"jquery",
-	"cobweb/Base/X3DChildObject",
-	"cobweb/Bits/X3DConstants",
-	"cobweb/Base/Events",
+	"../Base/X3DChildObject.js",
+	"../Bits/X3DConstants.js",
+	"../Base/Events.js",
 ],
 function ($,
 	       X3DChildObject,

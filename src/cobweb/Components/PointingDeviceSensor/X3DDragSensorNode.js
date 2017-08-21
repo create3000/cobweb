@@ -47,11 +47,11 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/PointingDeviceSensor/X3DDragSensorNode",
+define ("./X3DDragSensorNode.js",
 [
 	"jquery",
-	"cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode",
-	"cobweb/Bits/X3DConstants",
+	"./X3DPointingDeviceSensorNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           X3DPointingDeviceSensorNode, 

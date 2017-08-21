@@ -49,9 +49,9 @@
 
 define ([
 	"jquery",
-	"cobweb/Components/Shape/X3DAppearanceChildNode",
-	"cobweb/Bits/X3DConstants",
-	"cobweb/Bits/TraverseType",
+	"../Shape/X3DAppearanceChildNode.js",
+	"../../Bits/X3DConstants.js",
+	"../../Bits/TraverseType.js",
 ],
 function ($,
           X3DAppearanceChildNode, 

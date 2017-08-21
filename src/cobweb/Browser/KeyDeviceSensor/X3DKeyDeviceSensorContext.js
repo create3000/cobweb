@@ -49,7 +49,7 @@
 
 define ([
 	"jquery",
-	"cobweb/Fields",
+	"../../Fields.js",
 ],
 function ($,
           Fields)

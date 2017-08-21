@@ -47,7 +47,7 @@
  ******************************************************************************/
 
 
-define ("cobweb/Browser/Scripting/evaluate",
+define ("./evaluate.js",
 function ()
 {
 	return function (/* __global__, __text__ */)

@@ -49,8 +49,8 @@
 
 define ([
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DBaseNode",
+	"../../Fields.js",
+	"../../Basic/X3DBaseNode.js",
 ],
 function ($,
           Fields,

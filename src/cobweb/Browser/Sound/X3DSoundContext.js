@@ -48,7 +48,7 @@
 
 
 define ([
-	"cobweb/Fields",
+	"../../Fields.js",
 ],
 function (Fields)
 {

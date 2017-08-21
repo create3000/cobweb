@@ -48,10 +48,10 @@
 
 
 define ([
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Rotation4",
-	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Geometry/Line3",
+	"../Numbers/Vector3.js",
+	"../Numbers/Rotation4.js",
+	"../Numbers/Matrix4.js",
+	"./Line3.js",
 ],
 function (Vector3,
           Rotation4,

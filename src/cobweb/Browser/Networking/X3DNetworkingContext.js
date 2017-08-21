@@ -48,12 +48,12 @@
 
 
 define ([
-	"cobweb/Fields",
-	"cobweb/Components/Networking/LoadSensor",
-	"cobweb/Browser/Networking/urls",
-	"standard/Networking/URI",
-	"lib/sprintf.js/src/sprintf",
-	"lib/gettext",
+	"../../Fields.js",
+	"../../Components/Networking/LoadSensor.js",
+	"./urls.js",
+	"../../../standard/Networking/URI.js",
+	"../../../lib/sprintf.js/src/sprintf.js",
+	"../../../lib/gettext.js",
 ],
 function (Fields,
           LoadSensor,

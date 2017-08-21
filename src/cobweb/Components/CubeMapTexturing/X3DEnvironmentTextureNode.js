@@ -47,11 +47,11 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode",
+define ("./X3DEnvironmentTextureNode.js",
 [
 	"jquery",
-	"cobweb/Components/Texturing/X3DTextureNode",
-	"cobweb/Bits/X3DConstants",
+	"../Texturing/X3DTextureNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           X3DTextureNode, 

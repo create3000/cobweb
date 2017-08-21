@@ -47,15 +47,15 @@
  ******************************************************************************/
 
 
-define ("cobweb/Components/CADGeometry/CADAssembly",
+define ("./CADAssembly.js",
 [
 	"jquery",
-	"cobweb/Fields",
-	"cobweb/Basic/X3DFieldDefinition",
-	"cobweb/Basic/FieldDefinitionArray",
-	"cobweb/Components/Grouping/X3DGroupingNode",
-	"cobweb/Components/CADGeometry/X3DProductStructureChildNode",
-	"cobweb/Bits/X3DConstants",
+	"../../Fields.js",
+	"../../Basic/X3DFieldDefinition.js",
+	"../../Basic/FieldDefinitionArray.js",
+	"../Grouping/X3DGroupingNode.js",
+	"./X3DProductStructureChildNode.js",
+	"../../Bits/X3DConstants.js",
 ],
 function ($,
           Fields,

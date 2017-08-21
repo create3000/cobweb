@@ -47,12 +47,12 @@
  ******************************************************************************/
 
 
-define ("cobweb/Fields/SFRotation", [
+define ("./SFRotation.js", [
 	"jquery",
-	"cobweb/Fields/SFVec3",
-	"cobweb/Basic/X3DField",
-	"cobweb/Bits/X3DConstants",
-	"standard/Math/Numbers/Rotation4",
+	"./SFVec3.js",
+	"../Basic/X3DField.js",
+	"../Bits/X3DConstants.js",
+	"../../standard/Math/Numbers/Rotation4.js",
 ],
 function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 {

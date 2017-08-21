@@ -49,11 +49,11 @@
 
 define ([
 	"jquery",
-	"cobweb/Browser/Core/PrimitiveQuality",
-	"cobweb/Browser/Text/X3DTextGeometry",
-	"standard/Math/Numbers/Vector3",
-	"standard/Math/Numbers/Matrix4",
-	"standard/Math/Geometry/Triangle2",
+	"../Core/PrimitiveQuality.js",
+	"./X3DTextGeometry.js",
+	"../../../standard/Math/Numbers/Vector3.js",
+	"../../../standard/Math/Numbers/Matrix4.js",
+	"../../../standard/Math/Geometry/Triangle2.js",
 	"lib/bezierjs/bezier.js",
 	"lib/poly2tri.js/dist/poly2tri.js",
 	"lib/earcut/src/earcut.js",

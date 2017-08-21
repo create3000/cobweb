@@ -47,9 +47,9 @@
  ******************************************************************************/
 
 
-define ("cobweb/Fields/SFVecPrototypeTemplate", [
+define ("./SFVecPrototypeTemplate.js", [
 	"jquery",
-	"cobweb/Basic/X3DField",
+	"../Basic/X3DField.js",
 ],
 function ($, X3DField)
 {
