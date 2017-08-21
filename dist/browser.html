@@ -8,6 +8,7 @@
 		<link rel="stylesheet" type="text/css" href="cobweb.css"/>
 		<script type="text/javascript" src="cobweb.min.js"></script>
 		<style>
+
 @import url(https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700,700italic);
 
 html, body {
@@ -46,7 +47,9 @@ html, body {
 		<script type="text/javascript">
 X3D (function ()
 {
-	var url = new X3D .MFString (new (X3D .require ("standard/Networking/URI")) (location) .query .split (","));
+	var
+		URI = X3D .require ("standard/Networking/URI"),
+		url = new X3D .MFString (new URI (location) .query .split (","));
 
 	X3D .getBrowser ("#browser") .loadURL (url, new X3D .MFString ());
 });

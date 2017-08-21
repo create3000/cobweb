@@ -12,11 +12,12 @@ all:
 	uglifyjs -m -c -- cobweb.uncompressed.js > cobweb.ugly.js
 	mv cobweb.ugly.js cobweb.min.js
 
-	perl license.pl
+	perl build/license.pl
 
 	cp cobweb.html cobweb.min.html
 	perl -pi -e 's|\s*<script src="jam/require.js"></script>\n||sg' cobweb.min.html
-	perl -pi -e 's|"cobweb.js"|"cobweb.min.js"|sg' cobweb.min.html
+	perl -pi -e 's|"cobweb.css"|"../dist/cobweb.css"|sg' cobweb.min.html
+	perl -pi -e 's|"cobweb.js"|"../dist/cobweb.min.js"|sg' cobweb.min.html
 	perl -pi -e 's|([">])cobweb.min.html(["<])|\1cobweb.html\2|sg' cobweb.min.html
 	perl -pi -e 's|cobweb-dev|cobweb-min|sg' cobweb.min.html
 
@@ -27,10 +28,11 @@ all:
 
 
 dist: all
-	perl dist.pl
+	perl build/dist.pl
+
 
 version: dist
-	perl version.pl
+	perl build/version.pl
 
 
 clean:

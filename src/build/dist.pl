@@ -22,6 +22,9 @@ sub dist {
 	system "cp", "-v", "cobweb.min.js",               "../dist/";
 	system "cp", "-v", "-r", "images",                "../dist/";
 	system "cp", "-v", "browser.html",                "../dist/";
+
+	system "rm", "-v", "cobweb.uncompressed.js";
+	system "rm", "-v", "cobweb.min.js";
 }
 
 sub zip {

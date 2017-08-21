@@ -22,10 +22,6 @@
     <None Include="Cobweb.userprefs" />
     <None Include="cobweb.js.mdproj" />
     <None Include="cobweb.min.html" />
-    <None Include="cobweb.min.js" />
-    <None Include="cobweb.uncompressed.js" />
-    <None Include="license.pl" />
-    <None Include="license.txt" />
     <None Include="Makefile" />
     <None Include="package.json" />
     <None Include="spinner.css" />
@@ -1016,8 +1012,10 @@
     <None Include="standard\Math\Utility\MatrixStack.js" />
     <None Include="standard\Networking\URI.js" />
     <None Include="standard\Utility\ObjectCache.js" />
-    <None Include="dist.pl" />
-    <None Include="version.pl" />
+    <None Include="build\license.pl" />
+    <None Include="build\dist.pl" />
+    <None Include="build\version.pl" />
+    <None Include="license.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\" />
@@ -1027,5 +1025,6 @@
     <Folder Include="lib\" />
     <Folder Include="locale\" />
     <Folder Include="standard\" />
+    <Folder Include="build\" />
   </ItemGroup>
 </Project>
