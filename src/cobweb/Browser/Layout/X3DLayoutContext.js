@@ -49,7 +49,7 @@
 
 define ([
 	"jquery",
-	"../../Components/Texturing/TextureProperties.js",
+	"cobweb/Components/Texturing/TextureProperties",
 ],
 function ($, TextureProperties)
 {

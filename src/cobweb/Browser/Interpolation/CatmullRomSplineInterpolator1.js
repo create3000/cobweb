@@ -49,7 +49,7 @@
 
 define ([
 	"jquery",
-	"./CatmullRomSplineInterpolator.js"
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator"
 ],
 function ($,
           CatmullRomSplineInterpolator)

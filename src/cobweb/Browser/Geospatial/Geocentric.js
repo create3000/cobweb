@@ -48,8 +48,8 @@
 
 
 define ([
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Algorithm.js",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function (Vector3,
           Algorithm)

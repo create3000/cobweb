@@ -48,10 +48,10 @@
 
 
 define ([
-	"../../../standard/Geospatial/ReferenceEllipsoids.js",
-	"../../../standard/Geospatial/Geodetic.js",
-	"../../../standard/Geospatial/UniversalTransverseMercator.js",
-	"./Geocentric.js",
+	"standard/Geospatial/ReferenceEllipsoids",
+	"standard/Geospatial/Geodetic",
+	"standard/Geospatial/UniversalTransverseMercator",
+	"cobweb/Browser/Geospatial/Geocentric",
 ],
 function (ReferenceEllipsoids,
           Geodetic,

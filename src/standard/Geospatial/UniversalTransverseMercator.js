@@ -48,9 +48,9 @@
 
 
 define ([
-	"./Geodetic.js",
-	"../Math/Numbers/Vector3.js",
-	"../Math/Algorithm.js",
+	"standard/Geospatial/Geodetic",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function (Geodetic,
           Vector3,

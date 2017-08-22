@@ -48,7 +48,7 @@
 
 
 define ([
-	"./Browser/VERSION.js",
+	"cobweb/Browser/VERSION",
 ],
 function (VERSION)
 {

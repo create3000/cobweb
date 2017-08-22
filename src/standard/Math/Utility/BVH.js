@@ -48,9 +48,9 @@
 
 
 define ([
-	"../Numbers/Vector3.js",
-	"../Geometry/Plane3.js",
-	"../Algorithms/QuickSort.js",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Algorithms/QuickSort",
 ],
 function (Vector3,
           Plane3,

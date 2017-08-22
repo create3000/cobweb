@@ -49,10 +49,10 @@
 
 define ([
 	"jquery",
-	"../../Basic/X3DBaseNode.js",
-	"../../Fields.js",
-	"../../../standard/Math/Numbers/Complex.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Fields",
+	"standard/Math/Numbers/Complex",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           X3DBaseNode,

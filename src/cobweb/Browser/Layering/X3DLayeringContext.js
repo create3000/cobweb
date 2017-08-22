@@ -48,7 +48,7 @@
 
 
 define ([
-	"../../Components/Layering/Viewport.js",
+	"cobweb/Components/Layering/Viewport",
 ],
 function (Viewport)
 {

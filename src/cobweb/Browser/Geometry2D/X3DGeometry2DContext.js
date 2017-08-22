@@ -48,11 +48,11 @@
 
 
 define ([
-	"./Arc2DOptions.js",
-	"./ArcClose2DOptions.js",
-	"./Circle2DOptions.js",
-	"./Disk2DOptions.js",
-	"./Rectangle2DOptions.js",
+	"cobweb/Browser/Geometry2D/Arc2DOptions",
+	"cobweb/Browser/Geometry2D/ArcClose2DOptions",
+	"cobweb/Browser/Geometry2D/Circle2DOptions",
+	"cobweb/Browser/Geometry2D/Disk2DOptions",
+	"cobweb/Browser/Geometry2D/Rectangle2DOptions",
 ],
 function (Arc2DOptions,
           ArcClose2DOptions,

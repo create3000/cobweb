@@ -49,9 +49,9 @@
 
 define ([
 	"jquery",
-	"../Fields.js",
-	"../Base/X3DObject.js",
-	"../InputOutput/Generator.js",
+	"cobweb/Fields",
+	"cobweb/Base/X3DObject",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,

@@ -49,10 +49,10 @@
 
 define ([
 	"jquery",
-	"./X3DViewer.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../lib/gettext.js",
+	"cobweb/Browser/Navigation/X3DViewer",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"lib/gettext",
 	"jquery-mousewheel",
 ],
 function ($, X3DViewer, Vector3, Rotation4, _)

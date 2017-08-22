@@ -49,9 +49,9 @@
 
 define ([
 	"jquery",
-	"./X3DFollowerNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Components/Followers/X3DFollowerNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           X3DFollowerNode, 

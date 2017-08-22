@@ -49,10 +49,10 @@
 
 define ([
 	"jquery",
-	"../../Basic/X3DBaseNode.js",
-	"../../../lib/gettext.js",
-	"../../../lib/jquery-contextMenu/dist/jquery.contextMenu.js",
-	"../../../lib/jquery.fullscreen-min.js",
+	"cobweb/Basic/X3DBaseNode",
+	"lib/gettext",
+	"lib/jquery-contextMenu/dist/jquery.contextMenu",
+	"lib/jquery.fullscreen-min",
 ],
 function ($,
           X3DBaseNode,

@@ -49,11 +49,11 @@
 
 define ([
 	"jquery",
-	"../../Bits/X3DConstants.js",
-	"../../Browser/Geospatial/Geospatial.js",
-	"../../Bits/X3DCast.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Geospatial/Geospatial",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DConstants,

@@ -48,9 +48,9 @@
 
 
 define ([
-	"../Basic/X3DBaseNode.js",
-	"./X3DRenderObject.js",
-	"../Bits/TraverseType.js",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Rendering/X3DRenderObject",
+	"cobweb/Bits/TraverseType",
 ],
 function (X3DBaseNode,
           X3DRenderObject,

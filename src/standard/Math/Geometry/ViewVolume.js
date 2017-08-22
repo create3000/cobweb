@@ -49,12 +49,12 @@
 
 define ([
 	"jquery",
-	"./Line3.js",
-	"./Plane3.js",
-	"./Triangle3.js",
-	"../Numbers/Vector3.js",
-	"../Numbers/Vector4.js",
-	"../Numbers/Matrix4.js",
+	"standard/Math/Geometry/Line3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 {

@@ -48,8 +48,8 @@
 
 
 define ([
-	"../Fields.js",
-	"./X3DScene.js",
+	"cobweb/Fields",
+	"cobweb/Execution/X3DScene",
 ],
 function (Fields,
           X3DScene)

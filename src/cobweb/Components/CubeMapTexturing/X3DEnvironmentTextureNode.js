@@ -49,8 +49,8 @@
 
 define ([
 	"jquery",
-	"../Texturing/X3DTextureNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Texturing/X3DTextureNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DTextureNode, 

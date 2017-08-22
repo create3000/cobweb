@@ -49,7 +49,7 @@
 
 define ([
 	"jquery",
-	"../Basic/X3DBaseNode.js",
+	"cobweb/Basic/X3DBaseNode",
 ],
 function ($, X3DBaseNode)
 {

@@ -48,227 +48,227 @@
 
 
 define ([
-	"../Components/Networking/Anchor.js", // VRML
-	"../Components/Shape/Appearance.js", // VRML
-	"../Components/Geometry2D/Arc2D.js",
-	"../Components/Geometry2D/ArcClose2D.js",
-	"../Components/Sound/AudioClip.js",
-	"../Components/EnvironmentalEffects/Background.js", // VRML
-	//"../Components/RigidBodyPhysics/BallJoint.js",
-	"../Components/Navigation/Billboard.js", // VRML
-	"../Components/EventUtilities/BooleanFilter.js",
-	"../Components/EventUtilities/BooleanSequencer.js",
-	"../Components/EventUtilities/BooleanToggle.js",
-	"../Components/EventUtilities/BooleanTrigger.js",
-	"../Components/ParticleSystems/BoundedPhysicsModel.js",
-	"../Components/Geometry3D/Box.js", // VRML
-	"../Components/CADGeometry/CADAssembly.js",
-	"../Components/CADGeometry/CADFace.js",
-	"../Components/CADGeometry/CADLayer.js",
-	"../Components/CADGeometry/CADPart.js",
-	"../Components/Geometry2D/Circle2D.js",
-	"../Components/Rendering/ClipPlane.js",
-	//"../Components/RigidBodyPhysics/CollidableOffset.js",
-	//"../Components/RigidBodyPhysics/CollidableShape.js",
-	"../Components/Navigation/Collision.js", // VRML
-	//"../Components/RigidBodyPhysics/CollisionCollection.js",
-	//"../Components/RigidBodyPhysics/CollisionSensor.js",
-	//"../Components/RigidBodyPhysics/CollisionSpace.js",
-	"../Components/Rendering/Color.js", // VRML
-	"../Components/Followers/ColorChaser.js",
-	"../Components/Followers/ColorDamper.js",
-	"../Components/Interpolation/ColorInterpolator.js", // VRML
-	"../Components/Rendering/ColorRGBA.js",
-	"../Components/CubeMapTexturing/ComposedCubeMapTexture.js",
-	"../Components/Shaders/ComposedShader.js",
-	//"../Components/Texturing3D/ComposedTexture3D.js",
-	"../Components/Geometry3D/Cone.js", // VRML
-	"../Components/ParticleSystems/ConeEmitter.js",
-	//"../Components/RigidBodyPhysics/Contact.js",
-	//"../Components/NURBS/Contour2D.js",
-	//"../Components/NURBS/ContourPolyline2D.js",
-	"../Components/Rendering/Coordinate.js", // VRML
-	"../Components/Followers/CoordinateChaser.js",
-	"../Components/Followers/CoordinateDamper.js",
-	"../Components/NURBS/CoordinateDouble.js",
-	"../Components/Interpolation/CoordinateInterpolator.js", // VRML
-	"../Components/Interpolation/CoordinateInterpolator2D.js",
-	"../Components/Geometry3D/Cylinder.js", // VRML
-	"../Components/PointingDeviceSensor/CylinderSensor.js", // VRML
-	//"../Components/DIS/DISEntityManager.js",
-	//"../Components/DIS/DISEntityTypeMapping.js",
-	"../Components/Lighting/DirectionalLight.js", // VRML
-	"../Components/Geometry2D/Disk2D.js",
-	//"../Components/RigidBodyPhysics/DoubleAxisHingeJoint.js",
-	"../Components/Interpolation/EaseInEaseOut.js",
-	"../Components/Geometry3D/ElevationGrid.js", // VRML
-	//"../Components/DIS/EspduTransform.js",
-	"../Components/ParticleSystems/ExplosionEmitter.js",
-	"../Components/Geometry3D/Extrusion.js", // VRML
-	//"../Components/Shape/FillProperties.js",
-	"../Components/Shaders/FloatVertexAttribute.js",
-	"../Components/EnvironmentalEffects/Fog.js", // VRML
-	//"../Components/EnvironmentalEffects/FogCoordinate.js",
-	"../Components/Text/FontStyle.js", // VRML
-	"../Components/ParticleSystems/ForcePhysicsModel.js",
-	"../Components/CubeMapTexturing/GeneratedCubeMapTexture.js",
-	"../Components/Geospatial/GeoCoordinate.js",
-	"../Components/Geospatial/GeoElevationGrid.js",
-	"../Components/Geospatial/GeoLOD.js",
-	"../Components/Geospatial/GeoLocation.js",
-	"../Components/Geospatial/GeoMetadata.js",
-	"../Components/Geospatial/GeoOrigin.js",
-	"../Components/Geospatial/GeoPositionInterpolator.js",
-	"../Components/Geospatial/GeoProximitySensor.js",
-	"../Components/Geospatial/GeoTouchSensor.js",
-	"../Components/Geospatial/GeoTransform.js",
-	"../Components/Geospatial/GeoViewpoint.js",
-	"../Components/Grouping/Group.js", // VRML
-	//"../Components/H-Anim/HAnimDisplacer.js",
-	//"../Components/H-Anim/HAnimHumanoid.js",
-	//"../Components/H-Anim/HAnimJoint.js",
-	//"../Components/H-Anim/HAnimSegment.js",
-	//"../Components/H-Anim/HAnimSite.js",
-	"../Components/CubeMapTexturing/ImageCubeMapTexture.js",
-	"../Components/Texturing/ImageTexture.js", // VRML
-	//"../Components/Texturing3D/ImageTexture3D.js",
-	"../Components/Geometry3D/IndexedFaceSet.js", // VRML
-	"../Components/Rendering/IndexedLineSet.js", // VRML
-	"../Components/CADGeometry/IndexedQuadSet.js",
-	"../Components/Rendering/IndexedTriangleFanSet.js",
-	"../Components/Rendering/IndexedTriangleSet.js",
-	"../Components/Rendering/IndexedTriangleStripSet.js",
-	"../Components/Networking/Inline.js", // VRML
-	"../Components/EventUtilities/IntegerSequencer.js",
-	"../Components/EventUtilities/IntegerTrigger.js",
-	"../Components/KeyDeviceSensor/KeySensor.js",
-	"../Components/Navigation/LOD.js", // VRML
-	"../Components/Layering/Layer.js",
-	"../Components/Layering/LayerSet.js",
-	"../Components/Layout/Layout.js",
-	"../Components/Layout/LayoutGroup.js",
-	"../Components/Layout/LayoutLayer.js",
-	//"../Components/Picking/LinePickSensor.js",
-	"../Components/Shape/LineProperties.js",
-	"../Components/Rendering/LineSet.js",
-	"../Components/Networking/LoadSensor.js",
-	"../Components/EnvironmentalEffects/LocalFog.js",
-	"../Components/Shape/Material.js", // VRML
-	"../Components/Shaders/Matrix3VertexAttribute.js",
-	"../Components/Shaders/Matrix4VertexAttribute.js",
-	"../Components/Core/MetadataBoolean.js",
-	"../Components/Core/MetadataDouble.js",
-	"../Components/Core/MetadataFloat.js",
-	"../Components/Core/MetadataInteger.js",
-	"../Components/Core/MetadataSet.js",
-	"../Components/Core/MetadataString.js",
-	//"../Components/RigidBodyPhysics/MotorJoint.js",
-	"../Components/Texturing/MovieTexture.js", // VRML
-	//"../Components/Texturing/MultiTexture.js",
-	//"../Components/Texturing/MultiTextureCoordinate.js",
-	//"../Components/Texturing/MultiTextureTransform.js",
-	"../Components/Navigation/NavigationInfo.js", // VRML
-	"../Components/Rendering/Normal.js", // VRML
-	"../Components/Interpolation/NormalInterpolator.js", // VRML
-	//"../Components/NURBS/NurbsCurve.js",
-	//"../Components/NURBS/NurbsCurve2D.js",
-	//"../Components/NURBS/NurbsOrientationInterpolator.js",
-	//"../Components/NURBS/NurbsPatchSurface.js",
-	//"../Components/NURBS/NurbsPositionInterpolator.js",
-	//"../Components/NURBS/NurbsSet.js",
-	//"../Components/NURBS/NurbsSurfaceInterpolator.js",
-	//"../Components/NURBS/NurbsSweptSurface.js",
-	//"../Components/NURBS/NurbsSwungSurface.js",
-	//"../Components/NURBS/NurbsTextureCoordinate.js",
-	//"../Components/NURBS/NurbsTrimmedSurface.js",
-	"../Components/Followers/OrientationChaser.js",
-	"../Components/Followers/OrientationDamper.js",
-	"../Components/Interpolation/OrientationInterpolator.js", // VRML
-	"../Components/Navigation/OrthoViewpoint.js",
-	//"../Components/Shaders/PackagedShader.js",
-	"../Components/ParticleSystems/ParticleSystem.js",
-	//"../Components/Picking/PickableGroup.js",
-	"../Components/Texturing/PixelTexture.js", // VRML
-	//"../Components/Texturing3D/PixelTexture3D.js",
-	"../Components/PointingDeviceSensor/PlaneSensor.js", // VRML
-	"../Components/ParticleSystems/PointEmitter.js",
-	"../Components/Lighting/PointLight.js", // VRML
-	//"../Components/Picking/PointPickSensor.js",
-	"../Components/Rendering/PointSet.js", // VRML
-	"../Components/Geometry2D/Polyline2D.js",
-	"../Components/ParticleSystems/PolylineEmitter.js",
-	"../Components/Geometry2D/Polypoint2D.js",
-	"../Components/Followers/PositionChaser.js",
-	"../Components/Followers/PositionChaser2D.js",
-	"../Components/Followers/PositionDamper.js",
-	"../Components/Followers/PositionDamper2D.js",
-	"../Components/Interpolation/PositionInterpolator.js", // VRML
-	"../Components/Interpolation/PositionInterpolator2D.js",
-	//"../Components/Picking/PrimitivePickSensor.js",
-	//"../Components/Shaders/ProgramShader.js",
-	"../Components/EnvironmentalSensor/ProximitySensor.js", // VRML
-	"../Components/CADGeometry/QuadSet.js",
-	//"../Components/DIS/ReceiverPdu.js",
-	"../Components/Geometry2D/Rectangle2D.js",
-	//"../Components/RigidBodyPhysics/RigidBody.js",
-	//"../Components/RigidBodyPhysics/RigidBodyCollection.js",
-	"../Components/Followers/ScalarChaser.js",
-	"../Components/Followers/ScalarDamper.js",
-	"../Components/Interpolation/ScalarInterpolator.js", // VRML
-	"../Components/Layout/ScreenFontStyle.js",
-	"../Components/Layout/ScreenGroup.js",
-	"../Components/Scripting/Script.js", // VRML
-	"../Components/Shaders/ShaderPart.js",
-	//"../Components/Shaders/ShaderProgram.js",
-	"../Components/Shape/Shape.js", // VRML
-	//"../Components/DIS/SignalPdu.js",
-	//"../Components/RigidBodyPhysics/SingleAxisHingeJoint.js",
-	//"../Components/RigidBodyPhysics/SliderJoint.js",
-	"../Components/Sound/Sound.js", // VRML
-	"../Components/Geometry3D/Sphere.js", // VRML
-	"../Components/PointingDeviceSensor/SphereSensor.js", // VRML
-	"../Components/Interpolation/SplinePositionInterpolator.js",
-	"../Components/Interpolation/SplinePositionInterpolator2D.js",
-	"../Components/Interpolation/SplineScalarInterpolator.js",
-	"../Components/Lighting/SpotLight.js", // VRML
-	"../Components/Interpolation/SquadOrientationInterpolator.js",
-	"../Components/Grouping/StaticGroup.js",
-	//"../Components/KeyDeviceSensor/StringSensor.js",
-	"../Components/ParticleSystems/SurfaceEmitter.js",
-	"../Components/Grouping/Switch.js", // VRML
-	"../Components/Followers/TexCoordChaser2D.js",
-	"../Components/Followers/TexCoordDamper2D.js",
-	"../Components/Text/Text.js", // VRML
-	"../Components/EnvironmentalEffects/TextureBackground.js",
-	"../Components/Texturing/TextureCoordinate.js", // VRML
-	"../Components/Texturing3D/TextureCoordinate3D.js",
-	"../Components/Texturing3D/TextureCoordinate4D.js",
-	//"../Components/Texturing/TextureCoordinateGenerator.js",
-	"../Components/Texturing/TextureProperties.js",
-	"../Components/Texturing/TextureTransform.js", // VRML
-	"../Components/Texturing3D/TextureTransform3D.js",
-	"../Components/Texturing3D/TextureTransformMatrix3D.js",
-	"../Components/Time/TimeSensor.js", // VRML
-	"../Components/EventUtilities/TimeTrigger.js",
+	"cobweb/Components/Networking/Anchor", // VRML
+	"cobweb/Components/Shape/Appearance", // VRML
+	"cobweb/Components/Geometry2D/Arc2D",
+	"cobweb/Components/Geometry2D/ArcClose2D",
+	"cobweb/Components/Sound/AudioClip",
+	"cobweb/Components/EnvironmentalEffects/Background", // VRML
+	//"cobweb/Components/RigidBodyPhysics/BallJoint",
+	"cobweb/Components/Navigation/Billboard", // VRML
+	"cobweb/Components/EventUtilities/BooleanFilter",
+	"cobweb/Components/EventUtilities/BooleanSequencer",
+	"cobweb/Components/EventUtilities/BooleanToggle",
+	"cobweb/Components/EventUtilities/BooleanTrigger",
+	"cobweb/Components/ParticleSystems/BoundedPhysicsModel",
+	"cobweb/Components/Geometry3D/Box", // VRML
+	"cobweb/Components/CADGeometry/CADAssembly",
+	"cobweb/Components/CADGeometry/CADFace",
+	"cobweb/Components/CADGeometry/CADLayer",
+	"cobweb/Components/CADGeometry/CADPart",
+	"cobweb/Components/Geometry2D/Circle2D",
+	"cobweb/Components/Rendering/ClipPlane",
+	//"cobweb/Components/RigidBodyPhysics/CollidableOffset",
+	//"cobweb/Components/RigidBodyPhysics/CollidableShape",
+	"cobweb/Components/Navigation/Collision", // VRML
+	//"cobweb/Components/RigidBodyPhysics/CollisionCollection",
+	//"cobweb/Components/RigidBodyPhysics/CollisionSensor",
+	//"cobweb/Components/RigidBodyPhysics/CollisionSpace",
+	"cobweb/Components/Rendering/Color", // VRML
+	"cobweb/Components/Followers/ColorChaser",
+	"cobweb/Components/Followers/ColorDamper",
+	"cobweb/Components/Interpolation/ColorInterpolator", // VRML
+	"cobweb/Components/Rendering/ColorRGBA",
+	"cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture",
+	"cobweb/Components/Shaders/ComposedShader",
+	//"cobweb/Components/Texturing3D/ComposedTexture3D",
+	"cobweb/Components/Geometry3D/Cone", // VRML
+	"cobweb/Components/ParticleSystems/ConeEmitter",
+	//"cobweb/Components/RigidBodyPhysics/Contact",
+	//"cobweb/Components/NURBS/Contour2D",
+	//"cobweb/Components/NURBS/ContourPolyline2D",
+	"cobweb/Components/Rendering/Coordinate", // VRML
+	"cobweb/Components/Followers/CoordinateChaser",
+	"cobweb/Components/Followers/CoordinateDamper",
+	"cobweb/Components/NURBS/CoordinateDouble",
+	"cobweb/Components/Interpolation/CoordinateInterpolator", // VRML
+	"cobweb/Components/Interpolation/CoordinateInterpolator2D",
+	"cobweb/Components/Geometry3D/Cylinder", // VRML
+	"cobweb/Components/PointingDeviceSensor/CylinderSensor", // VRML
+	//"cobweb/Components/DIS/DISEntityManager",
+	//"cobweb/Components/DIS/DISEntityTypeMapping",
+	"cobweb/Components/Lighting/DirectionalLight", // VRML
+	"cobweb/Components/Geometry2D/Disk2D",
+	//"cobweb/Components/RigidBodyPhysics/DoubleAxisHingeJoint",
+	"cobweb/Components/Interpolation/EaseInEaseOut",
+	"cobweb/Components/Geometry3D/ElevationGrid", // VRML
+	//"cobweb/Components/DIS/EspduTransform",
+	"cobweb/Components/ParticleSystems/ExplosionEmitter",
+	"cobweb/Components/Geometry3D/Extrusion", // VRML
+	//"cobweb/Components/Shape/FillProperties",
+	"cobweb/Components/Shaders/FloatVertexAttribute",
+	"cobweb/Components/EnvironmentalEffects/Fog", // VRML
+	//"cobweb/Components/EnvironmentalEffects/FogCoordinate",
+	"cobweb/Components/Text/FontStyle", // VRML
+	"cobweb/Components/ParticleSystems/ForcePhysicsModel",
+	"cobweb/Components/CubeMapTexturing/GeneratedCubeMapTexture",
+	"cobweb/Components/Geospatial/GeoCoordinate",
+	"cobweb/Components/Geospatial/GeoElevationGrid",
+	"cobweb/Components/Geospatial/GeoLOD",
+	"cobweb/Components/Geospatial/GeoLocation",
+	"cobweb/Components/Geospatial/GeoMetadata",
+	"cobweb/Components/Geospatial/GeoOrigin",
+	"cobweb/Components/Geospatial/GeoPositionInterpolator",
+	"cobweb/Components/Geospatial/GeoProximitySensor",
+	"cobweb/Components/Geospatial/GeoTouchSensor",
+	"cobweb/Components/Geospatial/GeoTransform",
+	"cobweb/Components/Geospatial/GeoViewpoint",
+	"cobweb/Components/Grouping/Group", // VRML
+	//"cobweb/Components/H-Anim/HAnimDisplacer",
+	//"cobweb/Components/H-Anim/HAnimHumanoid",
+	//"cobweb/Components/H-Anim/HAnimJoint",
+	//"cobweb/Components/H-Anim/HAnimSegment",
+	//"cobweb/Components/H-Anim/HAnimSite",
+	"cobweb/Components/CubeMapTexturing/ImageCubeMapTexture",
+	"cobweb/Components/Texturing/ImageTexture", // VRML
+	//"cobweb/Components/Texturing3D/ImageTexture3D",
+	"cobweb/Components/Geometry3D/IndexedFaceSet", // VRML
+	"cobweb/Components/Rendering/IndexedLineSet", // VRML
+	"cobweb/Components/CADGeometry/IndexedQuadSet",
+	"cobweb/Components/Rendering/IndexedTriangleFanSet",
+	"cobweb/Components/Rendering/IndexedTriangleSet",
+	"cobweb/Components/Rendering/IndexedTriangleStripSet",
+	"cobweb/Components/Networking/Inline", // VRML
+	"cobweb/Components/EventUtilities/IntegerSequencer",
+	"cobweb/Components/EventUtilities/IntegerTrigger",
+	"cobweb/Components/KeyDeviceSensor/KeySensor",
+	"cobweb/Components/Navigation/LOD", // VRML
+	"cobweb/Components/Layering/Layer",
+	"cobweb/Components/Layering/LayerSet",
+	"cobweb/Components/Layout/Layout",
+	"cobweb/Components/Layout/LayoutGroup",
+	"cobweb/Components/Layout/LayoutLayer",
+	//"cobweb/Components/Picking/LinePickSensor",
+	"cobweb/Components/Shape/LineProperties",
+	"cobweb/Components/Rendering/LineSet",
+	"cobweb/Components/Networking/LoadSensor",
+	"cobweb/Components/EnvironmentalEffects/LocalFog",
+	"cobweb/Components/Shape/Material", // VRML
+	"cobweb/Components/Shaders/Matrix3VertexAttribute",
+	"cobweb/Components/Shaders/Matrix4VertexAttribute",
+	"cobweb/Components/Core/MetadataBoolean",
+	"cobweb/Components/Core/MetadataDouble",
+	"cobweb/Components/Core/MetadataFloat",
+	"cobweb/Components/Core/MetadataInteger",
+	"cobweb/Components/Core/MetadataSet",
+	"cobweb/Components/Core/MetadataString",
+	//"cobweb/Components/RigidBodyPhysics/MotorJoint",
+	"cobweb/Components/Texturing/MovieTexture", // VRML
+	//"cobweb/Components/Texturing/MultiTexture",
+	//"cobweb/Components/Texturing/MultiTextureCoordinate",
+	//"cobweb/Components/Texturing/MultiTextureTransform",
+	"cobweb/Components/Navigation/NavigationInfo", // VRML
+	"cobweb/Components/Rendering/Normal", // VRML
+	"cobweb/Components/Interpolation/NormalInterpolator", // VRML
+	//"cobweb/Components/NURBS/NurbsCurve",
+	//"cobweb/Components/NURBS/NurbsCurve2D",
+	//"cobweb/Components/NURBS/NurbsOrientationInterpolator",
+	//"cobweb/Components/NURBS/NurbsPatchSurface",
+	//"cobweb/Components/NURBS/NurbsPositionInterpolator",
+	//"cobweb/Components/NURBS/NurbsSet",
+	//"cobweb/Components/NURBS/NurbsSurfaceInterpolator",
+	//"cobweb/Components/NURBS/NurbsSweptSurface",
+	//"cobweb/Components/NURBS/NurbsSwungSurface",
+	//"cobweb/Components/NURBS/NurbsTextureCoordinate",
+	//"cobweb/Components/NURBS/NurbsTrimmedSurface",
+	"cobweb/Components/Followers/OrientationChaser",
+	"cobweb/Components/Followers/OrientationDamper",
+	"cobweb/Components/Interpolation/OrientationInterpolator", // VRML
+	"cobweb/Components/Navigation/OrthoViewpoint",
+	//"cobweb/Components/Shaders/PackagedShader",
+	"cobweb/Components/ParticleSystems/ParticleSystem",
+	//"cobweb/Components/Picking/PickableGroup",
+	"cobweb/Components/Texturing/PixelTexture", // VRML
+	//"cobweb/Components/Texturing3D/PixelTexture3D",
+	"cobweb/Components/PointingDeviceSensor/PlaneSensor", // VRML
+	"cobweb/Components/ParticleSystems/PointEmitter",
+	"cobweb/Components/Lighting/PointLight", // VRML
+	//"cobweb/Components/Picking/PointPickSensor",
+	"cobweb/Components/Rendering/PointSet", // VRML
+	"cobweb/Components/Geometry2D/Polyline2D",
+	"cobweb/Components/ParticleSystems/PolylineEmitter",
+	"cobweb/Components/Geometry2D/Polypoint2D",
+	"cobweb/Components/Followers/PositionChaser",
+	"cobweb/Components/Followers/PositionChaser2D",
+	"cobweb/Components/Followers/PositionDamper",
+	"cobweb/Components/Followers/PositionDamper2D",
+	"cobweb/Components/Interpolation/PositionInterpolator", // VRML
+	"cobweb/Components/Interpolation/PositionInterpolator2D",
+	//"cobweb/Components/Picking/PrimitivePickSensor",
+	//"cobweb/Components/Shaders/ProgramShader",
+	"cobweb/Components/EnvironmentalSensor/ProximitySensor", // VRML
+	"cobweb/Components/CADGeometry/QuadSet",
+	//"cobweb/Components/DIS/ReceiverPdu",
+	"cobweb/Components/Geometry2D/Rectangle2D",
+	//"cobweb/Components/RigidBodyPhysics/RigidBody",
+	//"cobweb/Components/RigidBodyPhysics/RigidBodyCollection",
+	"cobweb/Components/Followers/ScalarChaser",
+	"cobweb/Components/Followers/ScalarDamper",
+	"cobweb/Components/Interpolation/ScalarInterpolator", // VRML
+	"cobweb/Components/Layout/ScreenFontStyle",
+	"cobweb/Components/Layout/ScreenGroup",
+	"cobweb/Components/Scripting/Script", // VRML
+	"cobweb/Components/Shaders/ShaderPart",
+	//"cobweb/Components/Shaders/ShaderProgram",
+	"cobweb/Components/Shape/Shape", // VRML
+	//"cobweb/Components/DIS/SignalPdu",
+	//"cobweb/Components/RigidBodyPhysics/SingleAxisHingeJoint",
+	//"cobweb/Components/RigidBodyPhysics/SliderJoint",
+	"cobweb/Components/Sound/Sound", // VRML
+	"cobweb/Components/Geometry3D/Sphere", // VRML
+	"cobweb/Components/PointingDeviceSensor/SphereSensor", // VRML
+	"cobweb/Components/Interpolation/SplinePositionInterpolator",
+	"cobweb/Components/Interpolation/SplinePositionInterpolator2D",
+	"cobweb/Components/Interpolation/SplineScalarInterpolator",
+	"cobweb/Components/Lighting/SpotLight", // VRML
+	"cobweb/Components/Interpolation/SquadOrientationInterpolator",
+	"cobweb/Components/Grouping/StaticGroup",
+	//"cobweb/Components/KeyDeviceSensor/StringSensor",
+	"cobweb/Components/ParticleSystems/SurfaceEmitter",
+	"cobweb/Components/Grouping/Switch", // VRML
+	"cobweb/Components/Followers/TexCoordChaser2D",
+	"cobweb/Components/Followers/TexCoordDamper2D",
+	"cobweb/Components/Text/Text", // VRML
+	"cobweb/Components/EnvironmentalEffects/TextureBackground",
+	"cobweb/Components/Texturing/TextureCoordinate", // VRML
+	"cobweb/Components/Texturing3D/TextureCoordinate3D",
+	"cobweb/Components/Texturing3D/TextureCoordinate4D",
+	//"cobweb/Components/Texturing/TextureCoordinateGenerator",
+	"cobweb/Components/Texturing/TextureProperties",
+	"cobweb/Components/Texturing/TextureTransform", // VRML
+	"cobweb/Components/Texturing3D/TextureTransform3D",
+	"cobweb/Components/Texturing3D/TextureTransformMatrix3D",
+	"cobweb/Components/Time/TimeSensor", // VRML
+	"cobweb/Components/EventUtilities/TimeTrigger",
 	//"cobweb/Components/Titania/TouchGroup",
-	"../Components/PointingDeviceSensor/TouchSensor.js", // VRML
-	"../Components/Grouping/Transform.js", // VRML
-	"../Components/EnvironmentalSensor/TransformSensor.js",
-	//"../Components/DIS/TransmitterPdu.js",
-	"../Components/Rendering/TriangleFanSet.js",
-	"../Components/Rendering/TriangleSet.js",
-	"../Components/Geometry2D/TriangleSet2D.js",
-	"../Components/Rendering/TriangleStripSet.js",
-	"../Components/Shape/TwoSidedMaterial.js",
-	//"../Components/RigidBodyPhysics/UniversalJoint.js",
-	"../Components/Navigation/Viewpoint.js", // VRML
-	"../Components/Navigation/ViewpointGroup.js",
-	"../Components/Layering/Viewport.js",
-	"../Components/EnvironmentalSensor/VisibilitySensor.js", // VRML
-	"../Components/ParticleSystems/VolumeEmitter.js",
-	//"../Components/Picking/VolumePickSensor.js",
-	"../Components/ParticleSystems/WindPhysicsModel.js",
-	"../Components/Core/WorldInfo.js", // VRML
+	"cobweb/Components/PointingDeviceSensor/TouchSensor", // VRML
+	"cobweb/Components/Grouping/Transform", // VRML
+	"cobweb/Components/EnvironmentalSensor/TransformSensor",
+	//"cobweb/Components/DIS/TransmitterPdu",
+	"cobweb/Components/Rendering/TriangleFanSet",
+	"cobweb/Components/Rendering/TriangleSet",
+	"cobweb/Components/Geometry2D/TriangleSet2D",
+	"cobweb/Components/Rendering/TriangleStripSet",
+	"cobweb/Components/Shape/TwoSidedMaterial",
+	//"cobweb/Components/RigidBodyPhysics/UniversalJoint",
+	"cobweb/Components/Navigation/Viewpoint", // VRML
+	"cobweb/Components/Navigation/ViewpointGroup",
+	"cobweb/Components/Layering/Viewport",
+	"cobweb/Components/EnvironmentalSensor/VisibilitySensor", // VRML
+	"cobweb/Components/ParticleSystems/VolumeEmitter",
+	//"cobweb/Components/Picking/VolumePickSensor",
+	"cobweb/Components/ParticleSystems/WindPhysicsModel",
+	"cobweb/Components/Core/WorldInfo", // VRML
 ],
 function (Anchor,
           Appearance,

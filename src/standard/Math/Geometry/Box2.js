@@ -48,8 +48,8 @@
 
 
 define ([
-	"../Numbers/Matrix3.js",
-	"../Numbers/Vector2.js",
+	"standard/Math/Numbers/Matrix3",
+	"standard/Math/Numbers/Vector2",
 ],
 function (Matrix3, Vector2)
 {

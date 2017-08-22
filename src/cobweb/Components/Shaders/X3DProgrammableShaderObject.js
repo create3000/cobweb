@@ -49,10 +49,10 @@
 
 define ([
 	"jquery",
-	"../../Fields.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Matrix3.js",
+	"cobweb/Fields",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,

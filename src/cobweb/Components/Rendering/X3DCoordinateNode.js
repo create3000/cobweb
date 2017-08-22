@@ -49,10 +49,10 @@
 
 define ([
 	"jquery",
-	"./X3DGeometricPropertyNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Triangle3.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Components/Rendering/X3DGeometricPropertyNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           X3DGeometricPropertyNode, 

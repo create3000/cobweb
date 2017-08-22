@@ -49,7 +49,7 @@
 
 define ([
 	"jquery",
-	"../Basic/X3DField.js",
+	"cobweb/Basic/X3DField",
 ],
 function ($, X3DField)
 {

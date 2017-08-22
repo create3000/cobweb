@@ -48,9 +48,9 @@
 
 
 define ([
-	"../../Components/Texturing/TextureProperties.js",
-	"../../Components/Texturing/TextureTransform.js",
-	"../../Components/Texturing/TextureCoordinate.js",
+	"cobweb/Components/Texturing/TextureProperties",
+	"cobweb/Components/Texturing/TextureTransform",
+	"cobweb/Components/Texturing/TextureCoordinate",
 ],
 function (TextureProperties,
           TextureTransform,

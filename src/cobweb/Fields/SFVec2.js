@@ -49,10 +49,10 @@
 
 define ([
 	"jquery",
-	"../Basic/X3DField.js",
-	"./SFVecPrototypeTemplate.js",
-	"../Bits/X3DConstants.js",
-	"../../standard/Math/Numbers/Vector2.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFVecPrototypeTemplate",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
 ],
 function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector2)
 {

@@ -48,12 +48,12 @@
 
 
 define ([
-	"../../Fields.js",
-	"../../Basic/X3DBaseNode.js",
-	"../../Components/Geometry3D/IndexedFaceSet.js",
-	"../../Components/Rendering/Coordinate.js",
-	"../../Components/Texturing/TextureCoordinate.js",
-	"./IcoSphere.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Components/Geometry3D/IndexedFaceSet",
+	"cobweb/Components/Rendering/Coordinate",
+	"cobweb/Components/Texturing/TextureCoordinate",
+	"cobweb/Browser/Geometry3D/IcoSphere",
 ],
 function (Fields,
           X3DBaseNode,

@@ -49,8 +49,8 @@
 
 define ([
 	"jquery",
-	"../../../standard/Math/Numbers/Vector4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Vector4,

@@ -49,9 +49,9 @@
 
 define ([
 	"jquery",
-	"../../Fields/SFBool.js",
-	"../../Basic/X3DBaseNode.js",
-	"../../../lib/gettext.js",
+	"cobweb/Fields/SFBool",
+	"cobweb/Basic/X3DBaseNode",
+	"lib/gettext",
 ],
 function ($,
           SFBool,

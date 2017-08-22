@@ -48,7 +48,7 @@
 
 
 define ([
-	"../Math/Geometry/Spheroid3.js",
+	"standard/Math/Geometry/Spheroid3",
 ],
 function (Spheroid3)
 {

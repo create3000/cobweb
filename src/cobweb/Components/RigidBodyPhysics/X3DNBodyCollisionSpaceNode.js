@@ -49,9 +49,9 @@
 
 define ([
 	"jquery",
-	"../Core/X3DNode.js",
-	"../Grouping/X3DBoundedObject.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DNode, 

@@ -49,11 +49,11 @@
 
 define ([
 	"jquery",
-	"./X3DViewer.js",
-	"../../Components/Navigation/Viewpoint.js",
-	"../../Components/Geospatial/GeoViewpoint.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../lib/gettext.js",
+	"cobweb/Browser/Navigation/X3DViewer",
+	"cobweb/Components/Navigation/Viewpoint",
+	"cobweb/Components/Geospatial/GeoViewpoint",
+	"standard/Math/Numbers/Vector3",
+	"lib/gettext",
 	"jquery-mousewheel",
 ],
 function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)

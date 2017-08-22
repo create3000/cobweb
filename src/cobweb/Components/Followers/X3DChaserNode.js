@@ -49,8 +49,8 @@
 
 define ([
 	"jquery",
-	"./X3DFollowerNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Followers/X3DFollowerNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DFollowerNode, 

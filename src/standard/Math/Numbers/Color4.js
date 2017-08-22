@@ -49,8 +49,8 @@
 
 define ([
 	"jquery",
-	"./Color3.js",
-	"../Algorithm.js",
+	"standard/Math/Numbers/Color3",
+	"standard/Math/Algorithm",
 ],
 function ($, Color3, Algorithm)
 {

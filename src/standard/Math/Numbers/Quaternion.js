@@ -49,8 +49,8 @@
 
 define ([
 	"jquery",
-	"./Vector3.js",
-	"../Algorithm.js",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function ($, Vector3, Algorithm)
 {

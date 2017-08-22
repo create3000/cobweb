@@ -50,11 +50,11 @@
 
 define ([
 	"jquery",
-	"../Basic/X3DField.js",
-	"./SFMatrixPrototypeTemplate.js",
-	"./SFVec2.js",
-	"../Bits/X3DConstants.js",
-	"../../standard/Math/Numbers/Matrix3.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFMatrixPrototypeTemplate",
+	"cobweb/Fields/SFVec2",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix3",
 ],
 function ($, X3DField, SFMatrixPrototypeTemplate, SFVec2, X3DConstants, Matrix3)
 {

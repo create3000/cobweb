@@ -48,7 +48,7 @@
 
 
 define ([
-	"../Numbers/Vector3.js",
+	"standard/Math/Numbers/Vector3",
 ],
 function (Vector3)
 {

@@ -48,10 +48,10 @@
 
 
 define ([
-	"./BoxOptions.js",
-	"./ConeOptions.js",
-	"./CylinderOptions.js",
-	"./QuadSphereOptions.js",
+	"cobweb/Browser/Geometry3D/BoxOptions",
+	"cobweb/Browser/Geometry3D/ConeOptions",
+	"cobweb/Browser/Geometry3D/CylinderOptions",
+	"cobweb/Browser/Geometry3D/QuadSphereOptions",
 ],
 function (BoxOptions,
           ConeOptions,

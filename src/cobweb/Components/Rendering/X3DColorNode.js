@@ -49,8 +49,8 @@
 
 define ([
 	"jquery",
-	"./X3DGeometricPropertyNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Rendering/X3DGeometricPropertyNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DGeometricPropertyNode, 

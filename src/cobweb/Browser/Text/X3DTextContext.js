@@ -48,8 +48,8 @@
 
 
 define ([
-	"../../Components/Text/FontStyle.js",
-	"../../../lib/opentype.js/dist/opentype.js",
+	"cobweb/Components/Text/FontStyle",
+	"lib/opentype.js/dist/opentype",
 ],
 function (FontStyle,
           opentype)

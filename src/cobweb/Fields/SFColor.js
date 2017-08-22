@@ -49,9 +49,9 @@
 
 define ([
 	"jquery",
-	"../../standard/Math/Numbers/Color3.js",
-	"../Basic/X3DField.js",
-	"../Bits/X3DConstants.js",
+	"standard/Math/Numbers/Color3",
+	"cobweb/Basic/X3DField",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($, Color3, X3DField, X3DConstants)
 {

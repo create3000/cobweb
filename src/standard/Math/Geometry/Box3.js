@@ -48,10 +48,10 @@
 
 
 define ([
-	"./Triangle3.js",
-	"../Numbers/Matrix4.js",
-	"../Numbers/Vector3.js",
-	"../Algorithms/SAT.js",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithms/SAT",
 ],
 function (Triangle3,
           Matrix4,
