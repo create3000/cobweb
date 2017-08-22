@@ -23,7 +23,6 @@
     <None Include="cobweb.js.mdproj" />
     <None Include="cobweb.min.html" />
     <None Include="Makefile" />
-    <None Include="package.json" />
     <None Include="spinner.css" />
     <None Include="cobweb\Base\Events.js" />
     <None Include="cobweb\Base\X3DChildObject.js" />
@@ -1016,6 +1015,7 @@
     <None Include="build\dist.pl" />
     <None Include="build\version.pl" />
     <None Include="license.txt" />
+    <None Include="require.config.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\" />

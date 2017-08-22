@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./X3DPointingDeviceSensorNode.js",
-[
+define ([
 	"jquery",
 	"../Core/X3DSensorNode.js",
 	"../../Browser/PointingDeviceSensor/PointingDeviceSensorContainer.js",

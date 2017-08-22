@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./X3DArrayFollowerTemplate.js",
-function ()
+define (function ()
 {
 "use strict";
 

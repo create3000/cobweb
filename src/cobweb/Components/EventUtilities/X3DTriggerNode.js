@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./X3DTriggerNode.js",
-[
+define ([
 	"jquery",
 	"../Core/X3DChildNode.js",
 	"../../Bits/X3DConstants.js",

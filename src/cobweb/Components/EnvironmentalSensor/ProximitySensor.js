@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./ProximitySensor.js",
-[
+define ([
 	"jquery",
 	"../../Fields.js",
 	"../../Basic/X3DFieldDefinition.js",

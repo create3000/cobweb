@@ -136,7 +136,7 @@ function ($,
 			this .canvas = $("<canvas></canvas>");
 
 			this .video = $("<video></video>");
-			this .video .error (this .setError .bind (this));
+			this .video .on ("error", this .setError .bind (this));
 			this .video .bind ("abort", this .setError .bind (this));
 
 			this .video [0] .preload     = "auto";

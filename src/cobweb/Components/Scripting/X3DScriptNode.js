@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./X3DScriptNode.js",
-[
+define ([
 	"jquery",
 	"../Core/X3DChildNode.js",
 	"../Networking/X3DUrlObject.js",

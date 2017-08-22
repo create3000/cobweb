@@ -49,8 +49,7 @@
 
 // https://github.com/r3mi/poly2tri.js
 
-define ("./IndexedFaceSet.js",
-[
+define ([
 	"jquery",
 	"../../Fields.js",
 	"../../Basic/X3DFieldDefinition.js",

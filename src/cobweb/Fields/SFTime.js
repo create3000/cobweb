@@ -47,7 +47,7 @@
  ******************************************************************************/
 
 
-define ("./SFTime.js", [
+define ([
 	"jquery",
 	"../Basic/X3DField.js",
 	"../Bits/X3DConstants.js",

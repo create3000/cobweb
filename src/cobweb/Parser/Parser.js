@@ -47,7 +47,7 @@
  ******************************************************************************/
 
 
-define ("./Parser.js", [
+define ([
 	"jquery",
 	"../Fields.js",
 	"../Prototype/X3DExternProtoDeclaration.js",

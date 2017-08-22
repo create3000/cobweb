@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./X3DArrayChaserTemplate.js",
-[
+define ([
 	"jquery",
 	"./X3DArrayFollowerTemplate.js",
 ],

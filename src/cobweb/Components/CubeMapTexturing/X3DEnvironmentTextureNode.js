@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./X3DEnvironmentTextureNode.js",
-[
+define ([
 	"jquery",
 	"../Texturing/X3DTextureNode.js",
 	"../../Bits/X3DConstants.js",

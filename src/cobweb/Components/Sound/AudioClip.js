@@ -124,7 +124,7 @@ function ($,
 			this .url_ .addInterest ("set_url__", this);
 
 			this .audio = $("<audio></audio>");
-			this .audio .error (this .setError .bind (this));
+			this .audio .on ("error", this .setError .bind (this));
 			this .audio .bind ("abort", this .setError .bind (this));
 
 			this .audio [0] .preload     = "auto";

@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./X3DProductStructureChildNode.js",
-[
+define ([
 	"jquery",
 	"../Core/X3DChildNode.js",
 	"../../Bits/X3DConstants.js",

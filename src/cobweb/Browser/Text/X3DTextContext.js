@@ -49,7 +49,7 @@
 
 define ([
 	"../../Components/Text/FontStyle.js",
-	"lib/opentype.js/dist/opentype.js",
+	"../../../lib/opentype.js/dist/opentype.js",
 ],
 function (FontStyle,
           opentype)

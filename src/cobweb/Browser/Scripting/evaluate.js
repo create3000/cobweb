@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./evaluate.js",
-function ()
+define (function ()
 {
 	return function (/* __global__, __text__ */)
 	{

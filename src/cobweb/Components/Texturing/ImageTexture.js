@@ -117,8 +117,8 @@ function ($,
 			this .canvas = $("<canvas></canvas>");
 
 			this .image = $("<img></img>");
-			this .image .load (this .setImage .bind (this));
-			this .image .error (this .setError .bind (this));
+			this .image .on ("load", this .setImage .bind (this));
+			this .image .on ("error", this .setError .bind (this));
 			this .image .bind ("abort", this .setError .bind (this));
 
 			this .image [0] .crossOrigin = "Anonymous";

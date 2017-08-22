@@ -47,7 +47,7 @@
  ******************************************************************************/
 
 
-define ("./SFVecPrototypeTemplate.js", [
+define ([
 	"jquery",
 	"../Basic/X3DField.js",
 ],

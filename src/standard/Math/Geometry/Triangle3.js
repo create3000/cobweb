@@ -50,7 +50,7 @@
 define ([
 	"../Numbers/Vector3.js",
 	"../Numbers/Matrix4.js",
-	"lib/poly2tri.js/dist/poly2tri.js",
+	"../../../lib/poly2tri.js/dist/poly2tri.js",
 ],
 function (Vector3,
           Matrix4,

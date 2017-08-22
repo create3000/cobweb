@@ -46,7 +46,6 @@
  *
  ******************************************************************************/
 
-
 (function ()
 {
 "use strict";
@@ -59,6 +58,8 @@
 
 	function fallback (error)
 	{
+		console .log (error);
+
 		require (["./cobweb/Error.js"],
 		function (Error)
 		{
@@ -68,6 +69,12 @@
 		});
 	}
 
+	X3D .require = require;
+	X3D .define  = define;
+
+	// Now assign temporary X3D.
+	window .X3D = X3D;
+
 	if (window .Proxy === undefined)
 		return fallback ("Proxy is not defined");
 
@@ -75,17 +82,14 @@
 		callbacks = [ ],
 		fallbacks = [ ];
 
-	X3D .require = require;
-	X3D .define  = define;
-
-	window .X3D = X3D; // Now assign temporary X3D.
-
 	require (["./cobweb/X3D.js"],
 	function (X3D)
 	{
-		window .X3D = X3D; // Now assign real X3D.
+		// Now assign real X3D.
+		window .X3D = X3D;
 
-		X3D (); // Initialize all X3D tags
+		// Initialize all X3DCanvas tags.
+		X3D (); 
 
 		for (var i = 0; i < callbacks .length; ++ i)
 		   X3D (callbacks [i], fallbacks [i]);

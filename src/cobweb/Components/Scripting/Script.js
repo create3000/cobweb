@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./Script.js",
-[
+define ([
 	"jquery",
 	"../../Basic/X3DFieldDefinition.js",
 	"../../Basic/FieldDefinitionArray.js",

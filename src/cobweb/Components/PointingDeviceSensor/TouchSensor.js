@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./TouchSensor.js",
-[
+define ([
 	"jquery",
 	"../../Fields.js",
 	"../../Basic/X3DFieldDefinition.js",

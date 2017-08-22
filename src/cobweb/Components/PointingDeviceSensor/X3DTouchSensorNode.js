@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./X3DTouchSensorNode.js",
-[
+define ([
 	"jquery",
 	"./X3DPointingDeviceSensorNode.js",
 	"../../Bits/X3DConstants.js",

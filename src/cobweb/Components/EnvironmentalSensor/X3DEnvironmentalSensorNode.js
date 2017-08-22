@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./X3DEnvironmentalSensorNode.js",
-[
+define ([
 	"jquery",
 	"../../Fields.js",
 	"../Core/X3DSensorNode.js",

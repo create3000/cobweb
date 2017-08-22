@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./Polyline2D.js",
-[
+define ([
 	"jquery",
 	"../../Fields.js",
 	"../../Basic/X3DFieldDefinition.js",

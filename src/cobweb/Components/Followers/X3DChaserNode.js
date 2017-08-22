@@ -47,8 +47,7 @@
  ******************************************************************************/
 
 
-define ("./X3DChaserNode.js",
-[
+define ([
 	"jquery",
 	"./X3DFollowerNode.js",
 	"../../Bits/X3DConstants.js",
