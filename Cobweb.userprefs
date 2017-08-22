@@ -1,13 +1,14 @@
 ﻿<Properties StartupItem="meta/meta.mdproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Default" />
-  <MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench ActiveDocument="Cobweb.sln">
     <Files>
       <File FileName="package.json" Line="45" Column="29" />
-      <File FileName="src/cobweb.html" Line="10" Column="48" />
+      <File FileName="src/cobweb.html" Line="1" Column="1" />
       <File FileName="src/cobweb.js" Line="1" Column="1" />
       <File FileName="src/cobweb/X3D.js" Line="1" Column="1" />
-      <File FileName="require.build.js" Line="12" Column="1" />
-      <File FileName="require.build.min.js" Line="9" Column="36" />
+      <File FileName="require.build.js" Line="1" Column="1" />
+      <File FileName="require.build.min.js" Line="1" Column="1" />
+      <File FileName="Cobweb.sln" Line="18" Column="16" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

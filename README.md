@@ -1,4 +1,4 @@
-[Cobweb](http://create3000.de/cobweb/) — Cobweb WebGL X3D Browser
+[Cobweb](https://github.com/create3000/excite) — Cobweb is now Exite X3D
 ==================================================
 
 
@@ -7,7 +7,7 @@ Introduction
 
 Cobweb is a work in progress. The goal is a full standard WebGL X3D browser for all major web browsers.
 
-For more information and live preview please visit [http://create3000.de/cobweb/](http://create3000.de/cobweb/).
+For more information and live preview please visit [https://github.com/create3000/excite](https://github.com/create3000/excite).
 
 
 Links
