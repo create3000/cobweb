@@ -18,7 +18,6 @@
     <None Include="cobweb.css" />
     <None Include="cobweb.html" />
     <None Include="cobweb.js" />
-    <None Include="cobweb.min.html" />
     <None Include="Makefile" />
     <None Include="spinner.css" />
     <None Include="cobweb\Base\Events.js" />
@@ -948,7 +947,6 @@
     <None Include="lib\sprintf.js\src\sprintf.js" />
     <None Include="lib\sprintf.js\test\test.js" />
     <None Include="locale\de.mo" />
-    <None Include="locale\de.po" />
     <None Include="locale\fr.mo" />
     <None Include="locale\fr.po" />
     <None Include="standard\Geospatial\Geodetic.js" />
@@ -990,6 +988,7 @@
     <None Include="build\version.pl" />
     <None Include="license.txt" />
     <None Include="require.config.js" />
+    <None Include="locale\de.po" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="cobweb\" />

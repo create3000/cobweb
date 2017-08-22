@@ -48,8 +48,8 @@
 
 
 define ([
-	"text!../locale/de.po",
-	"text!../locale/fr.po",
+	"text!locale/de.po",
+	"text!locale/fr.po",
 ],
 function (de, fr)
 {

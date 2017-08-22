@@ -12451,7 +12451,7 @@ define("jquery/dist/jquery", function(){});
  ******************************************************************************/
 
 
-define ('cobweb/Error.js',[
+define ('cobweb/Error',[
 	"jquery",
 ],
 function ($)
@@ -12542,7 +12542,7 @@ function ($)
  ******************************************************************************/
 
 
-define ('cobweb/Basic/X3DFieldDefinition.js',[],function ()
+define ('cobweb/Basic/X3DFieldDefinition',[],function ()
 {
 "use strict";
 
@@ -12612,7 +12612,7 @@ define ('cobweb/Basic/X3DFieldDefinition.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Basic/FieldDefinitionArray.js',[
+define ('cobweb/Basic/FieldDefinitionArray',[
 	"jquery",
 ],
 function ($)
@@ -12722,7 +12722,7 @@ function ($)
  ******************************************************************************/
 
 
-define ('cobweb/Base/X3DObject.js',[
+define ('cobweb/Base/X3DObject',[
 ],
 function ()
 {
@@ -12863,9 +12863,9 @@ function ()
  ******************************************************************************/
 
 
-define ('cobweb/Base/X3DChildObject.js',[
+define ('cobweb/Base/X3DChildObject',[
 	"jquery",
-	"./X3DObject.js",
+	"cobweb/Base/X3DObject",
 ],
 function ($, X3DObject)
 {
@@ -12972,7 +12972,7 @@ function ($, X3DObject)
  ******************************************************************************/
 
 
-define ('cobweb/Bits/X3DConstants.js',[],function ()
+define ('cobweb/Bits/X3DConstants',[],function ()
 {
 "use strict";
 
@@ -13405,7 +13405,7 @@ define ('cobweb/Bits/X3DConstants.js',[],function ()
  ******************************************************************************/
 
 ﻿
-define ('cobweb/Base/Events.js',[
+define ('cobweb/Base/Events',[
 	"jquery",
 ],
 function ($)
@@ -13523,11 +13523,11 @@ function ($)
  ******************************************************************************/
 
 
-define ('cobweb/Basic/X3DField.js',[
+define ('cobweb/Basic/X3DField',[
 	"jquery",
-	"../Base/X3DChildObject.js",
-	"../Bits/X3DConstants.js",
-	"../Base/Events.js",
+	"cobweb/Base/X3DChildObject",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Base/Events",
 ],
 function ($,
 	       X3DChildObject,
@@ -13845,9 +13845,9 @@ function ($,
 
 
 
-define ('cobweb/InputOutput/Generator.js',[
+define ('cobweb/InputOutput/Generator',[
 	"jquery",
-	"../Bits/X3DConstants.js",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DConstants)
@@ -14182,11 +14182,11 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Basic/X3DArrayField.js',[
+define ('cobweb/Basic/X3DArrayField',[
 	"jquery",
-	"./X3DField.js",
-	"../Bits/X3DConstants.js",
-	"../InputOutput/Generator.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           X3DField,
@@ -14653,10 +14653,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFBool.js',[
+define ('cobweb/Fields/SFBool',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"../Bits/X3DConstants.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($, X3DField, X3DConstants)
 {
@@ -14760,7 +14760,7 @@ function ($, X3DField, X3DConstants)
 
 
 
-define ('standard/Math/Algorithm.js',[],function ()
+define ('standard/Math/Algorithm',[],function ()
 {
 "use strict";
 
@@ -15017,9 +15017,9 @@ define ('standard/Math/Algorithm.js',[],function ()
  ******************************************************************************/
 
 
-define ('standard/Math/Numbers/Color3.js',[
+define ('standard/Math/Numbers/Color3',[
 	"jquery",
-	"../Algorithm.js",
+	"standard/Math/Algorithm",
 ],
 function ($, Algorithm)
 {
@@ -15272,11 +15272,11 @@ function ($, Algorithm)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFColor.js',[
+define ('cobweb/Fields/SFColor',[
 	"jquery",
-	"../../standard/Math/Numbers/Color3.js",
-	"../Basic/X3DField.js",
-	"../Bits/X3DConstants.js",
+	"standard/Math/Numbers/Color3",
+	"cobweb/Basic/X3DField",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($, Color3, X3DField, X3DConstants)
 {
@@ -15455,10 +15455,10 @@ function ($, Color3, X3DField, X3DConstants)
  ******************************************************************************/
 
 
-define ('standard/Math/Numbers/Color4.js',[
+define ('standard/Math/Numbers/Color4',[
 	"jquery",
-	"./Color3.js",
-	"../Algorithm.js",
+	"standard/Math/Numbers/Color3",
+	"standard/Math/Algorithm",
 ],
 function ($, Color3, Algorithm)
 {
@@ -15643,12 +15643,12 @@ function ($, Color3, Algorithm)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFColorRGBA.js',[
+define ('cobweb/Fields/SFColorRGBA',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"./SFColor.js",
-	"../Bits/X3DConstants.js",
-	"../../standard/Math/Numbers/Color4.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFColor",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color4",
 ],
 function ($, X3DField, SFColor, X3DConstants, Color4)
 {
@@ -15833,10 +15833,10 @@ function ($, X3DField, SFColor, X3DConstants, Color4)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFDouble.js',[
+define ('cobweb/Fields/SFDouble',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"../Bits/X3DConstants.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($, X3DField, X3DConstants)
 {
@@ -15936,10 +15936,10 @@ function ($, X3DField, X3DConstants)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFFloat.js',[
+define ('cobweb/Fields/SFFloat',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"../Bits/X3DConstants.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($, X3DField, X3DConstants)
 {
@@ -16039,10 +16039,10 @@ function ($, X3DField, X3DConstants)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFInt32.js',[
+define ('cobweb/Fields/SFInt32',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"../Bits/X3DConstants.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($, X3DField, X3DConstants)
 {
@@ -16142,9 +16142,9 @@ function ($, X3DField, X3DConstants)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFMatrixPrototypeTemplate.js',[
+define ('cobweb/Fields/SFMatrixPrototypeTemplate',[
 	"jquery",
-	"../Basic/X3DField.js",
+	"cobweb/Basic/X3DField",
 ],
 function ($, X3DField)
 {
@@ -16283,9 +16283,9 @@ function ($, X3DField)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFVecPrototypeTemplate.js',[
+define ('cobweb/Fields/SFVecPrototypeTemplate',[
 	"jquery",
-	"../Basic/X3DField.js",
+	"cobweb/Basic/X3DField",
 ],
 function ($, X3DField)
 {
@@ -16404,9 +16404,9 @@ function ($, X3DField)
  ******************************************************************************/
 
 
-define ('standard/Math/Numbers/Vector2.js',[
+define ('standard/Math/Numbers/Vector2',[
 	"jquery",
-	"../Algorithm.js",
+	"standard/Math/Algorithm",
 ],
 function ($, Algorithm)
 {
@@ -16751,12 +16751,12 @@ function ($, Algorithm)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFVec2.js',[
+define ('cobweb/Fields/SFVec2',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"./SFVecPrototypeTemplate.js",
-	"../Bits/X3DConstants.js",
-	"../../standard/Math/Numbers/Vector2.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFVecPrototypeTemplate",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
 ],
 function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector2)
 {
@@ -16886,9 +16886,9 @@ function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector2)
  ******************************************************************************/
 
 
-define ('standard/Math/Numbers/Vector3.js',[
+define ('standard/Math/Numbers/Vector3',[
 	"jquery",
-	"../Algorithm.js",
+	"standard/Math/Algorithm",
 ],
 function ($, Algorithm)
 {
@@ -17310,9 +17310,9 @@ function ($, Algorithm)
  ******************************************************************************/
 
 
-define ('standard/Math/Numbers/Matrix2.js',[
+define ('standard/Math/Numbers/Matrix2',[
 	"jquery",
-	"../Algorithm.js"
+	"standard/Math/Algorithm"
 ],
 function ($, Algorithm)
 {
@@ -17541,7 +17541,7 @@ function ($, Algorithm)
  ******************************************************************************/
 
 
-define ('standard/Math/Algorithms/eigendecomposition.js',[],function ()
+define ('standard/Math/Algorithms/eigendecomposition',[],function ()
 {
 "use strict";
 
@@ -17733,12 +17733,12 @@ define ('standard/Math/Algorithms/eigendecomposition.js',[],function ()
  ******************************************************************************/
 
 
-define ('standard/Math/Numbers/Matrix3.js',[
+define ('standard/Math/Numbers/Matrix3',[
 	"jquery",
-	"./Vector2.js",
-	"./Vector3.js",
-	"./Matrix2.js",
-	"../Algorithms/eigendecomposition.js",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix2",
+	"standard/Math/Algorithms/eigendecomposition",
 ],
 function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 {
@@ -18504,13 +18504,13 @@ function ($, Vector2, Vector3, Matrix2, eigendecomposition)
 
 
 
-define ('cobweb/Fields/SFMatrix3.js',[
+define ('cobweb/Fields/SFMatrix3',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"./SFMatrixPrototypeTemplate.js",
-	"./SFVec2.js",
-	"../Bits/X3DConstants.js",
-	"../../standard/Math/Numbers/Matrix3.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFMatrixPrototypeTemplate",
+	"cobweb/Fields/SFVec2",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix3",
 ],
 function ($, X3DField, SFMatrixPrototypeTemplate, SFVec2, X3DConstants, Matrix3)
 {
@@ -18638,12 +18638,12 @@ function ($, X3DField, SFMatrixPrototypeTemplate, SFVec2, X3DConstants, Matrix3)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFVec3.js',[
+define ('cobweb/Fields/SFVec3',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"./SFVecPrototypeTemplate.js",
-	"../Bits/X3DConstants.js",
-	"../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFVecPrototypeTemplate",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector3)
 {
@@ -18794,9 +18794,9 @@ function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector3)
  ******************************************************************************/
 
 
-define ('standard/Math/Numbers/Vector4.js',[
+define ('standard/Math/Numbers/Vector4',[
 	"jquery",
-	"../Algorithm.js",
+	"standard/Math/Algorithm",
 ],
 function ($, Algorithm)
 {
@@ -19233,10 +19233,10 @@ function ($, Algorithm)
  ******************************************************************************/
 
 
-define ('standard/Math/Numbers/Quaternion.js',[
+define ('standard/Math/Numbers/Quaternion',[
 	"jquery",
-	"./Vector3.js",
-	"../Algorithm.js",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function ($, Vector3, Algorithm)
 {
@@ -19875,12 +19875,12 @@ function ($, Vector3, Algorithm)
  ******************************************************************************/
 
 
-define ('standard/Math/Numbers/Rotation4.js',[
+define ('standard/Math/Numbers/Rotation4',[
 	"jquery",
-	"./Quaternion.js",
-	"./Vector3.js",
-	"./Vector4.js",
-	"../Algorithm.js",
+	"standard/Math/Numbers/Quaternion",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Quaternion,
@@ -20282,13 +20282,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('standard/Math/Numbers/Matrix4.js',[
+define ('standard/Math/Numbers/Matrix4',[
 	"jquery",
-	"./Vector3.js",
-	"./Vector4.js",
-	"./Rotation4.js",
-	"./Matrix3.js",
-	"../Algorithms/eigendecomposition.js",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix3",
+	"standard/Math/Algorithms/eigendecomposition",
 ],
 function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
 {
@@ -21284,13 +21284,13 @@ function ($, Vector3, Vector4, Rotation4, Matrix3, eigendecomposition)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFMatrix4.js',[
+define ('cobweb/Fields/SFMatrix4',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"./SFMatrixPrototypeTemplate.js",
-	"./SFVec3.js",
-	"../Bits/X3DConstants.js",
-	"../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFMatrixPrototypeTemplate",
+	"cobweb/Fields/SFVec3",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($, X3DField, SFMatrixPrototypeTemplate, SFVec3, X3DConstants, Matrix4)
 {
@@ -21411,10 +21411,10 @@ function ($, X3DField, SFMatrixPrototypeTemplate, SFVec3, X3DConstants, Matrix4)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFNode.js',[
+define ('cobweb/Fields/SFNode',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"../Bits/X3DConstants.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($, X3DField, X3DConstants)
 {
@@ -21686,12 +21686,12 @@ function ($, X3DField, X3DConstants)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFRotation.js',[
+define ('cobweb/Fields/SFRotation',[
 	"jquery",
-	"./SFVec3.js",
-	"../Basic/X3DField.js",
-	"../Bits/X3DConstants.js",
-	"../../standard/Math/Numbers/Rotation4.js",
+	"cobweb/Fields/SFVec3",
+	"cobweb/Basic/X3DField",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Rotation4",
 ],
 function ($, SFVec3, X3DField, X3DConstants, Rotation4)
 {
@@ -21907,11 +21907,11 @@ function ($, SFVec3, X3DField, X3DConstants, Rotation4)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFString.js',[
+define ('cobweb/Fields/SFString',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"../Bits/X3DConstants.js",
-	"../InputOutput/Generator.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           X3DField,
@@ -22040,10 +22040,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFTime.js',[
+define ('cobweb/Fields/SFTime',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"../Bits/X3DConstants.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($, X3DField, X3DConstants)
 {
@@ -22143,12 +22143,12 @@ function ($, X3DField, X3DConstants)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFVec4.js',[
+define ('cobweb/Fields/SFVec4',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"./SFVecPrototypeTemplate.js",
-	"../Bits/X3DConstants.js",
-	"../../standard/Math/Numbers/Vector4.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Fields/SFVecPrototypeTemplate",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector4",
 ],
 function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector4)
 {
@@ -22312,27 +22312,27 @@ function ($, X3DField, SFVecPrototypeTemplate, X3DConstants, Vector4)
  ******************************************************************************/
 
 
-define ('cobweb/Fields/ArrayFields.js',[
+define ('cobweb/Fields/ArrayFields',[
 	"jquery",
-	"./SFBool.js",
-	"./SFColor.js",
-	"./SFColorRGBA.js",
-	"./SFDouble.js",
-	"./SFFloat.js",
-	"./SFImage.js",
-	"./SFInt32.js",
-	"./SFMatrix3.js",
-	"./SFMatrix4.js",
-	"./SFNode.js",
-	"./SFRotation.js",
-	"./SFString.js",
-	"./SFTime.js",
-	"./SFVec2.js",
-	"./SFVec3.js",
-	"./SFVec4.js",
-	"../Basic/X3DArrayField.js",
-	"../Bits/X3DConstants.js",
-	"../InputOutput/Generator.js",
+	"cobweb/Fields/SFBool",
+	"cobweb/Fields/SFColor",
+	"cobweb/Fields/SFColorRGBA",
+	"cobweb/Fields/SFDouble",
+	"cobweb/Fields/SFFloat",
+	"cobweb/Fields/SFImage",
+	"cobweb/Fields/SFInt32",
+	"cobweb/Fields/SFMatrix3",
+	"cobweb/Fields/SFMatrix4",
+	"cobweb/Fields/SFNode",
+	"cobweb/Fields/SFRotation",
+	"cobweb/Fields/SFString",
+	"cobweb/Fields/SFTime",
+	"cobweb/Fields/SFVec2",
+	"cobweb/Fields/SFVec3",
+	"cobweb/Fields/SFVec4",
+	"cobweb/Basic/X3DArrayField",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           SFBool,
@@ -22639,11 +22639,11 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Fields/SFImage.js',[
+define ('cobweb/Fields/SFImage',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"./ArrayFields.js",
-	"../Bits/X3DConstants.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Fields/ArrayFields",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($, X3DField, ArrayFields, X3DConstants)
 {
@@ -22921,25 +22921,25 @@ function ($, X3DField, ArrayFields, X3DConstants)
  ******************************************************************************/
 
 
-define ('cobweb/Fields.js',[
+define ('cobweb/Fields',[
 	"jquery",
-	"./Fields/SFBool.js",
-	"./Fields/SFColor.js",
-	"./Fields/SFColorRGBA.js",
-	"./Fields/SFDouble.js",
-	"./Fields/SFFloat.js",
-	"./Fields/SFImage.js",
-	"./Fields/SFInt32.js",
-	"./Fields/SFMatrix3.js",
-	"./Fields/SFMatrix4.js",
-	"./Fields/SFNode.js",
-	"./Fields/SFRotation.js",
-	"./Fields/SFString.js",
-	"./Fields/SFTime.js",
-	"./Fields/SFVec2.js",
-	"./Fields/SFVec3.js",
-	"./Fields/SFVec4.js",
-	"./Fields/ArrayFields.js",
+	"cobweb/Fields/SFBool",
+	"cobweb/Fields/SFColor",
+	"cobweb/Fields/SFColorRGBA",
+	"cobweb/Fields/SFDouble",
+	"cobweb/Fields/SFFloat",
+	"cobweb/Fields/SFImage",
+	"cobweb/Fields/SFInt32",
+	"cobweb/Fields/SFMatrix3",
+	"cobweb/Fields/SFMatrix4",
+	"cobweb/Fields/SFNode",
+	"cobweb/Fields/SFRotation",
+	"cobweb/Fields/SFString",
+	"cobweb/Fields/SFTime",
+	"cobweb/Fields/SFVec2",
+	"cobweb/Fields/SFVec3",
+	"cobweb/Fields/SFVec4",
+	"cobweb/Fields/ArrayFields",
 ],
 function ($,
           SFBool,
@@ -23044,9 +23044,9 @@ function ($,
  ******************************************************************************/
 
 ﻿
-define ('cobweb/Browser/VERSION.js',[],function ()
+define ('cobweb/Browser/VERSION',[],function ()
 {
-	return "3.3";
+	return "3.3.1";
 });
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
@@ -23098,10 +23098,10 @@ define ('cobweb/Browser/VERSION.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Base/X3DEventObject.js',[
+define ('cobweb/Base/X3DEventObject',[
 	"jquery",
-	"./X3DChildObject.js",
-	"./Events.js",
+	"cobweb/Base/X3DChildObject",
+	"cobweb/Base/Events",
 ],
 function ($,
 	       X3DChildObject,
@@ -23225,15 +23225,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Basic/X3DBaseNode.js',[
+define ('cobweb/Basic/X3DBaseNode',[
 	"jquery",
-	"../Base/X3DEventObject.js",
-	"../Base/Events.js",
-	"./X3DFieldDefinition.js",
-	"./FieldDefinitionArray.js",
-	"../Fields.js",
-	"../Bits/X3DConstants.js",
-	"../InputOutput/Generator.js",
+	"cobweb/Base/X3DEventObject",
+	"cobweb/Base/Events",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Fields",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           X3DEventObject,
@@ -24216,7 +24216,7 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Core/PrimitiveQuality.js',[],function ()
+define ('cobweb/Browser/Core/PrimitiveQuality',[],function ()
 {
 "use strict";
 	
@@ -24285,7 +24285,7 @@ define ('cobweb/Browser/Core/PrimitiveQuality.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Core/TextureQuality.js',[],function ()
+define ('cobweb/Browser/Core/TextureQuality',[],function ()
 {
 "use strict";
 	
@@ -24354,15 +24354,15 @@ define ('cobweb/Browser/Core/TextureQuality.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Core/BrowserOptions.js',[
+define ('cobweb/Browser/Core/BrowserOptions',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../../Basic/X3DBaseNode.js",
-	"../../Bits/X3DConstants.js",
-	"./PrimitiveQuality.js",
-	"./TextureQuality.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Core/PrimitiveQuality",
+	"cobweb/Browser/Core/TextureQuality",
 ],
 function ($,
           Fields,
@@ -24672,13 +24672,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Core/BrowserProperties.js',[
+define ('cobweb/Browser/Core/BrowserProperties',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../../Basic/X3DBaseNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -24773,13 +24773,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Core/RenderingProperties.js',[
+define ('cobweb/Browser/Core/RenderingProperties',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../../Basic/X3DBaseNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -24895,10 +24895,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Core/Notification.js',[
+define ('cobweb/Browser/Core/Notification',[
 	"jquery",
-	"../../Fields/SFString.js",
-	"../../Basic/X3DBaseNode.js",
+	"cobweb/Fields/SFString",
+	"cobweb/Basic/X3DBaseNode",
 ],
 function ($,
           SFString,
@@ -25376,10 +25376,10 @@ define('text/text',['module'], function (module) {
 define('text', ['text/text'], function (main) { return main; });
 
 
-define('text/text!locale/de.po',[],function () { return 'msgid ""\nmsgstr ""\n"Project-Id-Version: Cobweb\\n"\n"POT-Creation-Date: 2015-12-23 04:56+0100\\n"\n"PO-Revision-Date: 2015-12-23 04:57+0100\\n"\n"Last-Translator: Holger Seelig <holger.seelig@yahoo.de>\\n"\n"Language-Team: \\n"\n"Language: de\\n"\n"MIME-Version: 1.0\\n"\n"Content-Type: text/plain; charset=UTF-8\\n"\n"Content-Transfer-Encoding: 8bit\\n"\n"X-Generator: Poedit 1.8.4\\n"\n"X-Poedit-Basepath: ../cobweb\\n"\n"Plural-Forms: nplurals=2; plural=(n != 1);\\n"\n"X-Poedit-SourceCharset: UTF-8\\n"\n"X-Poedit-SearchPath-0: .\\n"\n\n#: Browser/Core/BrowserTimings.js:96\nmsgid "Less Properties"\nmsgstr "Weniger Eigenschaften"\n\n#: Browser/Core/BrowserTimings.js:98\nmsgid "More Properties"\nmsgstr "Mehr Eigenschaften"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "Frame rate"\nmsgstr "Bildrate"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "fps"\nmsgstr "BpS"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "Speed"\nmsgstr "Geschwindigkeit"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "m/s"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "km/h"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:150\nmsgid "Browser"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:150 Browser/Core/BrowserTimings.js:151\n#: Browser/Core/BrowserTimings.js:152 Browser/Core/BrowserTimings.js:153\n#: Browser/Core/BrowserTimings.js:154 Browser/Core/BrowserTimings.js:155\n#: Browser/Core/BrowserTimings.js:156\nmsgid "ms"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:151\nmsgid "X3D"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:152\nmsgid "Routing"\nmsgstr "Routen"\n\n#: Browser/Core/BrowserTimings.js:153\nmsgid "Picking"\nmsgstr "Zeigegerät"\n\n#: Browser/Core/BrowserTimings.js:154\nmsgid "Camera"\nmsgstr "Kamera"\n\n#: Browser/Core/BrowserTimings.js:155\nmsgid "Collision"\nmsgstr "Kollision"\n\n#: Browser/Core/BrowserTimings.js:156\nmsgid "Display"\nmsgstr "Anzeige"\n\n#: Browser/Core/BrowserTimings.js:157\nmsgid "Shapes"\nmsgstr "Formen"\n\n#: Browser/Core/BrowserTimings.js:158\nmsgid "Sensors"\nmsgstr "Sensoren"\n\n#: Browser/Core/BrowserTimings.js:163 Browser/Core/ContextMenu.js:210\nmsgid "Browser Timings"\nmsgstr "Zeitberechnung"\n\n#: Browser/Core/ContextMenu.js:19\nmsgid "Cobweb X3D Browser"\nmsgstr ""\n\n#: Browser/Core/ContextMenu.js:59\nmsgid "Viewpoints"\nmsgstr "Ansichtspunkte"\n\n#: Browser/Core/ContextMenu.js:87\nmsgid "Available Viewers"\nmsgstr "Verfügbare Betrachter"\n\n#: Browser/Core/ContextMenu.js:95 Browser/Core/ContextMenu.js:107\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:135\nmsgid "Primitive Quality"\nmsgstr "Qualität der Grundobjekte"\n\n#: Browser/Core/ContextMenu.js:99 Browser/Core/ContextMenu.js:147\nmsgid "High"\nmsgstr "Hoch"\n\n#: Browser/Core/ContextMenu.js:107 Browser/Core/ContextMenu.js:155\nmsgid "high"\nmsgstr "hoch"\n\n#: Browser/Core/ContextMenu.js:113 Browser/Core/ContextMenu.js:161\nmsgid "Medium"\nmsgstr "Mittel"\n\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:169\nmsgid "medium"\nmsgstr "mittel"\n\n#: Browser/Core/ContextMenu.js:127 Browser/Core/ContextMenu.js:175\nmsgid "Low"\nmsgstr "Niedrig"\n\n#: Browser/Core/ContextMenu.js:135 Browser/Core/ContextMenu.js:183\nmsgid "low"\nmsgstr "niedrig"\n\n#: Browser/Core/ContextMenu.js:143 Browser/Core/ContextMenu.js:155\n#: Browser/Core/ContextMenu.js:169 Browser/Core/ContextMenu.js:183\nmsgid "Texture Quality"\nmsgstr "Textur Qualität"\n\n#: Browser/Core/ContextMenu.js:191\nmsgid "Display Rubberband"\nmsgstr "Gummiband anzeigen"\n\n#: Browser/Core/ContextMenu.js:202 Browser/Core/ContextMenu.js:204\nmsgid "Rubberband"\nmsgstr "Gummiband"\n\n#: Browser/Core/ContextMenu.js:202\nmsgid "on"\nmsgstr "an"\n\n#: Browser/Core/ContextMenu.js:204\nmsgid "off"\nmsgstr "aus"\n\n#: Browser/Core/ContextMenu.js:225\nmsgid "Mute Browser"\nmsgstr "Browser stumm schalten"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser muted"\nmsgstr "Browser stumm geschalten"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser unmuted"\nmsgstr "Browser Ton an"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Leave Fullscreen"\nmsgstr "Vollbild verlassen"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Fullscreen"\nmsgstr "Vollbild"\n\n#: Browser/Core/ContextMenu.js:249\nmsgid "About Cobweb"\nmsgstr "Über Cobweb"\n\n#: Browser/Core/ContextMenu.js:342\nmsgid "Examine Viewer"\nmsgstr "Untersuchen"\n\n#: Browser/Core/ContextMenu.js:344\nmsgid "Walk Viewer"\nmsgstr "Laufen"\n\n#: Browser/Core/ContextMenu.js:346\nmsgid "Fly Viewer"\nmsgstr "Fliegen"\n\n#: Browser/Core/ContextMenu.js:348\nmsgid "Plane Viewer"\nmsgstr "Ebenen Betrachter"\n\n#: Browser/Core/ContextMenu.js:350\n#, fuzzy\nmsgid "Look At Viewer"\nmsgstr "Auf Objekte zielen"\n\n#: Browser/Core/ContextMenu.js:352\nmsgid "None Viewer"\nmsgstr "Kein Betrachter"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d file"\nmsgstr "Lade %d Datei"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d files"\nmsgstr "Lade %d Dateien"\n\n#: Browser/Networking/X3DNetworkingContext.js:104\nmsgid "Loading done"\nmsgstr "Fertig mit Laden"\n\n#: Browser/X3DBrowser.js:313\nmsgid "Failed loading world."\nmsgstr "Laden der Dateien fehlgeschlagen."\n\n#~ msgid "Look At"\n#~ msgstr "Auf Objekte zielen"\n';});
+define('text!locale/de.po',[],function () { return 'msgid ""\nmsgstr ""\n"Project-Id-Version: Cobweb\\n"\n"POT-Creation-Date: 2015-12-23 04:56+0100\\n"\n"PO-Revision-Date: 2015-12-23 04:57+0100\\n"\n"Last-Translator: Holger Seelig <holger.seelig@yahoo.de>\\n"\n"Language-Team: \\n"\n"Language: de\\n"\n"MIME-Version: 1.0\\n"\n"Content-Type: text/plain; charset=UTF-8\\n"\n"Content-Transfer-Encoding: 8bit\\n"\n"X-Generator: Poedit 1.8.4\\n"\n"X-Poedit-Basepath: ../cobweb\\n"\n"Plural-Forms: nplurals=2; plural=(n != 1);\\n"\n"X-Poedit-SourceCharset: UTF-8\\n"\n"X-Poedit-SearchPath-0: .\\n"\n\n#: Browser/Core/BrowserTimings.js:96\nmsgid "Less Properties"\nmsgstr "Weniger Eigenschaften"\n\n#: Browser/Core/BrowserTimings.js:98\nmsgid "More Properties"\nmsgstr "Mehr Eigenschaften"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "Frame rate"\nmsgstr "Bildrate"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "fps"\nmsgstr "BpS"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "Speed"\nmsgstr "Geschwindigkeit"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "m/s"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "km/h"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:150\nmsgid "Browser"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:150 Browser/Core/BrowserTimings.js:151\n#: Browser/Core/BrowserTimings.js:152 Browser/Core/BrowserTimings.js:153\n#: Browser/Core/BrowserTimings.js:154 Browser/Core/BrowserTimings.js:155\n#: Browser/Core/BrowserTimings.js:156\nmsgid "ms"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:151\nmsgid "X3D"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:152\nmsgid "Routing"\nmsgstr "Routen"\n\n#: Browser/Core/BrowserTimings.js:153\nmsgid "Picking"\nmsgstr "Zeigegerät"\n\n#: Browser/Core/BrowserTimings.js:154\nmsgid "Camera"\nmsgstr "Kamera"\n\n#: Browser/Core/BrowserTimings.js:155\nmsgid "Collision"\nmsgstr "Kollision"\n\n#: Browser/Core/BrowserTimings.js:156\nmsgid "Display"\nmsgstr "Anzeige"\n\n#: Browser/Core/BrowserTimings.js:157\nmsgid "Shapes"\nmsgstr "Formen"\n\n#: Browser/Core/BrowserTimings.js:158\nmsgid "Sensors"\nmsgstr "Sensoren"\n\n#: Browser/Core/BrowserTimings.js:163 Browser/Core/ContextMenu.js:210\nmsgid "Browser Timings"\nmsgstr "Zeitberechnung"\n\n#: Browser/Core/ContextMenu.js:19\nmsgid "Cobweb X3D Browser"\nmsgstr ""\n\n#: Browser/Core/ContextMenu.js:59\nmsgid "Viewpoints"\nmsgstr "Ansichtspunkte"\n\n#: Browser/Core/ContextMenu.js:87\nmsgid "Available Viewers"\nmsgstr "Verfügbare Betrachter"\n\n#: Browser/Core/ContextMenu.js:95 Browser/Core/ContextMenu.js:107\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:135\nmsgid "Primitive Quality"\nmsgstr "Qualität der Grundobjekte"\n\n#: Browser/Core/ContextMenu.js:99 Browser/Core/ContextMenu.js:147\nmsgid "High"\nmsgstr "Hoch"\n\n#: Browser/Core/ContextMenu.js:107 Browser/Core/ContextMenu.js:155\nmsgid "high"\nmsgstr "hoch"\n\n#: Browser/Core/ContextMenu.js:113 Browser/Core/ContextMenu.js:161\nmsgid "Medium"\nmsgstr "Mittel"\n\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:169\nmsgid "medium"\nmsgstr "mittel"\n\n#: Browser/Core/ContextMenu.js:127 Browser/Core/ContextMenu.js:175\nmsgid "Low"\nmsgstr "Niedrig"\n\n#: Browser/Core/ContextMenu.js:135 Browser/Core/ContextMenu.js:183\nmsgid "low"\nmsgstr "niedrig"\n\n#: Browser/Core/ContextMenu.js:143 Browser/Core/ContextMenu.js:155\n#: Browser/Core/ContextMenu.js:169 Browser/Core/ContextMenu.js:183\nmsgid "Texture Quality"\nmsgstr "Textur Qualität"\n\n#: Browser/Core/ContextMenu.js:191\nmsgid "Display Rubberband"\nmsgstr "Gummiband anzeigen"\n\n#: Browser/Core/ContextMenu.js:202 Browser/Core/ContextMenu.js:204\nmsgid "Rubberband"\nmsgstr "Gummiband"\n\n#: Browser/Core/ContextMenu.js:202\nmsgid "on"\nmsgstr "an"\n\n#: Browser/Core/ContextMenu.js:204\nmsgid "off"\nmsgstr "aus"\n\n#: Browser/Core/ContextMenu.js:225\nmsgid "Mute Browser"\nmsgstr "Browser stumm schalten"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser muted"\nmsgstr "Browser stumm geschalten"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser unmuted"\nmsgstr "Browser Ton an"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Leave Fullscreen"\nmsgstr "Vollbild verlassen"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Fullscreen"\nmsgstr "Vollbild"\n\n#: Browser/Core/ContextMenu.js:249\nmsgid "About Cobweb"\nmsgstr "Über Cobweb"\n\n#: Browser/Core/ContextMenu.js:342\nmsgid "Examine Viewer"\nmsgstr "Untersuchen"\n\n#: Browser/Core/ContextMenu.js:344\nmsgid "Walk Viewer"\nmsgstr "Laufen"\n\n#: Browser/Core/ContextMenu.js:346\nmsgid "Fly Viewer"\nmsgstr "Fliegen"\n\n#: Browser/Core/ContextMenu.js:348\nmsgid "Plane Viewer"\nmsgstr "Ebenen Betrachter"\n\n#: Browser/Core/ContextMenu.js:350\n#, fuzzy\nmsgid "Look At Viewer"\nmsgstr "Auf Objekte zielen"\n\n#: Browser/Core/ContextMenu.js:352\nmsgid "None Viewer"\nmsgstr "Kein Betrachter"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d file"\nmsgstr "Lade %d Datei"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d files"\nmsgstr "Lade %d Dateien"\n\n#: Browser/Networking/X3DNetworkingContext.js:104\nmsgid "Loading done"\nmsgstr "Fertig mit Laden"\n\n#: Browser/X3DBrowser.js:313\nmsgid "Failed loading world."\nmsgstr "Laden der Dateien fehlgeschlagen."\n\n#~ msgid "Look At"\n#~ msgstr "Auf Objekte zielen"\n';});
 
 
-define('text/text!locale/fr.po',[],function () { return 'msgid ""\nmsgstr ""\n"Project-Id-Version: Cobweb\\n"\n"POT-Creation-Date: 2015-12-23 04:58+0100\\n"\n"PO-Revision-Date: 2015-12-23 05:07+0100\\n"\n"Last-Translator: Holger Seelig <holger.seelig@yahoo.de>\\n"\n"Language-Team: \\n"\n"Language: fr\\n"\n"MIME-Version: 1.0\\n"\n"Content-Type: text/plain; charset=UTF-8\\n"\n"Content-Transfer-Encoding: 8bit\\n"\n"X-Generator: Poedit 1.8.4\\n"\n"X-Poedit-Basepath: ../cobweb\\n"\n"Plural-Forms: nplurals=2; plural=(n != 1);\\n"\n"X-Poedit-SourceCharset: UTF-8\\n"\n"X-Poedit-SearchPath-0: .\\n"\n\n#: Browser/Core/BrowserTimings.js:96\nmsgid "Less Properties"\nmsgstr "Moins de propriétés"\n\n#: Browser/Core/BrowserTimings.js:98\nmsgid "More Properties"\nmsgstr "Plus de propriétés"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "Frame rate"\nmsgstr "Fréquence"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "fps"\nmsgstr "fps"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "Speed"\nmsgstr "Vélocité"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "m/s"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "km/h"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:150\n#, fuzzy\nmsgid "Browser"\nmsgstr "Cobweb X3D Navigateur"\n\n#: Browser/Core/BrowserTimings.js:150 Browser/Core/BrowserTimings.js:151\n#: Browser/Core/BrowserTimings.js:152 Browser/Core/BrowserTimings.js:153\n#: Browser/Core/BrowserTimings.js:154 Browser/Core/BrowserTimings.js:155\n#: Browser/Core/BrowserTimings.js:156\nmsgid "ms"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:151\nmsgid "X3D"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:152\nmsgid "Routing"\nmsgstr "Routes"\n\n#: Browser/Core/BrowserTimings.js:153\nmsgid "Picking"\nmsgstr "Pointeur"\n\n#: Browser/Core/BrowserTimings.js:154\nmsgid "Camera"\nmsgstr "Caméra"\n\n#: Browser/Core/BrowserTimings.js:155\nmsgid "Collision"\nmsgstr "Collision"\n\n#: Browser/Core/BrowserTimings.js:156\nmsgid "Display"\nmsgstr "Visualisation"\n\n#: Browser/Core/BrowserTimings.js:157\nmsgid "Shapes"\nmsgstr "Formes"\n\n#: Browser/Core/BrowserTimings.js:158\nmsgid "Sensors"\nmsgstr "Senseurs"\n\n#: Browser/Core/BrowserTimings.js:163 Browser/Core/ContextMenu.js:210\nmsgid "Browser Timings"\nmsgstr "Calcul du temps"\n\n#: Browser/Core/ContextMenu.js:19\nmsgid "Cobweb X3D Browser"\nmsgstr "Cobweb X3D Navigateur"\n\n#: Browser/Core/ContextMenu.js:59\nmsgid "Viewpoints"\nmsgstr "Points de vue"\n\n#: Browser/Core/ContextMenu.js:87\nmsgid "Available Viewers"\nmsgstr "Visionneurs disponibles"\n\n#: Browser/Core/ContextMenu.js:95 Browser/Core/ContextMenu.js:107\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:135\nmsgid "Primitive Quality"\nmsgstr "Qualité des objets simples"\n\n#: Browser/Core/ContextMenu.js:99 Browser/Core/ContextMenu.js:147\nmsgid "High"\nmsgstr "Haut"\n\n#: Browser/Core/ContextMenu.js:107 Browser/Core/ContextMenu.js:155\nmsgid "high"\nmsgstr "haut"\n\n#: Browser/Core/ContextMenu.js:113 Browser/Core/ContextMenu.js:161\nmsgid "Medium"\nmsgstr "Moyenne"\n\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:169\nmsgid "medium"\nmsgstr "moyenne"\n\n#: Browser/Core/ContextMenu.js:127 Browser/Core/ContextMenu.js:175\nmsgid "Low"\nmsgstr "Faible"\n\n#: Browser/Core/ContextMenu.js:135 Browser/Core/ContextMenu.js:183\nmsgid "low"\nmsgstr "faible"\n\n#: Browser/Core/ContextMenu.js:143 Browser/Core/ContextMenu.js:155\n#: Browser/Core/ContextMenu.js:169 Browser/Core/ContextMenu.js:183\nmsgid "Texture Quality"\nmsgstr "Qualité des textures"\n\n#: Browser/Core/ContextMenu.js:191\nmsgid "Display Rubberband"\nmsgstr "Présenter le bande élastique"\n\n#: Browser/Core/ContextMenu.js:202 Browser/Core/ContextMenu.js:204\nmsgid "Rubberband"\nmsgstr "Bande élastique"\n\n#: Browser/Core/ContextMenu.js:202\nmsgid "on"\nmsgstr "marche"\n\n#: Browser/Core/ContextMenu.js:204\nmsgid "off"\nmsgstr "arrêt"\n\n#: Browser/Core/ContextMenu.js:225\nmsgid "Mute Browser"\nmsgstr "Rendre navigateur muet"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser muted"\nmsgstr "Navigateur muet"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser unmuted"\nmsgstr "Son de navigateur réactivé"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Leave Fullscreen"\nmsgstr "Sortie en plein écran"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Fullscreen"\nmsgstr "Plein écran"\n\n#: Browser/Core/ContextMenu.js:249\nmsgid "About Cobweb"\nmsgstr "À propos de Cobweb"\n\n#: Browser/Core/ContextMenu.js:342\nmsgid "Examine Viewer"\nmsgstr "Examiner"\n\n#: Browser/Core/ContextMenu.js:344\nmsgid "Walk Viewer"\nmsgstr "Aller"\n\n#: Browser/Core/ContextMenu.js:346\nmsgid "Fly Viewer"\nmsgstr "Voler"\n\n#: Browser/Core/ContextMenu.js:348\nmsgid "Plane Viewer"\nmsgstr "Visionneur de la plaine"\n\n#: Browser/Core/ContextMenu.js:350\n#, fuzzy\nmsgid "Look At Viewer"\nmsgstr "Regarder un objet de près"\n\n#: Browser/Core/ContextMenu.js:352\nmsgid "None Viewer"\nmsgstr "Pas de visionneur"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d file"\nmsgstr "Télécharger %d fichier"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d files"\nmsgstr "Télécharger %d fichiers"\n\n#: Browser/Networking/X3DNetworkingContext.js:104\nmsgid "Loading done"\nmsgstr "Téléchargement fini"\n\n#: Browser/X3DBrowser.js:313\nmsgid "Failed loading world."\nmsgstr "Le chargement des fichiers ayant échoué."\n\n#~ msgid "Look At"\n#~ msgstr "Regarder un objet de près"\n';});
+define('text!locale/fr.po',[],function () { return 'msgid ""\nmsgstr ""\n"Project-Id-Version: Cobweb\\n"\n"POT-Creation-Date: 2015-12-23 04:58+0100\\n"\n"PO-Revision-Date: 2015-12-23 05:07+0100\\n"\n"Last-Translator: Holger Seelig <holger.seelig@yahoo.de>\\n"\n"Language-Team: \\n"\n"Language: fr\\n"\n"MIME-Version: 1.0\\n"\n"Content-Type: text/plain; charset=UTF-8\\n"\n"Content-Transfer-Encoding: 8bit\\n"\n"X-Generator: Poedit 1.8.4\\n"\n"X-Poedit-Basepath: ../cobweb\\n"\n"Plural-Forms: nplurals=2; plural=(n != 1);\\n"\n"X-Poedit-SourceCharset: UTF-8\\n"\n"X-Poedit-SearchPath-0: .\\n"\n\n#: Browser/Core/BrowserTimings.js:96\nmsgid "Less Properties"\nmsgstr "Moins de propriétés"\n\n#: Browser/Core/BrowserTimings.js:98\nmsgid "More Properties"\nmsgstr "Plus de propriétés"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "Frame rate"\nmsgstr "Fréquence"\n\n#: Browser/Core/BrowserTimings.js:124\nmsgid "fps"\nmsgstr "fps"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "Speed"\nmsgstr "Vélocité"\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "m/s"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:125\nmsgid "km/h"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:150\n#, fuzzy\nmsgid "Browser"\nmsgstr "Cobweb X3D Navigateur"\n\n#: Browser/Core/BrowserTimings.js:150 Browser/Core/BrowserTimings.js:151\n#: Browser/Core/BrowserTimings.js:152 Browser/Core/BrowserTimings.js:153\n#: Browser/Core/BrowserTimings.js:154 Browser/Core/BrowserTimings.js:155\n#: Browser/Core/BrowserTimings.js:156\nmsgid "ms"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:151\nmsgid "X3D"\nmsgstr ""\n\n#: Browser/Core/BrowserTimings.js:152\nmsgid "Routing"\nmsgstr "Routes"\n\n#: Browser/Core/BrowserTimings.js:153\nmsgid "Picking"\nmsgstr "Pointeur"\n\n#: Browser/Core/BrowserTimings.js:154\nmsgid "Camera"\nmsgstr "Caméra"\n\n#: Browser/Core/BrowserTimings.js:155\nmsgid "Collision"\nmsgstr "Collision"\n\n#: Browser/Core/BrowserTimings.js:156\nmsgid "Display"\nmsgstr "Visualisation"\n\n#: Browser/Core/BrowserTimings.js:157\nmsgid "Shapes"\nmsgstr "Formes"\n\n#: Browser/Core/BrowserTimings.js:158\nmsgid "Sensors"\nmsgstr "Senseurs"\n\n#: Browser/Core/BrowserTimings.js:163 Browser/Core/ContextMenu.js:210\nmsgid "Browser Timings"\nmsgstr "Calcul du temps"\n\n#: Browser/Core/ContextMenu.js:19\nmsgid "Cobweb X3D Browser"\nmsgstr "Cobweb X3D Navigateur"\n\n#: Browser/Core/ContextMenu.js:59\nmsgid "Viewpoints"\nmsgstr "Points de vue"\n\n#: Browser/Core/ContextMenu.js:87\nmsgid "Available Viewers"\nmsgstr "Visionneurs disponibles"\n\n#: Browser/Core/ContextMenu.js:95 Browser/Core/ContextMenu.js:107\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:135\nmsgid "Primitive Quality"\nmsgstr "Qualité des objets simples"\n\n#: Browser/Core/ContextMenu.js:99 Browser/Core/ContextMenu.js:147\nmsgid "High"\nmsgstr "Haut"\n\n#: Browser/Core/ContextMenu.js:107 Browser/Core/ContextMenu.js:155\nmsgid "high"\nmsgstr "haut"\n\n#: Browser/Core/ContextMenu.js:113 Browser/Core/ContextMenu.js:161\nmsgid "Medium"\nmsgstr "Moyenne"\n\n#: Browser/Core/ContextMenu.js:121 Browser/Core/ContextMenu.js:169\nmsgid "medium"\nmsgstr "moyenne"\n\n#: Browser/Core/ContextMenu.js:127 Browser/Core/ContextMenu.js:175\nmsgid "Low"\nmsgstr "Faible"\n\n#: Browser/Core/ContextMenu.js:135 Browser/Core/ContextMenu.js:183\nmsgid "low"\nmsgstr "faible"\n\n#: Browser/Core/ContextMenu.js:143 Browser/Core/ContextMenu.js:155\n#: Browser/Core/ContextMenu.js:169 Browser/Core/ContextMenu.js:183\nmsgid "Texture Quality"\nmsgstr "Qualité des textures"\n\n#: Browser/Core/ContextMenu.js:191\nmsgid "Display Rubberband"\nmsgstr "Présenter le bande élastique"\n\n#: Browser/Core/ContextMenu.js:202 Browser/Core/ContextMenu.js:204\nmsgid "Rubberband"\nmsgstr "Bande élastique"\n\n#: Browser/Core/ContextMenu.js:202\nmsgid "on"\nmsgstr "marche"\n\n#: Browser/Core/ContextMenu.js:204\nmsgid "off"\nmsgstr "arrêt"\n\n#: Browser/Core/ContextMenu.js:225\nmsgid "Mute Browser"\nmsgstr "Rendre navigateur muet"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser muted"\nmsgstr "Navigateur muet"\n\n#: Browser/Core/ContextMenu.js:233\nmsgid "Browser unmuted"\nmsgstr "Son de navigateur réactivé"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Leave Fullscreen"\nmsgstr "Sortie en plein écran"\n\n#: Browser/Core/ContextMenu.js:239\nmsgid "Fullscreen"\nmsgstr "Plein écran"\n\n#: Browser/Core/ContextMenu.js:249\nmsgid "About Cobweb"\nmsgstr "À propos de Cobweb"\n\n#: Browser/Core/ContextMenu.js:342\nmsgid "Examine Viewer"\nmsgstr "Examiner"\n\n#: Browser/Core/ContextMenu.js:344\nmsgid "Walk Viewer"\nmsgstr "Aller"\n\n#: Browser/Core/ContextMenu.js:346\nmsgid "Fly Viewer"\nmsgstr "Voler"\n\n#: Browser/Core/ContextMenu.js:348\nmsgid "Plane Viewer"\nmsgstr "Visionneur de la plaine"\n\n#: Browser/Core/ContextMenu.js:350\n#, fuzzy\nmsgid "Look At Viewer"\nmsgstr "Regarder un objet de près"\n\n#: Browser/Core/ContextMenu.js:352\nmsgid "None Viewer"\nmsgstr "Pas de visionneur"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d file"\nmsgstr "Télécharger %d fichier"\n\n#: Browser/Networking/X3DNetworkingContext.js:101\n#, javascript-format\nmsgid "Loading %d files"\nmsgstr "Télécharger %d fichiers"\n\n#: Browser/Networking/X3DNetworkingContext.js:104\nmsgid "Loading done"\nmsgstr "Téléchargement fini"\n\n#: Browser/X3DBrowser.js:313\nmsgid "Failed loading world."\nmsgstr "Le chargement des fichiers ayant échoué."\n\n#~ msgid "Look At"\n#~ msgstr "Regarder un objet de près"\n';});
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
@@ -25430,9 +25430,9 @@ define('text/text!locale/fr.po',[],function () { return 'msgid ""\nmsgstr ""\n"P
  ******************************************************************************/
 
 
-define ('lib/gettext.js',[
-	"text!../locale/de.po",
-	"text!../locale/fr.po",
+define ('lib/gettext',[
+	"text!locale/de.po",
+	"text!locale/fr.po",
 ],
 function (de, fr)
 {
@@ -25558,11 +25558,11 @@ function (de, fr)
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Core/BrowserTimings.js',[
+define ('cobweb/Browser/Core/BrowserTimings',[
 	"jquery",
-	"../../Fields/SFBool.js",
-	"../../Basic/X3DBaseNode.js",
-	"../../../lib/gettext.js",
+	"cobweb/Fields/SFBool",
+	"cobweb/Basic/X3DBaseNode",
+	"lib/gettext",
 ],
 function ($,
           SFBool,
@@ -25763,7 +25763,7 @@ function ($,
 (function (factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as anonymous module.
-        define('lib/jquery-contextMenu/dist/jquery.contextMenu.js',['jquery'], factory);
+        define('lib/jquery-contextMenu/dist/jquery.contextMenu',['jquery'], factory);
     } else if (typeof exports === 'object') {
         // Node / CommonJS
         factory(require('jquery'));
@@ -27555,7 +27555,7 @@ function ($,
 
 });
 
-define ('lib/jquery.fullscreen-min.js',[
+define ('lib/jquery.fullscreen-min',[
 	"jquery",
 ],
 function (jQuery)
@@ -27621,12 +27621,12 @@ e.webkitCancelFullScreen?(f="webkitfullscreenchange",g="webkitfullscreenerror"):
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Core/ContextMenu.js',[
+define ('cobweb/Browser/Core/ContextMenu',[
 	"jquery",
-	"../../Basic/X3DBaseNode.js",
-	"../../../lib/gettext.js",
-	"../../../lib/jquery-contextMenu/dist/jquery.contextMenu.js",
-	"../../../lib/jquery.fullscreen-min.js",
+	"cobweb/Basic/X3DBaseNode",
+	"lib/gettext",
+	"lib/jquery-contextMenu/dist/jquery.contextMenu",
+	"lib/jquery.fullscreen-min",
 ],
 function ($,
           X3DBaseNode,
@@ -28026,7 +28026,7 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Configuration/X3DInfoArray.js',[
+define ('cobweb/Configuration/X3DInfoArray',[
 	"jquery",
 ],
 function ($)
@@ -28153,11 +28153,11 @@ function ($)
  ******************************************************************************/
 
 
-define ('cobweb/Configuration/ComponentInfo.js',[
+define ('cobweb/Configuration/ComponentInfo',[
 	"jquery",
-	"../Fields.js",
-	"../Bits/X3DConstants.js",
-	"../InputOutput/Generator.js",
+	"cobweb/Fields",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -28248,10 +28248,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Configuration/ComponentInfoArray.js',[
+define ('cobweb/Configuration/ComponentInfoArray',[
 	"jquery",
-	"./X3DInfoArray.js",
-	"./ComponentInfo.js",
+	"cobweb/Configuration/X3DInfoArray",
+	"cobweb/Configuration/ComponentInfo",
 ],
 function ($, X3DInfoArray, ComponentInfo)
 {
@@ -28333,12 +28333,12 @@ function ($, X3DInfoArray, ComponentInfo)
  ******************************************************************************/
 
 
-define ('cobweb/Execution/ImportedNode.js',[
+define ('cobweb/Execution/ImportedNode',[
 	"jquery",
-	"../Fields.js",
-	"../Basic/X3DBaseNode.js",
-	"../Bits/X3DConstants.js",
-	"../InputOutput/Generator.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -28628,9 +28628,9 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Prototype/ExternProtoDeclarationArray.js',[
+define ('cobweb/Prototype/ExternProtoDeclarationArray',[
 	"jquery",
-	"../Configuration/X3DInfoArray.js",
+	"cobweb/Configuration/X3DInfoArray",
 ],
 function ($, X3DInfoArray)
 {
@@ -28698,9 +28698,9 @@ function ($, X3DInfoArray)
  ******************************************************************************/
 
 
-define ('cobweb/Prototype/ProtoDeclarationArray.js',[
+define ('cobweb/Prototype/ProtoDeclarationArray',[
 	"jquery",
-	"../Configuration/X3DInfoArray.js",
+	"cobweb/Configuration/X3DInfoArray",
 ],
 function ($, X3DInfoArray)
 {
@@ -28768,7 +28768,7 @@ function ($, X3DInfoArray)
  ******************************************************************************/
 
 
-define ('cobweb/Routing/RouteArray.js',[
+define ('cobweb/Routing/RouteArray',[
 	"jquery",
 ],
 function ($)
@@ -28874,12 +28874,12 @@ function ($)
  ******************************************************************************/
 
 
-define ('cobweb/Routing/X3DRoute.js',[
+define ('cobweb/Routing/X3DRoute',[
 	"jquery",
-	"../Fields.js",
-	"../Basic/X3DBaseNode.js",
-	"../Bits/X3DConstants.js",
-	"../InputOutput/Generator.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -29112,8 +29112,8 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Bits/X3DCast.js',[
-	"../Fields.js",
+define ('cobweb/Bits/X3DCast',[
+	"cobweb/Fields",
 ],
 function (Fields)
 {
@@ -29193,7 +29193,7 @@ function (Fields)
  ******************************************************************************/
 
 
-define ('standard/Networking/URI.js',[
+define ('standard/Networking/URI',[
 	"jquery",
 ],
 function ($)
@@ -29881,23 +29881,23 @@ function ($)
  ******************************************************************************/
 
 
-define ('cobweb/Execution/X3DExecutionContext.js',[
+define ('cobweb/Execution/X3DExecutionContext',[
 	"jquery",
-	"../Fields.js",
-	"../Basic/X3DFieldDefinition.js",
-	"../Basic/FieldDefinitionArray.js",
-	"../Basic/X3DBaseNode.js",
-	"../Configuration/ComponentInfoArray.js",
-	"./ImportedNode.js",
-	"../Prototype/ExternProtoDeclarationArray.js",
-	"../Prototype/ProtoDeclarationArray.js",
-	"../Routing/RouteArray.js",
-	"../Routing/X3DRoute.js",
-	"../Bits/X3DCast.js",
-	"../Bits/X3DConstants.js",
-	"../../standard/Networking/URI.js",
-	"../../standard/Math/Algorithm.js",
-	"../InputOutput/Generator.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Configuration/ComponentInfoArray",
+	"cobweb/Execution/ImportedNode",
+	"cobweb/Prototype/ExternProtoDeclarationArray",
+	"cobweb/Prototype/ProtoDeclarationArray",
+	"cobweb/Routing/RouteArray",
+	"cobweb/Routing/X3DRoute",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+	"standard/Networking/URI",
+	"standard/Math/Algorithm",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -30468,9 +30468,9 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Configuration/UnitInfo.js',[
+define ('cobweb/Configuration/UnitInfo',[
 	"jquery",
-	"../InputOutput/Generator.js",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Generator)
@@ -30565,9 +30565,9 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Configuration/UnitInfoArray.js',[
+define ('cobweb/Configuration/UnitInfoArray',[
 	"jquery",
-	"./X3DInfoArray.js",
+	"cobweb/Configuration/X3DInfoArray",
 ],
 function ($, X3DInfoArray)
 {
@@ -30635,11 +30635,11 @@ function ($, X3DInfoArray)
  ******************************************************************************/
 
 
-define ('cobweb/Execution/ExportedNode.js',[
+define ('cobweb/Execution/ExportedNode',[
 	"jquery",
-	"../Fields.js",
-	"../Base/X3DObject.js",
-	"../InputOutput/Generator.js",
+	"cobweb/Fields",
+	"cobweb/Base/X3DObject",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -30742,15 +30742,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Execution/X3DScene.js',[
+define ('cobweb/Execution/X3DScene',[
 	"jquery",
-	"../Fields.js",
-	"./X3DExecutionContext.js",
-	"../Configuration/UnitInfo.js",
-	"../Configuration/UnitInfoArray.js",
-	"./ExportedNode.js",
-	"../Bits/X3DConstants.js",
-	"../InputOutput/Generator.js",
+	"cobweb/Fields",
+	"cobweb/Execution/X3DExecutionContext",
+	"cobweb/Configuration/UnitInfo",
+	"cobweb/Configuration/UnitInfoArray",
+	"cobweb/Execution/ExportedNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -31069,9 +31069,9 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Execution/Scene.js',[
-	"../Fields.js",
-	"./X3DScene.js",
+define ('cobweb/Execution/Scene',[
+	"cobweb/Fields",
+	"cobweb/Execution/X3DScene",
 ],
 function (Fields,
           X3DScene)
@@ -31221,10 +31221,10 @@ function (Fields,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Networking/X3DUrlObject.js',[
+define ('cobweb/Components/Networking/X3DUrlObject',[
 	"jquery",
-	"../../Fields.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -31313,10 +31313,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Core/X3DNode.js',[
+define ('cobweb/Components/Core/X3DNode',[
 	"jquery",
-	"../../Basic/X3DBaseNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DBaseNode,
@@ -31448,15 +31448,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Core/X3DPrototypeInstance.js',[
+define ('cobweb/Components/Core/X3DPrototypeInstance',[
 	"jquery",
-	"../../Basic/FieldDefinitionArray.js",
-	"../../Fields.js",
-	"../../Base/X3DChildObject.js",
-	"./X3DNode.js",
-	"../../Execution/X3DExecutionContext.js",
-	"../../Bits/X3DConstants.js",
-	"../../InputOutput/Generator.js",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Fields",
+	"cobweb/Base/X3DChildObject",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Execution/X3DExecutionContext",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           FieldDefinitionArray,
@@ -32008,12 +32008,12 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Prototype/X3DProtoDeclarationNode.js',[
+define ('cobweb/Prototype/X3DProtoDeclarationNode',[
 	"jquery",
-	"../Fields.js",
-	"../Components/Core/X3DNode.js",
-	"../Components/Core/X3DPrototypeInstance.js",
-	"../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Components/Core/X3DPrototypeInstance",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -32106,15 +32106,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Prototype/X3DExternProtoDeclaration.js',[
+define ('cobweb/Prototype/X3DExternProtoDeclaration',[
 	"jquery",
-	"../Fields.js",
-	"../Basic/X3DFieldDefinition.js",
-	"../Basic/FieldDefinitionArray.js",
-	"../Components/Networking/X3DUrlObject.js",
-	"./X3DProtoDeclarationNode.js",
-	"../Bits/X3DConstants.js",
-	"../InputOutput/Generator.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Prototype/X3DProtoDeclarationNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -32221,7 +32221,7 @@ function ($,
 
 			// Don't create scene cache, due to possible default nodes in proto SFNode fields and complete scenes.
 
-			var FileLoader = require ("../InputOutput/FileLoader.js");
+			var FileLoader = require ("cobweb/InputOutput/FileLoader");
 
 			new FileLoader (this) .createX3DFromURL (this .url_, null, this .setInternalSceneAsync .bind (this));
 		},
@@ -32408,15 +32408,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Prototype/X3DProtoDeclaration.js',[
+define ('cobweb/Prototype/X3DProtoDeclaration',[
 	"jquery",
-	"../Fields.js",
-	"../Basic/X3DFieldDefinition.js",
-	"../Basic/FieldDefinitionArray.js",
-	"../Execution/X3DExecutionContext.js",
-	"./X3DProtoDeclarationNode.js",
-	"../Bits/X3DConstants.js",
-	"../InputOutput/Generator.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Execution/X3DExecutionContext",
+	"cobweb/Prototype/X3DProtoDeclarationNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/Generator",
 ],
 function ($,
           Fields,
@@ -32680,12 +32680,12 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Parser/Parser.js',[
+define ('cobweb/Parser/Parser',[
 	"jquery",
-	"../Fields.js",
-	"../Prototype/X3DExternProtoDeclaration.js",
-	"../Prototype/X3DProtoDeclaration.js",
-	"../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Prototype/X3DExternProtoDeclaration",
+	"cobweb/Prototype/X3DProtoDeclaration",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -35660,7 +35660,7 @@ function ($,
  ******************************************************************************/
 
 
-define ('lib/DataStorage.js',[],function ()
+define ('lib/DataStorage',[],function ()
 {
 "use strict";
 
@@ -35761,17 +35761,17 @@ define ('lib/DataStorage.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Core/X3DCoreContext.js',[
-	"../../Fields.js",
-	"./BrowserOptions.js",
-	"./BrowserProperties.js",
-	"./RenderingProperties.js",
-	"./Notification.js",
-	"./BrowserTimings.js",
-	"./ContextMenu.js",
-	"../../Execution/Scene.js",
-	"../../Parser/Parser.js",
-	"../../../lib/DataStorage.js",
+define ('cobweb/Browser/Core/X3DCoreContext',[
+	"cobweb/Fields",
+	"cobweb/Browser/Core/BrowserOptions",
+	"cobweb/Browser/Core/BrowserProperties",
+	"cobweb/Browser/Core/RenderingProperties",
+	"cobweb/Browser/Core/Notification",
+	"cobweb/Browser/Core/BrowserTimings",
+	"cobweb/Browser/Core/ContextMenu",
+	"cobweb/Execution/Scene",
+	"cobweb/Parser/Parser",
+	"lib/DataStorage",
 ],
 function (Fields,
           BrowserOptions,
@@ -36054,7 +36054,7 @@ function (Fields,
  ******************************************************************************/
 
 
-define ('cobweb/Routing/X3DRoutingContext.js',[
+define ('cobweb/Routing/X3DRoutingContext',[
 ],
 function ()
 {
@@ -36174,7 +36174,7 @@ function ()
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Scripting/X3DScriptingContext.js',[
+define ('cobweb/Browser/Scripting/X3DScriptingContext',[
 ],
 function ()
 {
@@ -36252,11 +36252,11 @@ function ()
  ******************************************************************************/
 
 
-define ('cobweb/Components/Core/X3DChildNode.js',[
+define ('cobweb/Components/Core/X3DChildNode',[
 	"jquery",
-	"../../Fields.js",
-	"./X3DNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -36345,10 +36345,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Core/X3DSensorNode.js',[
+define ('cobweb/Components/Core/X3DSensorNode',[
 	"jquery",
-	"./X3DChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DChildNode, 
@@ -36422,10 +36422,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Networking/X3DNetworkSensorNode.js',[
+define ('cobweb/Components/Networking/X3DNetworkSensorNode',[
 	"jquery",
-	"../Core/X3DSensorNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DSensorNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DSensorNode, 
@@ -36499,14 +36499,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Networking/LoadSensor.js',[
+define ('cobweb/Components/Networking/LoadSensor',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DNetworkSensorNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Networking/X3DNetworkSensorNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -36758,7 +36758,7 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Networking/urls.js',[],function ()
+define ('cobweb/Browser/Networking/urls',[],function ()
 {
 "use strict";
 
@@ -36968,7 +36968,7 @@ define ('cobweb/Browser/Networking/urls.js',[],function ()
         window.vsprintf = vsprintf
 
         if (typeof define === "function" && define.amd) {
-            define('lib/sprintf.js/src/sprintf.js',[],function() {
+            define('lib/sprintf.js/src/sprintf',[],function() {
                 return {
                     sprintf: sprintf,
                     vsprintf: vsprintf
@@ -37027,13 +37027,13 @@ define ('cobweb/Browser/Networking/urls.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Networking/X3DNetworkingContext.js',[
-	"../../Fields.js",
-	"../../Components/Networking/LoadSensor.js",
-	"./urls.js",
-	"../../../standard/Networking/URI.js",
-	"../../../lib/sprintf.js/src/sprintf.js",
-	"../../../lib/gettext.js",
+define ('cobweb/Browser/Networking/X3DNetworkingContext',[
+	"cobweb/Fields",
+	"cobweb/Components/Networking/LoadSensor",
+	"cobweb/Browser/Networking/urls",
+	"standard/Networking/URI",
+	"lib/sprintf.js/src/sprintf",
+	"lib/gettext",
 ],
 function (Fields,
           LoadSensor,
@@ -37225,7 +37225,7 @@ function (Fields,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Shaders/X3DShadersContext.js',[],function ()
+define ('cobweb/Browser/Shaders/X3DShadersContext',[],function ()
 {
 "use strict";
 
@@ -37320,11 +37320,11 @@ define ('cobweb/Browser/Shaders/X3DShadersContext.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shape/X3DAppearanceNode.js',[
+define ('cobweb/Components/Shape/X3DAppearanceNode',[
 	"jquery",
-	"../../Fields.js",
-	"../Core/X3DNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -37405,14 +37405,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shape/Appearance.js',[
+define ('cobweb/Components/Shape/Appearance',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DAppearanceNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shape/X3DAppearanceNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -37675,8 +37675,8 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Shape/X3DShapeContext.js',[
-	"../../Components/Shape/Appearance.js",
+define ('cobweb/Browser/Shape/X3DShapeContext',[
+	"cobweb/Components/Shape/Appearance",
 ],
 function (Appearance)
 {
@@ -37751,10 +37751,10 @@ function (Appearance)
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shape/X3DAppearanceChildNode.js',[
+define ('cobweb/Components/Shape/X3DAppearanceChildNode',[
 	"jquery",
-	"../Core/X3DNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DNode, 
@@ -37828,7 +37828,7 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Bits/TraverseType.js',[],function ()
+define ('cobweb/Bits/TraverseType',[],function ()
 {
 "use strict";
 
@@ -37899,11 +37899,11 @@ define ('cobweb/Bits/TraverseType.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shaders/X3DShaderNode.js',[
+define ('cobweb/Components/Shaders/X3DShaderNode',[
 	"jquery",
-	"../Shape/X3DAppearanceChildNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../Bits/TraverseType.js",
+	"cobweb/Components/Shape/X3DAppearanceChildNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
 ],
 function ($,
           X3DAppearanceChildNode, 
@@ -38104,12 +38104,12 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shaders/X3DProgrammableShaderObject.js',[
+define ('cobweb/Components/Shaders/X3DProgrammableShaderObject',[
 	"jquery",
-	"../../Fields.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Matrix3.js",
+	"cobweb/Fields",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,
@@ -39325,16 +39325,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shaders/ComposedShader.js',[
+define ('cobweb/Components/Shaders/ComposedShader',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DShaderNode.js",
-	"./X3DProgrammableShaderObject.js",
-	"../Networking/LoadSensor.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shaders/X3DShaderNode",
+	"cobweb/Components/Shaders/X3DProgrammableShaderObject",
+	"cobweb/Components/Networking/LoadSensor",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -39534,13 +39534,13 @@ function ($,
 });
 
 
-define('text/text!cobweb/Browser/Shaders/Bits/Line3.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\n/* Line */\n\nstruct Line3 {\n\tvec3 point;\n\tvec3 direction;\n};\n\nLine3\nline3 (in vec3 point1, in vec3 point2)\n{\n\treturn Line3 (point1, normalize (point2 - point1));\n}\n';});
+define('text!cobweb/Browser/Shaders/Bits/Line3.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\n/* Line */\n\nstruct Line3 {\n\tvec3 point;\n\tvec3 direction;\n};\n\nLine3\nline3 (in vec3 point1, in vec3 point2)\n{\n\treturn Line3 (point1, normalize (point2 - point1));\n}\n';});
 
 
-define('text/text!cobweb/Browser/Shaders/Bits/Plane3.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\n#pragma X3D include "Line3.h"\n\n/* Plane */\n\nstruct Plane3\n{\n\tvec3  normal;\n\tfloat distanceFromOrigin;\n};\n\nPlane3\nplane3 (in vec3 point, in vec3 normal)\n{\n\treturn Plane3 (normal, dot (normal, point));\n}\n\n/* Plane intersect line */\nbool\nintersects (in Plane3 plane, in Line3 line, out vec3 point)\n{\n\tpoint = vec3 (0.0);\n\n\t// Check if the line is parallel to the plane.\n\tfloat theta = dot (line .direction, plane .normal);\n\n\t// Plane and line are parallel.\n\tif (theta == 0.0)\n\t\treturn false;\n\n\t// Plane and line are not parallel. The intersection point can be calculated now.\n\tfloat t = (plane .distanceFromOrigin - dot (plane .normal, line .point)) / theta;\n\n\tpoint = line .point + line .direction * t;\n\n\treturn true;\n}\n\n///  Returns the closest point on the plane to a given point @a point.\nvec3\nclosest_point (in Plane3 plane, in vec3 point)\n{\n\tvec3 closest_point;\n\tintersects (plane, Line3 (point, plane .normal), closest_point);\n\treturn closest_point;\n}\n';});
+define('text!cobweb/Browser/Shaders/Bits/Plane3.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\n#pragma X3D include "Line3.h"\n\n/* Plane */\n\nstruct Plane3\n{\n\tvec3  normal;\n\tfloat distanceFromOrigin;\n};\n\nPlane3\nplane3 (in vec3 point, in vec3 normal)\n{\n\treturn Plane3 (normal, dot (normal, point));\n}\n\n/* Plane intersect line */\nbool\nintersects (in Plane3 plane, in Line3 line, out vec3 point)\n{\n\tpoint = vec3 (0.0);\n\n\t// Check if the line is parallel to the plane.\n\tfloat theta = dot (line .direction, plane .normal);\n\n\t// Plane and line are parallel.\n\tif (theta == 0.0)\n\t\treturn false;\n\n\t// Plane and line are not parallel. The intersection point can be calculated now.\n\tfloat t = (plane .distanceFromOrigin - dot (plane .normal, line .point)) / theta;\n\n\tpoint = line .point + line .direction * t;\n\n\treturn true;\n}\n\n///  Returns the closest point on the plane to a given point @a point.\nvec3\nclosest_point (in Plane3 plane, in vec3 point)\n{\n\tvec3 closest_point;\n\tintersects (plane, Line3 (point, plane .normal), closest_point);\n\treturn closest_point;\n}\n';});
 
 
-define('text/text!cobweb/Browser/Shaders/Bits/Random.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\nconst int RAND_MAX = int (0x7fffffff);\nconst int RAND_MIN = int (0x80000000);\n\nint seedValue = 0;\n\nvoid\nseed (in int value)\n{\n\tseedValue = value;\n}\n\n// Return a uniform distributed random floating point number in the interval [-1, 1].\nfloat\nrandom1 ()\n{\n\treturn float (seedValue = seedValue * 1103515245 + 12345) / float (RAND_MAX);\n}\n\nvec2\nrandom2 ()\n{\n\treturn vec2 (random1 (), random1 ());\n}\n\nvec3\nrandom3 ()\n{\n\treturn vec3 (random1 (), random1 (), random1 ());\n}\n';});
+define('text!cobweb/Browser/Shaders/Bits/Random.h',[],function () { return '/* -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-*/\n\nconst int RAND_MAX = int (0x7fffffff);\nconst int RAND_MIN = int (0x80000000);\n\nint seedValue = 0;\n\nvoid\nseed (in int value)\n{\n\tseedValue = value;\n}\n\n// Return a uniform distributed random floating point number in the interval [-1, 1].\nfloat\nrandom1 ()\n{\n\treturn float (seedValue = seedValue * 1103515245 + 12345) / float (RAND_MAX);\n}\n\nvec2\nrandom2 ()\n{\n\treturn vec2 (random1 (), random1 ());\n}\n\nvec3\nrandom3 ()\n{\n\treturn vec3 (random1 (), random1 (), random1 ());\n}\n';});
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
@@ -39591,10 +39591,10 @@ define('text/text!cobweb/Browser/Shaders/Bits/Random.h',[],function () { return 
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Shaders/Shader.js',[
-	"text!./Bits/Line3.h",
-	"text!./Bits/Plane3.h",
-	"text!./Bits/Random.h",
+define ('cobweb/Browser/Shaders/Shader',[
+	"text!cobweb/Browser/Shaders/Bits/Line3.h",
+	"text!cobweb/Browser/Shaders/Bits/Plane3.h",
+	"text!cobweb/Browser/Shaders/Bits/Random.h",
 ],
 function (Line3,
           Plane3,
@@ -39697,7 +39697,7 @@ function (Line3,
  ******************************************************************************/
 
 
-define ('cobweb/Parser/HTMLSupport.js',[],function ()
+define ('cobweb/Parser/HTMLSupport',[],function ()
 {
 "use strict";
 
@@ -40352,18 +40352,18 @@ define ('cobweb/Parser/HTMLSupport.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Parser/XMLParser.js',[
+define ('cobweb/Parser/XMLParser',[
 	"jquery",
-	"../Basic/X3DField.js",
-	"../Basic/X3DArrayField.js",
-	"../Basic/X3DBaseNode.js",
-	"../Components/Core/X3DPrototypeInstance.js",
-	"../Fields.js",
-	"./Parser.js",
-	"./HTMLSupport.js",
-	"../Prototype/X3DExternProtoDeclaration.js",
-	"../Prototype/X3DProtoDeclaration.js",
-	"../Bits/X3DConstants.js",
+	"cobweb/Basic/X3DField",
+	"cobweb/Basic/X3DArrayField",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Components/Core/X3DPrototypeInstance",
+	"cobweb/Fields",
+	"cobweb/Parser/Parser",
+	"cobweb/Parser/HTMLSupport",
+	"cobweb/Prototype/X3DExternProtoDeclaration",
+	"cobweb/Prototype/X3DProtoDeclaration",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DField,
@@ -41339,7 +41339,7 @@ function ($,
  ******************************************************************************/
 
 
-define ('lib/BinaryTransport.js',[],function ()
+define ('lib/BinaryTransport',[],function ()
 {
 "use strict";
 
@@ -41411,7 +41411,7 @@ define ('lib/BinaryTransport.js',[],function ()
 		});
 	};
 });
-/* pako 0.2.8 nodeca/pako */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define('lib/pako/dist/pako_inflate.js',[],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.pako = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/* pako 0.2.8 nodeca/pako */(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define('lib/pako/dist/pako_inflate',[],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.pako = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 
@@ -44531,8 +44531,8 @@ exports.ungzip  = inflate;
  ******************************************************************************/
 
 
-define ('cobweb/DEBUG.js',[
-	"./Browser/VERSION.js",
+define ('cobweb/DEBUG',[
+	"cobweb/Browser/VERSION",
 ],
 function (VERSION)
 {
@@ -44590,17 +44590,17 @@ function (VERSION)
  ******************************************************************************/
 
 
-define ('cobweb/InputOutput/FileLoader.js',[
+define ('cobweb/InputOutput/FileLoader',[
 	"jquery",
-	"../Base/X3DObject.js",
-	"../Fields.js",
-	"../Browser/Networking/urls.js",
-	"../Parser/Parser.js",
-	"../Parser/XMLParser.js",
-	"../../standard/Networking/URI.js",
-	"../../lib/BinaryTransport.js",
-	"../../lib/pako/dist/pako_inflate.js",
-	"../DEBUG.js",
+	"cobweb/Base/X3DObject",
+	"cobweb/Fields",
+	"cobweb/Browser/Networking/urls",
+	"cobweb/Parser/Parser",
+	"cobweb/Parser/XMLParser",
+	"standard/Networking/URI",
+	"lib/BinaryTransport",
+	"lib/pako/dist/pako_inflate",
+	"cobweb/DEBUG",
 ],
 function ($,
           X3DObject,
@@ -45098,16 +45098,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shaders/ShaderPart.js',[
+define ('cobweb/Components/Shaders/ShaderPart',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../../Browser/Shaders/Shader.js",
-	"../Core/X3DNode.js",
-	"../Networking/X3DUrlObject.js",
-	"../../InputOutput/FileLoader.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Browser/Shaders/Shader",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/InputOutput/FileLoader",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -45235,31 +45235,31 @@ function ($,
 
 
 
-define('text/text!cobweb/Browser/Shaders/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoneFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\tfloat lw = (x3d_LinewidthScaleFactor + 1.0) / 2.0;\n\tfloat t  = distance (vec2 (0.5, 0.5), gl_PointCoord) * 2.0 * lw - lw + 1.0;\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = mix (C .a, 0.0, clamp (t, 0.0, 1.0));\n}\n';});
+define('text!cobweb/Browser/Shaders/PointSet.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoneFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\tfloat lw = (x3d_LinewidthScaleFactor + 1.0) / 2.0;\n\tfloat t  = distance (vec2 (0.5, 0.5), gl_PointCoord) * 2.0 * lw - lw + 1.0;\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = mix (C .a, 0.0, clamp (t, 0.0, 1.0));\n}\n';});
 
 
-define('text/text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\t// If we are points, make the gl_PointSize one pixel larger.\n\tgl_PointSize = x3d_GeometryType == x3d_GeometryLines ? x3d_LinewidthScaleFactor : x3d_LinewidthScaleFactor + 1.0;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
+define('text!cobweb/Browser/Shaders/Wireframe.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_ColorMaterial;   // true if a X3DColorNode is attached, otherwise false\nuniform bool  x3d_Lighting;        // true if a X3DMaterialNode is attached, otherwise false\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Transparency;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\t// If we are points, make the gl_PointSize one pixel larger.\n\tgl_PointSize = x3d_GeometryType == x3d_GeometryLines ? x3d_LinewidthScaleFactor : x3d_LinewidthScaleFactor + 1.0;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = vec3 (p);\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tfloat alpha = 1.0 - x3d_Transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tC .rgb = x3d_Color .rgb;\n\t\t\tC .a   = x3d_Color .a * alpha;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tC .rgb = x3d_EmissiveColor;\n\t\t\tC .a   = alpha;\n\t\t}\n\t}\n\telse\n\t{\n\t\tif (x3d_ColorMaterial)\n\t\t\tC = x3d_Color;\n\t\telse\n\t\t\tC = vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
 
-define('text/text!cobweb/Browser/Shaders/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoneFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
+define('text!cobweb/Browser/Shaders/Wireframe.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform float x3d_LinewidthScaleFactor;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoneFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, C .rgb, f0);\n\tgl_FragColor .a   = C .a;\n}\n';});
 
 
-define('text/text!cobweb/Browser/Shaders/Gouraud.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix [1];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4  frontColor; // color\nvarying vec4  backColor;  // color\nvarying vec4  t;          // texCoord\nvarying vec3  v;          // point on geometry\n\nvec4\ngetMaterialColor (in vec3 N,\n                  in vec3 v,\n                  in float x3d_AmbientIntensity,\n                  in vec3  x3d_DiffuseColor,\n                  in vec3  x3d_SpecularColor,\n                  in vec3  x3d_EmissiveColor,\n                  in float x3d_Shininess,\n                  in float x3d_Transparency)\n{\n\tvec3 V = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\n\t// Calculate diffuseFactor & alpha\n\n\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\tfloat alpha         = 1.0 - x3d_Transparency;\n\n\tif (x3d_ColorMaterial)\n\t{\n\t\tdiffuseFactor  = x3d_Color .rgb;\n\t\talpha         *= x3d_Color .a;\n\t}\n\telse\n\t\tdiffuseFactor = x3d_DiffuseColor;\n\n\tvec3 ambientTerm = diffuseFactor * x3d_AmbientIntensity;\n\n\t// Apply light sources\n\n\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t{\n\t\tint lightType = x3d_LightType [i];\n\n\t\tif (lightType == x3d_NoneLight)\n\t\t\tbreak;\n\n\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\tfloat dL = length (vL);\n\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t{\n\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\tvec3 H = normalize (L + V); // specular term\n\n\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\tfloat specularFactor = x3d_Shininess > 0.0 ? pow (max (dot (N, H), 0.0), x3d_Shininess * 128.0) : 1.0;\n\t\t\tvec3  specularTerm   = x3d_SpecularColor * specularFactor;\n\n\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\tfloat spot        = 1.0;\n\n\t\t\tif (lightType == x3d_SpotLight)\n\t\t\t{\n\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\n\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\tspot = 0.0;\n\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\tspot = 1.0;\n\t\t\t\telse\n\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t}\n\t\t\n\t\t\tvec3 lightFactor  = (attenuation * spot) * x3d_LightColor [i];\n\t\t\tvec3 ambientLight = (lightFactor * x3d_LightAmbientIntensity [i]) * ambientTerm;\n\n\t\t\tlightFactor *= x3d_LightIntensity [i];\n\t\t\tfinalColor  += ambientLight + lightFactor * (diffuseTerm + specularTerm);\n\t\t}\n\t}\n\n\tfinalColor += x3d_EmissiveColor;\n\n\treturn vec4 (clamp (finalColor, 0.0, 1.0), alpha);\n}\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3 N = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\t\tfloat ambientIntensity = x3d_AmbientIntensity;\n\t\tvec3  diffuseColor     = x3d_DiffuseColor;\n\t\tvec3  specularColor    = x3d_SpecularColor;\n\t\tvec3  emissiveColor    = x3d_EmissiveColor;\n\t\tfloat shininess        = x3d_Shininess;\n\t\tfloat transparency     = x3d_Transparency;\n\n\t\tfrontColor = getMaterialColor (N, v,\n\t\t                               ambientIntensity,\n\t\t                               diffuseColor,\n\t\t                               specularColor,\n\t\t                               emissiveColor,\n\t\t                               shininess,\n\t\t                               transparency);\n\n\t\tif (x3d_SeparateBackColor)\n\t\t{\n\t\t\tambientIntensity = x3d_BackAmbientIntensity;\n\t\t\tdiffuseColor     = x3d_BackDiffuseColor;\n\t\t\tspecularColor    = x3d_BackSpecularColor;\n\t\t\temissiveColor    = x3d_BackEmissiveColor;\n\t\t\tshininess        = x3d_BackShininess;\n\t\t\ttransparency     = x3d_BackTransparency;\n\t\t}\n\n\t\tbackColor = getMaterialColor (-N, v,\n\t\t                              ambientIntensity,\n\t\t                              diffuseColor,\n\t\t                              specularColor,\n\t\t                              emissiveColor,\n\t\t                              shininess,\n\t\t                              transparency);\n\t}\n\telse\n\t{\n\t   frontColor = backColor = x3d_ColorMaterial ? x3d_Color : vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
+define('text!cobweb/Browser/Shaders/Gouraud.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix [1];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4  frontColor; // color\nvarying vec4  backColor;  // color\nvarying vec4  t;          // texCoord\nvarying vec3  v;          // point on geometry\n\nvec4\ngetMaterialColor (in vec3 N,\n                  in vec3 v,\n                  in float x3d_AmbientIntensity,\n                  in vec3  x3d_DiffuseColor,\n                  in vec3  x3d_SpecularColor,\n                  in vec3  x3d_EmissiveColor,\n                  in float x3d_Shininess,\n                  in float x3d_Transparency)\n{\n\tvec3 V = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\n\t// Calculate diffuseFactor & alpha\n\n\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\tfloat alpha         = 1.0 - x3d_Transparency;\n\n\tif (x3d_ColorMaterial)\n\t{\n\t\tdiffuseFactor  = x3d_Color .rgb;\n\t\talpha         *= x3d_Color .a;\n\t}\n\telse\n\t\tdiffuseFactor = x3d_DiffuseColor;\n\n\tvec3 ambientTerm = diffuseFactor * x3d_AmbientIntensity;\n\n\t// Apply light sources\n\n\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t{\n\t\tint lightType = x3d_LightType [i];\n\n\t\tif (lightType == x3d_NoneLight)\n\t\t\tbreak;\n\n\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\tfloat dL = length (vL);\n\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t{\n\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\tvec3 L = di ? -d : normalize (vL);\n\t\t\tvec3 H = normalize (L + V); // specular term\n\n\t\t\tvec3  diffuseTerm    = diffuseFactor * max (dot (N, L), 0.0);\n\t\t\tfloat specularFactor = x3d_Shininess > 0.0 ? pow (max (dot (N, H), 0.0), x3d_Shininess * 128.0) : 1.0;\n\t\t\tvec3  specularTerm   = x3d_SpecularColor * specularFactor;\n\n\t\t\tfloat attenuation = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\tfloat spot        = 1.0;\n\n\t\t\tif (lightType == x3d_SpotLight)\n\t\t\t{\n\t\t\t\tfloat spotAngle   = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\t\t\tfloat cutOffAngle = x3d_LightCutOffAngle [i];\n\t\t\t\tfloat beamWidth   = x3d_LightBeamWidth [i];\n\t\t\t\t\n\t\t\t\tif (spotAngle >= cutOffAngle)\n\t\t\t\t\tspot = 0.0;\n\t\t\t\telse if (spotAngle <= beamWidth)\n\t\t\t\t\tspot = 1.0;\n\t\t\t\telse\n\t\t\t\t\tspot = (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n\t\t\t}\n\t\t\n\t\t\tvec3 lightFactor  = (attenuation * spot) * x3d_LightColor [i];\n\t\t\tvec3 ambientLight = (lightFactor * x3d_LightAmbientIntensity [i]) * ambientTerm;\n\n\t\t\tlightFactor *= x3d_LightIntensity [i];\n\t\t\tfinalColor  += ambientLight + lightFactor * (diffuseTerm + specularTerm);\n\t\t}\n\t}\n\n\tfinalColor += x3d_EmissiveColor;\n\n\treturn vec4 (clamp (finalColor, 0.0, 1.0), alpha);\n}\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n\n\tif (x3d_Lighting)\n\t{\n\t\tvec3 N = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\t\tfloat ambientIntensity = x3d_AmbientIntensity;\n\t\tvec3  diffuseColor     = x3d_DiffuseColor;\n\t\tvec3  specularColor    = x3d_SpecularColor;\n\t\tvec3  emissiveColor    = x3d_EmissiveColor;\n\t\tfloat shininess        = x3d_Shininess;\n\t\tfloat transparency     = x3d_Transparency;\n\n\t\tfrontColor = getMaterialColor (N, v,\n\t\t                               ambientIntensity,\n\t\t                               diffuseColor,\n\t\t                               specularColor,\n\t\t                               emissiveColor,\n\t\t                               shininess,\n\t\t                               transparency);\n\n\t\tif (x3d_SeparateBackColor)\n\t\t{\n\t\t\tambientIntensity = x3d_BackAmbientIntensity;\n\t\t\tdiffuseColor     = x3d_BackDiffuseColor;\n\t\t\tspecularColor    = x3d_BackSpecularColor;\n\t\t\temissiveColor    = x3d_BackEmissiveColor;\n\t\t\tshininess        = x3d_BackShininess;\n\t\t\ttransparency     = x3d_BackTransparency;\n\t\t}\n\n\t\tbackColor = getMaterialColor (-N, v,\n\t\t                              ambientIntensity,\n\t\t                              diffuseColor,\n\t\t                              specularColor,\n\t\t                              emissiveColor,\n\t\t                              shininess,\n\t\t                              transparency);\n\t}\n\telse\n\t{\n\t   frontColor = backColor = x3d_ColorMaterial ? x3d_Color : vec4 (1.0, 1.0, 1.0, 1.0);\n\t}\n}\n';});
 
 
-define('text/text!cobweb/Browser/Shaders/Gouraud.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // x3d_NoneTexture, x3d_TextureType2D or x3d_TextureTypeCubeMapTexture\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 frontColor; // color\nvarying vec4 backColor;  // color\nvarying vec4 t;          // texCoord\nvarying vec3 v;          // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoneFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n \tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n \n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n \tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tvec4 finalColor = gl_FrontFacing ? frontColor : backColor;\n\n\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t{\n\t\tif (x3d_Lighting)\n\t\t\tfinalColor *= getTextureColor ();\n\t\telse\n\t\t{\n\t\t\tif (x3d_ColorMaterial)\n\t\t\t\tfinalColor *= getTextureColor ();\n\t\t\telse\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, finalColor .rgb, f0);\n\tgl_FragColor .a   = finalColor .a;\n}\n';});
+define('text!cobweb/Browser/Shaders/Gouraud.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // x3d_NoneTexture, x3d_TextureType2D or x3d_TextureTypeCubeMapTexture\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 frontColor; // color\nvarying vec4 backColor;  // color\nvarying vec4 t;          // texCoord\nvarying vec3 v;          // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nfloat\ngetFogInterpolant ()\n{\n\tif (x3d_FogType == x3d_NoneFog)\n\t\treturn 1.0;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn 0.0;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange;\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn exp (-dV / (x3d_FogVisibilityRange - dV));\n\n\treturn 1.0;\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n \tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n \n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nvoid\nmain ()\n{\n \tclip ();\n\n\tfloat f0 = getFogInterpolant ();\n\n\tvec4 finalColor = gl_FrontFacing ? frontColor : backColor;\n\n\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t{\n\t\tif (x3d_Lighting)\n\t\t\tfinalColor *= getTextureColor ();\n\t\telse\n\t\t{\n\t\t\tif (x3d_ColorMaterial)\n\t\t\t\tfinalColor *= getTextureColor ();\n\t\t\telse\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\t}\n\n\tgl_FragColor .rgb = mix (x3d_FogColor, finalColor .rgb, f0);\n\tgl_FragColor .a   = finalColor .a;\n}\n';});
 
 
-define('text/text!cobweb/Browser/Shaders/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix [x3d_MaxTextures];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_TextureMatrix [x3d_MaxTextures];\nuniform mat3 x3d_NormalMatrix;\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;  // true if a X3DMaterialNode is attached, otherwise false\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_TexCoord;\nattribute vec3 x3d_Normal;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nmain ()\n{\n\tgl_PointSize = x3d_LinewidthScaleFactor;\n\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tif (x3d_Lighting)\n\t\tvN = normalize (x3d_NormalMatrix * x3d_Normal);\n\n\tt = x3d_TextureMatrix [0] * x3d_TexCoord;\n\tC = x3d_Color;\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
 
-define('text/text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nfloat\ngetSpotFactor (in float cutOffAngle, in float beamWidth, in vec3 L, in vec3 d)\n{\n\tfloat spotAngle = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\n\tif (spotAngle >= cutOffAngle)\n\t\treturn 0.0;\n\telse if (spotAngle <= beamWidth)\n\t\treturn 1.0;\n\n\treturn (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n}\n\nvec4\ngetMaterialColor ()\n{\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint lightType = x3d_LightType [i];\n\n\t\t\tif (lightType == x3d_NoneLight)\n\t\t\t\tbreak;\n\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);      // Normalized vector from point on geometry to light source i position.\n\t\t\t\tvec3 H = normalize (L + V);             // Specular term\n\n\t\t\t\tfloat lightAngle     = dot (N, L);      // Angle between normal and light ray.\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * clamp (lightAngle, 0.0, 1.0);\n\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\n\t\t\t\tfloat attenuationFactor           = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spotFactor                  = lightType == x3d_SpotLight ? getSpotFactor (x3d_LightCutOffAngle [i], x3d_LightBeamWidth [i], L, d) : 1.0;\n\t\t\t\tfloat attenuationSpotFactor       = attenuationFactor * spotFactor;\n\t\t\t\tvec3  ambientColor                = x3d_LightAmbientIntensity [i] * ambientTerm;\n\t\t\t\tvec3  ambientDiffuseSpecularColor = ambientColor + x3d_LightIntensity [i] * (diffuseTerm + specularTerm);\n\n\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\t\t\t}\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\treturn vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\treturn finalColor;\n\t}\n}\n\nvec3\ngetFogColor (in vec3 color)\n{\n\tif (x3d_FogType == x3d_NoneFog)\n\t\treturn color;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn x3d_FogColor;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn mix (x3d_FogColor, color, (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange);\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn mix (x3d_FogColor, color, exp (-dV / (x3d_FogVisibilityRange - dV)));\n\n\treturn color;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = getMaterialColor ();\n\n\tgl_FragColor .rgb = getFogColor (gl_FragColor .rgb);\n}\n';});
+define('text!cobweb/Browser/Shaders/Phong.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform int x3d_GeometryType;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nuniform int   x3d_FogType;\nuniform vec3  x3d_FogColor;\nuniform float x3d_FogVisibilityRange;\n\nuniform float x3d_LinewidthScaleFactor;\nuniform bool  x3d_Lighting;      // true if a X3DMaterialNode is attached, otherwise false\nuniform bool  x3d_ColorMaterial; // true if a X3DColorNode is attached, otherwise false\n\nuniform int   x3d_LightType [x3d_MaxLights];\nuniform bool  x3d_LightOn [x3d_MaxLights];\nuniform vec3  x3d_LightColor [x3d_MaxLights];\nuniform float x3d_LightIntensity [x3d_MaxLights];\nuniform float x3d_LightAmbientIntensity [x3d_MaxLights];\nuniform vec3  x3d_LightAttenuation [x3d_MaxLights];\nuniform vec3  x3d_LightLocation [x3d_MaxLights];\nuniform vec3  x3d_LightDirection [x3d_MaxLights];\nuniform float x3d_LightRadius [x3d_MaxLights];\nuniform float x3d_LightBeamWidth [x3d_MaxLights];\nuniform float x3d_LightCutOffAngle [x3d_MaxLights];\n\nuniform bool x3d_SeparateBackColor;\n\nuniform float x3d_AmbientIntensity;\nuniform vec3  x3d_DiffuseColor;\nuniform vec3  x3d_SpecularColor;\nuniform vec3  x3d_EmissiveColor;\nuniform float x3d_Shininess;\nuniform float x3d_Transparency;\n\nuniform float x3d_BackAmbientIntensity;\nuniform vec3  x3d_BackDiffuseColor;\nuniform vec3  x3d_BackSpecularColor;\nuniform vec3  x3d_BackEmissiveColor;\nuniform float x3d_BackShininess;\nuniform float x3d_BackTransparency;\n\nuniform int         x3d_TextureType [x3d_MaxTextures]; // true if a X3DTexture2DNode is attached, otherwise false\nuniform sampler2D   x3d_Texture2D [x3d_MaxTextures];\nuniform samplerCube x3d_CubeMapTexture [x3d_MaxTextures];\n\nvarying vec4 C;  // color\nvarying vec4 t;  // texCoord\nvarying vec3 vN; // normalized normal vector at this point on geometry\nvarying vec3 v;  // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec4\ngetTextureColor ()\n{\n\tif (x3d_TextureType [0] == x3d_TextureType2D)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn texture2D (x3d_Texture2D [0], vec2 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn texture2D (x3d_Texture2D [0], vec2 (1.0 - t .s, t .t));\n\t}\n\n\tif (x3d_TextureType [0] == x3d_TextureTypeCubeMapTexture)\n\t{\n\t\tif (x3d_GeometryType == x3d_Geometry3D || gl_FrontFacing)\n\t\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (t));\n\t\t\n\t\t// If dimension is x3d_Geometry2D the texCoords must be flipped.\n\t\treturn textureCube (x3d_CubeMapTexture [0], vec3 (1.0 - t .s, t .t, t .z));\n\t}\n\n\treturn vec4 (1.0, 1.0, 1.0, 1.0);\n}\n\nfloat\ngetSpotFactor (in float cutOffAngle, in float beamWidth, in vec3 L, in vec3 d)\n{\n\tfloat spotAngle = acos (clamp (dot (-L, d), -1.0, 1.0));\n\t\n\tif (spotAngle >= cutOffAngle)\n\t\treturn 0.0;\n\telse if (spotAngle <= beamWidth)\n\t\treturn 1.0;\n\n\treturn (spotAngle - cutOffAngle) / (beamWidth - cutOffAngle);\n}\n\nvec4\ngetMaterialColor ()\n{\n\tif (x3d_Lighting)\n\t{\n\t\tvec3  N  = normalize (gl_FrontFacing ? vN : -vN);\n\t\tvec3  V  = normalize (-v); // normalized vector from point on geometry to viewer\'s position\n\t\tfloat dV = length (v);\n\n\t\t// Calculate diffuseFactor & alpha\n\n\t\tbool frontColor = gl_FrontFacing || ! x3d_SeparateBackColor;\n\n\t\tfloat ambientIntensity = frontColor ? x3d_AmbientIntensity : x3d_BackAmbientIntensity;\n\t\tvec3  diffuseColor     = frontColor ? x3d_DiffuseColor     : x3d_BackDiffuseColor;\n\t\tvec3  specularColor    = frontColor ? x3d_SpecularColor    : x3d_BackSpecularColor;\n\t\tvec3  emissiveColor    = frontColor ? x3d_EmissiveColor    : x3d_BackEmissiveColor;\n\t\tfloat shininess        = frontColor ? x3d_Shininess        : x3d_BackShininess;\n\t\tfloat transparency     = frontColor ? x3d_Transparency     : x3d_BackTransparency;\n\n\t\tvec3  diffuseFactor = vec3 (1.0, 1.0, 1.0);\n\t\tfloat alpha         = 1.0 - transparency;\n\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * C .rgb;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = C .rgb;\n\n\t\t\talpha *= C .a;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tdiffuseFactor  = T .rgb * diffuseColor;\n\t\t\t\talpha         *= T .a;\n\t\t\t}\n\t\t\telse\n\t\t\t\tdiffuseFactor = diffuseColor;\n\t\t}\n\n\t\tvec3 ambientTerm = diffuseFactor * ambientIntensity;\n\n\t\t// Apply light sources\n\n\t\tvec3 finalColor = vec3 (0.0, 0.0, 0.0);\n\n\t\tfor (int i = 0; i < x3d_MaxLights; ++ i)\n\t\t{\n\t\t\tint lightType = x3d_LightType [i];\n\n\t\t\tif (lightType == x3d_NoneLight)\n\t\t\t\tbreak;\n\n\t\t\tvec3  vL = x3d_LightLocation [i] - v;\n\t\t\tfloat dL = length (vL);\n\t\t\tbool  di = lightType == x3d_DirectionalLight;\n\n\t\t\tif (di || dL <= x3d_LightRadius [i])\n\t\t\t{\n\t\t\t\tvec3 d = x3d_LightDirection [i];\n\t\t\t\tvec3 c = x3d_LightAttenuation [i];\n\t\t\t\tvec3 L = di ? -d : normalize (vL);      // Normalized vector from point on geometry to light source i position.\n\t\t\t\tvec3 H = normalize (L + V);             // Specular term\n\n\t\t\t\tfloat lightAngle     = dot (N, L);      // Angle between normal and light ray.\n\t\t\t\tvec3  diffuseTerm    = diffuseFactor * clamp (lightAngle, 0.0, 1.0);\n\t\t\t\tfloat specularFactor = shininess > 0.0 ? pow (max (dot (N, H), 0.0), shininess * 128.0) : 1.0;\n\t\t\t\tvec3  specularTerm   = specularColor * specularFactor;\n\n\t\t\t\tfloat attenuationFactor           = di ? 1.0 : 1.0 / max (c [0] + c [1] * dL + c [2] * (dL * dL), 1.0);\n\t\t\t\tfloat spotFactor                  = lightType == x3d_SpotLight ? getSpotFactor (x3d_LightCutOffAngle [i], x3d_LightBeamWidth [i], L, d) : 1.0;\n\t\t\t\tfloat attenuationSpotFactor       = attenuationFactor * spotFactor;\n\t\t\t\tvec3  ambientColor                = x3d_LightAmbientIntensity [i] * ambientTerm;\n\t\t\t\tvec3  ambientDiffuseSpecularColor = ambientColor + x3d_LightIntensity [i] * (diffuseTerm + specularTerm);\n\n\t\t\t\tfinalColor += attenuationSpotFactor * (x3d_LightColor [i] * ambientDiffuseSpecularColor);\n\t\t\t}\n\t\t}\n\n\t\tfinalColor += emissiveColor;\n\n\t\treturn vec4 (finalColor, alpha);\n\t}\n\telse\n\t{\n\t\tvec4 finalColor = vec4 (1.0, 1.0, 1.0, 1.0);\n\t\n\t\tif (x3d_ColorMaterial)\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t{\n\t\t\t\tvec4 T = getTextureColor ();\n\n\t\t\t\tfinalColor = T * C;\n\t\t\t}\n\t\t\telse\n\t\t\t\tfinalColor = C;\n\t\t}\n\t\telse\n\t\t{\n\t\t\tif (x3d_TextureType [0] != x3d_NoneTexture)\n\t\t\t\tfinalColor = getTextureColor ();\n\t\t}\n\n\t\treturn finalColor;\n\t}\n}\n\nvec3\ngetFogColor (in vec3 color)\n{\n\tif (x3d_FogType == x3d_NoneFog)\n\t\treturn color;\n\n\tfloat dV = length (v);\n\n\tif (dV >= x3d_FogVisibilityRange)\n\t\treturn x3d_FogColor;\n\n\tif (x3d_FogType == x3d_LinearFog)\n\t\treturn mix (x3d_FogColor, color, (x3d_FogVisibilityRange - dV) / x3d_FogVisibilityRange);\n\n\tif (x3d_FogType == x3d_ExponentialFog)\n\t\treturn mix (x3d_FogColor, color, exp (-dV / (x3d_FogVisibilityRange - dV)));\n\n\treturn color;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = getMaterialColor ();\n\n\tgl_FragColor .rgb = getFogColor (gl_FragColor .rgb);\n}\n';});
 
 
-define('text/text!cobweb/Browser/Shaders/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
+define('text!cobweb/Browser/Shaders/Depth.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Vertex;\n\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv = p .xyz;\n\n\tgl_Position = x3d_ProjectionMatrix * p;\n}\n';});
 
 
-define('text/text!cobweb/Browser/Shaders/Depth.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec4\npack (in float f)\n{\n\tvec4 color;\n\n\tf *= 255.0;\n\tcolor .r = floor (f);\n\n\tf -= color .r;\n\tf *= 255.0;\n\tcolor .g = floor (f);\n\n\tf -= color .g;\n\tf *= 255.0;\n\tcolor .b = floor (f);\n\n\tf -= color .b;\n\tf *= 255.0;\n\tcolor .a = floor (f);\n\n\treturn color / 255.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = pack (gl_FragCoord .z);\n}\n';});
+define('text!cobweb/Browser/Shaders/Depth.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvec4\npack (in float f)\n{\n\tvec4 color;\n\n\tf *= 255.0;\n\tcolor .r = floor (f);\n\n\tf -= color .r;\n\tf *= 255.0;\n\tcolor .g = floor (f);\n\n\tf -= color .g;\n\tf *= 255.0;\n\tcolor .b = floor (f);\n\n\tf -= color .b;\n\tf *= 255.0;\n\tcolor .a = floor (f);\n\n\treturn color / 255.0;\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = pack (gl_FragCoord .z);\n}\n';});
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
@@ -45312,20 +45312,20 @@ define('text/text!cobweb/Browser/Shaders/Depth.fs',[],function () { return 'data
 
 //https://github.com/sdecima/javascript-detect-element-resize
 
-define ('cobweb/Browser/Rendering/X3DRenderingContext.js',[
-	"../../Fields.js",
-	"../../Components/Shaders/ComposedShader.js",
-	"../../Components/Shaders/ShaderPart.js",
-	"text!../Shaders/PointSet.fs",
-	"text!../Shaders/Wireframe.vs",
-	"text!../Shaders/Wireframe.fs",
-	"text!../Shaders/Gouraud.vs",
-	"text!../Shaders/Gouraud.fs",
-	"text!../Shaders/Phong.vs",
-	"text!../Shaders/Phong.fs",
-	"text!../Shaders/Depth.vs",
-	"text!../Shaders/Depth.fs",
-	"../../../standard/Math/Numbers/Vector4.js",
+define ('cobweb/Browser/Rendering/X3DRenderingContext',[
+	"cobweb/Fields",
+	"cobweb/Components/Shaders/ComposedShader",
+	"cobweb/Components/Shaders/ShaderPart",
+	"text!cobweb/Browser/Shaders/PointSet.fs",
+	"text!cobweb/Browser/Shaders/Wireframe.vs",
+	"text!cobweb/Browser/Shaders/Wireframe.fs",
+	"text!cobweb/Browser/Shaders/Gouraud.vs",
+	"text!cobweb/Browser/Shaders/Gouraud.fs",
+	"text!cobweb/Browser/Shaders/Phong.vs",
+	"text!cobweb/Browser/Shaders/Phong.fs",
+	"text!cobweb/Browser/Shaders/Depth.vs",
+	"text!cobweb/Browser/Shaders/Depth.fs",
+	"standard/Math/Numbers/Vector4",
 ],
 function (Fields,
           ComposedShader,
@@ -45590,10 +45590,10 @@ function (Fields,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Geometry2D/Arc2DOptions.js',[
+define ('cobweb/Browser/Geometry2D/Arc2DOptions',[
 	"jquery",
-	"../../Basic/X3DBaseNode.js",
-	"../../Fields.js",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Fields",
 ],
 function ($,
           X3DBaseNode,
@@ -45677,10 +45677,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Geometry2D/ArcClose2DOptions.js',[
+define ('cobweb/Browser/Geometry2D/ArcClose2DOptions',[
 	"jquery",
-	"../../Basic/X3DBaseNode.js",
-	"../../Fields.js",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Fields",
 ],
 function ($,
           X3DBaseNode,
@@ -45764,7 +45764,7 @@ function ($,
  ******************************************************************************/
 
 
-define ('standard/Math/Numbers/Complex.js',[
+define ('standard/Math/Numbers/Complex',[
 	"jquery",
 ],
 function ($)
@@ -45975,12 +45975,12 @@ function ($)
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Geometry2D/Circle2DOptions.js',[
+define ('cobweb/Browser/Geometry2D/Circle2DOptions',[
 	"jquery",
-	"../../Basic/X3DBaseNode.js",
-	"../../Fields.js",
-	"../../../standard/Math/Numbers/Complex.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Fields",
+	"standard/Math/Numbers/Complex",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           X3DBaseNode,
@@ -46093,12 +46093,12 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Geometry2D/Disk2DOptions.js',[
+define ('cobweb/Browser/Geometry2D/Disk2DOptions',[
 	"jquery",
-	"../../Basic/X3DBaseNode.js",
-	"../../Fields.js",
-	"../../../standard/Math/Numbers/Complex.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Fields",
+	"standard/Math/Numbers/Complex",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           X3DBaseNode,
@@ -46202,7 +46202,7 @@ function ($,
 	return Disk2DOptions;
 });
 
-!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define('lib/poly2tri.js/dist/poly2tri.js',e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.poly2tri=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+!function(e){if("object"==typeof exports)module.exports=e();else if("function"==typeof define&&define.amd)define('lib/poly2tri.js/dist/poly2tri',e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.poly2tri=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 module.exports={"version": "1.3.5"}
 },{}],2:[function(_dereq_,module,exports){
 /*
@@ -49085,10 +49085,10 @@ module.exports = {
  ******************************************************************************/
 
 
-define ('standard/Math/Geometry/Triangle3.js',[
-	"../Numbers/Vector3.js",
-	"../Numbers/Matrix4.js",
-	"../../../lib/poly2tri.js/dist/poly2tri.js",
+define ('standard/Math/Geometry/Triangle3',[
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
+	"lib/poly2tri.js/dist/poly2tri",
 ],
 function (Vector3,
           Matrix4,
@@ -49299,7 +49299,7 @@ function (Vector3,
  ******************************************************************************/
 
 
-define ('standard/Math/Algorithms/SAT.js',[],function ()
+define ('standard/Math/Algorithms/SAT',[],function ()
 {
 "use strict";
 
@@ -49420,11 +49420,11 @@ define ('standard/Math/Algorithms/SAT.js',[],function ()
  ******************************************************************************/
 
 
-define ('standard/Math/Geometry/Box3.js',[
-	"./Triangle3.js",
-	"../Numbers/Matrix4.js",
-	"../Numbers/Vector3.js",
-	"../Algorithms/SAT.js",
+define ('standard/Math/Geometry/Box3',[
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithms/SAT",
 ],
 function (Triangle3,
           Matrix4,
@@ -49953,9 +49953,9 @@ function (Triangle3,
  ******************************************************************************/
 
 
-define ('standard/Math/Geometry/Plane3.js',[
-	"../Numbers/Vector3.js",
-	"../Numbers/Matrix4.js",
+define ('standard/Math/Geometry/Plane3',[
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function (Vector3,
           Matrix4)
@@ -50131,20 +50131,20 @@ function (Vector3,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/X3DGeometryNode.js',[
+define ('cobweb/Components/Rendering/X3DGeometryNode',[
 	"jquery",
-	"../../Fields.js",
-	"../Core/X3DNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Color3.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Matrix3.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Geometry/Box3.js",
-	"../../../standard/Math/Geometry/Plane3.js",
-	"../../../standard/Math/Geometry/Triangle3.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color3",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix3",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Box3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -51236,12 +51236,12 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/X3DComposedGeometryNode.js',[
+define ('cobweb/Components/Rendering/X3DComposedGeometryNode',[
 	"jquery",
-	"./X3DGeometryNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           X3DGeometryNode,
@@ -51580,16 +51580,16 @@ function ($,
 
 // https://github.com/r3mi/poly2tri.js
 
-define ('cobweb/Components/Geometry3D/IndexedFaceSet.js',[
+define ('cobweb/Components/Geometry3D/IndexedFaceSet',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DComposedGeometryNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Geometry/Triangle3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DComposedGeometryNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Triangle3",
 ],
 function ($,
           Fields,
@@ -52057,10 +52057,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/X3DGeometricPropertyNode.js',[
+define ('cobweb/Components/Rendering/X3DGeometricPropertyNode',[
 	"jquery",
-	"../Core/X3DNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DNode, 
@@ -52134,12 +52134,12 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/X3DCoordinateNode.js',[
+define ('cobweb/Components/Rendering/X3DCoordinateNode',[
 	"jquery",
-	"./X3DGeometricPropertyNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Triangle3.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Components/Rendering/X3DGeometricPropertyNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           X3DGeometricPropertyNode, 
@@ -52267,13 +52267,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/Coordinate.js',[
+define ('cobweb/Components/Rendering/Coordinate',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DCoordinateNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DCoordinateNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -52366,10 +52366,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Texturing/X3DTextureCoordinateNode.js',[
+define ('cobweb/Components/Texturing/X3DTextureCoordinateNode',[
 	"jquery",
-	"../Rendering/X3DGeometricPropertyNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Rendering/X3DGeometricPropertyNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DGeometricPropertyNode, 
@@ -52451,14 +52451,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Texturing/TextureCoordinate.js',[
+define ('cobweb/Components/Texturing/TextureCoordinate',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DTextureCoordinateNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTextureCoordinateNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector4",
 ],
 function ($,
           Fields,
@@ -52579,14 +52579,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Geometry2D/Rectangle2DOptions.js',[
+define ('cobweb/Browser/Geometry2D/Rectangle2DOptions',[
 	"jquery",
-	"../../Basic/X3DBaseNode.js",
-	"../../Components/Geometry3D/IndexedFaceSet.js",
-	"../../Components/Rendering/Coordinate.js",
-	"../../Components/Texturing/TextureCoordinate.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Components/Geometry3D/IndexedFaceSet",
+	"cobweb/Components/Rendering/Coordinate",
+	"cobweb/Components/Texturing/TextureCoordinate",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           X3DBaseNode,
@@ -52712,12 +52712,12 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Geometry2D/X3DGeometry2DContext.js',[
-	"./Arc2DOptions.js",
-	"./ArcClose2DOptions.js",
-	"./Circle2DOptions.js",
-	"./Disk2DOptions.js",
-	"./Rectangle2DOptions.js",
+define ('cobweb/Browser/Geometry2D/X3DGeometry2DContext',[
+	"cobweb/Browser/Geometry2D/Arc2DOptions",
+	"cobweb/Browser/Geometry2D/ArcClose2DOptions",
+	"cobweb/Browser/Geometry2D/Circle2DOptions",
+	"cobweb/Browser/Geometry2D/Disk2DOptions",
+	"cobweb/Browser/Geometry2D/Rectangle2DOptions",
 ],
 function (Arc2DOptions,
           ArcClose2DOptions,
@@ -52818,14 +52818,14 @@ function (Arc2DOptions,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Geometry3D/BoxOptions.js',[
+define ('cobweb/Browser/Geometry3D/BoxOptions',[
 	"jquery",
-	"../../Basic/X3DBaseNode.js",
-	"../../Components/Geometry3D/IndexedFaceSet.js",
-	"../../Components/Rendering/Coordinate.js",
-	"../../Components/Texturing/TextureCoordinate.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Components/Geometry3D/IndexedFaceSet",
+	"cobweb/Components/Rendering/Coordinate",
+	"cobweb/Components/Texturing/TextureCoordinate",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           X3DBaseNode,
@@ -52962,10 +52962,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Geometry3D/ConeOptions.js',[
+define ('cobweb/Browser/Geometry3D/ConeOptions',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DBaseNode.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DBaseNode",
 ],
 function ($,
           Fields,
@@ -53050,10 +53050,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Geometry3D/CylinderOptions.js',[
+define ('cobweb/Browser/Geometry3D/CylinderOptions',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DBaseNode.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DBaseNode",
 ],
 function ($,
           Fields,
@@ -53138,16 +53138,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Geometry3D/QuadSphereOptions.js',[
+define ('cobweb/Browser/Geometry3D/QuadSphereOptions',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DBaseNode.js",
-	"../../Components/Geometry3D/IndexedFaceSet.js",
-	"../../Components/Rendering/Coordinate.js",
-	"../../Components/Texturing/TextureCoordinate.js",
-	"../../../standard/Math/Numbers/Complex.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Components/Geometry3D/IndexedFaceSet",
+	"cobweb/Components/Rendering/Coordinate",
+	"cobweb/Components/Texturing/TextureCoordinate",
+	"standard/Math/Numbers/Complex",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -53444,11 +53444,11 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Geometry3D/X3DGeometry3DContext.js',[
-	"./BoxOptions.js",
-	"./ConeOptions.js",
-	"./CylinderOptions.js",
-	"./QuadSphereOptions.js",
+define ('cobweb/Browser/Geometry3D/X3DGeometry3DContext',[
+	"cobweb/Browser/Geometry3D/BoxOptions",
+	"cobweb/Browser/Geometry3D/ConeOptions",
+	"cobweb/Browser/Geometry3D/CylinderOptions",
+	"cobweb/Browser/Geometry3D/QuadSphereOptions",
 ],
 function (BoxOptions,
           ConeOptions,
@@ -53544,9 +53544,9 @@ function (BoxOptions,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/PointingDeviceSensor/PointingDevice.js',[
+define ('cobweb/Browser/PointingDeviceSensor/PointingDevice',[
 	"jquery",
-	"../../Basic/X3DBaseNode.js",
+	"cobweb/Basic/X3DBaseNode",
 ],
 function (jquery,
           X3DBaseNode)
@@ -53749,8 +53749,8 @@ function (jquery,
  ******************************************************************************/
 
 
-define ('standard/Math/Geometry/Line3.js',[
-	"../Numbers/Vector3.js",
+define ('standard/Math/Geometry/Line3',[
+	"standard/Math/Numbers/Vector3",
 ],
 function (Vector3)
 {
@@ -53952,14 +53952,14 @@ function (Vector3)
  ******************************************************************************/
 
 
-define ('standard/Math/Geometry/ViewVolume.js',[
+define ('standard/Math/Geometry/ViewVolume',[
 	"jquery",
-	"./Line3.js",
-	"./Plane3.js",
-	"./Triangle3.js",
-	"../Numbers/Vector3.js",
-	"../Numbers/Vector4.js",
-	"../Numbers/Matrix4.js",
+	"standard/Math/Geometry/Line3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
 {
@@ -54183,7 +54183,7 @@ function ($, Line3, Plane3, Triangle3, Vector3, Vector4, Matrix4)
  ******************************************************************************/
 
 
-define ('standard/Math/Algorithms/MergeSort.js',[],function ()
+define ('standard/Math/Algorithms/MergeSort',[],function ()
 {
 "use strict";
 
@@ -54293,18 +54293,18 @@ define ('standard/Math/Algorithms/MergeSort.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Browser/PointingDeviceSensor/X3DPointingDeviceSensorContext.js',[
+define ('cobweb/Browser/PointingDeviceSensor/X3DPointingDeviceSensorContext',[
 	"jquery",
-	"./PointingDevice.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Line3.js",
-	"../../../standard/Math/Geometry/ViewVolume.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Algorithms/MergeSort.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Browser/PointingDeviceSensor/PointingDevice",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Line3",
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithms/MergeSort",
+	"standard/Math/Algorithm",
 ],
 function ($,
           PointingDevice,
@@ -54602,9 +54602,9 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/KeyDeviceSensor/X3DKeyDeviceSensorContext.js',[
+define ('cobweb/Browser/KeyDeviceSensor/X3DKeyDeviceSensorContext',[
 	"jquery",
-	"../../Fields.js",
+	"cobweb/Fields",
 ],
 function ($,
           Fields)
@@ -54865,10 +54865,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Core/X3DBindableNode.js',[
+define ('cobweb/Components/Core/X3DBindableNode',[
 	"jquery",
-	"./X3DChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DChildNode, 
@@ -54979,11 +54979,11 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Time/X3DTimeDependentNode.js',[
+define ('cobweb/Components/Time/X3DTimeDependentNode',[
 	"jquery",
-	"../../Fields.js",
-	"../Core/X3DChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -55340,14 +55340,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Time/TimeSensor.js',[
+define ('cobweb/Components/Time/TimeSensor',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DSensorNode.js",
-	"./X3DTimeDependentNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DSensorNode",
+	"cobweb/Components/Time/X3DTimeDependentNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -55521,11 +55521,11 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Interpolation/X3DInterpolatorNode.js',[
+define ('cobweb/Components/Interpolation/X3DInterpolatorNode',[
 	"jquery",
-	"../Core/X3DChildNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           X3DChildNode, 
@@ -55660,13 +55660,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Interpolation/EaseInEaseOut.js',[
+define ('cobweb/Components/Interpolation/EaseInEaseOut',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DInterpolatorNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -55808,14 +55808,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Interpolation/PositionInterpolator.js',[
+define ('cobweb/Components/Interpolation/PositionInterpolator',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DInterpolatorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -55932,14 +55932,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Interpolation/OrientationInterpolator.js',[
+define ('cobweb/Components/Interpolation/OrientationInterpolator',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DInterpolatorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Rotation4.js"
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Rotation4"
 ],
 function ($,
           Fields,
@@ -56061,20 +56061,20 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Navigation/X3DViewpointNode.js',[
+define ('cobweb/Components/Navigation/X3DViewpointNode',[
 	"jquery",
-	"../../Fields.js",
-	"../Core/X3DBindableNode.js",
-	"../Time/TimeSensor.js",
-	"../Interpolation/EaseInEaseOut.js",
-	"../Interpolation/PositionInterpolator.js",
-	"../Interpolation/OrientationInterpolator.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DBindableNode",
+	"cobweb/Components/Time/TimeSensor",
+	"cobweb/Components/Interpolation/EaseInEaseOut",
+	"cobweb/Components/Interpolation/PositionInterpolator",
+	"cobweb/Components/Interpolation/OrientationInterpolator",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -56523,8 +56523,8 @@ function ($,
  ******************************************************************************/
 
 
-define ('standard/Math/Geometry/Camera.js',[
-	"../Numbers/Vector3.js",
+define ('standard/Math/Geometry/Camera',[
+	"standard/Math/Numbers/Vector3",
 ],
 function (Vector3)
 {
@@ -56647,17 +56647,17 @@ function (Vector3)
  ******************************************************************************/
 
 
-define ('cobweb/Components/Navigation/OrthoViewpoint.js',[
+define ('cobweb/Components/Navigation/OrthoViewpoint',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DViewpointNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Camera.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Navigation/X3DViewpointNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -56878,13 +56878,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Navigation/X3DViewer.js',[
+define ('cobweb/Browser/Navigation/X3DViewer',[
 	"jquery",
-	"../../Basic/X3DBaseNode.js",
-	"../../Components/Navigation/OrthoViewpoint.js",
-	"../../../standard/Math/Geometry/ViewVolume.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Components/Navigation/OrthoViewpoint",
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($, X3DBaseNode, OrthoViewpoint, ViewVolume, Vector3, Matrix4)
 {
@@ -57284,12 +57284,12 @@ define('jquery-mousewheel', ['jquery-mousewheel/jquery.mousewheel'], function (m
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Navigation/ExamineViewer.js',[
+define ('cobweb/Browser/Navigation/ExamineViewer',[
 	"jquery",
-	"./X3DViewer.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../lib/gettext.js",
+	"cobweb/Browser/Navigation/X3DViewer",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"lib/gettext",
 	"jquery-mousewheel",
 ],
 function ($, X3DViewer, Vector3, Rotation4, _)
@@ -57646,13 +57646,13 @@ function ($, X3DViewer, Vector3, Rotation4, _)
  ******************************************************************************/
 
 ﻿
-define ('cobweb/Browser/Navigation/X3DFlyViewer.js',[
+define ('cobweb/Browser/Navigation/X3DFlyViewer',[
 	"jquery",
-	"./X3DViewer.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Geometry/Camera.js",
+	"cobweb/Browser/Navigation/X3DViewer",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Camera",
 	"jquery-mousewheel",
 ],
 function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
@@ -58213,11 +58213,11 @@ function ($, X3DViewer, Vector3, Rotation4, Matrix4, Camera)
  ******************************************************************************/
 
 ﻿
-define ('cobweb/Browser/Navigation/WalkViewer.js',[
-	"./X3DFlyViewer.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../lib/gettext.js",
+define ('cobweb/Browser/Navigation/WalkViewer',[
+	"cobweb/Browser/Navigation/X3DFlyViewer",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"lib/gettext",
 ],
 function (X3DFlyViewer, Vector3, Rotation4, _)
 {
@@ -58318,9 +58318,9 @@ function (X3DFlyViewer, Vector3, Rotation4, _)
  ******************************************************************************/
 
 ﻿
-define ('cobweb/Browser/Navigation/FlyViewer.js',[
-	"./X3DFlyViewer.js",
-	"../../../lib/gettext.js",
+define ('cobweb/Browser/Navigation/FlyViewer',[
+	"cobweb/Browser/Navigation/X3DFlyViewer",
+	"lib/gettext",
 ],
 function (X3DFlyViewer, _)
 {
@@ -58404,14 +58404,14 @@ function (X3DFlyViewer, _)
  ******************************************************************************/
 
 
-define ('cobweb/Components/Interpolation/ScalarInterpolator.js',[
+define ('cobweb/Components/Interpolation/ScalarInterpolator',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DInterpolatorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -58527,17 +58527,17 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Navigation/Viewpoint.js',[
+define ('cobweb/Components/Navigation/Viewpoint',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DViewpointNode.js",
-	"../Interpolation/ScalarInterpolator.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Camera.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Navigation/X3DViewpointNode",
+	"cobweb/Components/Interpolation/ScalarInterpolator",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -58708,7 +58708,7 @@ function ($,
  ******************************************************************************/
 
 
-define ('standard/Math/Geometry/Spheroid3.js',[],function ()
+define ('standard/Math/Geometry/Spheroid3',[],function ()
 {
 "use strict";
 
@@ -58803,8 +58803,8 @@ define ('standard/Math/Geometry/Spheroid3.js',[],function ()
  ******************************************************************************/
 
 
-define ('standard/Geospatial/ReferenceEllipsoids.js',[
-	"../Math/Geometry/Spheroid3.js",
+define ('standard/Geospatial/ReferenceEllipsoids',[
+	"standard/Math/Geometry/Spheroid3",
 ],
 function (Spheroid3)
 {
@@ -58904,9 +58904,9 @@ function (Spheroid3)
  ******************************************************************************/
 
 
-define ('standard/Geospatial/Geodetic.js',[
-	"../Math/Numbers/Vector3.js",
-	"../Math/Algorithm.js",
+define ('standard/Geospatial/Geodetic',[
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function (Vector3,
           Algorithm)
@@ -59172,10 +59172,10 @@ function (Vector3,
  ******************************************************************************/
 
 
-define ('standard/Geospatial/UniversalTransverseMercator.js',[
-	"./Geodetic.js",
-	"../Math/Numbers/Vector3.js",
-	"../Math/Algorithm.js",
+define ('standard/Geospatial/UniversalTransverseMercator',[
+	"standard/Geospatial/Geodetic",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function (Geodetic,
           Vector3,
@@ -59390,9 +59390,9 @@ function (Geodetic,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Geospatial/Geocentric.js',[
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Algorithm.js",
+define ('cobweb/Browser/Geospatial/Geocentric',[
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function (Vector3,
           Algorithm)
@@ -59477,11 +59477,11 @@ function (Vector3,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Geospatial/Geospatial.js',[
-	"../../../standard/Geospatial/ReferenceEllipsoids.js",
-	"../../../standard/Geospatial/Geodetic.js",
-	"../../../standard/Geospatial/UniversalTransverseMercator.js",
-	"./Geocentric.js",
+define ('cobweb/Browser/Geospatial/Geospatial',[
+	"standard/Geospatial/ReferenceEllipsoids",
+	"standard/Geospatial/Geodetic",
+	"standard/Geospatial/UniversalTransverseMercator",
+	"cobweb/Browser/Geospatial/Geocentric",
 ],
 function (ReferenceEllipsoids,
           Geodetic,
@@ -59693,13 +59693,13 @@ function (ReferenceEllipsoids,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geospatial/X3DGeospatialObject.js',[
+define ('cobweb/Components/Geospatial/X3DGeospatialObject',[
 	"jquery",
-	"../../Bits/X3DConstants.js",
-	"../../Browser/Geospatial/Geospatial.js",
-	"../../Bits/X3DCast.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Geospatial/Geospatial",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DConstants,
@@ -59975,14 +59975,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Navigation/NavigationInfo.js',[
+define ('cobweb/Components/Navigation/NavigationInfo',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DBindableNode.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DBindableNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -60311,21 +60311,21 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geospatial/GeoViewpoint.js',[
+define ('cobweb/Components/Geospatial/GeoViewpoint',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Navigation/X3DViewpointNode.js",
-	"./X3DGeospatialObject.js",
-	"../Interpolation/ScalarInterpolator.js",
-	"../Navigation/NavigationInfo.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Camera.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Navigation/X3DViewpointNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Components/Interpolation/ScalarInterpolator",
+	"cobweb/Components/Navigation/NavigationInfo",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -60606,13 +60606,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Navigation/PlaneViewer.js',[
+define ('cobweb/Browser/Navigation/PlaneViewer',[
 	"jquery",
-	"./X3DViewer.js",
-	"../../Components/Navigation/Viewpoint.js",
-	"../../Components/Geospatial/GeoViewpoint.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../lib/gettext.js",
+	"cobweb/Browser/Navigation/X3DViewer",
+	"cobweb/Components/Navigation/Viewpoint",
+	"cobweb/Components/Geospatial/GeoViewpoint",
+	"standard/Math/Numbers/Vector3",
+	"lib/gettext",
 	"jquery-mousewheel",
 ],
 function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
@@ -60847,10 +60847,10 @@ function ($, X3DViewer, Viewpoint, GeoViewpoint, Vector3, _)
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Navigation/NoneViewer.js',[
+define ('cobweb/Browser/Navigation/NoneViewer',[
 	"jquery",
-	"./X3DViewer.js",
-	"../../../lib/gettext.js",
+	"cobweb/Browser/Navigation/X3DViewer",
+	"lib/gettext",
 ],
 function ($, X3DViewer, _)
 {
@@ -60918,10 +60918,10 @@ function ($, X3DViewer, _)
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Navigation/LookAtViewer.js',[
+define ('cobweb/Browser/Navigation/LookAtViewer',[
 	"jquery",
-	"./X3DViewer.js",
-	"../../../lib/gettext.js",
+	"cobweb/Browser/Navigation/X3DViewer",
+	"lib/gettext",
 	"jquery-mousewheel",
 ],
 function ($, X3DViewer, _)
@@ -61061,13 +61061,13 @@ function ($, X3DViewer, _)
  ******************************************************************************/
 
 
-define ('cobweb/Components/Lighting/X3DLightNode.js',[
+define ('cobweb/Components/Lighting/X3DLightNode',[
 	"jquery",
-	"../Core/X3DChildNode.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithm",
 ],
 function ($,
           X3DChildNode,
@@ -61252,12 +61252,12 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Grouping/X3DBoundedObject.js',[
+define ('cobweb/Components/Grouping/X3DBoundedObject',[
 	"jquery",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Geometry/Box3.js",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Geometry/Box3",
 ],
 function ($,
           X3DCast,
@@ -61352,14 +61352,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Grouping/X3DGroupingNode.js',[
+define ('cobweb/Components/Grouping/X3DGroupingNode',[
 	"jquery",
-	"../../Fields.js",
-	"../Core/X3DChildNode.js",
-	"./X3DBoundedObject.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
 	       Fields,
@@ -61781,7 +61781,7 @@ function ($,
  ******************************************************************************/
 
 
-define ('standard/Math/Utility/MatrixStack.js',[
+define ('standard/Math/Utility/MatrixStack',[
 	"jquery",
 ],
 function ($)
@@ -61906,7 +61906,7 @@ function ($)
  ******************************************************************************/
 
 
-define ('standard/Utility/ObjectCache.js',[],function ()
+define ('standard/Utility/ObjectCache',[],function ()
 {
 "use strict";
 
@@ -61992,24 +61992,24 @@ define ('standard/Utility/ObjectCache.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Components/Lighting/DirectionalLight.js',[
+define ('cobweb/Components/Lighting/DirectionalLight',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DLightNode.js",
-	"../Grouping/X3DGroupingNode.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Box3.js",
-	"../../../standard/Math/Geometry/Camera.js",
-	"../../../standard/Math/Geometry/ViewVolume.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Vector4.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Utility/MatrixStack.js",
-	"../../../standard/Utility/ObjectCache.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Lighting/X3DLightNode",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Box3",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Utility/MatrixStack",
+	"standard/Utility/ObjectCache",
 ],
 function ($,
           Fields,
@@ -62300,16 +62300,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Navigation/X3DNavigationContext.js',[
-	"../../Fields.js",
-	"./ExamineViewer.js",
-	"./WalkViewer.js",
-	"./FlyViewer.js",
-	"./PlaneViewer.js",
-	"./NoneViewer.js",
-	"./LookAtViewer.js",
-	"../../Components/Lighting/DirectionalLight.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+define ('cobweb/Browser/Navigation/X3DNavigationContext',[
+	"cobweb/Fields",
+	"cobweb/Browser/Navigation/ExamineViewer",
+	"cobweb/Browser/Navigation/WalkViewer",
+	"cobweb/Browser/Navigation/FlyViewer",
+	"cobweb/Browser/Navigation/PlaneViewer",
+	"cobweb/Browser/Navigation/NoneViewer",
+	"cobweb/Browser/Navigation/LookAtViewer",
+	"cobweb/Components/Lighting/DirectionalLight",
+	"standard/Math/Numbers/Matrix4",
 ],
 function (Fields,
           ExamineViewer,
@@ -62529,10 +62529,10 @@ function (Fields,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Layering/X3DViewportNode.js',[
+define ('cobweb/Components/Layering/X3DViewportNode',[
 	"jquery",
-	"../Grouping/X3DGroupingNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DGroupingNode, 
@@ -62606,17 +62606,17 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Layering/Viewport.js',[
+define ('cobweb/Components/Layering/Viewport',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DViewportNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../Bits/TraverseType.js",
-	"../../../standard/Utility/ObjectCache.js",
-	"../../../standard/Math/Geometry/ViewVolume.js",
-	"../../../standard/Math/Numbers/Vector4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Layering/X3DViewportNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
+	"standard/Utility/ObjectCache",
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Numbers/Vector4",
 ],
 function ($,
           Fields,
@@ -62791,8 +62791,8 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Layering/X3DLayeringContext.js',[
-	"../../Components/Layering/Viewport.js",
+define ('cobweb/Browser/Layering/X3DLayeringContext',[
+	"cobweb/Components/Layering/Viewport",
 ],
 function (Viewport)
 {
@@ -62867,13 +62867,13 @@ function (Viewport)
  ******************************************************************************/
 
 
-define ('cobweb/Components/Texturing/TextureProperties.js',[
+define ('cobweb/Components/Texturing/TextureProperties',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -63058,9 +63058,9 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Layout/X3DLayoutContext.js',[
+define ('cobweb/Browser/Layout/X3DLayoutContext',[
 	"jquery",
-	"../../Components/Texturing/TextureProperties.js",
+	"cobweb/Components/Texturing/TextureProperties",
 ],
 function ($, TextureProperties)
 {
@@ -63102,10 +63102,10 @@ function ($, TextureProperties)
 });
 
 
-define('text/text!cobweb/Browser/Shaders/BackgroundSphereVertexShader.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = p .xyz;\n\tgl_Position = x3d_ProjectionMatrix * p;\n\tC           = x3d_Color;\n}\n';});
+define('text!cobweb/Browser/Shaders/BackgroundSphereVertexShader.vs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform mat4 x3d_ProjectionMatrix;\nuniform mat4 x3d_ModelViewMatrix;\n\nattribute vec4 x3d_Color;\nattribute vec4 x3d_Vertex;\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nmain ()\n{\n\tvec4 p = x3d_ModelViewMatrix * x3d_Vertex;\n\n\tv           = p .xyz;\n\tgl_Position = x3d_ProjectionMatrix * p;\n\tC           = x3d_Color;\n}\n';});
 
 
-define('text/text!cobweb/Browser/Shaders/BackgroundSphereFragmentShader.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = C;\n}\n';});
+define('text!cobweb/Browser/Shaders/BackgroundSphereFragmentShader.fs',[],function () { return 'data:text/plain;charset=utf-8,\n// -*- Mode: C++; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-\n//\n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright create3000, Scheffelstraße 31a, Leipzig, Germany 2011.\n// \n//  All rights reserved. Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  The copyright notice above does not evidence any actual of intended\n//  publication of such source code, and is an unpublished work by create3000.\n//  This material contains CONFIDENTIAL INFORMATION that is the property of\n//  create3000.\n// \n//  No permission is granted to copy, distribute, or create derivative works from\n//  the contents of this software, in whole or in part, without the prior written\n//  permission of create3000.\n// \n//  NON-MILITARY USE ONLY\n// \n//  All create3000 software are effectively free software with a non-military use\n//  restriction. It is free. Well commented source is provided. You may reuse the\n//  source in any way you please with the exception anything that uses it must be\n//  marked to indicate is contains \'non-military use only\' components.\n// \n//  DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.\n// \n//  Copyright 2015, 2016 Holger Seelig <holger.seelig@yahoo.de>.\n// \n//  This file is part of the Cobweb Project.\n// \n//  Cobweb is free software: you can redistribute it and/or modify it under the\n//  terms of the GNU General Public License version 3 only, as published by the\n//  Free Software Foundation.\n// \n//  Cobweb is distributed in the hope that it will be useful, but WITHOUT ANY\n//  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR\n//  A PARTICULAR PURPOSE. See the GNU General Public License version 3 for more\n//  details (a copy is included in the LICENSE file that accompanied this code).\n// \n//  You should have received a copy of the GNU General Public License version 3\n//  along with Cobweb.  If not, see <http://www.gnu.org/licenses/gpl.html> for a\n//  copy of the GPLv3 License.\n// \n//  For Silvio, Joy and Adi.\n\n\nprecision mediump float;\n\nuniform vec4 x3d_ClipPlane [x3d_MaxClipPlanes];\n\nvarying vec4 C; // color\nvarying vec3 v; // point on geometry\n\nvoid\nclip ()\n{\n\tfor (int i = 0; i < x3d_MaxClipPlanes; ++ i)\n\t{\n\t\tif (x3d_ClipPlane [i] == x3d_NoneClipPlane)\n\t\t\tbreak;\n\n\t\tif (dot (v, x3d_ClipPlane [i] .xyz) - x3d_ClipPlane [i] .w < 0.0)\n\t\t\tdiscard;\n\t}\n}\n\nvoid\nmain ()\n{\n\tclip ();\n\n\tgl_FragColor = C;\n}\n';});
 
 /* -*- Mode: JavaScript; coding: utf-8; tab-width: 3; indent-tabs-mode: tab; c-basic-offset: 3 -*-
  *******************************************************************************
@@ -63156,12 +63156,12 @@ define('text/text!cobweb/Browser/Shaders/BackgroundSphereFragmentShader.fs',[],f
  ******************************************************************************/
 
 
-define ('cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext.js',[
-	"../../Components/Shaders/ComposedShader.js",
-	"../../Components/Shaders/ShaderPart.js",
-	"../../Components/Texturing/TextureProperties.js",
-	"text!../Shaders/BackgroundSphereVertexShader.vs",
-	"text!../Shaders/BackgroundSphereFragmentShader.fs",
+define ('cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext',[
+	"cobweb/Components/Shaders/ComposedShader",
+	"cobweb/Components/Shaders/ShaderPart",
+	"cobweb/Components/Texturing/TextureProperties",
+	"text!cobweb/Browser/Shaders/BackgroundSphereVertexShader.vs",
+	"text!cobweb/Browser/Shaders/BackgroundSphereFragmentShader.fs",
 ],
 function (ComposedShader,
           ShaderPart,
@@ -63251,10 +63251,10 @@ function (ComposedShader,
  ******************************************************************************/
 
 
-define ('cobweb/Rendering/DepthBuffer.js',[
-	"../../standard/Math/Geometry/ViewVolume.js",
-	"../../standard/Math/Numbers/Vector3.js",
-	"../../standard/Math/Numbers/Matrix4.js",
+define ('cobweb/Rendering/DepthBuffer',[
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function (ViewVolume,
           Vector3,
@@ -63447,8 +63447,8 @@ function (ViewVolume,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Lighting/X3DLightingContext.js',[
-	"../../Rendering/DepthBuffer.js",
+define ('cobweb/Browser/Lighting/X3DLightingContext',[
+	"cobweb/Rendering/DepthBuffer",
 ],
 function (DepthBuffer)
 {
@@ -63555,8 +63555,8 @@ function (DepthBuffer)
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Sound/X3DSoundContext.js',[
-	"../../Fields.js",
+define ('cobweb/Browser/Sound/X3DSoundContext',[
+	"cobweb/Fields",
 ],
 function (Fields)
 {
@@ -63644,7 +63644,7 @@ function (Fields)
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Text/TextAlignment.js',[],function ()
+define ('cobweb/Browser/Text/TextAlignment',[],function ()
 {
 "use strict";
 	
@@ -63714,17 +63714,17 @@ define ('cobweb/Browser/Text/TextAlignment.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Components/Text/X3DFontStyleNode.js',[
+define ('cobweb/Components/Text/X3DFontStyleNode',[
 	"jquery",
-	"../../Fields.js",
-	"../Core/X3DNode.js",
-	"../Networking/X3DUrlObject.js",
-	"../../Browser/Text/TextAlignment.js",
-	"../../InputOutput/FileLoader.js",
-	"../../Bits/X3DConstants.js",
-	"../../Browser/Networking/urls.js",
-	"../../../standard/Networking/URI.js",
-	"../../DEBUG.js",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Browser/Text/TextAlignment",
+	"cobweb/InputOutput/FileLoader",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Networking/urls",
+	"standard/Networking/URI",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -64019,9 +64019,9 @@ function ($,
  ******************************************************************************/
 
 
-define ('standard/Math/Geometry/Box2.js',[
-	"../Numbers/Matrix3.js",
-	"../Numbers/Vector2.js",
+define ('standard/Math/Geometry/Box2',[
+	"standard/Math/Numbers/Matrix3",
+	"standard/Math/Numbers/Vector2",
 ],
 function (Matrix3, Vector2)
 {
@@ -64276,12 +64276,12 @@ function (Matrix3, Vector2)
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Text/X3DTextGeometry.js',[
-	"./TextAlignment.js",
-	"../../../standard/Math/Geometry/Box2.js",
-	"../../../standard/Math/Geometry/Box3.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+define ('cobweb/Browser/Text/X3DTextGeometry',[
+	"cobweb/Browser/Text/TextAlignment",
+	"standard/Math/Geometry/Box2",
+	"standard/Math/Geometry/Box3",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
 ],
 function (TextAlignment,
           Box2,
@@ -64932,7 +64932,7 @@ function (TextAlignment,
  ******************************************************************************/
 
 ﻿
-define ('standard/Math/Geometry/Triangle2.js',[],function ()
+define ('standard/Math/Geometry/Triangle2',[],function ()
 {
 "use strict";
 
@@ -64973,7 +64973,7 @@ define ('standard/Math/Geometry/Triangle2.js',[],function ()
 **/
 //(function() {
 
-define ('lib/bezierjs/bezier.js',[],function ()
+define ('lib/bezierjs/bezier',[],function ()
 {
   "use strict";
 
@@ -66132,7 +66132,7 @@ module.exports = require("./bezier");
 });
 */;
 
-define ('lib/earcut/src/earcut.js',[],function ()
+define ('lib/earcut/src/earcut',[],function ()
 {
 'use strict';
 
@@ -66847,16 +66847,16 @@ function Node(i) {
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Text/PolygonText.js',[
+define ('cobweb/Browser/Text/PolygonText',[
 	"jquery",
-	"../Core/PrimitiveQuality.js",
-	"./X3DTextGeometry.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Geometry/Triangle2.js",
-	"../../../lib/bezierjs/bezier.js",
-	"../../../lib/poly2tri.js/dist/poly2tri.js",
-	"../../../lib/earcut/src/earcut.js",
+	"cobweb/Browser/Core/PrimitiveQuality",
+	"cobweb/Browser/Text/X3DTextGeometry",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Triangle2",
+	"lib/bezierjs/bezier",
+	"lib/poly2tri.js/dist/poly2tri",
+	"lib/earcut/src/earcut",
 ],
 function ($,
           PrimitiveQuality,
@@ -67478,14 +67478,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Text/FontStyle.js',[
+define ('cobweb/Components/Text/FontStyle',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DFontStyleNode.js",
-	"../../Browser/Text/PolygonText.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Text/X3DFontStyleNode",
+	"cobweb/Browser/Text/PolygonText",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -67546,7 +67546,7 @@ function ($,
 
 
 
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define('lib/opentype.js/dist/opentype.js',[],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.opentype = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define('lib/opentype.js/dist/opentype',[],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.opentype = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // Run-time checking of preconditions.
 
 
@@ -72523,9 +72523,9 @@ exports.sizeOf = sizeOf;
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Text/X3DTextContext.js',[
-	"../../Components/Text/FontStyle.js",
-	"../../../lib/opentype.js/dist/opentype.js",
+define ('cobweb/Browser/Text/X3DTextContext',[
+	"cobweb/Components/Text/FontStyle",
+	"lib/opentype.js/dist/opentype",
 ],
 function (FontStyle,
           opentype)
@@ -72647,11 +72647,11 @@ function (FontStyle,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Texturing/X3DTextureTransformNode.js',[
+define ('cobweb/Components/Texturing/X3DTextureTransformNode',[
 	"jquery",
-	"../Shape/X3DAppearanceChildNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Components/Shape/X3DAppearanceChildNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DAppearanceChildNode, 
@@ -72741,15 +72741,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Texturing/TextureTransform.js',[
+define ('cobweb/Components/Texturing/TextureTransform',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DTextureTransformNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Matrix3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTextureTransformNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,
@@ -72898,10 +72898,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Texturing/X3DTexturingContext.js',[
-	"../../Components/Texturing/TextureProperties.js",
-	"../../Components/Texturing/TextureTransform.js",
-	"../../Components/Texturing/TextureCoordinate.js",
+define ('cobweb/Browser/Texturing/X3DTexturingContext',[
+	"cobweb/Components/Texturing/TextureProperties",
+	"cobweb/Components/Texturing/TextureTransform",
+	"cobweb/Components/Texturing/TextureCoordinate",
 ],
 function (TextureProperties,
           TextureTransform,
@@ -73074,8 +73074,8 @@ function (TextureProperties,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Time/X3DTimeContext.js',[
-	"../../../standard/Math/Numbers/Vector3.js",
+define ('cobweb/Browser/Time/X3DTimeContext',[
+	"standard/Math/Numbers/Vector3",
 ],
 function (Vector3)
 {
@@ -73173,7 +73173,7 @@ function (Vector3)
  ******************************************************************************/
 
 
-define ('standard/Math/Algorithms/QuickSort.js',[],function ()
+define ('standard/Math/Algorithms/QuickSort',[],function ()
 {
 "use strict";
 
@@ -73287,16 +73287,16 @@ define ('standard/Math/Algorithms/QuickSort.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Components/ParticleSystems/X3DParticleEmitterNode.js',[
+define ('cobweb/Components/ParticleSystems/X3DParticleEmitterNode',[
 	"jquery",
-	"../Core/X3DNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Geometry/Line3.js",
-	"../../../standard/Math/Geometry/Plane3.js",
-	"../../../standard/Math/Algorithm.js",
-	"../../../standard/Math/Algorithms/QuickSort.js",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Geometry/Line3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Algorithm",
+	"standard/Math/Algorithms/QuickSort",
 ],
 function ($,
           X3DNode, 
@@ -73696,14 +73696,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/ParticleSystems/PointEmitter.js',[
+define ('cobweb/Components/ParticleSystems/PointEmitter',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DParticleEmitterNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -73843,8 +73843,8 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/ParticleSystems/X3DParticleSystemsContext.js',[
-	"../../Components/ParticleSystems/PointEmitter.js",
+define ('cobweb/Browser/ParticleSystems/X3DParticleSystemsContext',[
+	"cobweb/Components/ParticleSystems/PointEmitter",
 ],
 function (PointEmitter)
 {
@@ -73919,20 +73919,20 @@ function (PointEmitter)
  ******************************************************************************/
 
 
-define ('cobweb/Rendering/X3DRenderObject.js',[
+define ('cobweb/Rendering/X3DRenderObject',[
 	"jquery",
-	"./DepthBuffer.js",
-	"../Bits/TraverseType.js",
-	"../../standard/Math/Algorithm.js",
-	"../../standard/Math/Algorithms/MergeSort.js",
-	"../../standard/Math/Geometry/Camera.js",
-	"../../standard/Math/Geometry/Box3.js",
-	"../../standard/Math/Geometry/ViewVolume.js",
-	"../../standard/Math/Numbers/Vector3.js",
-	"../../standard/Math/Numbers/Vector4.js",
-	"../../standard/Math/Numbers/Rotation4.js",
-	"../../standard/Math/Numbers/Matrix4.js",
-	"../../standard/Math/Utility/MatrixStack.js",
+	"cobweb/Rendering/DepthBuffer",
+	"cobweb/Bits/TraverseType",
+	"standard/Math/Algorithm",
+	"standard/Math/Algorithms/MergeSort",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Geometry/Box3",
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Utility/MatrixStack",
 ],
 function ($,
           DepthBuffer,
@@ -74855,9 +74855,9 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Execution/BindableStack.js',[
+define ('cobweb/Execution/BindableStack',[
 	"jquery",
-	"../Basic/X3DBaseNode.js",
+	"cobweb/Basic/X3DBaseNode",
 ],
 function ($, X3DBaseNode)
 {
@@ -75044,9 +75044,9 @@ function ($, X3DBaseNode)
  ******************************************************************************/
 
 
-define ('cobweb/Execution/BindableList.js',[
+define ('cobweb/Execution/BindableList',[
 	"jquery",
-	"../Basic/X3DBaseNode.js",
+	"cobweb/Basic/X3DBaseNode",
 ],
 function ($, X3DBaseNode)
 {
@@ -75192,9 +75192,9 @@ function ($, X3DBaseNode)
  ******************************************************************************/
 
 
-define ('cobweb/Components/EnvironmentalEffects/X3DFogObject.js',[
+define ('cobweb/Components/EnvironmentalEffects/X3DFogObject',[
 	"jquery",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DConstants)
@@ -75317,15 +75317,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EnvironmentalEffects/Fog.js',[
+define ('cobweb/Components/EnvironmentalEffects/Fog',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DBindableNode.js",
-	"./X3DFogObject.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DBindableNode",
+	"cobweb/Components/EnvironmentalEffects/X3DFogObject",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -75448,17 +75448,17 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EnvironmentalEffects/X3DBackgroundNode.js',[
+define ('cobweb/Components/EnvironmentalEffects/X3DBackgroundNode',[
 	"jquery",
-	"../Core/X3DBindableNode.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/ViewVolume.js",
-	"../../../standard/Math/Numbers/Complex.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Components/Core/X3DBindableNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Numbers/Complex",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithm",
 ],
 function ($,
           X3DBindableNode,
@@ -76129,11 +76129,11 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Texturing/X3DTextureNode.js',[
+define ('cobweb/Components/Texturing/X3DTextureNode',[
 	"jquery",
-	"../../Fields.js",
-	"../Shape/X3DAppearanceChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Components/Shape/X3DAppearanceChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -76278,12 +76278,12 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Texturing/X3DTexture2DNode.js',[
+define ('cobweb/Components/Texturing/X3DTexture2DNode',[
 	"jquery",
-	"../../Fields.js",
-	"./X3DTextureNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Components/Texturing/X3DTextureNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -76515,18 +76515,18 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Texturing/ImageTexture.js',[
+define ('cobweb/Components/Texturing/ImageTexture',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DTexture2DNode.js",
-	"../Networking/X3DUrlObject.js",
-	"../../Bits/X3DConstants.js",
-	"../../Browser/Networking/urls.js",
-	"../../../standard/Networking/URI.js",
-	"../../../standard/Math/Algorithm.js",
-	"../../DEBUG.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTexture2DNode",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Networking/urls",
+	"standard/Networking/URI",
+	"standard/Math/Algorithm",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -76777,14 +76777,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EnvironmentalEffects/Background.js',[
+define ('cobweb/Components/EnvironmentalEffects/Background',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DBackgroundNode.js",
-	"../Texturing/ImageTexture.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EnvironmentalEffects/X3DBackgroundNode",
+	"cobweb/Components/Texturing/ImageTexture",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -76939,22 +76939,22 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Layering/X3DLayerNode.js',[
+define ('cobweb/Components/Layering/X3DLayerNode',[
 	"jquery",
-	"../Core/X3DNode.js",
-	"../../Rendering/X3DRenderObject.js",
-	"./X3DViewportNode.js",
-	"../../Execution/BindableStack.js",
-	"../../Execution/BindableList.js",
-	"../Navigation/NavigationInfo.js",
-	"../EnvironmentalEffects/Fog.js",
-	"../EnvironmentalEffects/Background.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Camera.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Rendering/X3DRenderObject",
+	"cobweb/Components/Layering/X3DViewportNode",
+	"cobweb/Execution/BindableStack",
+	"cobweb/Execution/BindableList",
+	"cobweb/Components/Navigation/NavigationInfo",
+	"cobweb/Components/EnvironmentalEffects/Fog",
+	"cobweb/Components/EnvironmentalEffects/Background",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DNode,
@@ -77325,13 +77325,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Grouping/Group.js',[
+define ('cobweb/Components/Grouping/Group',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DGroupingNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -77428,15 +77428,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Layering/Layer.js',[
+define ('cobweb/Components/Layering/Layer',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DLayerNode.js",
-	"../Navigation/Viewpoint.js",
-	"../Grouping/Group.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Layering/X3DLayerNode",
+	"cobweb/Components/Navigation/Viewpoint",
+	"cobweb/Components/Grouping/Group",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -77538,16 +77538,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Layering/LayerSet.js',[
+define ('cobweb/Components/Layering/LayerSet',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DNode.js",
-	"./Layer.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Components/Layering/Layer",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -77767,14 +77767,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Execution/World.js',[
+define ('cobweb/Execution/World',[
 	"jquery",
-	"../Fields/SFNode.js",
-	"../Basic/X3DBaseNode.js",
-	"../Components/Layering/LayerSet.js",
-	"../Components/Layering/Layer.js",
-	"../Bits/X3DCast.js",
-	"../Bits/X3DConstants.js",
+	"cobweb/Fields/SFNode",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Components/Layering/LayerSet",
+	"cobweb/Components/Layering/Layer",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           SFNode,
@@ -77928,33 +77928,33 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/X3DBrowserContext.js',[
+define ('cobweb/Browser/X3DBrowserContext',[
 	"jquery",
-	"../Fields/SFTime.js",
-	"../Basic/X3DBaseNode.js",
-	"./Core/X3DCoreContext.js",
-	"../Routing/X3DRoutingContext.js",
-	"./Scripting/X3DScriptingContext.js",
-	"./Networking/X3DNetworkingContext.js",
-	"./Shaders/X3DShadersContext.js",
-	"./Shape/X3DShapeContext.js",
-	"./Rendering/X3DRenderingContext.js",
-	"./Geometry2D/X3DGeometry2DContext.js",
-	"./Geometry3D/X3DGeometry3DContext.js",
-	"./PointingDeviceSensor/X3DPointingDeviceSensorContext.js",
-	"./KeyDeviceSensor/X3DKeyDeviceSensorContext.js",
-	"./Navigation/X3DNavigationContext.js",
-	"./Layering/X3DLayeringContext.js",
-	"./Layout/X3DLayoutContext.js",
-	"./EnvironmentalEffects/X3DEnvironmentalEffectsContext.js",
-	"./Lighting/X3DLightingContext.js",
-	"./Sound/X3DSoundContext.js",
-	"./Text/X3DTextContext.js",
-	"./Texturing/X3DTexturingContext.js",
-	"./Time/X3DTimeContext.js",
-	"./ParticleSystems/X3DParticleSystemsContext.js",
-	"../Execution/World.js",
-	"../Bits/TraverseType.js",
+	"cobweb/Fields/SFTime",
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Browser/Core/X3DCoreContext",
+	"cobweb/Routing/X3DRoutingContext",
+	"cobweb/Browser/Scripting/X3DScriptingContext",
+	"cobweb/Browser/Networking/X3DNetworkingContext",
+	"cobweb/Browser/Shaders/X3DShadersContext",
+	"cobweb/Browser/Shape/X3DShapeContext",
+	"cobweb/Browser/Rendering/X3DRenderingContext",
+	"cobweb/Browser/Geometry2D/X3DGeometry2DContext",
+	"cobweb/Browser/Geometry3D/X3DGeometry3DContext",
+	"cobweb/Browser/PointingDeviceSensor/X3DPointingDeviceSensorContext",
+	"cobweb/Browser/KeyDeviceSensor/X3DKeyDeviceSensorContext",
+	"cobweb/Browser/Navigation/X3DNavigationContext",
+	"cobweb/Browser/Layering/X3DLayeringContext",
+	"cobweb/Browser/Layout/X3DLayoutContext",
+	"cobweb/Browser/EnvironmentalEffects/X3DEnvironmentalEffectsContext",
+	"cobweb/Browser/Lighting/X3DLightingContext",
+	"cobweb/Browser/Sound/X3DSoundContext",
+	"cobweb/Browser/Text/X3DTextContext",
+	"cobweb/Browser/Texturing/X3DTexturingContext",
+	"cobweb/Browser/Time/X3DTimeContext",
+	"cobweb/Browser/ParticleSystems/X3DParticleSystemsContext",
+	"cobweb/Execution/World",
+	"cobweb/Bits/TraverseType",
 ],
 function ($,
           SFTime,
@@ -78217,7 +78217,7 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Configuration/ProfileInfo.js',[
+define ('cobweb/Configuration/ProfileInfo',[
 	"jquery",
 ],
 function ($)
@@ -78295,9 +78295,9 @@ function ($)
  ******************************************************************************/
 
 
-define ('cobweb/Configuration/ProfileInfoArray.js',[
+define ('cobweb/Configuration/ProfileInfoArray',[
 	"jquery",
-	"./X3DInfoArray.js",
+	"cobweb/Configuration/X3DInfoArray",
 ],
 function ($, X3DInfoArray)
 {
@@ -78365,12 +78365,12 @@ function ($, X3DInfoArray)
  ******************************************************************************/
 
 
-define ('cobweb/Configuration/SupportedProfiles.js',[
+define ('cobweb/Configuration/SupportedProfiles',[
 	"jquery",
-	"./ProfileInfo.js",
-	"./ProfileInfoArray.js",
-	"./ComponentInfoArray.js",
-	"../Browser/Networking/urls.js",
+	"cobweb/Configuration/ProfileInfo",
+	"cobweb/Configuration/ProfileInfoArray",
+	"cobweb/Configuration/ComponentInfoArray",
+	"cobweb/Browser/Networking/urls",
 ],
 function ($,
           ProfileInfo,
@@ -78596,10 +78596,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Configuration/SupportedComponents.js',[
+define ('cobweb/Configuration/SupportedComponents',[
 	"jquery",
-	"./ComponentInfoArray.js",
-	"../Browser/Networking/urls.js",
+	"cobweb/Configuration/ComponentInfoArray",
+	"cobweb/Browser/Networking/urls",
 ],
 function ($, ComponentInfoArray, urls)
 {
@@ -78955,10 +78955,10 @@ function ($, ComponentInfoArray, urls)
  ******************************************************************************/
 
 
-define ('cobweb/Browser/PointingDeviceSensor/PointingDeviceSensorContainer.js',[
+define ('cobweb/Browser/PointingDeviceSensor/PointingDeviceSensorContainer',[
 	"jquery",
-	"../../../standard/Math/Numbers/Vector4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Vector4,
@@ -79052,11 +79052,11 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode.js',[
+define ('cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode',[
 	"jquery",
-	"../Core/X3DSensorNode.js",
-	"../../Browser/PointingDeviceSensor/PointingDeviceSensorContainer.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DSensorNode",
+	"cobweb/Browser/PointingDeviceSensor/PointingDeviceSensorContainer",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DSensorNode,
@@ -79179,10 +79179,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode.js',[
+define ('cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode',[
 	"jquery",
-	"./X3DPointingDeviceSensorNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DPointingDeviceSensorNode, 
@@ -79263,14 +79263,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/PointingDeviceSensor/TouchSensor.js',[
+define ('cobweb/Components/PointingDeviceSensor/TouchSensor',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DTouchSensorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -79395,17 +79395,17 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Networking/Anchor.js',[
+define ('cobweb/Components/Networking/Anchor',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Grouping/X3DGroupingNode.js",
-	"./X3DUrlObject.js",
-	"../PointingDeviceSensor/TouchSensor.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../InputOutput/FileLoader.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Components/PointingDeviceSensor/TouchSensor",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/FileLoader",
 ],
 function ($,
           Fields,
@@ -79592,11 +79592,11 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/X3DLineGeometryNode.js',[
+define ('cobweb/Components/Rendering/X3DLineGeometryNode',[
 	"jquery",
-	"./X3DGeometryNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DGeometryNode,
@@ -79791,16 +79791,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geometry2D/Arc2D.js',[
+define ('cobweb/Components/Geometry2D/Arc2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DLineGeometryNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Complex.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Complex",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -79969,16 +79969,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geometry2D/ArcClose2D.js',[
+define ('cobweb/Components/Geometry2D/ArcClose2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DGeometryNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Complex.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Complex",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -80196,11 +80196,11 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Sound/X3DSoundSourceNode.js',[
+define ('cobweb/Components/Sound/X3DSoundSourceNode',[
 	"jquery",
-	"../Core/X3DChildNode.js",
-	"../Time/X3DTimeDependentNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/Time/X3DTimeDependentNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DChildNode,
@@ -80422,17 +80422,17 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Sound/AudioClip.js',[
+define ('cobweb/Components/Sound/AudioClip',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DSoundSourceNode.js",
-	"../Networking/X3DUrlObject.js",
-	"../../Bits/X3DConstants.js",
-	"../../Browser/Networking/urls.js",
-	"../../../standard/Networking/URI.js",
-	"../../DEBUG.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Sound/X3DSoundSourceNode",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Networking/urls",
+	"standard/Networking/URI",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -80629,17 +80629,17 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Navigation/Billboard.js',[
+define ('cobweb/Components/Navigation/Billboard',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Grouping/X3DGroupingNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../Bits/TraverseType.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -80827,13 +80827,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EventUtilities/BooleanFilter.js',[
+define ('cobweb/Components/EventUtilities/BooleanFilter',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -80947,11 +80947,11 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EventUtilities/X3DSequencerNode.js',[
+define ('cobweb/Components/EventUtilities/X3DSequencerNode',[
 	"jquery",
-	"../Core/X3DChildNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           X3DChildNode, 
@@ -81102,13 +81102,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EventUtilities/BooleanSequencer.js',[
+define ('cobweb/Components/EventUtilities/BooleanSequencer',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DSequencerNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DSequencerNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -81220,13 +81220,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EventUtilities/BooleanToggle.js',[
+define ('cobweb/Components/EventUtilities/BooleanToggle',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -81331,10 +81331,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EventUtilities/X3DTriggerNode.js',[
+define ('cobweb/Components/EventUtilities/X3DTriggerNode',[
 	"jquery",
-	"../Core/X3DChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DChildNode, 
@@ -81408,13 +81408,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EventUtilities/BooleanTrigger.js',[
+define ('cobweb/Components/EventUtilities/BooleanTrigger',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DTriggerNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DTriggerNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -81518,10 +81518,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/ParticleSystems/X3DParticlePhysicsModelNode.js',[
+define ('cobweb/Components/ParticleSystems/X3DParticlePhysicsModelNode',[
 	"jquery",
-	"../Core/X3DNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DNode, 
@@ -81597,14 +81597,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/ParticleSystems/BoundedPhysicsModel.js',[
+define ('cobweb/Components/ParticleSystems/BoundedPhysicsModel',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DParticlePhysicsModelNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../Bits/X3DCast.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticlePhysicsModelNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/X3DCast",
 ],
 function ($,
           Fields,
@@ -81732,14 +81732,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geometry3D/Box.js',[
+define ('cobweb/Components/Geometry3D/Box',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DGeometryNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -81880,10 +81880,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/CADGeometry/X3DProductStructureChildNode.js',[
+define ('cobweb/Components/CADGeometry/X3DProductStructureChildNode',[
 	"jquery",
-	"../Core/X3DChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DChildNode, 
@@ -81957,14 +81957,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/CADGeometry/CADAssembly.js',[
+define ('cobweb/Components/CADGeometry/CADAssembly',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Grouping/X3DGroupingNode.js",
-	"./X3DProductStructureChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Components/CADGeometry/X3DProductStructureChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -82065,16 +82065,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/CADGeometry/CADFace.js',[
+define ('cobweb/Components/CADGeometry/CADFace',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DProductStructureChildNode.js",
-	"../Grouping/X3DBoundedObject.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/CADGeometry/X3DProductStructureChildNode",
+	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -82241,13 +82241,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/CADGeometry/CADLayer.js',[
+define ('cobweb/Components/CADGeometry/CADLayer',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Grouping/X3DGroupingNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -82356,13 +82356,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Grouping/X3DTransformMatrix3DNode.js',[
+define ('cobweb/Components/Grouping/X3DTransformMatrix3DNode',[
 	"jquery",
-	"./X3DGroupingNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           X3DGroupingNode,
@@ -82492,10 +82492,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Grouping/X3DTransformNode.js',[
+define ('cobweb/Components/Grouping/X3DTransformNode',[
 	"jquery",
-	"./X3DTransformMatrix3DNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Grouping/X3DTransformMatrix3DNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DTransformMatrix3DNode, 
@@ -82591,14 +82591,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/CADGeometry/CADPart.js',[
+define ('cobweb/Components/CADGeometry/CADPart',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Grouping/X3DTransformNode.js",
-	"./X3DProductStructureChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DTransformNode",
+	"cobweb/Components/CADGeometry/X3DProductStructureChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -82708,13 +82708,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geometry2D/Circle2D.js',[
+define ('cobweb/Components/Geometry2D/Circle2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DLineGeometryNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -82843,17 +82843,17 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/ClipPlane.js',[
+define ('cobweb/Components/Rendering/ClipPlane',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DChildNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Vector4.js",
-	"../../../standard/Math/Geometry/Plane3.js",
-	"../../../standard/Utility/ObjectCache.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Geometry/Plane3",
+	"standard/Utility/ObjectCache",
 ],
 function ($,
           Fields,
@@ -83032,16 +83032,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Navigation/Collision.js',[
+define ('cobweb/Components/Navigation/Collision',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Grouping/X3DGroupingNode.js",
-	"../Core/X3DSensorNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Components/Core/X3DSensorNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -83211,10 +83211,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/X3DColorNode.js',[
+define ('cobweb/Components/Rendering/X3DColorNode',[
 	"jquery",
-	"./X3DGeometricPropertyNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Rendering/X3DGeometricPropertyNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DGeometricPropertyNode, 
@@ -83300,15 +83300,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/Color.js',[
+define ('cobweb/Components/Rendering/Color',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DColorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Color3.js",
-	"../../../standard/Math/Numbers/Vector4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DColorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color3",
+	"standard/Math/Numbers/Vector4",
 ],
 function ($,
           Fields,
@@ -83428,10 +83428,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/X3DFollowerNode.js',[
+define ('cobweb/Components/Followers/X3DFollowerNode',[
 	"jquery",
-	"../Core/X3DChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DChildNode, 
@@ -83576,10 +83576,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/X3DChaserNode.js',[
+define ('cobweb/Components/Followers/X3DChaserNode',[
 	"jquery",
-	"./X3DFollowerNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Followers/X3DFollowerNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DFollowerNode, 
@@ -83828,15 +83828,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/ColorChaser.js',[
+define ('cobweb/Components/Followers/ColorChaser',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DChaserNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Color3.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color3",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -83979,11 +83979,11 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/X3DDamperNode.js',[
+define ('cobweb/Components/Followers/X3DDamperNode',[
 	"jquery",
-	"./X3DFollowerNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Components/Followers/X3DFollowerNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           X3DFollowerNode, 
@@ -84162,15 +84162,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/ColorDamper.js',[
+define ('cobweb/Components/Followers/ColorDamper',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DDamperNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Color3.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color3",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -84311,14 +84311,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Interpolation/ColorInterpolator.js',[
+define ('cobweb/Components/Interpolation/ColorInterpolator',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DInterpolatorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Color3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color3",
 ],
 function ($,
           Fields,
@@ -84442,15 +84442,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/ColorRGBA.js',[
+define ('cobweb/Components/Rendering/ColorRGBA',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DColorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Color4.js",
-	"../../../standard/Math/Numbers/Vector4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DColorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Color4",
+	"standard/Math/Numbers/Vector4",
 ],
 function ($,
           Fields,
@@ -84570,10 +84570,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode.js',[
+define ('cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode',[
 	"jquery",
-	"../Texturing/X3DTextureNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Texturing/X3DTextureNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DTextureNode, 
@@ -84696,14 +84696,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture.js',[
+define ('cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DEnvironmentTextureNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -84966,16 +84966,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geometry3D/Cone.js',[
+define ('cobweb/Components/Geometry3D/Cone',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DGeometryNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Complex.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Complex",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -85219,15 +85219,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/ParticleSystems/ConeEmitter.js',[
+define ('cobweb/Components/ParticleSystems/ConeEmitter',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DParticleEmitterNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
 ],
 function ($,
           Fields,
@@ -85369,7 +85369,7 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Followers/X3DArrayFollowerTemplate.js',[],function ()
+define ('cobweb/Browser/Followers/X3DArrayFollowerTemplate',[],function ()
 {
 "use strict";
 
@@ -85503,9 +85503,9 @@ define ('cobweb/Browser/Followers/X3DArrayFollowerTemplate.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Followers/X3DArrayChaserTemplate.js',[
+define ('cobweb/Browser/Followers/X3DArrayChaserTemplate',[
 	"jquery",
-	"./X3DArrayFollowerTemplate.js",
+	"cobweb/Browser/Followers/X3DArrayFollowerTemplate",
 ],
 function ($,
           X3DArrayFollowerTemplate)
@@ -85596,15 +85596,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/CoordinateChaser.js',[
+define ('cobweb/Components/Followers/CoordinateChaser',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DChaserNode.js",
-	"../../Browser/Followers/X3DArrayChaserTemplate.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Browser/Followers/X3DArrayChaserTemplate",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -85717,15 +85717,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/CoordinateDamper.js',[
+define ('cobweb/Components/Followers/CoordinateDamper',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DDamperNode.js",
-	"../../Browser/Followers/X3DArrayFollowerTemplate.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Browser/Followers/X3DArrayFollowerTemplate",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -85840,13 +85840,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/NURBS/CoordinateDouble.js',[
+define ('cobweb/Components/NURBS/CoordinateDouble',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DCoordinateNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DCoordinateNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -85939,14 +85939,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Interpolation/CoordinateInterpolator.js',[
+define ('cobweb/Components/Interpolation/CoordinateInterpolator',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DInterpolatorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -86064,13 +86064,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Interpolation/CoordinateInterpolator2D.js',[
+define ('cobweb/Components/Interpolation/CoordinateInterpolator2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DInterpolatorNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -86186,16 +86186,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geometry3D/Cylinder.js',[
+define ('cobweb/Components/Geometry3D/Cylinder',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DGeometryNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Complex.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Complex",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -86498,10 +86498,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/PointingDeviceSensor/X3DDragSensorNode.js',[
+define ('cobweb/Components/PointingDeviceSensor/X3DDragSensorNode',[
 	"jquery",
-	"./X3DPointingDeviceSensorNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/PointingDeviceSensor/X3DPointingDeviceSensorNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DPointingDeviceSensorNode, 
@@ -86575,11 +86575,11 @@ function ($,
  ******************************************************************************/
 
 
-define ('standard/Math/Geometry/Cylinder3.js',[
-	"../Numbers/Vector3.js",
-	"../Numbers/Rotation4.js",
-	"../Numbers/Matrix4.js",
-	"./Line3.js",
+define ('standard/Math/Geometry/Cylinder3',[
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Line3",
 ],
 function (Vector3,
           Rotation4,
@@ -86747,20 +86747,20 @@ function (Vector3,
  ******************************************************************************/
 
 
-define ('cobweb/Components/PointingDeviceSensor/CylinderSensor.js',[
+define ('cobweb/Components/PointingDeviceSensor/CylinderSensor',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DDragSensorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Geometry/Line3.js",
-	"../../../standard/Math/Geometry/Plane3.js",
-	"../../../standard/Math/Geometry/Cylinder3.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/PointingDeviceSensor/X3DDragSensorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Line3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Geometry/Cylinder3",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -87056,15 +87056,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geometry2D/Disk2D.js',[
+define ('cobweb/Components/Geometry2D/Disk2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DGeometryNode.js",
-	"../Rendering/X3DLineGeometryNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -87339,17 +87339,17 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geometry3D/ElevationGrid.js',[
+define ('cobweb/Components/Geometry3D/ElevationGrid',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DGeometryNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Triangle3.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -87750,13 +87750,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/ParticleSystems/ExplosionEmitter.js',[
+define ('cobweb/Components/ParticleSystems/ExplosionEmitter',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DParticleEmitterNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -87875,18 +87875,18 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geometry3D/Extrusion.js',[
+define ('cobweb/Components/Geometry3D/Extrusion',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DGeometryNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Triangle3.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -88504,10 +88504,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shaders/X3DVertexAttributeNode.js',[
+define ('cobweb/Components/Shaders/X3DVertexAttributeNode',[
 	"jquery",
-	"../Rendering/X3DGeometricPropertyNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Rendering/X3DGeometricPropertyNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DGeometricPropertyNode, 
@@ -88581,14 +88581,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shaders/FloatVertexAttribute.js',[
+define ('cobweb/Components/Shaders/FloatVertexAttribute',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DVertexAttributeNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shaders/X3DVertexAttributeNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -88710,13 +88710,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/ParticleSystems/ForcePhysicsModel.js',[
+define ('cobweb/Components/ParticleSystems/ForcePhysicsModel',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DParticlePhysicsModelNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticlePhysicsModelNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -88818,10 +88818,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Rendering/DependentRenderer.js',[
-	"../Basic/X3DBaseNode.js",
-	"./X3DRenderObject.js",
-	"../Bits/TraverseType.js",
+define ('cobweb/Rendering/DependentRenderer',[
+	"cobweb/Basic/X3DBaseNode",
+	"cobweb/Rendering/X3DRenderObject",
+	"cobweb/Bits/TraverseType",
 ],
 function (X3DBaseNode,
           X3DRenderObject,
@@ -88965,23 +88965,23 @@ function (X3DBaseNode,
  ******************************************************************************/
 
 
-define ('cobweb/Components/CubeMapTexturing/GeneratedCubeMapTexture.js',[
+define ('cobweb/Components/CubeMapTexturing/GeneratedCubeMapTexture',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DEnvironmentTextureNode.js",
-	"../../Rendering/DependentRenderer.js",
-	"../../Rendering/DepthBuffer.js",
-	"../../Bits/X3DConstants.js",
-	"../../Bits/TraverseType.js",
-	"../../../standard/Math/Geometry/Camera.js",
-	"../../../standard/Math/Geometry/ViewVolume.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Vector4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode",
+	"cobweb/Rendering/DependentRenderer",
+	"cobweb/Rendering/DepthBuffer",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -89269,16 +89269,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geospatial/GeoCoordinate.js',[
+define ('cobweb/Components/Geospatial/GeoCoordinate',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DCoordinateNode.js",
-	"./X3DGeospatialObject.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Triangle3.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DCoordinateNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -89459,18 +89459,18 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geospatial/GeoElevationGrid.js',[
+define ('cobweb/Components/Geospatial/GeoElevationGrid',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DGeometryNode.js",
-	"./X3DGeospatialObject.js",
-	"../../Bits/X3DConstants.js",
-	"../../Bits/X3DCast.js",
-	"../../../standard/Math/Geometry/Triangle3.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -89888,17 +89888,17 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Networking/Inline.js',[
+define ('cobweb/Components/Networking/Inline',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DChildNode.js",
-	"./X3DUrlObject.js",
-	"../Grouping/X3DBoundedObject.js",
-	"../Grouping/Group.js",
-	"../../Bits/X3DConstants.js",
-	"../../InputOutput/FileLoader.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Components/Grouping/Group",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/InputOutput/FileLoader",
 ],
 function ($,
           Fields,
@@ -90133,21 +90133,21 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geospatial/GeoLOD.js',[
+define ('cobweb/Components/Geospatial/GeoLOD',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DChildNode.js",
-	"../Grouping/X3DBoundedObject.js",
-	"./X3DGeospatialObject.js",
-	"../../Bits/X3DConstants.js",
-	"../../Bits/TraverseType.js",
-	"../Grouping/Group.js",
-	"../Networking/Inline.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Geometry/Box3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Components/Grouping/Group",
+	"cobweb/Components/Networking/Inline",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -90507,15 +90507,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geospatial/GeoLocation.js',[
+define ('cobweb/Components/Geospatial/GeoLocation',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Grouping/X3DTransformMatrix3DNode.js",
-	"./X3DGeospatialObject.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DTransformMatrix3DNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -90634,10 +90634,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Core/X3DInfoNode.js',[
+define ('cobweb/Components/Core/X3DInfoNode',[
 	"jquery",
-	"./X3DChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DChildNode, 
@@ -90711,13 +90711,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geospatial/GeoMetadata.js',[
+define ('cobweb/Components/Geospatial/GeoMetadata',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DInfoNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DInfoNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -90812,14 +90812,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geospatial/GeoOrigin.js',[
+define ('cobweb/Components/Geospatial/GeoOrigin',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../Browser/Geospatial/Geospatial.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Geospatial/Geospatial",
 ],
 function ($,
           Fields,
@@ -90933,16 +90933,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geospatial/GeoPositionInterpolator.js',[
+define ('cobweb/Components/Geospatial/GeoPositionInterpolator',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Interpolation/X3DInterpolatorNode.js",
-	"./X3DGeospatialObject.js",
-	"../../Browser/Geospatial/Geocentric.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Browser/Geospatial/Geocentric",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -91088,12 +91088,12 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode.js',[
+define ('cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode',[
 	"jquery",
-	"../../Fields.js",
-	"../Core/X3DSensorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Components/Core/X3DSensorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -91222,17 +91222,17 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EnvironmentalSensor/ProximitySensor.js',[
+define ('cobweb/Components/EnvironmentalSensor/ProximitySensor',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DEnvironmentalSensorNode.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -91516,16 +91516,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geospatial/GeoProximitySensor.js',[
+define ('cobweb/Components/Geospatial/GeoProximitySensor',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../EnvironmentalSensor/X3DEnvironmentalSensorNode.js",
-	"./X3DGeospatialObject.js",
-	"../EnvironmentalSensor/ProximitySensor.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Components/EnvironmentalSensor/ProximitySensor",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -91674,16 +91674,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geospatial/GeoTouchSensor.js',[
+define ('cobweb/Components/Geospatial/GeoTouchSensor',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../PointingDeviceSensor/X3DTouchSensorNode.js",
-	"./X3DGeospatialObject.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/PointingDeviceSensor/X3DTouchSensorNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -91823,15 +91823,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geospatial/GeoTransform.js',[
+define ('cobweb/Components/Geospatial/GeoTransform',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Grouping/X3DTransformMatrix3DNode.js",
-	"./X3DGeospatialObject.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DTransformMatrix3DNode",
+	"cobweb/Components/Geospatial/X3DGeospatialObject",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -91975,19 +91975,19 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/CubeMapTexturing/ImageCubeMapTexture.js',[
+define ('cobweb/Components/CubeMapTexturing/ImageCubeMapTexture',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DEnvironmentTextureNode.js",
-	"../Networking/X3DUrlObject.js",
-	"../../Bits/X3DConstants.js",
-	"../../Browser/Networking/urls.js",
-	"../../../standard/Networking/URI.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Algorithm.js",
-	"../../DEBUG.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/CubeMapTexturing/X3DEnvironmentTextureNode",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Networking/urls",
+	"standard/Networking/URI",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Algorithm",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -92277,14 +92277,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/IndexedLineSet.js',[
+define ('cobweb/Components/Rendering/IndexedLineSet',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DLineGeometryNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -92595,13 +92595,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/CADGeometry/IndexedQuadSet.js',[
+define ('cobweb/Components/CADGeometry/IndexedQuadSet',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DComposedGeometryNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DComposedGeometryNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -92747,13 +92747,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/IndexedTriangleFanSet.js',[
+define ('cobweb/Components/Rendering/IndexedTriangleFanSet',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DComposedGeometryNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DComposedGeometryNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -92909,13 +92909,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/IndexedTriangleSet.js',[
+define ('cobweb/Components/Rendering/IndexedTriangleSet',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DComposedGeometryNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DComposedGeometryNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -93026,13 +93026,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/IndexedTriangleStripSet.js',[
+define ('cobweb/Components/Rendering/IndexedTriangleStripSet',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DComposedGeometryNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DComposedGeometryNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -93199,13 +93199,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EventUtilities/IntegerSequencer.js',[
+define ('cobweb/Components/EventUtilities/IntegerSequencer',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DSequencerNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DSequencerNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -93317,13 +93317,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EventUtilities/IntegerTrigger.js',[
+define ('cobweb/Components/EventUtilities/IntegerTrigger',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DTriggerNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DTriggerNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -93428,10 +93428,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/KeyDeviceSensor/X3DKeyDeviceSensorNode.js',[
+define ('cobweb/Components/KeyDeviceSensor/X3DKeyDeviceSensorNode',[
 	"jquery",
-	"../Core/X3DSensorNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DSensorNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DSensorNode, 
@@ -93569,13 +93569,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/KeyDeviceSensor/KeySensor.js',[
+define ('cobweb/Components/KeyDeviceSensor/KeySensor',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DKeyDeviceSensorNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/KeyDeviceSensor/X3DKeyDeviceSensorNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -93884,17 +93884,17 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Navigation/LOD.js',[
+define ('cobweb/Components/Navigation/LOD',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Grouping/X3DGroupingNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -94102,10 +94102,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Layout/X3DLayoutNode.js',[
+define ('cobweb/Components/Layout/X3DLayoutNode',[
 	"jquery",
-	"../Core/X3DChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DChildNode,
@@ -94179,18 +94179,18 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Layout/Layout.js',[
+define ('cobweb/Components/Layout/Layout',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DLayoutNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Layout/X3DLayoutNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -94832,16 +94832,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Layout/LayoutGroup.js',[
+define ('cobweb/Components/Layout/LayoutGroup',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Grouping/X3DGroupingNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -95021,15 +95021,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Layout/LayoutLayer.js',[
+define ('cobweb/Components/Layout/LayoutLayer',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Layering/X3DLayerNode.js",
-	"./LayoutGroup.js",
-	"../Navigation/OrthoViewpoint.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Layering/X3DLayerNode",
+	"cobweb/Components/Layout/LayoutGroup",
+	"cobweb/Components/Navigation/OrthoViewpoint",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -95140,13 +95140,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shape/LineProperties.js',[
+define ('cobweb/Components/Shape/LineProperties',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DAppearanceChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shape/X3DAppearanceChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -95257,14 +95257,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/LineSet.js',[
+define ('cobweb/Components/Rendering/LineSet',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DLineGeometryNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -95481,14 +95481,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EnvironmentalEffects/LocalFog.js',[
+define ('cobweb/Components/EnvironmentalEffects/LocalFog',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DChildNode.js",
-	"./X3DFogObject.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/EnvironmentalEffects/X3DFogObject",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -95602,10 +95602,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shape/X3DMaterialNode.js',[
+define ('cobweb/Components/Shape/X3DMaterialNode',[
 	"jquery",
-	"./X3DAppearanceChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Shape/X3DAppearanceChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DAppearanceChildNode, 
@@ -95679,14 +95679,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shape/Material.js',[
+define ('cobweb/Components/Shape/Material',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DMaterialNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shape/X3DMaterialNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -95875,14 +95875,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shaders/Matrix3VertexAttribute.js',[
+define ('cobweb/Components/Shaders/Matrix3VertexAttribute',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DVertexAttributeNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Matrix3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shaders/X3DVertexAttributeNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,
@@ -96002,13 +96002,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shaders/Matrix4VertexAttribute.js',[
+define ('cobweb/Components/Shaders/Matrix4VertexAttribute',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DVertexAttributeNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shaders/X3DVertexAttributeNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -96127,9 +96127,9 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Core/X3DMetadataObject.js',[
+define ('cobweb/Components/Core/X3DMetadataObject',[
 	"jquery",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DConstants)
@@ -96201,14 +96201,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Core/MetadataBoolean.js',[
+define ('cobweb/Components/Core/MetadataBoolean',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DNode.js",
-	"./X3DMetadataObject.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Components/Core/X3DMetadataObject",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -96306,14 +96306,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Core/MetadataDouble.js',[
+define ('cobweb/Components/Core/MetadataDouble',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DNode.js",
-	"./X3DMetadataObject.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Components/Core/X3DMetadataObject",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -96411,14 +96411,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Core/MetadataFloat.js',[
+define ('cobweb/Components/Core/MetadataFloat',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DNode.js",
-	"./X3DMetadataObject.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Components/Core/X3DMetadataObject",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -96516,14 +96516,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Core/MetadataInteger.js',[
+define ('cobweb/Components/Core/MetadataInteger',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DNode.js",
-	"./X3DMetadataObject.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Components/Core/X3DMetadataObject",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -96621,14 +96621,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Core/MetadataSet.js',[
+define ('cobweb/Components/Core/MetadataSet',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DNode.js",
-	"./X3DMetadataObject.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Components/Core/X3DMetadataObject",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -96726,14 +96726,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Core/MetadataString.js',[
+define ('cobweb/Components/Core/MetadataString',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DNode.js",
-	"./X3DMetadataObject.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DNode",
+	"cobweb/Components/Core/X3DMetadataObject",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -96831,19 +96831,19 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Texturing/MovieTexture.js',[
+define ('cobweb/Components/Texturing/MovieTexture',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DTexture2DNode.js",
-	"../Sound/X3DSoundSourceNode.js",
-	"../Networking/X3DUrlObject.js",
-	"../../Bits/X3DConstants.js",
-	"../../Browser/Networking/urls.js",
-	"../../../standard/Networking/URI.js",
-	"../../../standard/Math/Algorithm.js",
-	"../../DEBUG.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTexture2DNode",
+	"cobweb/Components/Sound/X3DSoundSourceNode",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Browser/Networking/urls",
+	"standard/Networking/URI",
+	"standard/Math/Algorithm",
+	"cobweb/DEBUG",
 ],
 function ($,
           Fields,
@@ -97091,10 +97091,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/X3DNormalNode.js',[
+define ('cobweb/Components/Rendering/X3DNormalNode',[
 	"jquery",
-	"./X3DGeometricPropertyNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Rendering/X3DGeometricPropertyNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DGeometricPropertyNode, 
@@ -97168,14 +97168,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/Normal.js',[
+define ('cobweb/Components/Rendering/Normal',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DNormalNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DNormalNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -97278,15 +97278,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Interpolation/NormalInterpolator.js',[
+define ('cobweb/Components/Interpolation/NormalInterpolator',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DInterpolatorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -97419,14 +97419,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/OrientationChaser.js',[
+define ('cobweb/Components/Followers/OrientationChaser',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DChaserNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Rotation4",
 ],
 function ($,
           Fields,
@@ -97550,14 +97550,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/OrientationDamper.js',[
+define ('cobweb/Components/Followers/OrientationDamper',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DDamperNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Rotation4",
 ],
 function ($,
           Fields,
@@ -97677,13 +97677,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shape/X3DShapeNode.js',[
+define ('cobweb/Components/Shape/X3DShapeNode',[
 	"jquery",
-	"../Core/X3DChildNode.js",
-	"../Grouping/X3DBoundedObject.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Box3.js",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Box3",
 ],
 function ($,
           X3DChildNode, 
@@ -97861,10 +97861,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('standard/Math/Utility/BVH.js',[
-	"../Numbers/Vector3.js",
-	"../Geometry/Plane3.js",
-	"../Algorithms/QuickSort.js",
+define ('standard/Math/Utility/BVH',[
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Algorithms/QuickSort",
 ],
 function (Vector3,
           Plane3,
@@ -98218,23 +98218,23 @@ function (Vector3,
  ******************************************************************************/
 
 
-define ('cobweb/Components/ParticleSystems/ParticleSystem.js',[
+define ('cobweb/Components/ParticleSystems/ParticleSystem',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Shape/X3DShapeNode.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../Bits/X3DCast.js",
-	"../../../standard/Math/Numbers/Color4.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Vector4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Numbers/Matrix3.js",
-	"../../../standard/Math/Algorithms/QuickSort.js",
-	"../../../standard/Math/Algorithm.js",
-	"../../../standard/Math/Utility/BVH.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shape/X3DShapeNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Numbers/Color4",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Numbers/Matrix3",
+	"standard/Math/Algorithms/QuickSort",
+	"standard/Math/Algorithm",
+	"standard/Math/Utility/BVH",
 ],
 function ($,
           Fields,
@@ -99574,16 +99574,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Texturing/PixelTexture.js',[
+define ('cobweb/Components/Texturing/PixelTexture',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DTexture2DNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Algorithm.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Matrix3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTexture2DNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix3",
 ],
 function ($,
           Fields,
@@ -99824,21 +99824,21 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/PointingDeviceSensor/PlaneSensor.js',[
+define ('cobweb/Components/PointingDeviceSensor/PlaneSensor',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DDragSensorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Vector4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Geometry/Line3.js",
-	"../../../standard/Math/Geometry/Plane3.js",
-	"../../../standard/Math/Geometry/ViewVolume.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/PointingDeviceSensor/X3DDragSensorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Line3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -100138,25 +100138,25 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Lighting/PointLight.js',[
+define ('cobweb/Components/Lighting/PointLight',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DLightNode.js",
-	"../Grouping/X3DGroupingNode.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Box3.js",
-	"../../../standard/Math/Geometry/Camera.js",
-	"../../../standard/Math/Geometry/ViewVolume.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Vector4.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Utility/MatrixStack.js",
-	"../../../standard/Math/Algorithm.js",
-	"../../../standard/Utility/ObjectCache.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Lighting/X3DLightNode",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Box3",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Utility/MatrixStack",
+	"standard/Math/Algorithm",
+	"standard/Utility/ObjectCache",
 ],
 function ($,
           Fields,
@@ -100501,14 +100501,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/PointSet.js',[
+define ('cobweb/Components/Rendering/PointSet',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DLineGeometryNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -100697,14 +100697,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geometry2D/Polyline2D.js',[
+define ('cobweb/Components/Geometry2D/Polyline2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DLineGeometryNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -100821,16 +100821,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/ParticleSystems/PolylineEmitter.js',[
+define ('cobweb/Components/ParticleSystems/PolylineEmitter',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DParticleEmitterNode.js",
-	"../Rendering/IndexedLineSet.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Components/Rendering/IndexedLineSet",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -101068,14 +101068,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geometry2D/Polypoint2D.js',[
+define ('cobweb/Components/Geometry2D/Polypoint2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DLineGeometryNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DLineGeometryNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -101199,14 +101199,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/PositionChaser.js',[
+define ('cobweb/Components/Followers/PositionChaser',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DChaserNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -101310,14 +101310,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/PositionChaser2D.js',[
+define ('cobweb/Components/Followers/PositionChaser2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DChaserNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector2.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
 ],
 function ($,
           Fields,
@@ -101421,14 +101421,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/PositionDamper.js',[
+define ('cobweb/Components/Followers/PositionDamper',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DDamperNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -101534,14 +101534,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/PositionDamper2D.js',[
+define ('cobweb/Components/Followers/PositionDamper2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DDamperNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector2.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
 ],
 function ($,
           Fields,
@@ -101647,14 +101647,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Interpolation/PositionInterpolator2D.js',[
+define ('cobweb/Components/Interpolation/PositionInterpolator2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DInterpolatorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector2.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
 ],
 function ($,
           Fields,
@@ -101771,13 +101771,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/CADGeometry/QuadSet.js',[
+define ('cobweb/Components/CADGeometry/QuadSet',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DComposedGeometryNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DComposedGeometryNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -101914,15 +101914,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geometry2D/Rectangle2D.js',[
+define ('cobweb/Components/Geometry2D/Rectangle2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DGeometryNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -102060,14 +102060,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/ScalarChaser.js',[
+define ('cobweb/Components/Followers/ScalarChaser',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DChaserNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -102195,14 +102195,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/ScalarDamper.js',[
+define ('cobweb/Components/Followers/ScalarDamper',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DDamperNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -102324,19 +102324,19 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Layout/ScreenText.js',[
+define ('cobweb/Browser/Layout/ScreenText',[
 	"jquery",
-	"../Text/X3DTextGeometry.js",
-	"../Text/TextAlignment.js",
-	"../../Components/Texturing/PixelTexture.js",
-	"../../Bits/TraverseType.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Geometry/Box3.js",
-	"../../../standard/Math/Geometry/ViewVolume.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Browser/Text/X3DTextGeometry",
+	"cobweb/Browser/Text/TextAlignment",
+	"cobweb/Components/Texturing/PixelTexture",
+	"cobweb/Bits/TraverseType",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Box3",
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Algorithm",
 ],
 function ($,
           X3DTextGeometry,
@@ -102804,14 +102804,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Layout/ScreenFontStyle.js',[
+define ('cobweb/Components/Layout/ScreenFontStyle',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Text/X3DFontStyleNode.js",
-	"../../Browser/Layout/ScreenText.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Text/X3DFontStyleNode",
+	"cobweb/Browser/Layout/ScreenText",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -102921,18 +102921,18 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Layout/ScreenGroup.js',[
+define ('cobweb/Components/Layout/ScreenGroup',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Grouping/X3DGroupingNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../Bits/TraverseType.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Geometry/ViewVolume.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/TraverseType",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/ViewVolume",
 ],
 function ($,
           Fields,
@@ -103116,7 +103116,7 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Scripting/evaluate.js',[],function ()
+define ('cobweb/Browser/Scripting/evaluate',[],function ()
 {
 	return function (/* __global__, __text__ */)
 	{
@@ -103176,11 +103176,11 @@ define ('cobweb/Browser/Scripting/evaluate.js',[],function ()
  ******************************************************************************/
 
 
-define ('cobweb/Components/Scripting/X3DScriptNode.js',[
+define ('cobweb/Components/Scripting/X3DScriptNode',[
 	"jquery",
-	"../Core/X3DChildNode.js",
-	"../Networking/X3DUrlObject.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/Networking/X3DUrlObject",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DChildNode, 
@@ -103257,32 +103257,32 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Scripting/Script.js',[
+define ('cobweb/Components/Scripting/Script',[
 	"jquery",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../../Basic/X3DField.js",
-	"../../Basic/X3DArrayField.js",
-	"../../Fields.js",
-	"../../Browser/X3DBrowser.js",
-	"../../Configuration/ComponentInfo.js",
-	"../../Configuration/ComponentInfoArray.js",
-	"../../Configuration/ProfileInfo.js",
-	"../../Configuration/ProfileInfoArray.js",
-	"../../Configuration/UnitInfo.js",
-	"../../Configuration/UnitInfoArray.js",
-	"../../Execution/X3DExecutionContext.js",
-	"../../Execution/X3DScene.js",
-	"../../Prototype/ExternProtoDeclarationArray.js",
-	"../../Prototype/ProtoDeclarationArray.js",
-	"../../Prototype/X3DExternProtoDeclaration.js",
-	"../../Prototype/X3DProtoDeclaration.js",
-	"../../Routing/RouteArray.js",
-	"../../Routing/X3DRoute.js",
-	"../../Browser/Scripting/evaluate.js",
-	"./X3DScriptNode.js",
-	"../../InputOutput/FileLoader.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Basic/X3DField",
+	"cobweb/Basic/X3DArrayField",
+	"cobweb/Fields",
+	"cobweb/Browser/X3DBrowser",
+	"cobweb/Configuration/ComponentInfo",
+	"cobweb/Configuration/ComponentInfoArray",
+	"cobweb/Configuration/ProfileInfo",
+	"cobweb/Configuration/ProfileInfoArray",
+	"cobweb/Configuration/UnitInfo",
+	"cobweb/Configuration/UnitInfoArray",
+	"cobweb/Execution/X3DExecutionContext",
+	"cobweb/Execution/X3DScene",
+	"cobweb/Prototype/ExternProtoDeclarationArray",
+	"cobweb/Prototype/ProtoDeclarationArray",
+	"cobweb/Prototype/X3DExternProtoDeclaration",
+	"cobweb/Prototype/X3DProtoDeclaration",
+	"cobweb/Routing/RouteArray",
+	"cobweb/Routing/X3DRoute",
+	"cobweb/Browser/Scripting/evaluate",
+	"cobweb/Components/Scripting/X3DScriptNode",
+	"cobweb/InputOutput/FileLoader",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DFieldDefinition,
@@ -103782,19 +103782,19 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shape/Shape.js',[
+define ('cobweb/Components/Shape/Shape',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DShapeNode.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Algorithm.js",
-	"../../../standard/Math/Geometry/Line3.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Algorithms/QuickSort.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shape/X3DShapeNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
+	"standard/Math/Geometry/Line3",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Algorithms/QuickSort",
 ],
 function ($,
           Fields,
@@ -104008,10 +104008,10 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Sound/X3DSoundNode.js',[
+define ('cobweb/Components/Sound/X3DSoundNode',[
 	"jquery",
-	"../Core/X3DChildNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           X3DChildNode, 
@@ -104085,19 +104085,19 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Sound/Sound.js',[
+define ('cobweb/Components/Sound/Sound',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DSoundNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector2.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Sound/X3DSoundNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function ($,
           Fields,
@@ -104305,13 +104305,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geometry3D/Sphere.js',[
+define ('cobweb/Components/Geometry3D/Sphere',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DGeometryNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -104453,8 +104453,8 @@ function ($,
  ******************************************************************************/
 
 
-define ('standard/Math/Geometry/Sphere3.js',[
-	"../Numbers/Vector3.js",
+define ('standard/Math/Geometry/Sphere3',[
+	"standard/Math/Numbers/Vector3",
 ],
 function (Vector3)
 {
@@ -104641,20 +104641,20 @@ function (Vector3)
  ******************************************************************************/
 
 
-define ('cobweb/Components/PointingDeviceSensor/SphereSensor.js',[
+define ('cobweb/Components/PointingDeviceSensor/SphereSensor',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DDragSensorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Geometry/Triangle3.js",
-	"../../../standard/Math/Geometry/Line3.js",
-	"../../../standard/Math/Geometry/Plane3.js",
-	"../../../standard/Math/Geometry/Sphere3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/PointingDeviceSensor/X3DDragSensorNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Geometry/Line3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Geometry/Sphere3",
 ],
 function ($,
           Fields,
@@ -104885,9 +104885,9 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator.js',[
-	"../../../standard/Math/Numbers/Vector4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
+define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator',[
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Matrix4",
 ],
 function (Vector4,
           Matrix4)
@@ -105073,9 +105073,9 @@ function (Vector4,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolatorTemplate.js',[
+define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolatorTemplate',[
 	"jquery",
-	"./CatmullRomSplineInterpolator.js"
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator"
 ],
 function ($,
           CatmullRomSplineInterpolator)
@@ -105189,9 +105189,9 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator3.js',[
-	"./CatmullRomSplineInterpolatorTemplate.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator3',[
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolatorTemplate",
+	"standard/Math/Numbers/Vector3",
 ],
 function (CatmullRomSplineInterpolatorTemplate,
           Vector3)
@@ -105250,14 +105250,14 @@ function (CatmullRomSplineInterpolatorTemplate,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Interpolation/SplinePositionInterpolator.js',[
+define ('cobweb/Components/Interpolation/SplinePositionInterpolator',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DInterpolatorNode.js",
-	"../../Browser/Interpolation/CatmullRomSplineInterpolator3.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator3",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -105395,9 +105395,9 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator2.js',[
-	"./CatmullRomSplineInterpolatorTemplate.js",
-	"../../../standard/Math/Numbers/Vector2.js",
+define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator2',[
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolatorTemplate",
+	"standard/Math/Numbers/Vector2",
 ],
 function (CatmullRomSplineInterpolatorTemplate,
           Vector2)
@@ -105456,14 +105456,14 @@ function (CatmullRomSplineInterpolatorTemplate,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Interpolation/SplinePositionInterpolator2D.js',[
+define ('cobweb/Components/Interpolation/SplinePositionInterpolator2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DInterpolatorNode.js",
-	"../../Browser/Interpolation/CatmullRomSplineInterpolator2.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator2",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -105601,9 +105601,9 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator1.js',[
+define ('cobweb/Browser/Interpolation/CatmullRomSplineInterpolator1',[
 	"jquery",
-	"./CatmullRomSplineInterpolator.js"
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator"
 ],
 function ($,
           CatmullRomSplineInterpolator)
@@ -105703,14 +105703,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Interpolation/SplineScalarInterpolator.js',[
+define ('cobweb/Components/Interpolation/SplineScalarInterpolator',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DInterpolatorNode.js",
-	"../../Browser/Interpolation/CatmullRomSplineInterpolator1.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Browser/Interpolation/CatmullRomSplineInterpolator1",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -105848,25 +105848,25 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Lighting/SpotLight.js',[
+define ('cobweb/Components/Lighting/SpotLight',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DLightNode.js",
-	"../Grouping/X3DGroupingNode.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Box3.js",
-	"../../../standard/Math/Geometry/Camera.js",
-	"../../../standard/Math/Geometry/ViewVolume.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Vector4.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Numbers/Matrix4.js",
-	"../../../standard/Math/Utility/MatrixStack.js",
-	"../../../standard/Math/Algorithm.js",
-	"../../../standard/Utility/ObjectCache.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Lighting/X3DLightNode",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Box3",
+	"standard/Math/Geometry/Camera",
+	"standard/Math/Geometry/ViewVolume",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Vector4",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Numbers/Matrix4",
+	"standard/Math/Utility/MatrixStack",
+	"standard/Math/Algorithm",
+	"standard/Utility/ObjectCache",
 ],
 function ($,
           Fields,
@@ -106214,8 +106214,8 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/Interpolation/SquatInterpolator.js',[
-	"../../../standard/Math/Numbers/Rotation4.js",
+define ('cobweb/Browser/Interpolation/SquatInterpolator',[
+	"standard/Math/Numbers/Rotation4",
 ],
 function (Rotation4)
 {
@@ -106333,14 +106333,14 @@ function (Rotation4)
  ******************************************************************************/
 
 
-define ('cobweb/Components/Interpolation/SquadOrientationInterpolator.js',[
+define ('cobweb/Components/Interpolation/SquadOrientationInterpolator',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DInterpolatorNode.js",
-	"../../Browser/Interpolation/SquatInterpolator.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Interpolation/X3DInterpolatorNode",
+	"cobweb/Browser/Interpolation/SquatInterpolator",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -106470,16 +106470,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Grouping/StaticGroup.js',[
+define ('cobweb/Components/Grouping/StaticGroup',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DChildNode.js",
-	"./X3DBoundedObject.js",
-	"./Group.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Geometry/Box3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/Grouping/X3DBoundedObject",
+	"cobweb/Components/Grouping/Group",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -106615,17 +106615,17 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/ParticleSystems/SurfaceEmitter.js',[
+define ('cobweb/Components/ParticleSystems/SurfaceEmitter',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DParticleEmitterNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../Bits/X3DCast.js",
-	"../../../standard/Math/Geometry/Triangle3.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -106868,14 +106868,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Grouping/Switch.js',[
+define ('cobweb/Components/Grouping/Switch',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DGroupingNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DGroupingNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -107016,15 +107016,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/TexCoordChaser2D.js',[
+define ('cobweb/Components/Followers/TexCoordChaser2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DChaserNode.js",
-	"../../Browser/Followers/X3DArrayChaserTemplate.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector2.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DChaserNode",
+	"cobweb/Browser/Followers/X3DArrayChaserTemplate",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
 ],
 function ($,
           Fields,
@@ -107137,15 +107137,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Followers/TexCoordDamper2D.js',[
+define ('cobweb/Components/Followers/TexCoordDamper2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DDamperNode.js",
-	"../../Browser/Followers/X3DArrayFollowerTemplate.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector2.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Followers/X3DDamperNode",
+	"cobweb/Browser/Followers/X3DArrayFollowerTemplate",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector2",
 ],
 function ($,
           Fields,
@@ -107260,14 +107260,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Text/Text.js',[
+define ('cobweb/Components/Text/Text',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DGeometryNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -107454,14 +107454,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EnvironmentalEffects/TextureBackground.js',[
+define ('cobweb/Components/EnvironmentalEffects/TextureBackground',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DBackgroundNode.js",
-	"../../Bits/X3DCast.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EnvironmentalEffects/X3DBackgroundNode",
+	"cobweb/Bits/X3DCast",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -107610,13 +107610,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Texturing3D/TextureCoordinate3D.js',[
+define ('cobweb/Components/Texturing3D/TextureCoordinate3D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Texturing/X3DTextureCoordinateNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTextureCoordinateNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -107738,13 +107738,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Texturing3D/TextureCoordinate4D.js',[
+define ('cobweb/Components/Texturing3D/TextureCoordinate4D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Texturing/X3DTextureCoordinateNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTextureCoordinateNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -107866,15 +107866,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Texturing3D/TextureTransform3D.js',[
+define ('cobweb/Components/Texturing3D/TextureTransform3D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Texturing/X3DTextureTransformNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTextureTransformNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
 ],
 function ($,
           Fields,
@@ -108012,13 +108012,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Texturing3D/TextureTransformMatrix3D.js',[
+define ('cobweb/Components/Texturing3D/TextureTransformMatrix3D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Texturing/X3DTextureTransformNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Texturing/X3DTextureTransformNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -108121,13 +108121,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EventUtilities/TimeTrigger.js',[
+define ('cobweb/Components/EventUtilities/TimeTrigger',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DTriggerNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EventUtilities/X3DTriggerNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -108231,13 +108231,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Grouping/Transform.js',[
+define ('cobweb/Components/Grouping/Transform',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DTransformNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Grouping/X3DTransformNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -108339,17 +108339,17 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EnvironmentalSensor/TransformSensor.js',[
+define ('cobweb/Components/EnvironmentalSensor/TransformSensor',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DEnvironmentalSensorNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../Bits/X3DCast.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Geometry/Box3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+	"cobweb/Bits/X3DConstants",
+	"cobweb/Bits/X3DCast",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Geometry/Box3",
 ],
 function ($,
           Fields,
@@ -108541,13 +108541,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/TriangleFanSet.js',[
+define ('cobweb/Components/Rendering/TriangleFanSet',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DComposedGeometryNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DComposedGeometryNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -108690,13 +108690,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/TriangleSet.js',[
+define ('cobweb/Components/Rendering/TriangleSet',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DComposedGeometryNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DComposedGeometryNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -108809,14 +108809,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Geometry2D/TriangleSet2D.js',[
+define ('cobweb/Components/Geometry2D/TriangleSet2D',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Rendering/X3DGeometryNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DGeometryNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -108950,13 +108950,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Rendering/TriangleStripSet.js',[
+define ('cobweb/Components/Rendering/TriangleStripSet',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DComposedGeometryNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Rendering/X3DComposedGeometryNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -109103,14 +109103,14 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Shape/TwoSidedMaterial.js',[
+define ('cobweb/Components/Shape/TwoSidedMaterial',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DMaterialNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Shape/X3DMaterialNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -109398,16 +109398,16 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Navigation/ViewpointGroup.js',[
+define ('cobweb/Components/Navigation/ViewpointGroup',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"../Core/X3DChildNode.js",
-	"../EnvironmentalSensor/ProximitySensor.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DChildNode",
+	"cobweb/Components/EnvironmentalSensor/ProximitySensor",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -109650,15 +109650,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/EnvironmentalSensor/VisibilitySensor.js',[
+define ('cobweb/Components/EnvironmentalSensor/VisibilitySensor',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DEnvironmentalSensorNode.js",
-	"../../Bits/TraverseType.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/EnvironmentalSensor/X3DEnvironmentalSensorNode",
+	"cobweb/Bits/TraverseType",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
 ],
 function ($,
           Fields,
@@ -109826,22 +109826,22 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/ParticleSystems/VolumeEmitter.js',[
+define ('cobweb/Components/ParticleSystems/VolumeEmitter',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DParticleEmitterNode.js",
-	"../Geometry3D/IndexedFaceSet.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Numbers/Rotation4.js",
-	"../../../standard/Math/Geometry/Line3.js",
-	"../../../standard/Math/Geometry/Plane3.js",
-	"../../../standard/Math/Geometry/Triangle3.js",
-	"../../../standard/Math/Algorithm.js",
-	"../../../standard/Math/Utility/BVH.js",
-	"../../../standard/Math/Algorithms/QuickSort.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticleEmitterNode",
+	"cobweb/Components/Geometry3D/IndexedFaceSet",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Numbers/Rotation4",
+	"standard/Math/Geometry/Line3",
+	"standard/Math/Geometry/Plane3",
+	"standard/Math/Geometry/Triangle3",
+	"standard/Math/Algorithm",
+	"standard/Math/Utility/BVH",
+	"standard/Math/Algorithms/QuickSort",
 ],
 function ($,
           Fields,
@@ -110143,15 +110143,15 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/ParticleSystems/WindPhysicsModel.js',[
+define ('cobweb/Components/ParticleSystems/WindPhysicsModel',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DParticlePhysicsModelNode.js",
-	"../../Bits/X3DConstants.js",
-	"../../../standard/Math/Numbers/Vector3.js",
-	"../../../standard/Math/Algorithm.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/ParticleSystems/X3DParticlePhysicsModelNode",
+	"cobweb/Bits/X3DConstants",
+	"standard/Math/Numbers/Vector3",
+	"standard/Math/Algorithm",
 ],
 function ($,
           Fields,
@@ -110279,13 +110279,13 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Components/Core/WorldInfo.js',[
+define ('cobweb/Components/Core/WorldInfo',[
 	"jquery",
-	"../../Fields.js",
-	"../../Basic/X3DFieldDefinition.js",
-	"../../Basic/FieldDefinitionArray.js",
-	"./X3DInfoNode.js",
-	"../../Bits/X3DConstants.js",
+	"cobweb/Fields",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Components/Core/X3DInfoNode",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Fields,
@@ -110379,228 +110379,228 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/Configuration/SupportedNodes.js',[
-	"../Components/Networking/Anchor.js", // VRML
-	"../Components/Shape/Appearance.js", // VRML
-	"../Components/Geometry2D/Arc2D.js",
-	"../Components/Geometry2D/ArcClose2D.js",
-	"../Components/Sound/AudioClip.js",
-	"../Components/EnvironmentalEffects/Background.js", // VRML
-	//"../Components/RigidBodyPhysics/BallJoint.js",
-	"../Components/Navigation/Billboard.js", // VRML
-	"../Components/EventUtilities/BooleanFilter.js",
-	"../Components/EventUtilities/BooleanSequencer.js",
-	"../Components/EventUtilities/BooleanToggle.js",
-	"../Components/EventUtilities/BooleanTrigger.js",
-	"../Components/ParticleSystems/BoundedPhysicsModel.js",
-	"../Components/Geometry3D/Box.js", // VRML
-	"../Components/CADGeometry/CADAssembly.js",
-	"../Components/CADGeometry/CADFace.js",
-	"../Components/CADGeometry/CADLayer.js",
-	"../Components/CADGeometry/CADPart.js",
-	"../Components/Geometry2D/Circle2D.js",
-	"../Components/Rendering/ClipPlane.js",
-	//"../Components/RigidBodyPhysics/CollidableOffset.js",
-	//"../Components/RigidBodyPhysics/CollidableShape.js",
-	"../Components/Navigation/Collision.js", // VRML
-	//"../Components/RigidBodyPhysics/CollisionCollection.js",
-	//"../Components/RigidBodyPhysics/CollisionSensor.js",
-	//"../Components/RigidBodyPhysics/CollisionSpace.js",
-	"../Components/Rendering/Color.js", // VRML
-	"../Components/Followers/ColorChaser.js",
-	"../Components/Followers/ColorDamper.js",
-	"../Components/Interpolation/ColorInterpolator.js", // VRML
-	"../Components/Rendering/ColorRGBA.js",
-	"../Components/CubeMapTexturing/ComposedCubeMapTexture.js",
-	"../Components/Shaders/ComposedShader.js",
-	//"../Components/Texturing3D/ComposedTexture3D.js",
-	"../Components/Geometry3D/Cone.js", // VRML
-	"../Components/ParticleSystems/ConeEmitter.js",
-	//"../Components/RigidBodyPhysics/Contact.js",
-	//"../Components/NURBS/Contour2D.js",
-	//"../Components/NURBS/ContourPolyline2D.js",
-	"../Components/Rendering/Coordinate.js", // VRML
-	"../Components/Followers/CoordinateChaser.js",
-	"../Components/Followers/CoordinateDamper.js",
-	"../Components/NURBS/CoordinateDouble.js",
-	"../Components/Interpolation/CoordinateInterpolator.js", // VRML
-	"../Components/Interpolation/CoordinateInterpolator2D.js",
-	"../Components/Geometry3D/Cylinder.js", // VRML
-	"../Components/PointingDeviceSensor/CylinderSensor.js", // VRML
-	//"../Components/DIS/DISEntityManager.js",
-	//"../Components/DIS/DISEntityTypeMapping.js",
-	"../Components/Lighting/DirectionalLight.js", // VRML
-	"../Components/Geometry2D/Disk2D.js",
-	//"../Components/RigidBodyPhysics/DoubleAxisHingeJoint.js",
-	"../Components/Interpolation/EaseInEaseOut.js",
-	"../Components/Geometry3D/ElevationGrid.js", // VRML
-	//"../Components/DIS/EspduTransform.js",
-	"../Components/ParticleSystems/ExplosionEmitter.js",
-	"../Components/Geometry3D/Extrusion.js", // VRML
-	//"../Components/Shape/FillProperties.js",
-	"../Components/Shaders/FloatVertexAttribute.js",
-	"../Components/EnvironmentalEffects/Fog.js", // VRML
-	//"../Components/EnvironmentalEffects/FogCoordinate.js",
-	"../Components/Text/FontStyle.js", // VRML
-	"../Components/ParticleSystems/ForcePhysicsModel.js",
-	"../Components/CubeMapTexturing/GeneratedCubeMapTexture.js",
-	"../Components/Geospatial/GeoCoordinate.js",
-	"../Components/Geospatial/GeoElevationGrid.js",
-	"../Components/Geospatial/GeoLOD.js",
-	"../Components/Geospatial/GeoLocation.js",
-	"../Components/Geospatial/GeoMetadata.js",
-	"../Components/Geospatial/GeoOrigin.js",
-	"../Components/Geospatial/GeoPositionInterpolator.js",
-	"../Components/Geospatial/GeoProximitySensor.js",
-	"../Components/Geospatial/GeoTouchSensor.js",
-	"../Components/Geospatial/GeoTransform.js",
-	"../Components/Geospatial/GeoViewpoint.js",
-	"../Components/Grouping/Group.js", // VRML
-	//"../Components/H-Anim/HAnimDisplacer.js",
-	//"../Components/H-Anim/HAnimHumanoid.js",
-	//"../Components/H-Anim/HAnimJoint.js",
-	//"../Components/H-Anim/HAnimSegment.js",
-	//"../Components/H-Anim/HAnimSite.js",
-	"../Components/CubeMapTexturing/ImageCubeMapTexture.js",
-	"../Components/Texturing/ImageTexture.js", // VRML
-	//"../Components/Texturing3D/ImageTexture3D.js",
-	"../Components/Geometry3D/IndexedFaceSet.js", // VRML
-	"../Components/Rendering/IndexedLineSet.js", // VRML
-	"../Components/CADGeometry/IndexedQuadSet.js",
-	"../Components/Rendering/IndexedTriangleFanSet.js",
-	"../Components/Rendering/IndexedTriangleSet.js",
-	"../Components/Rendering/IndexedTriangleStripSet.js",
-	"../Components/Networking/Inline.js", // VRML
-	"../Components/EventUtilities/IntegerSequencer.js",
-	"../Components/EventUtilities/IntegerTrigger.js",
-	"../Components/KeyDeviceSensor/KeySensor.js",
-	"../Components/Navigation/LOD.js", // VRML
-	"../Components/Layering/Layer.js",
-	"../Components/Layering/LayerSet.js",
-	"../Components/Layout/Layout.js",
-	"../Components/Layout/LayoutGroup.js",
-	"../Components/Layout/LayoutLayer.js",
-	//"../Components/Picking/LinePickSensor.js",
-	"../Components/Shape/LineProperties.js",
-	"../Components/Rendering/LineSet.js",
-	"../Components/Networking/LoadSensor.js",
-	"../Components/EnvironmentalEffects/LocalFog.js",
-	"../Components/Shape/Material.js", // VRML
-	"../Components/Shaders/Matrix3VertexAttribute.js",
-	"../Components/Shaders/Matrix4VertexAttribute.js",
-	"../Components/Core/MetadataBoolean.js",
-	"../Components/Core/MetadataDouble.js",
-	"../Components/Core/MetadataFloat.js",
-	"../Components/Core/MetadataInteger.js",
-	"../Components/Core/MetadataSet.js",
-	"../Components/Core/MetadataString.js",
-	//"../Components/RigidBodyPhysics/MotorJoint.js",
-	"../Components/Texturing/MovieTexture.js", // VRML
-	//"../Components/Texturing/MultiTexture.js",
-	//"../Components/Texturing/MultiTextureCoordinate.js",
-	//"../Components/Texturing/MultiTextureTransform.js",
-	"../Components/Navigation/NavigationInfo.js", // VRML
-	"../Components/Rendering/Normal.js", // VRML
-	"../Components/Interpolation/NormalInterpolator.js", // VRML
-	//"../Components/NURBS/NurbsCurve.js",
-	//"../Components/NURBS/NurbsCurve2D.js",
-	//"../Components/NURBS/NurbsOrientationInterpolator.js",
-	//"../Components/NURBS/NurbsPatchSurface.js",
-	//"../Components/NURBS/NurbsPositionInterpolator.js",
-	//"../Components/NURBS/NurbsSet.js",
-	//"../Components/NURBS/NurbsSurfaceInterpolator.js",
-	//"../Components/NURBS/NurbsSweptSurface.js",
-	//"../Components/NURBS/NurbsSwungSurface.js",
-	//"../Components/NURBS/NurbsTextureCoordinate.js",
-	//"../Components/NURBS/NurbsTrimmedSurface.js",
-	"../Components/Followers/OrientationChaser.js",
-	"../Components/Followers/OrientationDamper.js",
-	"../Components/Interpolation/OrientationInterpolator.js", // VRML
-	"../Components/Navigation/OrthoViewpoint.js",
-	//"../Components/Shaders/PackagedShader.js",
-	"../Components/ParticleSystems/ParticleSystem.js",
-	//"../Components/Picking/PickableGroup.js",
-	"../Components/Texturing/PixelTexture.js", // VRML
-	//"../Components/Texturing3D/PixelTexture3D.js",
-	"../Components/PointingDeviceSensor/PlaneSensor.js", // VRML
-	"../Components/ParticleSystems/PointEmitter.js",
-	"../Components/Lighting/PointLight.js", // VRML
-	//"../Components/Picking/PointPickSensor.js",
-	"../Components/Rendering/PointSet.js", // VRML
-	"../Components/Geometry2D/Polyline2D.js",
-	"../Components/ParticleSystems/PolylineEmitter.js",
-	"../Components/Geometry2D/Polypoint2D.js",
-	"../Components/Followers/PositionChaser.js",
-	"../Components/Followers/PositionChaser2D.js",
-	"../Components/Followers/PositionDamper.js",
-	"../Components/Followers/PositionDamper2D.js",
-	"../Components/Interpolation/PositionInterpolator.js", // VRML
-	"../Components/Interpolation/PositionInterpolator2D.js",
-	//"../Components/Picking/PrimitivePickSensor.js",
-	//"../Components/Shaders/ProgramShader.js",
-	"../Components/EnvironmentalSensor/ProximitySensor.js", // VRML
-	"../Components/CADGeometry/QuadSet.js",
-	//"../Components/DIS/ReceiverPdu.js",
-	"../Components/Geometry2D/Rectangle2D.js",
-	//"../Components/RigidBodyPhysics/RigidBody.js",
-	//"../Components/RigidBodyPhysics/RigidBodyCollection.js",
-	"../Components/Followers/ScalarChaser.js",
-	"../Components/Followers/ScalarDamper.js",
-	"../Components/Interpolation/ScalarInterpolator.js", // VRML
-	"../Components/Layout/ScreenFontStyle.js",
-	"../Components/Layout/ScreenGroup.js",
-	"../Components/Scripting/Script.js", // VRML
-	"../Components/Shaders/ShaderPart.js",
-	//"../Components/Shaders/ShaderProgram.js",
-	"../Components/Shape/Shape.js", // VRML
-	//"../Components/DIS/SignalPdu.js",
-	//"../Components/RigidBodyPhysics/SingleAxisHingeJoint.js",
-	//"../Components/RigidBodyPhysics/SliderJoint.js",
-	"../Components/Sound/Sound.js", // VRML
-	"../Components/Geometry3D/Sphere.js", // VRML
-	"../Components/PointingDeviceSensor/SphereSensor.js", // VRML
-	"../Components/Interpolation/SplinePositionInterpolator.js",
-	"../Components/Interpolation/SplinePositionInterpolator2D.js",
-	"../Components/Interpolation/SplineScalarInterpolator.js",
-	"../Components/Lighting/SpotLight.js", // VRML
-	"../Components/Interpolation/SquadOrientationInterpolator.js",
-	"../Components/Grouping/StaticGroup.js",
-	//"../Components/KeyDeviceSensor/StringSensor.js",
-	"../Components/ParticleSystems/SurfaceEmitter.js",
-	"../Components/Grouping/Switch.js", // VRML
-	"../Components/Followers/TexCoordChaser2D.js",
-	"../Components/Followers/TexCoordDamper2D.js",
-	"../Components/Text/Text.js", // VRML
-	"../Components/EnvironmentalEffects/TextureBackground.js",
-	"../Components/Texturing/TextureCoordinate.js", // VRML
-	"../Components/Texturing3D/TextureCoordinate3D.js",
-	"../Components/Texturing3D/TextureCoordinate4D.js",
-	//"../Components/Texturing/TextureCoordinateGenerator.js",
-	"../Components/Texturing/TextureProperties.js",
-	"../Components/Texturing/TextureTransform.js", // VRML
-	"../Components/Texturing3D/TextureTransform3D.js",
-	"../Components/Texturing3D/TextureTransformMatrix3D.js",
-	"../Components/Time/TimeSensor.js", // VRML
-	"../Components/EventUtilities/TimeTrigger.js",
+define ('cobweb/Configuration/SupportedNodes',[
+	"cobweb/Components/Networking/Anchor", // VRML
+	"cobweb/Components/Shape/Appearance", // VRML
+	"cobweb/Components/Geometry2D/Arc2D",
+	"cobweb/Components/Geometry2D/ArcClose2D",
+	"cobweb/Components/Sound/AudioClip",
+	"cobweb/Components/EnvironmentalEffects/Background", // VRML
+	//"cobweb/Components/RigidBodyPhysics/BallJoint",
+	"cobweb/Components/Navigation/Billboard", // VRML
+	"cobweb/Components/EventUtilities/BooleanFilter",
+	"cobweb/Components/EventUtilities/BooleanSequencer",
+	"cobweb/Components/EventUtilities/BooleanToggle",
+	"cobweb/Components/EventUtilities/BooleanTrigger",
+	"cobweb/Components/ParticleSystems/BoundedPhysicsModel",
+	"cobweb/Components/Geometry3D/Box", // VRML
+	"cobweb/Components/CADGeometry/CADAssembly",
+	"cobweb/Components/CADGeometry/CADFace",
+	"cobweb/Components/CADGeometry/CADLayer",
+	"cobweb/Components/CADGeometry/CADPart",
+	"cobweb/Components/Geometry2D/Circle2D",
+	"cobweb/Components/Rendering/ClipPlane",
+	//"cobweb/Components/RigidBodyPhysics/CollidableOffset",
+	//"cobweb/Components/RigidBodyPhysics/CollidableShape",
+	"cobweb/Components/Navigation/Collision", // VRML
+	//"cobweb/Components/RigidBodyPhysics/CollisionCollection",
+	//"cobweb/Components/RigidBodyPhysics/CollisionSensor",
+	//"cobweb/Components/RigidBodyPhysics/CollisionSpace",
+	"cobweb/Components/Rendering/Color", // VRML
+	"cobweb/Components/Followers/ColorChaser",
+	"cobweb/Components/Followers/ColorDamper",
+	"cobweb/Components/Interpolation/ColorInterpolator", // VRML
+	"cobweb/Components/Rendering/ColorRGBA",
+	"cobweb/Components/CubeMapTexturing/ComposedCubeMapTexture",
+	"cobweb/Components/Shaders/ComposedShader",
+	//"cobweb/Components/Texturing3D/ComposedTexture3D",
+	"cobweb/Components/Geometry3D/Cone", // VRML
+	"cobweb/Components/ParticleSystems/ConeEmitter",
+	//"cobweb/Components/RigidBodyPhysics/Contact",
+	//"cobweb/Components/NURBS/Contour2D",
+	//"cobweb/Components/NURBS/ContourPolyline2D",
+	"cobweb/Components/Rendering/Coordinate", // VRML
+	"cobweb/Components/Followers/CoordinateChaser",
+	"cobweb/Components/Followers/CoordinateDamper",
+	"cobweb/Components/NURBS/CoordinateDouble",
+	"cobweb/Components/Interpolation/CoordinateInterpolator", // VRML
+	"cobweb/Components/Interpolation/CoordinateInterpolator2D",
+	"cobweb/Components/Geometry3D/Cylinder", // VRML
+	"cobweb/Components/PointingDeviceSensor/CylinderSensor", // VRML
+	//"cobweb/Components/DIS/DISEntityManager",
+	//"cobweb/Components/DIS/DISEntityTypeMapping",
+	"cobweb/Components/Lighting/DirectionalLight", // VRML
+	"cobweb/Components/Geometry2D/Disk2D",
+	//"cobweb/Components/RigidBodyPhysics/DoubleAxisHingeJoint",
+	"cobweb/Components/Interpolation/EaseInEaseOut",
+	"cobweb/Components/Geometry3D/ElevationGrid", // VRML
+	//"cobweb/Components/DIS/EspduTransform",
+	"cobweb/Components/ParticleSystems/ExplosionEmitter",
+	"cobweb/Components/Geometry3D/Extrusion", // VRML
+	//"cobweb/Components/Shape/FillProperties",
+	"cobweb/Components/Shaders/FloatVertexAttribute",
+	"cobweb/Components/EnvironmentalEffects/Fog", // VRML
+	//"cobweb/Components/EnvironmentalEffects/FogCoordinate",
+	"cobweb/Components/Text/FontStyle", // VRML
+	"cobweb/Components/ParticleSystems/ForcePhysicsModel",
+	"cobweb/Components/CubeMapTexturing/GeneratedCubeMapTexture",
+	"cobweb/Components/Geospatial/GeoCoordinate",
+	"cobweb/Components/Geospatial/GeoElevationGrid",
+	"cobweb/Components/Geospatial/GeoLOD",
+	"cobweb/Components/Geospatial/GeoLocation",
+	"cobweb/Components/Geospatial/GeoMetadata",
+	"cobweb/Components/Geospatial/GeoOrigin",
+	"cobweb/Components/Geospatial/GeoPositionInterpolator",
+	"cobweb/Components/Geospatial/GeoProximitySensor",
+	"cobweb/Components/Geospatial/GeoTouchSensor",
+	"cobweb/Components/Geospatial/GeoTransform",
+	"cobweb/Components/Geospatial/GeoViewpoint",
+	"cobweb/Components/Grouping/Group", // VRML
+	//"cobweb/Components/H-Anim/HAnimDisplacer",
+	//"cobweb/Components/H-Anim/HAnimHumanoid",
+	//"cobweb/Components/H-Anim/HAnimJoint",
+	//"cobweb/Components/H-Anim/HAnimSegment",
+	//"cobweb/Components/H-Anim/HAnimSite",
+	"cobweb/Components/CubeMapTexturing/ImageCubeMapTexture",
+	"cobweb/Components/Texturing/ImageTexture", // VRML
+	//"cobweb/Components/Texturing3D/ImageTexture3D",
+	"cobweb/Components/Geometry3D/IndexedFaceSet", // VRML
+	"cobweb/Components/Rendering/IndexedLineSet", // VRML
+	"cobweb/Components/CADGeometry/IndexedQuadSet",
+	"cobweb/Components/Rendering/IndexedTriangleFanSet",
+	"cobweb/Components/Rendering/IndexedTriangleSet",
+	"cobweb/Components/Rendering/IndexedTriangleStripSet",
+	"cobweb/Components/Networking/Inline", // VRML
+	"cobweb/Components/EventUtilities/IntegerSequencer",
+	"cobweb/Components/EventUtilities/IntegerTrigger",
+	"cobweb/Components/KeyDeviceSensor/KeySensor",
+	"cobweb/Components/Navigation/LOD", // VRML
+	"cobweb/Components/Layering/Layer",
+	"cobweb/Components/Layering/LayerSet",
+	"cobweb/Components/Layout/Layout",
+	"cobweb/Components/Layout/LayoutGroup",
+	"cobweb/Components/Layout/LayoutLayer",
+	//"cobweb/Components/Picking/LinePickSensor",
+	"cobweb/Components/Shape/LineProperties",
+	"cobweb/Components/Rendering/LineSet",
+	"cobweb/Components/Networking/LoadSensor",
+	"cobweb/Components/EnvironmentalEffects/LocalFog",
+	"cobweb/Components/Shape/Material", // VRML
+	"cobweb/Components/Shaders/Matrix3VertexAttribute",
+	"cobweb/Components/Shaders/Matrix4VertexAttribute",
+	"cobweb/Components/Core/MetadataBoolean",
+	"cobweb/Components/Core/MetadataDouble",
+	"cobweb/Components/Core/MetadataFloat",
+	"cobweb/Components/Core/MetadataInteger",
+	"cobweb/Components/Core/MetadataSet",
+	"cobweb/Components/Core/MetadataString",
+	//"cobweb/Components/RigidBodyPhysics/MotorJoint",
+	"cobweb/Components/Texturing/MovieTexture", // VRML
+	//"cobweb/Components/Texturing/MultiTexture",
+	//"cobweb/Components/Texturing/MultiTextureCoordinate",
+	//"cobweb/Components/Texturing/MultiTextureTransform",
+	"cobweb/Components/Navigation/NavigationInfo", // VRML
+	"cobweb/Components/Rendering/Normal", // VRML
+	"cobweb/Components/Interpolation/NormalInterpolator", // VRML
+	//"cobweb/Components/NURBS/NurbsCurve",
+	//"cobweb/Components/NURBS/NurbsCurve2D",
+	//"cobweb/Components/NURBS/NurbsOrientationInterpolator",
+	//"cobweb/Components/NURBS/NurbsPatchSurface",
+	//"cobweb/Components/NURBS/NurbsPositionInterpolator",
+	//"cobweb/Components/NURBS/NurbsSet",
+	//"cobweb/Components/NURBS/NurbsSurfaceInterpolator",
+	//"cobweb/Components/NURBS/NurbsSweptSurface",
+	//"cobweb/Components/NURBS/NurbsSwungSurface",
+	//"cobweb/Components/NURBS/NurbsTextureCoordinate",
+	//"cobweb/Components/NURBS/NurbsTrimmedSurface",
+	"cobweb/Components/Followers/OrientationChaser",
+	"cobweb/Components/Followers/OrientationDamper",
+	"cobweb/Components/Interpolation/OrientationInterpolator", // VRML
+	"cobweb/Components/Navigation/OrthoViewpoint",
+	//"cobweb/Components/Shaders/PackagedShader",
+	"cobweb/Components/ParticleSystems/ParticleSystem",
+	//"cobweb/Components/Picking/PickableGroup",
+	"cobweb/Components/Texturing/PixelTexture", // VRML
+	//"cobweb/Components/Texturing3D/PixelTexture3D",
+	"cobweb/Components/PointingDeviceSensor/PlaneSensor", // VRML
+	"cobweb/Components/ParticleSystems/PointEmitter",
+	"cobweb/Components/Lighting/PointLight", // VRML
+	//"cobweb/Components/Picking/PointPickSensor",
+	"cobweb/Components/Rendering/PointSet", // VRML
+	"cobweb/Components/Geometry2D/Polyline2D",
+	"cobweb/Components/ParticleSystems/PolylineEmitter",
+	"cobweb/Components/Geometry2D/Polypoint2D",
+	"cobweb/Components/Followers/PositionChaser",
+	"cobweb/Components/Followers/PositionChaser2D",
+	"cobweb/Components/Followers/PositionDamper",
+	"cobweb/Components/Followers/PositionDamper2D",
+	"cobweb/Components/Interpolation/PositionInterpolator", // VRML
+	"cobweb/Components/Interpolation/PositionInterpolator2D",
+	//"cobweb/Components/Picking/PrimitivePickSensor",
+	//"cobweb/Components/Shaders/ProgramShader",
+	"cobweb/Components/EnvironmentalSensor/ProximitySensor", // VRML
+	"cobweb/Components/CADGeometry/QuadSet",
+	//"cobweb/Components/DIS/ReceiverPdu",
+	"cobweb/Components/Geometry2D/Rectangle2D",
+	//"cobweb/Components/RigidBodyPhysics/RigidBody",
+	//"cobweb/Components/RigidBodyPhysics/RigidBodyCollection",
+	"cobweb/Components/Followers/ScalarChaser",
+	"cobweb/Components/Followers/ScalarDamper",
+	"cobweb/Components/Interpolation/ScalarInterpolator", // VRML
+	"cobweb/Components/Layout/ScreenFontStyle",
+	"cobweb/Components/Layout/ScreenGroup",
+	"cobweb/Components/Scripting/Script", // VRML
+	"cobweb/Components/Shaders/ShaderPart",
+	//"cobweb/Components/Shaders/ShaderProgram",
+	"cobweb/Components/Shape/Shape", // VRML
+	//"cobweb/Components/DIS/SignalPdu",
+	//"cobweb/Components/RigidBodyPhysics/SingleAxisHingeJoint",
+	//"cobweb/Components/RigidBodyPhysics/SliderJoint",
+	"cobweb/Components/Sound/Sound", // VRML
+	"cobweb/Components/Geometry3D/Sphere", // VRML
+	"cobweb/Components/PointingDeviceSensor/SphereSensor", // VRML
+	"cobweb/Components/Interpolation/SplinePositionInterpolator",
+	"cobweb/Components/Interpolation/SplinePositionInterpolator2D",
+	"cobweb/Components/Interpolation/SplineScalarInterpolator",
+	"cobweb/Components/Lighting/SpotLight", // VRML
+	"cobweb/Components/Interpolation/SquadOrientationInterpolator",
+	"cobweb/Components/Grouping/StaticGroup",
+	//"cobweb/Components/KeyDeviceSensor/StringSensor",
+	"cobweb/Components/ParticleSystems/SurfaceEmitter",
+	"cobweb/Components/Grouping/Switch", // VRML
+	"cobweb/Components/Followers/TexCoordChaser2D",
+	"cobweb/Components/Followers/TexCoordDamper2D",
+	"cobweb/Components/Text/Text", // VRML
+	"cobweb/Components/EnvironmentalEffects/TextureBackground",
+	"cobweb/Components/Texturing/TextureCoordinate", // VRML
+	"cobweb/Components/Texturing3D/TextureCoordinate3D",
+	"cobweb/Components/Texturing3D/TextureCoordinate4D",
+	//"cobweb/Components/Texturing/TextureCoordinateGenerator",
+	"cobweb/Components/Texturing/TextureProperties",
+	"cobweb/Components/Texturing/TextureTransform", // VRML
+	"cobweb/Components/Texturing3D/TextureTransform3D",
+	"cobweb/Components/Texturing3D/TextureTransformMatrix3D",
+	"cobweb/Components/Time/TimeSensor", // VRML
+	"cobweb/Components/EventUtilities/TimeTrigger",
 	//"cobweb/Components/Titania/TouchGroup",
-	"../Components/PointingDeviceSensor/TouchSensor.js", // VRML
-	"../Components/Grouping/Transform.js", // VRML
-	"../Components/EnvironmentalSensor/TransformSensor.js",
-	//"../Components/DIS/TransmitterPdu.js",
-	"../Components/Rendering/TriangleFanSet.js",
-	"../Components/Rendering/TriangleSet.js",
-	"../Components/Geometry2D/TriangleSet2D.js",
-	"../Components/Rendering/TriangleStripSet.js",
-	"../Components/Shape/TwoSidedMaterial.js",
-	//"../Components/RigidBodyPhysics/UniversalJoint.js",
-	"../Components/Navigation/Viewpoint.js", // VRML
-	"../Components/Navigation/ViewpointGroup.js",
-	"../Components/Layering/Viewport.js",
-	"../Components/EnvironmentalSensor/VisibilitySensor.js", // VRML
-	"../Components/ParticleSystems/VolumeEmitter.js",
-	//"../Components/Picking/VolumePickSensor.js",
-	"../Components/ParticleSystems/WindPhysicsModel.js",
-	"../Components/Core/WorldInfo.js", // VRML
+	"cobweb/Components/PointingDeviceSensor/TouchSensor", // VRML
+	"cobweb/Components/Grouping/Transform", // VRML
+	"cobweb/Components/EnvironmentalSensor/TransformSensor",
+	//"cobweb/Components/DIS/TransmitterPdu",
+	"cobweb/Components/Rendering/TriangleFanSet",
+	"cobweb/Components/Rendering/TriangleSet",
+	"cobweb/Components/Geometry2D/TriangleSet2D",
+	"cobweb/Components/Rendering/TriangleStripSet",
+	"cobweb/Components/Shape/TwoSidedMaterial",
+	//"cobweb/Components/RigidBodyPhysics/UniversalJoint",
+	"cobweb/Components/Navigation/Viewpoint", // VRML
+	"cobweb/Components/Navigation/ViewpointGroup",
+	"cobweb/Components/Layering/Viewport",
+	"cobweb/Components/EnvironmentalSensor/VisibilitySensor", // VRML
+	"cobweb/Components/ParticleSystems/VolumeEmitter",
+	//"cobweb/Components/Picking/VolumePickSensor",
+	"cobweb/Components/ParticleSystems/WindPhysicsModel",
+	"cobweb/Components/Core/WorldInfo", // VRML
 ],
 function (Anchor,
           Appearance,
@@ -111115,21 +111115,21 @@ function (Anchor,
  ******************************************************************************/
 
 
-define ('cobweb/Browser/X3DBrowser.js',[
+define ('cobweb/Browser/X3DBrowser',[
 	"jquery",
-	"./VERSION.js",
-	"../Base/Events.js",
-	"../Fields.js",
-	"./X3DBrowserContext.js",
-	"../Configuration/ComponentInfo.js",
-	"../Configuration/SupportedProfiles.js",
-	"../Configuration/SupportedComponents.js",
-	"../Configuration/SupportedNodes.js",
-	"../Execution/Scene.js",
-	"../InputOutput/FileLoader.js",
-	"../Parser/XMLParser.js",
-	"../Bits/X3DConstants.js",
-	"../../lib/gettext.js",
+	"cobweb/Browser/VERSION",
+	"cobweb/Base/Events",
+	"cobweb/Fields",
+	"cobweb/Browser/X3DBrowserContext",
+	"cobweb/Configuration/ComponentInfo",
+	"cobweb/Configuration/SupportedProfiles",
+	"cobweb/Configuration/SupportedComponents",
+	"cobweb/Configuration/SupportedNodes",
+	"cobweb/Execution/Scene",
+	"cobweb/InputOutput/FileLoader",
+	"cobweb/Parser/XMLParser",
+	"cobweb/Bits/X3DConstants",
+	"lib/gettext",
 ],
 function ($,
           VERSION,
@@ -111799,30 +111799,30 @@ function ($,
  ******************************************************************************/
 
 
-define ('cobweb/X3D.js',[
+define ('cobweb/X3D',[
 	"jquery",
-	"./Error.js",
-	"./Basic/X3DFieldDefinition.js",
-	"./Basic/FieldDefinitionArray.js",
-	"./Basic/X3DField.js",
-	"./Basic/X3DArrayField.js",
-	"./Fields.js",
-	"./Browser/X3DBrowser.js",
-	"./Configuration/ComponentInfo.js",
-	"./Configuration/ComponentInfoArray.js",
-	"./Configuration/ProfileInfo.js",
-	"./Configuration/ProfileInfoArray.js",
-	"./Configuration/UnitInfo.js",
-	"./Configuration/UnitInfoArray.js",
-	"./Execution/X3DExecutionContext.js",
-	"./Execution/X3DScene.js",
-	"./Prototype/ExternProtoDeclarationArray.js",
-	"./Prototype/ProtoDeclarationArray.js",
-	"./Prototype/X3DExternProtoDeclaration.js",
-	"./Prototype/X3DProtoDeclaration.js",
-	"./Routing/RouteArray.js",
-	"./Routing/X3DRoute.js",
-	"./Bits/X3DConstants.js",
+	"cobweb/Error",
+	"cobweb/Basic/X3DFieldDefinition",
+	"cobweb/Basic/FieldDefinitionArray",
+	"cobweb/Basic/X3DField",
+	"cobweb/Basic/X3DArrayField",
+	"cobweb/Fields",
+	"cobweb/Browser/X3DBrowser",
+	"cobweb/Configuration/ComponentInfo",
+	"cobweb/Configuration/ComponentInfoArray",
+	"cobweb/Configuration/ProfileInfo",
+	"cobweb/Configuration/ProfileInfoArray",
+	"cobweb/Configuration/UnitInfo",
+	"cobweb/Configuration/UnitInfoArray",
+	"cobweb/Execution/X3DExecutionContext",
+	"cobweb/Execution/X3DScene",
+	"cobweb/Prototype/ExternProtoDeclarationArray",
+	"cobweb/Prototype/ProtoDeclarationArray",
+	"cobweb/Prototype/X3DExternProtoDeclaration",
+	"cobweb/Prototype/X3DProtoDeclaration",
+	"cobweb/Routing/RouteArray",
+	"cobweb/Routing/X3DRoute",
+	"cobweb/Bits/X3DConstants",
 ],
 function ($,
           Error,
@@ -112060,7 +112060,7 @@ function ($,
 	{
 		console .log (error);
 
-		require (["./cobweb/Error.js"],
+		require (["cobweb/Error"],
 		function (Error)
 		{
 			Error (error, fallbacks);
@@ -112082,7 +112082,7 @@ function ($,
 		callbacks = [ ],
 		fallbacks = [ ];
 
-	require (["./cobweb/X3D.js"],
+	require (["cobweb/X3D"],
 	function (X3D)
 	{
 		// Now assign real X3D.
