@@ -52,7 +52,7 @@ define (function ()
 "use strict";
 
 	return {
-		providerUrl:       "http://titania.create3000.de/cobweb",
+		providerUrl:       "http://create3000.de/cobweb",
 		fallbackUrl:       "http://cors.create3000.de/",
 		fallbackExpression: new RegExp ("^http://cors.create3000.de/"),
 	};

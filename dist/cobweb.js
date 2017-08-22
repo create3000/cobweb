@@ -27870,7 +27870,7 @@ function ($,
 						className: "context-menu-icon cobweb-icon-help-about",
 						callback: function ()
 						{
-						   window .open ("http://titania.create3000.de/cobweb");
+						   window .open ("http://create3000.de/cobweb/");
 						},
 					},
 				}
