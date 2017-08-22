@@ -103,7 +103,7 @@ Programmers who want to work on Cobweb shall first read the [Style Guide](STYLE_
 
 Tests
 --------------------------------------
-[Cobweb Test Page](http://rawgit.com/create3000/cobweb/master/src/cobweb.min.html)
+[Cobweb Test Page](http://rawgit.com/create3000/cobweb/master/cobweb.min.html)
 
 
 Authors
